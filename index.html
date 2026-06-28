@@ -205,11 +205,10 @@ body{
 .day-cell.done.t-productivite::after{background:rgba(154,154,154,.2);color:#9a9a9a;}
 .day-cell.done.t-developpement::after{background:rgba(104,104,104,.22);color:#686868;}
 .day-cell .num{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;line-height:1;}
-.day-cell .dot{width:6px;height:6px;border-radius:50%;}
-.t-mindset .dot{background:var(--red);} .t-manifestation .dot{background:#cfcfcf;} .t-productivite .dot{background:#9a9a9a;} .t-developpement .dot{background:#686868;}
+.day-cell .dot{font-size:11px;line-height:1;}
 .legend-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
 .legend-card h3{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-dot{font-size:13px;flex-shrink:0;}
 .legend-card ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
 .legend-card ul li{font-size:11.5px;color:var(--muted);padding-left:4px;}
 .legend-card ul li a{color:var(--muted);text-decoration:none;}
@@ -615,7 +614,7 @@ body{
   <div class="card-title">— Thèmes, chaînes & liens validés <div class="line"></div></div>
 
   <div class="legend-card">
-    <h3><span class="legend-dot" style="background:var(--red)"></span>Mindset & Discipline</h3>
+    <h3><span class="legend-dot">🧠</span>Mindset & Discipline</h3>
     <ul>
       <li><a href="https://www.youtube.com/@davidgoggins" target="_blank">David Goggins</a></li>
       <li><a href="https://www.youtube.com/@HamzaYT" target="_blank">Hamza Ahmed</a></li>
@@ -627,7 +626,7 @@ body{
     <div class="legend-note">Jours 13/17/21/25/29 à compléter — voir Carnet de bord.</div>
   </div>
   <div class="legend-card">
-    <h3><span class="legend-dot" style="background:#cfcfcf"></span>Visualisation & Manifestation</h3>
+    <h3><span class="legend-dot">✨</span>Visualisation & Manifestation</h3>
     <ul>
       <li><a href="https://www.youtube.com/@edMylett" target="_blank">Ed Mylett</a></li>
       <li><a href="https://www.youtube.com/@TomBilyeu" target="_blank">Tom Bilyeu</a></li>
@@ -638,7 +637,7 @@ body{
     <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
   </div>
   <div class="legend-card">
-    <h3><span class="legend-dot" style="background:#9a9a9a"></span>Productivité & Organisation</h3>
+    <h3><span class="legend-dot">⚡</span>Productivité & Organisation</h3>
     <ul>
       <li><a href="https://www.youtube.com/@ThomasFrankExplains" target="_blank">Thomas Frank</a></li>
       <li><a href="https://www.youtube.com/@aliabdaal" target="_blank">Ali Abdaal</a></li>
@@ -649,7 +648,7 @@ body{
     <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
   </div>
   <div class="legend-card">
-    <h3><span class="legend-dot" style="background:#686868"></span>Développement Personnel</h3>
+    <h3><span class="legend-dot">🌱</span>Développement Personnel</h3>
     <ul>
       <li><a href="https://www.youtube.com/@JayShettyPodcast" target="_blank">Jay Shetty</a></li>
       <li><a href="https://www.youtube.com/@SimonSinek" target="_blank">Simon Sinek</a></li>
@@ -1046,10 +1045,10 @@ function updateCountdown(){
 /* ============ PLAN 30 JOURS ============ */
 const P30_START = new Date('2026-06-26');
 const P30_THEMES = [
-  { key:'mindset', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
-  { key:'manifestation', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
-  { key:'productivite', label:'Productivité & Organisation', channels:"Thomas Frank · Ali Abdaal · Matt D'Avella" },
-  { key:'developpement', label:'Développement Personnel', channels:'Jay Shetty · Simon Sinek · Brendon Burchard' }
+  { key:'mindset', emoji:'🧠', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
+  { key:'manifestation', emoji:'✨', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
+  { key:'productivite', emoji:'⚡', label:'Productivité & Organisation', channels:"Thomas Frank · Ali Abdaal · Matt D'Avella" },
+  { key:'developpement', emoji:'🌱', label:'Développement Personnel', channels:'Jay Shetty · Simon Sinek · Brendon Burchard' }
 ];
 const P30_DAYS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const P30_MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -1098,7 +1097,7 @@ function p30BuildGrid(){
     const isToday = i === todayIdx;
     const cell = document.createElement('div');
     cell.className = `day-cell t-${theme.key}${isDone?' done':''}${isToday?' is-today':''}`;
-    cell.innerHTML = `<div class="num">${i+1}</div><div class="dot"></div>`;
+    cell.innerHTML = `<div class="num">${i+1}</div><div class="dot">${theme.emoji}</div>`;
     cell.title = `Jour ${i+1} — ${theme.label}`;
     cell.onclick = () => p30ToggleDay(i);
     grid.appendChild(cell);
