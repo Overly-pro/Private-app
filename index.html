@@ -10,6 +10,9 @@
 <meta name="theme-color" content="#070707">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mon Espace">
+<script>
+  if(localStorage.getItem('theme_pref') === 'light'){ document.documentElement.classList.add('theme-light'); }
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
 
@@ -31,13 +34,22 @@ body{
 /* BRAND WATERMARK */
 .bg-watermark{
   position:fixed; inset:0; z-index:0; pointer-events:none;
-  background-image:url('brand/logo-mark-white.png');
+  background-image:url('brand/logo-detailed-white.png');
   background-position:center center; background-repeat:no-repeat;
-  background-size:80% auto;
-  opacity:0.10;
+  background-size:95% auto;
+  opacity:0.14;
 }
 .app-header, .view, .bottom-nav, .toast, .auth-overlay{ position:relative; z-index:1; }
 .logo-mark{ height:18px; width:auto; vertical-align:middle; margin-right:7px; opacity:0.92; }
+
+/* THEME TOGGLE (palette is pure grayscale, so a CSS invert gives a perfect light theme for free) */
+html{ transition:filter .25s ease; }
+html.theme-light{ filter:invert(1); }
+.theme-toggle{
+  background:none; border:1px solid var(--border2); color:var(--text);
+  border-radius:20px; width:30px; height:30px; font-size:14px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-family:inherit;
+}
 
 /* HEADER */
 .app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 2px;}
@@ -297,6 +309,7 @@ body{
     <div class="date mono" id="headerDate">—</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
+    <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Changer de thème">🌙</button>
     <div class="badge" id="headerBadge">16 août 2026</div>
     <button class="logout-btn" onclick="authLogout()">déconnexion</button>
   </div>
@@ -923,6 +936,21 @@ function todayLongFR(){
 }
 document.getElementById('headerDate').textContent = todayLongFR();
 
+/* ============ THEME ============ */
+function applyTheme(isLight){
+  document.documentElement.classList.toggle('theme-light', isLight);
+  document.getElementById('themeToggleBtn').textContent = isLight ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  const isLight = !document.documentElement.classList.contains('theme-light');
+  applyTheme(isLight);
+  saveKey('theme_pref', isLight ? 'light' : 'dark');
+}
+function initTheme(){
+  const pref = loadKey('theme_pref');
+  applyTheme(pref === 'light');
+}
+
 /* ============ GENERIC SUBTABS ============ */
 function showSubtab(group, tab){
   document.querySelectorAll('[data-'+group+'-tab]').forEach(b=>b.classList.remove('active'));
@@ -1284,6 +1312,7 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 
 /* ============ INIT ============ */
 function initApp(){
+  initTheme();
   // repeupler les données en mémoire depuis le cloud (cloudData) avant tout rendu
   p30Done = JSON.parse(loadKey('plan30_done') || '[]');
   sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
