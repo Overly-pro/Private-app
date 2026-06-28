@@ -45,6 +45,7 @@ body{
 /* THEME TOGGLE (palette is pure grayscale, so a CSS invert gives a perfect light theme for free) */
 html{ transition:filter .25s ease; }
 html.theme-light{ filter:invert(1); }
+html.theme-light .emoji-fix{ filter:invert(1); }
 .theme-toggle{
   background:none; border:1px solid var(--border2); color:var(--text);
   border-radius:20px; width:30px; height:30px; font-size:14px; cursor:pointer;
@@ -924,6 +925,7 @@ function goTo(view){
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
+  wrapEmojis(t);
   clearTimeout(window._toastTimer);
   window._toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
 }
@@ -940,6 +942,7 @@ document.getElementById('headerDate').textContent = todayLongFR();
 function applyTheme(isLight){
   document.documentElement.classList.toggle('theme-light', isLight);
   document.getElementById('themeToggleBtn').textContent = isLight ? '☀️' : '🌙';
+  wrapEmojis(document.getElementById('themeToggleBtn'));
 }
 function toggleTheme(){
   const isLight = !document.documentElement.classList.contains('theme-light');
@@ -949,6 +952,39 @@ function toggleTheme(){
 function initTheme(){
   const pref = loadKey('theme_pref');
   applyTheme(pref === 'light');
+}
+
+/* Isole chaque emoji dans un span "emoji-fix" pour qu'il garde ses couleurs
+   d'origine même quand le thème clair inverse le reste de la page. */
+function wrapEmojis(root){
+  root = root || document.body;
+  const EMOJI_TEST = /\p{Extended_Pictographic}/u;
+  const EMOJI_GLOBAL = /\p{Extended_Pictographic}/gu;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node){
+      if(node.parentElement && node.parentElement.classList.contains('emoji-fix')) return NodeFilter.FILTER_REJECT;
+      return EMOJI_TEST.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  const nodes = [];
+  let n;
+  while(n = walker.nextNode()) nodes.push(n);
+  nodes.forEach(node => {
+    const text = node.nodeValue;
+    const frag = document.createDocumentFragment();
+    let lastIndex = 0;
+    text.replace(EMOJI_GLOBAL, (match, offset) => {
+      if(offset > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, offset)));
+      const span = document.createElement('span');
+      span.className = 'emoji-fix';
+      span.textContent = match;
+      frag.appendChild(span);
+      lastIndex = offset + match.length;
+      return match;
+    });
+    if(lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    node.parentNode.replaceChild(frag, node);
+  });
 }
 
 /* ============ GENERIC SUBTABS ============ */
@@ -1130,6 +1166,7 @@ function p30BuildGrid(){
     cell.onclick = () => p30ToggleDay(i);
     grid.appendChild(cell);
   }
+  wrapEmojis(grid);
 }
 function p30Render(){ p30BuildGrid(); p30BuildToday(); p30UpdateProgress(); }
 
@@ -1339,6 +1376,7 @@ function initApp(){
   // journal
   loadJournalToday();
   renderJournalHistory();
+  wrapEmojis(document.body);
 }
 </script>
 
