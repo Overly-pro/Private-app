@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Espace — Tableau de bord privé</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --bg:#0a0a0f; --surface:#110f1a; --surface2:#12101a; --border:#1c182b; --border2:#1e1a2e;
+  --text:#e8e4f0; --muted:#5a5075; --muted2:#4a4060; --muted3:#3a3060;
+  --accent:#a855f7; --accent2:#6d28d9; --gold:#c9a84c; --orange:#f97316;
+  --blue:#4aafff; --green:#4affa0; --red:#ff4d4d;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; padding:18px 14px 92px; max-width:680px; margin:0 auto;
+}
+.mono{font-family:'Space Mono',monospace;}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 2px;}
+.app-header .title{font-size:14px;font-weight:800;color:#f0ecff;}
+.app-header .date{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;}
+.app-header .badge{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:20px;padding:5px 11px;white-space:nowrap;}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* CARD base */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+.card-title{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.card-title .line{flex:1;height:1px;background:var(--border);}
+
+/* HOME hero */
+.hero{background:linear-gradient(135deg,#12101a,#1a1030);border:1px solid #6c3fff33;border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.hero-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.hero-main{font-size:15px;font-weight:800;color:#f0ecff;line-height:1.4;}
+.hero-days{font-size:36px;font-weight:900;color:var(--accent);line-height:1;text-align:right;}
+.hero-days-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-align:right;margin-top:2px;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 10px;text-align:center;cursor:pointer;transition:border-color .2s;}
+.stat:hover{border-color:#3a2a5a;}
+.stat-val{font-size:19px;font-weight:900;color:var(--text);line-height:1;}
+.stat-lbl{font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.5px;line-height:1.3;}
+
+/* PROGRESS RING shared */
+.ring-row{display:flex;align-items:center;gap:18px;}
+.ring-box{position:relative;flex-shrink:0;}
+.ring-box svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--border);}
+.ring-fill{fill:none;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-pct{font-weight:900;color:#f0ecff;line-height:1;}
+.ring-lbl{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
+
+/* NAV BOTTOM */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;background:#0d0b14;border-top:1px solid var(--border);
+  display:flex;justify-content:center;z-index:50;padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.nav-inner{display:flex;gap:2px;max-width:680px;width:100%;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--muted3);padding:7px 2px;border-radius:10px;cursor:pointer;font-family:inherit;transition:color .2s,background .2s;}
+.nav-btn .ic{font-size:18px;line-height:1;}
+.nav-btn .lb{font-size:8.5px;font-weight:600;letter-spacing:.3px;}
+.nav-btn.active{color:var(--accent);background:rgba(168,85,247,0.08);}
+
+/* TASK CARD (checklist) */
+.section{margin-bottom:16px;}
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-left:2px;}
+.section-icon{font-size:13px;}
+.section-title{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#6040a0;}
+.section-time{font-size:9px;color:var(--muted3);margin-left:auto;font-family:'Space Mono',monospace;}
+.section-line{flex:1;height:1px;background:var(--border);}
+
+.task{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s;user-select:none;}
+.task:hover{border-color:#2e2050;}
+.task.done{background:#0e1a0e;border-color:#1a3a1a;}
+.task-top{display:flex;align-items:center;gap:12px;}
+.checkbox{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:2px solid #2e2050;display:flex;align-items:center;justify-content:center;background:transparent;transition:all .2s;}
+.task.done .checkbox{background:linear-gradient(135deg,#6d28d9,#a855f7);border-color:transparent;}
+.checkmark{display:none;font-size:12px;color:#fff;font-weight:900;}
+.task.done .checkmark{display:block;}
+.task-body{flex:1;min-width:0;}
+.task-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;transition:color .2s;}
+.task.done .task-name{color:#5a7a5a;text-decoration:line-through;}
+.task-sub{font-size:11px;color:var(--muted2);margin-top:2px;transition:color .2s;}
+.task.done .task-sub{color:#2e3e2e;}
+.expand-btn{font-size:10px;color:#3a3060;padding:4px;transition:transform .2s,color .2s;flex-shrink:0;}
+.task:hover .expand-btn{color:#6040a0;}
+.expand-btn.open{transform:rotate(180deg);}
+.how-to{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .3s ease;opacity:0;}
+.how-to.open{max-height:700px;opacity:1;}
+.how-to-inner{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;line-height:1.7;color:#6a6090;}
+.how-to-inner strong{color:#9060c0;}
+.quote-block{color:#b084e8;line-height:1.8;display:block;padding:10px 12px;background:rgba(109,40,217,0.08);border-left:2px solid var(--accent2);border-radius:4px;margin:8px 0;font-style:italic;}
+
+.streak-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.streak-badge{background:linear-gradient(135deg,#1e1a30,#2a1f3d);border:1px solid #3a2a5a;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#c084fc;display:flex;align-items:center;gap:5px;}
+
+.reset-bar{text-align:center;margin-top:18px;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:#3a3060;border-radius:8px;padding:8px 18px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-ghost:hover{border-color:#3a2a5a;color:#6040a0;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1a2e;border:1px solid #3a2a5a;color:#c084fc;font-size:12px;font-weight:600;padding:10px 20px;border-radius:10px;transition:transform .3s ease;z-index:99;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* SUBTABS */
+.subtabs{display:flex;gap:5px;margin-bottom:16px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);}
+.subtab{flex:1;text-align:center;padding:9px 4px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;color:#5a4f7a;border:none;background:transparent;font-family:inherit;}
+.subtab.active{background:linear-gradient(135deg,#6c3fff,#a855f7);color:#fff;box-shadow:0 2px 12px rgba(108,63,255,0.4);}
+.subpanel{display:none;}
+.subpanel.active{display:block;}
+
+/* CASH / progress */
+.pb-bar-wrap{background:var(--border2);border-radius:6px;height:8px;overflow:hidden;}
+.pb-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,#6c3fff,#a855f7);transition:width .8s;}
+.pb-sources{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.pb-source{flex:1;min-width:80px;background:#0e0c18;border:1px solid var(--border2);border-radius:8px;padding:8px 10px;}
+.pbs-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.pbs-val{font-size:15px;font-weight:700;}
+.highlight-source{border-color:#4affa055;background:#0a1a10;}
+.input-row{display:flex;gap:6px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+.input-row input,.input-row select{flex:1;min-width:70px;background:#0e0c18;border:1px solid #2e2a40;border-radius:6px;color:var(--text);font-size:12px;padding:7px 8px;font-family:inherit;}
+.input-row button,.btn-primary{background:linear-gradient(135deg,#6c3fff,#a855f7);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:inherit;}
+
+/* TIMELINE (roadmap / routine detail) */
+.phase-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:16px 17px;margin-bottom:10px;position:relative;overflow:hidden;}
+.phase-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.p1::before{background:var(--orange);} .p2::before{background:var(--gold);} .p3::before{background:var(--accent);} .p4::before{background:var(--green);}
+.ph-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.ph-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.p1 .ph-label{color:var(--orange);} .p2 .ph-label{color:var(--gold);} .p3 .ph-label{color:var(--accent);} .p4 .ph-label{color:var(--green);}
+.ph-title{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
+.ph-period{margin-left:auto;font-size:10px;color:var(--muted);font-style:italic;white-space:nowrap;}
+.ph-tasks{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ph-tasks li{font-size:11.5px;color:#9890b8;padding:6px 9px;background:#0e0c18;border-radius:6px;display:flex;align-items:flex-start;gap:5px;line-height:1.4;}
+.ph-goal{margin-top:12px;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;}
+.p1 .ph-goal{background:#1a0a00;color:var(--orange);} .p2 .ph-goal{background:#18140a;color:var(--gold);}
+.p3 .ph-goal{background:#1a1030;color:var(--accent);} .p4 .ph-goal{background:#0e1a14;color:var(--green);}
+.arrow{text-align:center;color:#3d3560;font-size:18px;margin:4px 0;}
+
+.hill-formula{background:#12110a;border:1px solid #c9a84c55;border-radius:10px;padding:18px;margin-bottom:14px;}
+.hf-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
+.hf-text{font-size:13px;color:#d9cbb8;line-height:1.9;font-style:italic;text-align:center;}
+.hf-text span{color:var(--gold);font-weight:700;font-style:normal;}
+.hf-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;}
+
+.rule-card .c-tasks{list-style:none;}
+.rule-card .c-tasks li{display:flex;gap:9px;font-size:12.5px;color:#b0a8cc;line-height:1.4;padding:7px 0;border-bottom:1px solid #18152a;}
+.rule-card .c-tasks li:last-child{border-bottom:none;}
+.t-ico{font-size:13px;flex-shrink:0;margin-top:1px;}
+.t-txt strong{color:#e8e4ff;font-weight:600;display:block;font-size:12.5px;}
+.t-txt .detail{font-size:11px;color:var(--muted);margin-top:2px;display:block;line-height:1.4;}
+
+/* PLAN 30 grid */
+.today-card{background:var(--surface2);border:1px solid var(--border2);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.today-content{flex:1;min-width:160px;}
+.today-day{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.tag{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:4px;margin-bottom:6px;}
+.tag-mindset{background:rgba(255,77,77,.15);color:var(--red);}
+.tag-manifestation{background:rgba(155,93,229,.15);color:#9b5de5;}
+.tag-productivite{background:rgba(0,180,216,.15);color:#00b4d8;}
+.tag-developpement{background:rgba(56,176,0,.15);color:#38b000;}
+.today-theme{font-size:17px;font-weight:600;margin-bottom:6px;}
+.today-channels{font-size:12px;color:var(--muted);}
+.today-channels span{color:var(--text);}
+.today-btn{flex-shrink:0;background:none;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.today-btn.done{opacity:.5;}
+
+.p30-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:16px;}
+@media (max-width:480px){.p30-grid{grid-template-columns:repeat(5,1fr);}}
+.day-cell{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:8px;cursor:pointer;transition:all .15s;position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;}
+.day-cell:hover{border-color:var(--muted);}
+.day-cell.is-today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.day-cell.done::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;border-radius:10px;}
+.day-cell.done.t-mindset::after{background:rgba(255,77,77,.2);color:var(--red);}
+.day-cell.done.t-manifestation::after{background:rgba(155,93,229,.2);color:#9b5de5;}
+.day-cell.done.t-productivite::after{background:rgba(0,180,216,.2);color:#00b4d8;}
+.day-cell.done.t-developpement::after{background:rgba(56,176,0,.2);color:#38b000;}
+.day-cell .num{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;line-height:1;}
+.day-cell .dot{width:6px;height:6px;border-radius:50%;}
+.t-mindset .dot{background:var(--red);} .t-manifestation .dot{background:#9b5de5;} .t-productivite .dot{background:#00b4d8;} .t-developpement .dot{background:#38b000;}
+.legend-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.legend-card h3{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-card ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.legend-card ul li{font-size:11.5px;color:var(--muted);padding-left:4px;}
+.legend-card ul li a{color:var(--muted);text-decoration:none;}
+.legend-card ul li a:hover{color:var(--text);}
+.legend-note{font-size:11px;color:var(--muted2);font-style:italic;margin-top:4px;}
+
+/* SLEEP form */
+.field-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.field{flex:1;min-width:120px;}
+.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;}
+.field input[type=date],.field input[type=time],.field input[type=number],.field textarea{
+  width:100%;background:#0e0c18;border:1px solid #2e2a40;border-radius:8px;color:var(--text);
+  font-size:13px;padding:9px 10px;font-family:inherit;
+}
+.field textarea{resize:vertical;min-height:60px;}
+.scale-row{display:flex;gap:6px;}
+.scale-btn{flex:1;text-align:center;padding:9px 0;border-radius:8px;border:1px solid #2e2a40;background:#0e0c18;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;}
+.scale-btn.sel{background:linear-gradient(135deg,#6c3fff,#a855f7);color:#fff;border-color:transparent;}
+.chip-row{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{padding:8px 13px;border-radius:20px;border:1px solid #2e2a40;background:#0e0c18;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;user-select:none;}
+.chip.sel{background:rgba(74,255,160,0.15);border-color:#4affa055;color:var(--green);}
+.stepper{display:flex;align-items:center;gap:10px;}
+.stepper button{width:30px;height:30px;border-radius:8px;border:1px solid #2e2a40;background:#0e0c18;color:var(--text);font-size:15px;cursor:pointer;}
+.stepper .val{font-size:15px;font-weight:700;min-width:24px;text-align:center;}
+
+.history-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0e0c18;border:1px solid var(--border2);border-radius:8px;margin-bottom:6px;cursor:pointer;}
+.history-row:hover{border-color:#3a2a5a;}
+.hr-date{font-size:11px;color:var(--text);font-weight:600;}
+.hr-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.hr-score{font-size:12px;color:var(--accent);font-weight:700;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.kpi{background:#0e0c18;border:1px solid var(--border2);border-radius:10px;padding:12px;}
+.kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.kpi-val{font-size:18px;font-weight:800;color:var(--text);}
+
+.guide-block{font-size:12.5px;line-height:1.7;color:#a89ec4;margin-bottom:12px;}
+.guide-block strong{color:#c9a84c;}
+.guide-list{margin:8px 0;padding-left:0;list-style:none;}
+.guide-list li{padding:7px 0 7px 0;border-bottom:1px solid #18152a;font-size:12px;color:#a89ec4;line-height:1.5;}
+.guide-list li:last-child{border-bottom:none;}
+
+/* JOURNAL */
+.journal-entry{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.je-date{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:capitalize;}
+.je-block{margin-bottom:8px;}
+.je-block-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.je-block-txt{font-size:12.5px;color:#cfc8e6;line-height:1.6;white-space:pre-wrap;}
+.je-empty{font-size:11px;color:var(--muted3);font-style:italic;}
+
+/* AUTH OVERLAY */
+.auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-overlay.hidden{display:none;}
+.auth-box{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:26px 22px;}
+.auth-box h2{font-size:17px;font-weight:800;color:#f0ecff;margin-bottom:4px;text-align:center;}
+.auth-box .auth-sub{font-size:11px;color:var(--muted);text-align:center;margin-bottom:18px;}
+.auth-box input{width:100%;background:#0e0c18;border:1px solid #2e2a40;border-radius:8px;color:var(--text);font-size:13px;padding:10px 12px;font-family:inherit;margin-bottom:10px;}
+.auth-box .btn-primary{width:100%;padding:11px;font-size:13px;margin-top:4px;}
+.auth-toggle{text-align:center;margin-top:14px;font-size:12px;color:var(--muted);}
+.auth-toggle a{color:var(--accent);cursor:pointer;text-decoration:none;}
+.auth-error{font-size:11px;color:#ff6b6b;text-align:center;margin-top:8px;min-height:14px;}
+.logout-btn{font-size:9px;color:var(--muted3);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH OVERLAY ============ -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-box">
+    <h2>Mon Espace</h2>
+    <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
+    <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
+    <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
+    <button class="btn-primary" id="auth-submit-btn" onclick="authSubmit()">Se connecter</button>
+    <div class="auth-error" id="auth-error"></div>
+    <div class="auth-toggle" id="auth-toggle-row">Pas encore de compte ? <a onclick="authToggleMode()">Créer un compte</a></div>
+  </div>
+</div>
+
+<div class="app-header">
+  <div>
+    <div class="title">Mon Espace</div>
+    <div class="date mono" id="headerDate">—</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="badge" id="headerBadge">16 août 2026</div>
+    <button class="logout-btn" onclick="authLogout()">déconnexion</button>
+  </div>
+</div>
+
+<!-- ============ VIEW: HOME ============ -->
+<div class="view active" id="view-home">
+
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <div class="hero-label">🎯 Objectif principal</div>
+        <div class="hero-main">1 500 – 2 000 € pour lancer ma marque de bijoux<br><span style="color:#9890b8;font-weight:600;">via KFC (CDI) + revente chaussures</span></div>
+      </div>
+      <div>
+        <div class="hero-days mono" id="home-days">—</div>
+        <div class="hero-days-lbl">jours restants</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat" onclick="goTo('tasks')">
+      <div class="stat-val" id="home-tasks-done">0/10</div>
+      <div class="stat-lbl">tâches aujourd'hui</div>
+    </div>
+    <div class="stat" onclick="goTo('goal')">
+      <div class="stat-val" id="home-cash-pct">0%</div>
+      <div class="stat-lbl">objectif cash atteint</div>
+    </div>
+    <div class="stat" onclick="goTo('plan30')">
+      <div class="stat-val" id="home-plan-day">J0/30</div>
+      <div class="stat-lbl">plan 30 jours</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔥 Régularité <div class="line"></div></div>
+    <div class="streak-row" style="margin-top:0;">
+      <div class="streak-badge"><span>🔥</span><span id="home-streak">0</span> jour<span id="home-streak-pl"></span> de suite — journée parfaite</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">😴 Sommeil <div class="line"></div></div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-lbl">Durée moy. 7j</div><div class="kpi-val" id="home-sleep-avg">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">Humeur moy. 7j</div><div class="kpi-val" id="home-mood-avg">—</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="cursor:pointer;" onclick="goTo('goal');showSubtab('goal','hill')">
+    <div class="card-title">✨ Rappel — Déclaration Hill <div class="line"></div></div>
+    <div style="font-size:12px;color:#b0a8cc;line-height:1.6;font-style:italic;">« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. » <span style="color:var(--accent);font-style:normal;">Lire en entier →</span></div>
+  </div>
+
+</div>
+
+<!-- ============ VIEW: TASKS ============ -->
+<div class="view" id="view-tasks">
+
+  <div class="card" style="background:var(--surface2);">
+    <div class="ring-row">
+      <div class="ring-box" style="width:82px;height:82px;">
+        <svg width="82" height="82" viewBox="0 0 82 82">
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="41" cy="41" r="35" stroke-width="7"/>
+          <circle class="ring-fill" cx="41" cy="41" r="35" stroke-width="7" stroke="url(#rg)" stroke-dasharray="220" stroke-dashoffset="220" id="t-ringFill"/>
+        </svg>
+        <div class="ring-text"><div class="ring-pct" id="t-ringPct" style="font-size:19px;">0%</div><div class="ring-lbl">FAIT</div></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:26px;font-weight:900;color:var(--accent);line-height:1;"><span id="t-doneCnt">0</span><span style="font-size:15px;color:var(--muted3);"> / 10</span></div>
+        <div style="font-size:11px;color:#5a5075;margin-top:2px;">tâches non négociables aujourd'hui</div>
+        <div class="streak-row"><div class="streak-badge"><span>🔥</span><span id="t-streakVal">0</span> jour<span id="t-streakPl"></span> de suite</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><span class="section-icon">🌅</span><span class="section-title">Matin</span><span class="section-time">06:30 – 07:30</span></div>
+    <div class="task" id="t1" onclick="toggleTask('t1')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">Déclaration Hill à voix haute + Visualisation</div><div class="task-sub">Ancrer le désir, la foi et l'objectif du 16 août</div></div>
+        <div class="expand-btn" id="e-t1" onclick="expandHow(event,'h-t1','e-t1')">▼</div></div>
+      <div class="how-to" id="h-t1"><div class="how-to-inner"><strong>Comment faire :</strong> Debout, voix claire et confiante. Lis cette déclaration à voix haute :
+        <span class="quote-block">« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. La date est fixée, l'objectif est réel, je crois en ma capacité à l'atteindre. Je le vois, je le ressens — c'est déjà en route. »</span>
+        Puis ferme les yeux 2 min : vois-toi le 16 août, capital atteint, marque lancée. Ressens la fierté. Ouvre les yeux — commence ta journée.</div></div>
+    </div>
+    <div class="task" id="t2" onclick="toggleTask('t2')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">💪 Faire 25 pompes</div><div class="task-sub">Corps actif = esprit actif dès le réveil</div></div>
+        <div class="expand-btn" id="e-t2" onclick="expandHow(event,'h-t2','e-t2')">▼</div></div>
+      <div class="how-to" id="h-t2"><div class="how-to-inner"><strong>Comment faire :</strong> Au sol, mains à largeur d'épaules. 25 répétitions d'affilée ou en 2-3 séries si besoin. Active le corps, libère les endorphines, signale au cerveau que la journée commence fort.</div></div>
+    </div>
+    <div class="task" id="t3" onclick="toggleTask('t3')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">📖 Lire 10 pages de mon livre</div><div class="task-sub">Nourrir l'esprit avant le bruit du monde</div></div>
+        <div class="expand-btn" id="e-t3" onclick="expandHow(event,'h-t3','e-t3')">▼</div></div>
+      <div class="how-to" id="h-t3"><div class="how-to-inner"><strong>Comment faire :</strong> Endroit calme, pas d'écran à proximité. 10 pages minimum. Marque ce qui te frappe — entre dans la journée avec une idée qui oriente tes actions.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><span class="section-icon">⚡</span><span class="section-title">Journée</span><span class="section-time">07:15 – 18:00</span></div>
+    <div class="task" id="t4" onclick="toggleTask('t4')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">👟 Resell chaussures — Photos, annonces, messages</div><div class="task-sub">Revente active, chaque message compte</div></div>
+        <div class="expand-btn" id="e-t4" onclick="expandHow(event,'h-t4','e-t4')">▼</div></div>
+      <div class="how-to" id="h-t4"><div class="how-to-inner"><strong>Comment faire :</strong> Actualise les photos si besoin (fond clair, lumière naturelle, dessus + côté + semelle + boîte). Réponds à tous les messages en moins de 2h. Relance toute annonce inactive depuis 3+ jours, ajuste le prix si ça stagne. Mets à jour ton tableau de vente (prix, marge, cash cumulé).</div></div>
+    </div>
+    <div class="task" id="t5" onclick="toggleTask('t5')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">💼 KFC — Ponctuel, fiable, irréprochable</div><div class="task-sub">Poser les bases du CDI par ton attitude quotidienne</div></div>
+        <div class="expand-btn" id="e-t5" onclick="expandHow(event,'h-t5','e-t5')">▼</div></div>
+      <div class="how-to" id="h-t5"><div class="how-to-inner"><strong>Comment faire :</strong> Arrive en avance, uniforme impeccable, attitude pro. Aucune excuse, aucun retard. Rends service sans qu'on te le demande. Chaque shift est une audition pour ton CDI — le socle financier de tout le plan.</div></div>
+    </div>
+    <div class="task" id="t6" onclick="toggleTask('t6')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">🎥 1 vidéo du plan 30 jours</div><div class="task-sub">Mindset & productivité — alimenter la vision</div></div>
+        <div class="expand-btn" id="e-t6" onclick="expandHow(event,'h-t6','e-t6')">▼</div></div>
+      <div class="how-to" id="h-t6"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Plan 30j, regarde la vidéo du jour en entier, stylo en main. Note une idée qui t'a marqué. Ne mets pas en accéléré — c'est ton entraînement mental du jour.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><span class="section-icon">🌙</span><span class="section-title">Soir</span><span class="section-time">19:00 – 21:30</span></div>
+    <div class="task" id="t7" onclick="toggleTask('t7')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">💎 Session bijoux — Apprentissage & vision marque</div><div class="task-sub">Pinterest · Instagram · branding · lexique</div></div>
+        <div class="expand-btn" id="e-t7" onclick="expandHow(event,'h-t7','e-t7')">▼</div></div>
+      <div class="how-to" id="h-t7"><div class="how-to-inner"><strong>Comment faire :</strong> 20-30 min. Étudie avec ton contact bijoux ou en solo : comment identifier un bijou, marges, fournisseurs. Analyse 2-3 bijoux en vente (prix, état, vitesse de vente). Note du nouveau vocabulaire (argent 925, plaqué or, poinçons...) dans ton Carnet de bord. Explore Pinterest/Instagram pour ton branding, pose-toi 1 question (nom de marque ? client idéal ?).</div></div>
+    </div>
+    <div class="task" id="t8" onclick="toggleTask('t8')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">💰 Mettre à jour le compteur cash</div><div class="task-sub">Pocket Revolut → progression réelle vers le 16 août</div></div>
+        <div class="expand-btn" id="e-t8" onclick="expandHow(event,'h-t8','e-t8')">▼</div></div>
+      <div class="how-to" id="h-t8"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Objectif, regarde le solde exact de ta pocket Revolut dédiée et mets-le à jour. C'est ton score du jour — chaque euro compte. Clarté des chiffres = clarté de la trajectoire.</div></div>
+    </div>
+    <div class="task" id="t9" onclick="toggleTask('t9')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">📌 Écrire mes 3 priorités du lendemain</div><div class="task-sub">Clarifier la journée suivante avant de dormir</div></div>
+        <div class="expand-btn" id="e-t9" onclick="expandHow(event,'h-t9','e-t9')">▼</div></div>
+      <div class="how-to" id="h-t9"><div class="how-to-inner"><strong>Comment faire :</strong> 5 min. Ouvre ton Carnet de bord. Écris 3 actions concrètes pour demain — pas des envies, des engagements. Classe-les par ordre d'impact. Demain matin, tu sauras exactement quoi faire en premier.</div></div>
+    </div>
+    <div class="task" id="t10" onclick="toggleTask('t10')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">Déclaration Hill + Visualisation — Soir</div><div class="task-sub">Planter la graine dans le subconscient avant le sommeil</div></div>
+        <div class="expand-btn" id="e-t10" onclick="expandHow(event,'h-t10','e-t10')">▼</div></div>
+      <div class="how-to" id="h-t10"><div class="how-to-inner"><strong>Comment faire :</strong> Juste avant de te coucher, relis la même déclaration à voix basse. Visualise 2 min : le 16 août, tout est accompli, ressens la gratitude. Ton subconscient travaille pendant que tu dors — ne la saute jamais.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="background:#0e0c18;">
+    <div class="card-title">⚡ Hebdomadaire <div class="line"></div></div>
+    <div style="font-size:13px;font-weight:600;color:#8060a0;">Alimenter les 4 playlists YouTube du plan 30 jours</div>
+    <div style="font-size:11px;color:var(--muted2);margin-top:2px;">20 min · 1 fois par semaine — mindset, manifestation, productivité, développement personnel</div>
+  </div>
+
+  <div class="reset-bar"><button class="btn-ghost" onclick="resetTasksDay()">↺ Réinitialiser la journée</button></div>
+</div>
+
+<!-- ============ VIEW: GOAL ============ -->
+<div class="view" id="view-goal">
+
+  <div class="card" style="background:linear-gradient(135deg,#12101a,#1a1030);border-color:#6c3fff44;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="flex:1;">
+        <div class="hero-label">🎯 Objectif</div>
+        <div style="font-size:16px;font-weight:800;color:#f0ecff;">1 500 – 2 000 €+</div>
+        <div style="font-size:11px;color:#7a5ff7;margin-top:2px;">pour lancer ma marque de bijoux</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="hero-days mono" id="goal-days" style="font-size:32px;">—</div>
+        <div class="hero-days-lbl">jours restants</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subtabs">
+    <button class="subtab active" data-goal-tab="progress" onclick="showSubtab('goal','progress')">💰 Cash</button>
+    <button class="subtab" data-goal-tab="roadmap" onclick="showSubtab('goal','roadmap')">🗺 Vision</button>
+    <button class="subtab" data-goal-tab="hill" onclick="showSubtab('goal','hill')">✨ Hill</button>
+  </div>
+
+  <!-- CASH -->
+  <div class="subpanel active" id="goal-panel-progress">
+    <div class="card">
+      <div class="card-title">💰 Progression vers 2 000 € <div class="line"></div><span class="mono" id="g-pct" style="color:var(--accent);font-weight:700;">0%</span></div>
+      <div class="pb-bar-wrap"><div class="pb-bar" id="g-bar" style="width:0%"></div></div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;">Sources d'argent</div>
+      <div class="pb-sources">
+        <div class="pb-source"><div class="pbs-label">💼 KFC</div><div class="pbs-val" id="g-kfc-val" style="color:var(--orange);">0 €</div><div class="pbs-label" style="margin-top:2px;">gagné</div></div>
+        <div class="pb-source"><div class="pbs-label">👟 Chaussures</div><div class="pbs-val" id="g-shoes-val" style="color:var(--blue);">0 €</div><div class="pbs-label" style="margin-top:2px;">vendu</div></div>
+      </div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:14px 0 6px;">💳 Argent de côté — Pocket Revolut</div>
+      <div class="pb-sources">
+        <div class="pb-source highlight-source" style="flex:2;"><div class="pbs-label">Solde actuel de ta pocket</div><div class="pbs-val" id="g-revolut-val" style="color:var(--green);font-size:22px;">0 €</div><div class="pbs-label" style="margin-top:3px;">→ c'est ce chiffre qui compte vers les 2 000 €</div></div>
+        <div class="pb-source"><div class="pbs-label">📊 Il manque</div><div class="pbs-val" id="g-reste-val" style="color:var(--accent);">2 000 €</div><div class="pbs-label" style="margin-top:2px;">pour l'objectif</div></div>
+      </div>
+      <div class="input-row">
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Maj :</span>
+        <input type="number" id="g-kfc-input" placeholder="KFC gagné €">
+        <input type="number" id="g-shoes-input" placeholder="Shoes vendues €">
+        <input type="number" id="g-revolut-input" placeholder="Pocket Revolut €" style="border-color:#4affa044;color:var(--green);">
+        <button onclick="updateCashProgress()">Maj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="subpanel" id="goal-panel-roadmap">
+    <div class="phase-card p1">
+      <div class="ph-head"><div><div class="ph-label">Phase 1 · Court terme</div><div class="ph-title">💼 Cash Accumulation</div></div><div class="ph-period">Maintenant → 16 août 2026</div></div>
+      <ul class="ph-tasks">
+        <li><span>💼</span>Formation KFC → CDI sécurisé</li><li><span>👟</span>Vendre tout le lot de chaussures</li>
+        <li><span>📊</span>Tracker chaque euro gagné</li><li><span>💍</span>Apprendre l'univers bijoux chaque soir</li>
+        <li><span>🧠</span>Rituel Hill matin + soir sans exception</li><li><span>📸</span>Préparer son identité de marque</li>
+      </ul>
+      <div class="ph-goal">🎯 Atteindre 1 500 – 2 000 € d'ici le 16 août 2026</div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="phase-card p2">
+      <div class="ph-head"><div><div class="ph-label">Phase 2 · Lancement</div><div class="ph-title">💍 Resell Bijoux — Premier Cash Flow</div></div><div class="ph-period">Août → Novembre 2026</div></div>
+      <ul class="ph-tasks">
+        <li><span>💰</span>Utiliser les 2 000 € pour 1er stock bijoux</li><li><span>📲</span>Vendre sur Vinted, IG, LBC, Vestiaire</li>
+        <li><span>🤝</span>Développer la relation avec ton contact</li><li><span>📦</span>Identifier les bijoux à fort potentiel</li>
+        <li><span>⭐</span>Premiers avis + réputation en ligne</li><li><span>📊</span>Réinvestir les bénéfices en stock</li>
+      </ul>
+      <div class="ph-goal">🎯 Cash flow régulier — réinvestissement continu</div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="phase-card p3">
+      <div class="ph-head"><div><div class="ph-label">Phase 3 · Moyen terme</div><div class="ph-title">💎 Bijoutier Privé — Ta Marque Naît</div></div><div class="ph-period">Fin 2026 → 2027</div></div>
+      <ul class="ph-tasks">
+        <li><span>🏷️</span>Créer nom + identité de marque bijoux</li><li><span>📸</span>Shooter tes premières collections</li>
+        <li><span>📱</span>Instagram + TikTok dédiés à la marque</li><li><span>🤝</span>Fournisseurs propres / exclusifs</li>
+        <li><span>📦</span>Packaging premium, unboxing soigné</li><li><span>💬</span>Communauté de clients fidèles</li>
+      </ul>
+      <div class="ph-goal">🎯 Marque identifiée, clientèle fidèle, CA croissant</div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="phase-card p4">
+      <div class="ph-head"><div><div class="ph-label">Phase 4 · Long terme</div><div class="ph-title">👑 Bijoux × Vêtements — Scale</div></div><div class="ph-period">2027 → +</div></div>
+      <ul class="ph-tasks">
+        <li><span>👗</span>Étendre la marque au prêt-à-porter</li><li><span>🌍</span>Présence internationale en ligne</li>
+        <li><span>🤝</span>Collaborations et placements influenceurs</li><li><span>🏪</span>Pop-up stores / showrooms</li>
+        <li><span>📈</span>Équipe, automatisation, systèmes</li><li><span>💎</span>Univers de marque lifestyle complet</li>
+      </ul>
+      <div class="ph-goal">🎯 Marque lifestyle scalée — bijoux + vêtements fusionnés</div>
+    </div>
+  </div>
+
+  <!-- HILL -->
+  <div class="subpanel" id="goal-panel-hill">
+    <div class="hill-formula">
+      <div class="hf-label">✨ Ta Déclaration de Désir — À lire 2x/jour à voix haute</div>
+      <div class="hf-text">« Je veux réunir <span>2 000 €</span> d'ici le <span>16 août 2026</span>.<br><br>
+        En échange, je m'engage à exceller à KFC pour obtenir mon CDI,<br>à vendre mes chaussures avec énergie et détermination,<br>et à apprendre chaque jour l'univers des bijoux.<br><br>
+        Cet argent est le carburant de <span>ma marque de bijoux</span>,<br>que je vais scaler jusqu'à devenir une marque lifestyle complète.<br><br>
+        Je crois profondément que je réussis.<br>Je le vois, je le ressens — <span>c'est déjà en chemin</span>. »</div>
+      <div class="hf-note">Lire à voix haute, avec émotion intense. L'émotion est le catalyseur qui grave ça dans le subconscient.</div>
+    </div>
+    <div class="card-title">📋 Les 7 règles Hill adaptées à ta situation <div class="line"></div></div>
+    <div class="card rule-card">
+      <ul class="c-tasks">
+        <li><span class="t-ico">1️⃣</span><div class="t-txt"><strong>Désir brûlant</strong><span class="detail">Tes 2 000 € ne sont pas un vœu — c'est une date, un montant, un plan. Ressens-le comme si c'était déjà fait.</span></div></li>
+        <li><span class="t-ico">2️⃣</span><div class="t-txt"><strong>Foi totale</strong><span class="detail">Tu ne « testes » pas — tu construis. La marque existe déjà dans ta tête. Agis en conséquence chaque jour.</span></div></li>
+        <li><span class="t-ico">3️⃣</span><div class="t-txt"><strong>Autosuggestion quotidienne</strong><span class="detail">Déclaration matin + soir, à voix haute, avec émotion forte.</span></div></li>
+        <li><span class="t-ico">4️⃣</span><div class="t-txt"><strong>Connaissances spécialisées</strong><span class="detail">Ton contact bijoux est ton Maître-Cerveau du domaine. Chaque session = un actif pour ton futur business.</span></div></li>
+        <li><span class="t-ico">5️⃣</span><div class="t-txt"><strong>Plan organisé et exécuté</strong><span class="detail">3 priorités écrites chaque soir. Le lendemain tu sais exactement quoi faire. Fini le flou du matin.</span></div></li>
+        <li><span class="t-ico">6️⃣</span><div class="t-txt"><strong>Décision rapide</strong><span class="detail">Prix de vente, réponse acheteur, action du jour : décide vite, ajuste ensuite.</span></div></li>
+        <li><span class="t-ico">7️⃣</span><div class="t-txt"><strong>Persistance absolue</strong><span class="detail">Un jour sans vente n'est pas un échec — c'est un jour de plus dans le processus. Agir quand même.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VIEW: PLAN 30 JOURS ============ -->
+<div class="view" id="view-plan30">
+
+  <div class="card">
+    <div class="ring-row">
+      <div class="ring-box" style="width:78px;height:78px;">
+        <svg width="78" height="78" viewBox="0 0 78 78">
+          <circle class="ring-bg" cx="39" cy="39" r="33" stroke-width="7"/>
+          <circle class="ring-fill" cx="39" cy="39" r="33" stroke-width="7" stroke="#9b5de5" stroke-dasharray="207" stroke-dashoffset="207" id="p30-ring"/>
+        </svg>
+        <div class="ring-text"><span class="ring-pct" id="p30-pct" style="font-size:17px;">0%</span><span class="ring-lbl">JOURS</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:#f0ecff;">Apprentissage YouTube — 30 jours</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">13h00–13h30 chaque jour. Coche chaque vidéo regardée.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="today-card" id="p30-todayCard">
+    <div class="today-content">
+      <div class="today-day" id="p30-todayDay">—</div>
+      <div id="p30-todayTag"></div>
+      <div class="today-theme" id="p30-todayTheme">—</div>
+      <div class="today-channels" id="p30-todayChannels">—</div>
+    </div>
+    <button class="today-btn" id="p30-todayBtn" onclick="toggleP30Today()">✓ Marquer fait</button>
+  </div>
+
+  <div class="card-title">— Progression des 30 jours <div class="line"></div></div>
+  <div class="p30-grid" id="p30-grid"></div>
+
+  <div class="card-title">— Thèmes, chaînes & liens validés <div class="line"></div></div>
+
+  <div class="legend-card">
+    <h3><span class="legend-dot" style="background:var(--red)"></span>Mindset & Discipline</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/@davidgoggins" target="_blank">David Goggins</a></li>
+      <li><a href="https://www.youtube.com/@HamzaYT" target="_blank">Hamza Ahmed</a></li>
+      <li><a href="https://www.youtube.com/@hubermanlab" target="_blank">Andrew Huberman Lab</a></li>
+      <li><a href="https://www.youtube.com/watch?v=X0F7TDOg-Mk" target="_blank">▶ Jour 1 — Goggins Discipline</a></li>
+      <li><a href="https://www.youtube.com/watch?v=II1TOaSoOf8" target="_blank">▶ Jour 5 — Goggins Discipline</a></li>
+      <li><a href="https://www.youtube.com/watch?v=SBYvuAtaUtA" target="_blank">▶ Jour 9 — Goggins Discipline</a></li>
+    </ul>
+    <div class="legend-note">Jours 13/17/21/25/29 à compléter — voir Carnet de bord.</div>
+  </div>
+  <div class="legend-card">
+    <h3><span class="legend-dot" style="background:#9b5de5"></span>Visualisation & Manifestation</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/@edMylett" target="_blank">Ed Mylett</a></li>
+      <li><a href="https://www.youtube.com/@TomBilyeu" target="_blank">Tom Bilyeu</a></li>
+      <li><a href="https://www.youtube.com/@LewisHowes" target="_blank">Lewis Howes</a></li>
+      <li>Recherche : "law of attraction visualization technique"</li>
+      <li>Recherche : "subconscious mind reprogramming sleep"</li>
+    </ul>
+    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
+  </div>
+  <div class="legend-card">
+    <h3><span class="legend-dot" style="background:#00b4d8"></span>Productivité & Organisation</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/@ThomasFrankExplains" target="_blank">Thomas Frank</a></li>
+      <li><a href="https://www.youtube.com/@aliabdaal" target="_blank">Ali Abdaal</a></li>
+      <li><a href="https://www.youtube.com/@mattdavella" target="_blank">Matt D'Avella</a></li>
+      <li>Recherche : "time blocking entrepreneur schedule"</li>
+      <li>Recherche : "second brain system Notion"</li>
+    </ul>
+    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
+  </div>
+  <div class="legend-card">
+    <h3><span class="legend-dot" style="background:#38b000"></span>Développement Personnel</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/@JayShettyPodcast" target="_blank">Jay Shetty</a></li>
+      <li><a href="https://www.youtube.com/@SimonSinek" target="_blank">Simon Sinek</a></li>
+      <li><a href="https://www.youtube.com/@BrendonBurchard" target="_blank">Brendon Burchard</a></li>
+      <li>Recherche : "napoleon hill think and grow rich animated"</li>
+      <li>Recherche : "Brendon Burchard high performance habits"</li>
+    </ul>
+    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
+  </div>
+
+  <div class="card" style="background:#0e0c18;margin-top:4px;">
+    <div style="font-size:11px;color:var(--muted2);">Plan démarré le 26 juin 2026 · Maintenance des liens : mercredi (selon planning KFC).</div>
+  </div>
+</div>
+
+<!-- ============ VIEW: SLEEP ============ -->
+<div class="view" id="view-sleep">
+
+  <div class="subtabs">
+    <button class="subtab active" data-sleep-tab="entry" onclick="showSubtab('sleep','entry')">📝 Saisie</button>
+    <button class="subtab" data-sleep-tab="dash" onclick="showSubtab('sleep','dash')">📊 Tableau de bord</button>
+    <button class="subtab" data-sleep-tab="guide" onclick="showSubtab('sleep','guide')">📘 Guide</button>
+  </div>
+
+  <!-- ENTRY -->
+  <div class="subpanel active" id="sleep-panel-entry">
+    <div class="card">
+      <div class="card-title">⚙️ Cibles <div class="line"></div></div>
+      <div class="field-row">
+        <div class="field"><label>Coucher cible</label><input type="time" id="s-target-bed" value="22:30"></div>
+        <div class="field"><label>Réveil cible</label><input type="time" id="s-target-wake" value="06:30"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 Entrée du jour <div class="line"></div></div>
+      <div class="field-row">
+        <div class="field"><label>Date</label><input type="date" id="s-date"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Heure de coucher</label><input type="time" id="s-bed"></div>
+        <div class="field"><label>Heure de réveil</label><input type="time" id="s-wake"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Qualité sommeil (1-5)</label><div class="scale-row" id="s-quality"></div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Énergie au réveil (1-5)</label><div class="scale-row" id="s-energy"></div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Humeur (1-5)</label><div class="scale-row" id="s-mood"></div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Eau (verres)</label>
+          <div class="stepper"><button onclick="stepWater(-1)">−</button><span class="val" id="s-water-val">0</span><button onclick="stepWater(1)">+</button></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field" style="flex:1 0 100%;">
+          <label>Habitudes du jour</label>
+          <div class="chip-row">
+            <div class="chip" data-habit="sport" onclick="toggleChip(this)">🏃 Sport</div>
+            <div class="chip" data-habit="meditation" onclick="toggleChip(this)">🧘 Méditation</div>
+            <div class="chip" data-habit="lecture" onclick="toggleChip(this)">📖 Lecture</div>
+            <div class="chip" data-habit="food" onclick="toggleChip(this)">🥗 Alimentation équilibrée</div>
+            <div class="chip" data-habit="screens" onclick="toggleChip(this)">📵 Écrans coupés 1h avant</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field" style="flex:1 0 100%;"><label>Notes</label><textarea id="s-notes" placeholder="Remarques de la nuit / journée..."></textarea></div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:6px;" onclick="saveSleepEntry()">💾 Enregistrer cette entrée</button>
+    </div>
+
+    <div class="card-title">🕘 Historique <div class="line"></div></div>
+    <div id="sleep-history"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="subpanel" id="sleep-panel-dash">
+    <div class="card">
+      <div class="card-title">📈 Tableau de bord du mois <div class="line"></div></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">Durée moyenne sommeil</div><div class="kpi-val" id="sd-avgdur">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Régularité coucher (écart moy.)</div><div class="kpi-val" id="sd-reg">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Qualité moyenne /5</div><div class="kpi-val" id="sd-qual">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Énergie moyenne /5</div><div class="kpi-val" id="sd-energy">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Humeur moyenne /5</div><div class="kpi-val" id="sd-mood">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Jours suivis</div><div class="kpi-val" id="sd-count">—</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Habitudes (% de jours) <div class="line"></div></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">🏃 Sport</div><div class="kpi-val" id="sd-sport">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">🧘 Méditation</div><div class="kpi-val" id="sd-medit">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">📖 Lecture</div><div class="kpi-val" id="sd-read">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">🥗 Alimentation</div><div class="kpi-val" id="sd-food">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">📵 Écrans coupés</div><div class="kpi-val" id="sd-screens">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="subpanel" id="sleep-panel-guide">
+    <div class="card">
+      <div class="card-title">📘 Comment utiliser cet onglet <div class="line"></div></div>
+      <div class="guide-block">Remplis l'entrée chaque jour (idéalement le matin pour la nuit qui vient de se terminer). La durée de sommeil et l'écart par rapport à ton heure de coucher cible se calculent automatiquement. Regarde le <strong>Tableau de bord</strong> une fois par semaine pour suivre ta tendance — pas besoin de le faire tous les jours.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌙 Pourquoi un horaire irrégulier pose problème <div class="line"></div></div>
+      <div class="guide-block">Ton corps fonctionne avec une horloge interne (rythme circadien) calée sur des horaires réguliers de coucher et surtout de réveil. Quand ces horaires varient beaucoup, c'est comme un décalage horaire permanent : le corps doit sans cesse se recaler, ce qui dégrade la qualité du sommeil et l'énergie en journée — même si le nombre d'heures dormies est correct.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔑 5 leviers pour stabiliser ton rythme <div class="line"></div></div>
+      <ul class="guide-list">
+        <li><strong>1.</strong> Heure de réveil fixe, y compris le week-end (±30 min). C'est le levier le plus puissant.</li>
+        <li><strong>2.</strong> Lumière naturelle dans les 30 min après le réveil (fenêtre, balcon, marche).</li>
+        <li><strong>3.</strong> Rituel de pré-sommeil identique chaque soir (douche, lecture, lumière tamisée...).</li>
+        <li><strong>4.</strong> Coupe les écrans 30-60 min avant le coucher, ou filtre de lumière chaude.</li>
+        <li><strong>5.</strong> Évite caféine après 14h et repas lourds tard le soir.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VIEW: JOURNAL ============ -->
+<div class="view" id="view-journal">
+
+  <div class="card">
+    <div class="card-title">📌 Mes 3 priorités pour demain <div class="line"></div></div>
+    <textarea id="j-priorities" placeholder="1. ...&#10;2. ...&#10;3. ..." style="width:100%;background:#0e0c18;border:1px solid #2e2a40;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:90px;resize:vertical;"></textarea>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveJournalToday()">💾 Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📓 Notes / réflexions du jour <div class="line"></div></div>
+    <textarea id="j-notes" placeholder="Ce que tu as appris, ressenti, ce qui a marché ou pas aujourd'hui..." style="width:100%;background:#0e0c18;border:1px solid #2e2a40;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:110px;resize:vertical;"></textarea>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveJournalToday()">💾 Enregistrer</button>
+  </div>
+
+  <div class="card-title">🕘 Historique du carnet <div class="line"></div></div>
+  <div id="journal-history"></div>
+</div>
+
+<!-- ============ NAV ============ -->
+<div class="bottom-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
+    <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
+    <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
+    <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
+    <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
+    <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============ FIREBASE (cloud sync) ============ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAayL4EiSR2uQ4TQEcPUQ0Qx-1rSsXKYbM",
+  authDomain: "private-app-22697.firebaseapp.com",
+  projectId: "private-app-22697",
+  storageBucket: "private-app-22697.firebasestorage.app",
+  messagingSenderId: "275514640525",
+  appId: "1:275514640525:web:ce9003d513287e54597ac4"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+db.enablePersistence().catch(()=>{ /* persistance non dispo (mode privé, etc.) — pas bloquant */ });
+
+let cloudData = {};
+let currentUid = null;
+let authMode = 'login';
+
+function loadKey(key){
+  if(Object.prototype.hasOwnProperty.call(cloudData, key)) return cloudData[key];
+  return localStorage.getItem(key);
+}
+function saveKey(key, value){
+  cloudData[key] = value;
+  localStorage.setItem(key, value);
+  if(currentUid){
+    db.collection('users').doc(currentUid).set({ [key]: value }, { merge:true })
+      .catch(e=>console.error('Sync cloud échouée:', e));
+  }
+}
+
+function authToggleMode(){
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  document.getElementById('auth-submit-btn').textContent = authMode === 'login' ? 'Se connecter' : 'Créer mon compte';
+  document.getElementById('auth-toggle-row').innerHTML = authMode === 'login'
+    ? 'Pas encore de compte ? <a onclick="authToggleMode()">Créer un compte</a>'
+    : 'Déjà un compte ? <a onclick="authToggleMode()">Se connecter</a>';
+  document.getElementById('auth-error').textContent = '';
+}
+function authSubmit(){
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.textContent = '';
+  if(!email || !password){ errEl.textContent = 'Renseigne ton e-mail et ton mot de passe.'; return; }
+  const action = authMode === 'login'
+    ? auth.signInWithEmailAndPassword(email, password)
+    : auth.createUserWithEmailAndPassword(email, password);
+  action.catch(e => { errEl.textContent = authErrorMessage(e); });
+}
+function authErrorMessage(e){
+  const map = {
+    'auth/invalid-email': 'Adresse e-mail invalide.',
+    'auth/user-not-found': 'Aucun compte avec cet e-mail.',
+    'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/email-already-in-use': 'Un compte existe déjà avec cet e-mail.',
+    'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).'
+  };
+  return map[e.code] || ('Erreur : ' + e.message);
+}
+function authLogout(){
+  if(!confirm('Se déconnecter de Mon Espace ?')) return;
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(user => {
+  const overlay = document.getElementById('auth-overlay');
+  if(user){
+    currentUid = user.uid;
+    db.collection('users').doc(currentUid).get().then(doc => {
+      cloudData = doc.exists ? doc.data() : {};
+      overlay.classList.add('hidden');
+      initApp();
+    }).catch(e => {
+      console.error('Chargement cloud échoué, utilisation du cache local:', e);
+      cloudData = {};
+      overlay.classList.add('hidden');
+      initApp();
+    });
+  } else {
+    currentUid = null;
+    overlay.classList.remove('hidden');
+  }
+});
+</script>
+
+<script>
+/* ============ NAVIGATION ============ */
+function goTo(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelector('.nav-btn[data-view="'+view+'"]').classList.add('active');
+  window.scrollTo(0,0);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function todayISO(){
+  const d=new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0');
+}
+function todayLongFR(){
+  return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+document.getElementById('headerDate').textContent = todayLongFR();
+
+/* ============ GENERIC SUBTABS ============ */
+function showSubtab(group, tab){
+  document.querySelectorAll('[data-'+group+'-tab]').forEach(b=>b.classList.remove('active'));
+  document.querySelector('[data-'+group+'-tab="'+tab+'"]').classList.add('active');
+  document.querySelectorAll('#view-'+group+' .subpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(group+'-panel-'+tab).classList.add('active');
+}
+
+/* ============ TASKS ============ */
+const T_TOTAL = 10;
+const TK_STATE='tasks_state', TK_DATE='tasks_date', TK_STREAK='tasks_streak', TK_LASTOK='tasks_lastok';
+function yesterdayISO(){ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
+let taskState = {};
+function loadTaskState(){
+  const savedDate = loadKey(TK_DATE);
+  const today = todayISO();
+  if(savedDate !== today){
+    const savedState = JSON.parse(loadKey(TK_STATE) || '{}');
+    const yesterdayDone = Object.keys(savedState).filter(k=>savedState[k]).length === T_TOTAL;
+    let streak = parseInt(loadKey(TK_STREAK) || '0');
+    if(savedDate === yesterdayISO() && yesterdayDone){ saveKey(TK_LASTOK, yesterdayISO()); }
+    else if(savedDate && savedDate < yesterdayISO()){ streak = 0; saveKey(TK_STREAK, streak); }
+    saveKey(TK_DATE, today);
+    saveKey(TK_STATE, '{}');
+    return {};
+  }
+  return JSON.parse(loadKey(TK_STATE) || '{}');
+}
+function saveTaskState(s){
+  saveKey(TK_STATE, JSON.stringify(s));
+  const done = Object.keys(s).filter(k=>s[k]).length;
+  if(done === T_TOTAL){
+    const lastOk = loadKey(TK_LASTOK);
+    const today = todayISO();
+    if(lastOk !== today){
+      let streak = parseInt(loadKey(TK_STREAK) || '0') + 1;
+      saveKey(TK_STREAK, streak);
+      saveKey(TK_LASTOK, today);
+    }
+  }
+}
+function toggleTask(id){
+  taskState[id] = !taskState[id];
+  renderTask(id);
+  updateTaskProgress();
+  saveTaskState(taskState);
+  const done = Object.keys(taskState).filter(k=>taskState[k]).length;
+  if(done === T_TOTAL) showToast('🔥 Journée parfaite — 10/10 accompli !');
+  else if(taskState[id]) showToast('✓ Tâche validée — continue comme ça !');
+}
+function renderTask(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('done', !!taskState[id]);
+}
+function updateTaskProgress(){
+  const done = Object.keys(taskState).filter(k=>taskState[k]).length;
+  document.getElementById('t-doneCnt').textContent = done;
+  const pct = Math.round((done / T_TOTAL) * 100);
+  document.getElementById('t-ringPct').textContent = pct + '%';
+  const circ = 220;
+  document.getElementById('t-ringFill').style.strokeDashoffset = circ - (circ * done / T_TOTAL);
+  const streak = parseInt(loadKey(TK_STREAK) || '0');
+  document.getElementById('t-streakVal').textContent = streak;
+  document.getElementById('t-streakPl').textContent = streak > 1 ? 's' : '';
+  document.getElementById('home-tasks-done').textContent = done + '/' + T_TOTAL;
+  document.getElementById('home-streak').textContent = streak;
+  document.getElementById('home-streak-pl').textContent = streak > 1 ? 's' : '';
+}
+function expandHow(e, hid, eid){
+  e.stopPropagation();
+  document.getElementById(hid).classList.toggle('open');
+  document.getElementById(eid).classList.toggle('open');
+}
+function resetTasksDay(){
+  if(!confirm('Réinitialiser toutes les tâches du jour ?')) return;
+  taskState = {};
+  saveKey(TK_STATE, '{}');
+  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  updateTaskProgress();
+}
+
+/* ============ GOAL / CASH ============ */
+function updateCashProgress(){
+  const kfc = parseFloat(document.getElementById('g-kfc-input').value) || 0;
+  const shoes = parseFloat(document.getElementById('g-shoes-input').value) || 0;
+  const revolut = parseFloat(document.getElementById('g-revolut-input').value) || 0;
+  const goal = 2000;
+  const pct = Math.min(Math.round((revolut / goal) * 100), 100);
+  const reste = Math.max(goal - revolut, 0);
+  document.getElementById('g-kfc-val').textContent = kfc.toLocaleString('fr-FR') + ' €';
+  document.getElementById('g-shoes-val').textContent = shoes.toLocaleString('fr-FR') + ' €';
+  document.getElementById('g-revolut-val').textContent = revolut.toLocaleString('fr-FR') + ' €';
+  document.getElementById('g-reste-val').textContent = reste.toLocaleString('fr-FR') + ' €';
+  document.getElementById('g-pct').textContent = pct + '%';
+  document.getElementById('g-bar').style.width = pct + '%';
+  document.getElementById('home-cash-pct').textContent = pct + '%';
+  saveKey('cash_kfc', kfc);
+  saveKey('cash_shoes', shoes);
+  saveKey('cash_revolut', revolut);
+}
+function loadCashProgress(){
+  const kfc = loadKey('cash_kfc');
+  const shoes = loadKey('cash_shoes');
+  const revolut = loadKey('cash_revolut');
+  if(kfc !== null) document.getElementById('g-kfc-input').value = kfc;
+  if(shoes !== null) document.getElementById('g-shoes-input').value = shoes;
+  if(revolut !== null) document.getElementById('g-revolut-input').value = revolut;
+  updateCashProgress();
+}
+function updateCountdown(){
+  const target = new Date('2026-08-16');
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.ceil((target - now) / 86400000);
+  const val = diff > 0 ? diff : 0;
+  document.getElementById('goal-days').textContent = val;
+  document.getElementById('home-days').textContent = val;
+}
+
+/* ============ PLAN 30 JOURS ============ */
+const P30_START = new Date('2026-06-26');
+const P30_THEMES = [
+  { key:'mindset', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
+  { key:'manifestation', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
+  { key:'productivite', label:'Productivité & Organisation', channels:"Thomas Frank · Ali Abdaal · Matt D'Avella" },
+  { key:'developpement', label:'Développement Personnel', channels:'Jay Shetty · Simon Sinek · Brendon Burchard' }
+];
+const P30_DAYS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const P30_MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+let p30Done = [];
+function p30Theme(i){ return P30_THEMES[i % 4]; }
+function p30Today(){ const now=new Date(); now.setHours(0,0,0,0); return Math.floor((now - P30_START) / 86400000); }
+function p30Save(){ saveKey('plan30_done', JSON.stringify(p30Done)); }
+function p30UpdateProgress(){
+  const count = p30Done.length;
+  const pct = Math.round((count / 30) * 100);
+  const circ = 2 * Math.PI * 33;
+  document.getElementById('p30-ring').style.strokeDashoffset = circ - (circ * count / 30);
+  document.getElementById('p30-pct').textContent = pct + '%';
+  document.getElementById('home-plan-day').textContent = 'J' + Math.min(p30Today()+1,30) + '/30';
+}
+function p30BuildToday(){
+  const idx = p30Today();
+  if(idx < 0 || idx >= 30){ document.getElementById('p30-todayCard').style.display='none'; return; }
+  const theme = p30Theme(idx);
+  const d = new Date(P30_START); d.setDate(d.getDate() + idx);
+  document.getElementById('p30-todayDay').textContent = `Jour ${idx+1} · ${P30_DAYS_FR[d.getDay()]} ${d.getDate()} ${P30_MONTHS_FR[d.getMonth()]}`;
+  document.getElementById('p30-todayTag').innerHTML = `<div class="tag tag-${theme.key}">${theme.label}</div>`;
+  document.getElementById('p30-todayTheme').textContent = theme.label;
+  document.getElementById('p30-todayChannels').innerHTML = `Chaînes : <span>${theme.channels}</span>`;
+  const btn = document.getElementById('p30-todayBtn');
+  if(p30Done.includes(idx)){ btn.textContent='✓ Fait !'; btn.classList.add('done'); }
+  else { btn.textContent='✓ Marquer fait'; btn.classList.remove('done'); }
+}
+function toggleP30Today(){
+  const idx = p30Today();
+  if(idx < 0 || idx >= 30) return;
+  if(p30Done.includes(idx)) p30Done = p30Done.filter(d=>d!==idx); else p30Done.push(idx);
+  p30Save(); p30Render();
+}
+function p30ToggleDay(idx){
+  if(p30Done.includes(idx)) p30Done = p30Done.filter(d=>d!==idx); else p30Done.push(idx);
+  p30Save(); p30Render();
+}
+function p30BuildGrid(){
+  const grid = document.getElementById('p30-grid');
+  grid.innerHTML = '';
+  const todayIdx = p30Today();
+  for(let i=0;i<30;i++){
+    const theme = p30Theme(i);
+    const isDone = p30Done.includes(i);
+    const isToday = i === todayIdx;
+    const cell = document.createElement('div');
+    cell.className = `day-cell t-${theme.key}${isDone?' done':''}${isToday?' is-today':''}`;
+    cell.innerHTML = `<div class="num">${i+1}</div><div class="dot"></div>`;
+    cell.title = `Jour ${i+1} — ${theme.label}`;
+    cell.onclick = () => p30ToggleDay(i);
+    grid.appendChild(cell);
+  }
+}
+function p30Render(){ p30BuildGrid(); p30BuildToday(); p30UpdateProgress(); }
+
+/* ============ SLEEP ============ */
+const SLEEP_ENTRIES_KEY = 'sleep_entries';
+const SLEEP_SETTINGS_KEY = 'sleep_settings';
+let sleepEntries = {};
+let sleepDraft = { quality:0, energy:0, mood:0, water:0, habits:{} };
+
+function buildScale(containerId, key){
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  for(let i=1;i<=5;i++){
+    const b = document.createElement('div');
+    b.className = 'scale-btn'; b.textContent = i;
+    b.onclick = () => { sleepDraft[key]=i; refreshScales(); };
+    c.appendChild(b);
+  }
+}
+function refreshScales(){
+  ['quality','energy','mood'].forEach(key=>{
+    const containerId = key==='quality' ? 's-quality' : key==='energy' ? 's-energy' : 's-mood';
+    const c = document.getElementById(containerId);
+    Array.from(c.children).forEach((b,idx)=> b.classList.toggle('sel', (idx+1)===sleepDraft[key]));
+  });
+}
+function stepWater(delta){
+  sleepDraft.water = Math.max(0, sleepDraft.water + delta);
+  document.getElementById('s-water-val').textContent = sleepDraft.water;
+}
+function toggleChip(el){
+  const h = el.dataset.habit;
+  sleepDraft.habits[h] = !sleepDraft.habits[h];
+  el.classList.toggle('sel', !!sleepDraft.habits[h]);
+}
+function timeToMinutes(t){ if(!t) return null; const [h,m]=t.split(':').map(Number); return h*60+m; }
+function computeSleepDuration(bed, wake){
+  const b = timeToMinutes(bed), w = timeToMinutes(wake);
+  if(b===null || w===null) return null;
+  let diff = w - b; if(diff <= 0) diff += 24*60;
+  return diff / 60;
+}
+function computeBedGap(bed, target){
+  const b = timeToMinutes(bed), t = timeToMinutes(target);
+  if(b===null || t===null) return null;
+  let diff = b - t;
+  if(diff > 12*60) diff -= 24*60;
+  if(diff < -12*60) diff += 24*60;
+  return diff;
+}
+function loadSleepDraftForDate(dateStr){
+  const e = sleepEntries[dateStr];
+  sleepDraft = e ? JSON.parse(JSON.stringify(e)) : { quality:0, energy:0, mood:0, water:0, habits:{} };
+  document.getElementById('s-bed').value = sleepDraft.bed || '';
+  document.getElementById('s-wake').value = sleepDraft.wake || '';
+  document.getElementById('s-notes').value = sleepDraft.notes || '';
+  refreshScales();
+  document.getElementById('s-water-val').textContent = sleepDraft.water || 0;
+  document.querySelectorAll('.chip').forEach(c=>{
+    const h = c.dataset.habit;
+    c.classList.toggle('sel', !!(sleepDraft.habits && sleepDraft.habits[h]));
+  });
+}
+function saveSleepEntry(){
+  const dateStr = document.getElementById('s-date').value || todayISO();
+  sleepDraft.bed = document.getElementById('s-bed').value;
+  sleepDraft.wake = document.getElementById('s-wake').value;
+  sleepDraft.notes = document.getElementById('s-notes').value;
+  sleepEntries[dateStr] = JSON.parse(JSON.stringify(sleepDraft));
+  saveKey(SLEEP_ENTRIES_KEY, JSON.stringify(sleepEntries));
+  showToast('💾 Nuit enregistrée');
+  renderSleepHistory();
+  updateSleepDashboard();
+  updateHomeSleepStats();
+}
+function renderSleepHistory(){
+  const wrap = document.getElementById('sleep-history');
+  const dates = Object.keys(sleepEntries).sort().reverse().slice(0,14);
+  if(dates.length===0){ wrap.innerHTML = '<div class="je-empty">Aucune nuit enregistrée encore.</div>'; return; }
+  const target = document.getElementById('s-target-bed').value;
+  wrap.innerHTML = dates.map(d=>{
+    const e = sleepEntries[d];
+    const dur = computeSleepDuration(e.bed, e.wake);
+    return `<div class="history-row" onclick="loadSleepFromHistory('${d}')">
+      <div><div class="hr-date">${d}</div><div class="hr-meta">${e.bed||'—'} → ${e.wake||'—'} · Qualité ${e.quality||0}/5</div></div>
+      <div class="hr-score">${dur!==null ? dur.toFixed(1)+'h' : '—'}</div>
+    </div>`;
+  }).join('');
+}
+function loadSleepFromHistory(d){
+  document.getElementById('s-date').value = d;
+  loadSleepDraftForDate(d);
+  showToast('📂 Entrée du '+d+' chargée');
+}
+function avg(arr){ const a = arr.filter(v=>v!==null && v!==undefined && !isNaN(v)); return a.length ? a.reduce((s,v)=>s+v,0)/a.length : null; }
+function pct(arr){ const a = arr.filter(v=>v!==null && v!==undefined); return a.length ? Math.round(100*a.filter(Boolean).length/a.length) : null; }
+function updateSleepDashboard(){
+  const target = document.getElementById('s-target-bed').value;
+  const list = Object.values(sleepEntries);
+  const durs = list.map(e=>computeSleepDuration(e.bed,e.wake));
+  const gaps = list.map(e=>computeBedGap(e.bed,target)).map(g=>g===null?null:Math.abs(g));
+  const qual = list.map(e=>e.quality||null);
+  const ener = list.map(e=>e.energy||null);
+  const mood = list.map(e=>e.mood||null);
+  const sport = list.map(e=>e.habits?e.habits.sport:null);
+  const medit = list.map(e=>e.habits?e.habits.meditation:null);
+  const read = list.map(e=>e.habits?e.habits.lecture:null);
+  const food = list.map(e=>e.habits?e.habits.food:null);
+  const screens = list.map(e=>e.habits?e.habits.screens:null);
+  const fmt = v => v===null ? '—' : v.toFixed(1);
+  document.getElementById('sd-avgdur').textContent = fmt(avg(durs)) + (avg(durs)!==null?'h':'');
+  document.getElementById('sd-reg').textContent = (avg(gaps)!==null ? Math.round(avg(gaps))+' min' : '—');
+  document.getElementById('sd-qual').textContent = fmt(avg(qual)) + (avg(qual)!==null?'/5':'');
+  document.getElementById('sd-energy').textContent = fmt(avg(ener)) + (avg(ener)!==null?'/5':'');
+  document.getElementById('sd-mood').textContent = fmt(avg(mood)) + (avg(mood)!==null?'/5':'');
+  document.getElementById('sd-count').textContent = list.length;
+  document.getElementById('sd-sport').textContent = pct(sport)!==null ? pct(sport)+'%' : '—';
+  document.getElementById('sd-medit').textContent = pct(medit)!==null ? pct(medit)+'%' : '—';
+  document.getElementById('sd-read').textContent = pct(read)!==null ? pct(read)+'%' : '—';
+  document.getElementById('sd-food').textContent = pct(food)!==null ? pct(food)+'%' : '—';
+  document.getElementById('sd-screens').textContent = pct(screens)!==null ? pct(screens)+'%' : '—';
+}
+function updateHomeSleepStats(){
+  const dates = Object.keys(sleepEntries).sort().reverse().slice(0,7);
+  const durs = dates.map(d=>computeSleepDuration(sleepEntries[d].bed, sleepEntries[d].wake));
+  const moods = dates.map(d=>sleepEntries[d].mood||null);
+  const a1 = avg(durs), a2 = avg(moods);
+  document.getElementById('home-sleep-avg').textContent = a1!==null ? a1.toFixed(1)+'h' : '—';
+  document.getElementById('home-mood-avg').textContent = a2!==null ? a2.toFixed(1)+'/5' : '—';
+}
+function initSleepSettings(){
+  const saved = JSON.parse(loadKey(SLEEP_SETTINGS_KEY) || '{}');
+  if(saved.bed) document.getElementById('s-target-bed').value = saved.bed;
+  if(saved.wake) document.getElementById('s-target-wake').value = saved.wake;
+  document.getElementById('s-target-bed').onchange = document.getElementById('s-target-wake').onchange = () => {
+    saveKey(SLEEP_SETTINGS_KEY, JSON.stringify({
+      bed: document.getElementById('s-target-bed').value,
+      wake: document.getElementById('s-target-wake').value
+    }));
+    updateSleepDashboard();
+  };
+}
+
+/* ============ JOURNAL ============ */
+const JOURNAL_KEY = 'journal_entries';
+let journalEntries = {};
+function saveJournalToday(){
+  const d = todayISO();
+  journalEntries[d] = {
+    priorities: document.getElementById('j-priorities').value,
+    notes: document.getElementById('j-notes').value
+  };
+  saveKey(JOURNAL_KEY, JSON.stringify(journalEntries));
+  showToast('💾 Carnet enregistré');
+  renderJournalHistory();
+}
+function loadJournalToday(){
+  const d = todayISO();
+  const e = journalEntries[d];
+  if(e){
+    document.getElementById('j-priorities').value = e.priorities || '';
+    document.getElementById('j-notes').value = e.notes || '';
+  }
+}
+function renderJournalHistory(){
+  const wrap = document.getElementById('journal-history');
+  const dates = Object.keys(journalEntries).sort().reverse().filter(d=>d!==todayISO());
+  if(dates.length===0){ wrap.innerHTML = '<div class="je-empty">Pas encore d\'entrées passées.</div>'; return; }
+  wrap.innerHTML = dates.map(d=>{
+    const e = journalEntries[d];
+    const dateLabel = new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    return `<div class="journal-entry">
+      <div class="je-date">${dateLabel}</div>
+      <div class="je-block"><div class="je-block-lbl">Priorités</div><div class="je-block-txt">${(e.priorities||'').trim() ? escapeHtml(e.priorities) : '<span class=\"je-empty\">—</span>'}</div></div>
+      <div class="je-block"><div class="je-block-lbl">Notes</div><div class="je-block-txt">${(e.notes||'').trim() ? escapeHtml(e.notes) : '<span class=\"je-empty\">—</span>'}</div></div>
+    </div>`;
+  }).join('');
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* ============ INIT ============ */
+function initApp(){
+  // repeupler les données en mémoire depuis le cloud (cloudData) avant tout rendu
+  p30Done = JSON.parse(loadKey('plan30_done') || '[]');
+  sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
+  journalEntries = JSON.parse(loadKey(JOURNAL_KEY) || '{}');
+  // tasks
+  taskState = loadTaskState();
+  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  updateTaskProgress();
+  // goal
+  updateCountdown();
+  loadCashProgress();
+  // plan30
+  p30Render();
+  // sleep
+  buildScale('s-quality','quality');
+  buildScale('s-energy','energy');
+  buildScale('s-mood','mood');
+  initSleepSettings();
+  document.getElementById('s-date').value = todayISO();
+  loadSleepDraftForDate(todayISO());
+  renderSleepHistory();
+  updateSleepDashboard();
+  updateHomeSleepStats();
+  // journal
+  loadJournalToday();
+  renderJournalHistory();
+}
+</script>
+
+</body>
+</html>
