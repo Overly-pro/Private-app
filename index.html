@@ -291,6 +291,10 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 .planning-sep{color:var(--muted3);font-size:11px;}
 .planning-off{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted2);white-space:nowrap;cursor:pointer;}
 .planning-off input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
+.planning-checks{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.planning-times2{width:100%;padding-left:88px;margin-top:-4px;}
+.planning-pause-lbl{font-size:9.5px;color:var(--muted3);text-transform:uppercase;letter-spacing:.5px;margin-right:2px;}
+@media (max-width:480px){ .planning-times2{padding-left:0;} }
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -1139,7 +1143,7 @@ function updateCountdown(){
 }
 
 /* ============ PLAN 30 JOURS ============ */
-const P30_START = new Date('2026-06-26');
+const P30_START = new Date(2026, 5, 26);
 const P30_THEMES = [
   { key:'mindset', emoji:'🧠', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
   { key:'manifestation', emoji:'✨', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
@@ -1389,7 +1393,7 @@ let planningWeek = {};
 function renderPlanningWeek(){
   const wrap = document.getElementById('planning-week');
   wrap.innerHTML = PLANNING_DAYS.map(([key,label])=>{
-    const d = planningWeek[key] || { off:false, start:'09:00', end:'17:00' };
+    const d = planningWeek[key] || { off:false, pause:false, start:'09:00', end:'17:00', start2:'18:30', end2:'23:00' };
     return `<div class="planning-row" data-day="${key}">
       <div class="planning-day">${label}</div>
       <div class="planning-times">
@@ -1397,10 +1401,22 @@ function renderPlanningWeek(){
         <span class="planning-sep">→</span>
         <input type="time" class="planning-input" id="pl-${key}-end" value="${d.end || '17:00'}" ${d.off?'disabled':''}>
       </div>
-      <label class="planning-off">
-        <input type="checkbox" id="pl-${key}-off" onchange="togglePlanningOff('${key}')" ${d.off?'checked':''}>
-        Repos
-      </label>
+      <div class="planning-times planning-times2" id="pl-${key}-row2" style="${d.pause && !d.off ? '' : 'display:none;'}">
+        <span class="planning-pause-lbl">Reprise</span>
+        <input type="time" class="planning-input" id="pl-${key}-start2" value="${d.start2 || '18:30'}" ${d.off?'disabled':''}>
+        <span class="planning-sep">→</span>
+        <input type="time" class="planning-input" id="pl-${key}-end2" value="${d.end2 || '23:00'}" ${d.off?'disabled':''}>
+      </div>
+      <div class="planning-checks">
+        <label class="planning-off">
+          <input type="checkbox" id="pl-${key}-pause" onchange="togglePlanningPause('${key}')" ${d.pause?'checked':''}>
+          Pause
+        </label>
+        <label class="planning-off">
+          <input type="checkbox" id="pl-${key}-off" onchange="togglePlanningOff('${key}')" ${d.off?'checked':''}>
+          Repos
+        </label>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1408,13 +1424,22 @@ function togglePlanningOff(key){
   const off = document.getElementById('pl-'+key+'-off').checked;
   document.getElementById('pl-'+key+'-start').disabled = off;
   document.getElementById('pl-'+key+'-end').disabled = off;
+  document.getElementById('pl-'+key+'-start2').disabled = off;
+  document.getElementById('pl-'+key+'-end2').disabled = off;
+}
+function togglePlanningPause(key){
+  const pause = document.getElementById('pl-'+key+'-pause').checked;
+  document.getElementById('pl-'+key+'-row2').style.display = pause ? '' : 'none';
 }
 function savePlanningWeek(){
   PLANNING_DAYS.forEach(([key])=>{
     planningWeek[key] = {
       off: document.getElementById('pl-'+key+'-off').checked,
+      pause: document.getElementById('pl-'+key+'-pause').checked,
       start: document.getElementById('pl-'+key+'-start').value || '09:00',
-      end: document.getElementById('pl-'+key+'-end').value || '17:00'
+      end: document.getElementById('pl-'+key+'-end').value || '17:00',
+      start2: document.getElementById('pl-'+key+'-start2').value || '18:30',
+      end2: document.getElementById('pl-'+key+'-end2').value || '23:00'
     };
   });
   saveKey(PLANNING_KEY, JSON.stringify(planningWeek));
