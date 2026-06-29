@@ -26,8 +26,11 @@
 body{
   font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
   background:var(--bg); color:var(--text);
-  min-height:100vh; padding:18px 14px 92px; max-width:680px; margin:0 auto;
-  position:relative;
+  min-height:100vh; margin:0; position:relative;
+  display:flex; align-items:stretch;
+}
+.app-shell{
+  flex:1; min-width:0; padding:18px 14px 28px; max-width:680px; margin:0 auto;
 }
 .mono{font-family:'Space Mono',monospace;}
 
@@ -39,7 +42,7 @@ body{
   background-size:95% auto;
   opacity:0.14;
 }
-.app-header, .view, .bottom-nav, .toast, .auth-overlay{ position:relative; z-index:1; }
+.app-header, .view, .side-nav, .toast, .auth-overlay{ position:relative; z-index:1; }
 .logo-mark{ height:18px; width:auto; vertical-align:middle; margin-right:7px; opacity:0.92; }
 
 /* THEME TOGGLE (palette is pure grayscale, so a CSS invert gives a perfect light theme for free) */
@@ -92,16 +95,23 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 .ring-pct{font-weight:900;color:#ffffff;line-height:1;}
 .ring-lbl{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
 
-/* NAV BOTTOM */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;border-top:1px solid var(--border);
-  display:flex;justify-content:center;z-index:50;padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+/* SIDE NAV (style Discord) */
+.side-nav{
+  flex-shrink:0; width:78px; background:#0a0a0a; border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:stretch; gap:4px;
+  padding:18px 8px calc(18px + env(safe-area-inset-bottom));
+  position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
+  z-index:50;
 }
-.nav-inner{display:flex;gap:2px;max-width:680px;width:100%;}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--muted3);padding:7px 2px;border-radius:10px;cursor:pointer;font-family:inherit;transition:color .2s,background .2s;}
-.nav-btn .ic{font-size:18px;line-height:1;}
-.nav-btn .lb{font-size:8.5px;font-weight:600;letter-spacing:.3px;}
+.nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:none;color:var(--muted3);padding:11px 2px;border-radius:12px;cursor:pointer;font-family:inherit;transition:color .2s,background .2s;}
+.nav-btn .ic{font-size:21px;line-height:1;}
+.nav-btn .lb{font-size:8.5px;font-weight:600;letter-spacing:.3px;text-align:center;line-height:1.2;}
 .nav-btn.active{color:var(--accent);background:rgba(255,255,255,0.08);}
+@media (max-width:480px){
+  .side-nav{width:62px;padding:14px 4px calc(14px + env(safe-area-inset-bottom));}
+  .nav-btn .ic{font-size:19px;}
+  .nav-btn .lb{font-size:7.5px;}
+}
 
 /* TASK CARD (checklist) */
 .section{margin-bottom:16px;}
@@ -141,7 +151,7 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 .btn-ghost:hover{border-color:#333333;color:#aaaaaa;}
 
 /* TOAST */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#242424;border:1px solid #333333;color:#ffffff;font-size:12px;font-weight:600;padding:10px 20px;border-radius:10px;transition:transform .3s ease;z-index:99;white-space:nowrap;}
+.toast{position:fixed;bottom:24px;left:calc(50% + 39px);transform:translateX(-50%) translateY(80px);background:#242424;border:1px solid #333333;color:#ffffff;font-size:12px;font-weight:600;padding:10px 20px;border-radius:10px;transition:transform .3s ease;z-index:99;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
 /* SUBTABS */
@@ -272,6 +282,16 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 .je-block-txt{font-size:12.5px;color:#dddddd;line-height:1.6;white-space:pre-wrap;}
 .je-empty{font-size:11px;color:var(--muted3);font-style:italic;}
 
+/* PLANNING SEMAINE */
+.planning-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:11px 14px;margin-bottom:8px;flex-wrap:wrap;}
+.planning-day{font-size:12.5px;font-weight:700;color:var(--text);width:78px;flex-shrink:0;}
+.planning-times{display:flex;align-items:center;gap:6px;flex:1;min-width:150px;}
+.planning-input{background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:6px 8px;font-family:inherit;}
+.planning-input:disabled{opacity:0.35;}
+.planning-sep{color:var(--muted3);font-size:11px;}
+.planning-off{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted2);white-space:nowrap;cursor:pointer;}
+.planning-off input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
+
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-overlay.hidden{display:none;}
@@ -303,6 +323,19 @@ html.theme-light .emoji-fix{ filter:invert(1); }
     <div class="auth-toggle" id="auth-toggle-row">Pas encore de compte ? <a onclick="authToggleMode()">Créer un compte</a></div>
   </div>
 </div>
+
+<!-- ============ SIDE NAV (style Discord) ============ -->
+<nav class="side-nav">
+  <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
+  <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
+  <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
+  <button class="nav-btn" data-view="planning" onclick="goTo('planning')"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
+  <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
+  <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
+  <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
+</nav>
+
+<div class="app-shell">
 
 <div class="app-header">
   <div>
@@ -809,17 +842,16 @@ html.theme-light .emoji-fix{ filter:invert(1); }
   <div id="journal-history"></div>
 </div>
 
-<!-- ============ NAV ============ -->
-<div class="bottom-nav">
-  <div class="nav-inner">
-    <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
-    <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
-    <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
-    <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
-    <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
-    <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
+<!-- ============ VIEW: PLANNING SEMAINE ============ -->
+<div class="view" id="view-planning">
+  <div class="card">
+    <div class="card-title">🗓️ Mon planning de la semaine <div class="line"></div></div>
+    <div id="planning-week"></div>
+    <button class="btn-primary" style="width:100%;margin-top:14px;" onclick="savePlanningWeek()">💾 Enregistrer</button>
   </div>
 </div>
+
+</div><!-- /app-shell -->
 
 <div class="toast" id="toast"></div>
 
@@ -1347,6 +1379,48 @@ function renderJournalHistory(){
 }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
+/* ============ PLANNING SEMAINE ============ */
+const PLANNING_KEY = 'planning_week';
+const PLANNING_DAYS = [
+  ['lundi','Lundi'], ['mardi','Mardi'], ['mercredi','Mercredi'], ['jeudi','Jeudi'],
+  ['vendredi','Vendredi'], ['samedi','Samedi'], ['dimanche','Dimanche']
+];
+let planningWeek = {};
+function renderPlanningWeek(){
+  const wrap = document.getElementById('planning-week');
+  wrap.innerHTML = PLANNING_DAYS.map(([key,label])=>{
+    const d = planningWeek[key] || { off:false, start:'09:00', end:'17:00' };
+    return `<div class="planning-row" data-day="${key}">
+      <div class="planning-day">${label}</div>
+      <div class="planning-times">
+        <input type="time" class="planning-input" id="pl-${key}-start" value="${d.start || '09:00'}" ${d.off?'disabled':''}>
+        <span class="planning-sep">→</span>
+        <input type="time" class="planning-input" id="pl-${key}-end" value="${d.end || '17:00'}" ${d.off?'disabled':''}>
+      </div>
+      <label class="planning-off">
+        <input type="checkbox" id="pl-${key}-off" onchange="togglePlanningOff('${key}')" ${d.off?'checked':''}>
+        Repos
+      </label>
+    </div>`;
+  }).join('');
+}
+function togglePlanningOff(key){
+  const off = document.getElementById('pl-'+key+'-off').checked;
+  document.getElementById('pl-'+key+'-start').disabled = off;
+  document.getElementById('pl-'+key+'-end').disabled = off;
+}
+function savePlanningWeek(){
+  PLANNING_DAYS.forEach(([key])=>{
+    planningWeek[key] = {
+      off: document.getElementById('pl-'+key+'-off').checked,
+      start: document.getElementById('pl-'+key+'-start').value || '09:00',
+      end: document.getElementById('pl-'+key+'-end').value || '17:00'
+    };
+  });
+  saveKey(PLANNING_KEY, JSON.stringify(planningWeek));
+  showToast('💾 Planning enregistré');
+}
+
 /* ============ INIT ============ */
 function initApp(){
   initTheme();
@@ -1354,6 +1428,7 @@ function initApp(){
   p30Done = JSON.parse(loadKey('plan30_done') || '[]');
   sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
   journalEntries = JSON.parse(loadKey(JOURNAL_KEY) || '{}');
+  planningWeek = JSON.parse(loadKey(PLANNING_KEY) || '{}');
   // tasks
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
@@ -1376,6 +1451,8 @@ function initApp(){
   // journal
   loadJournalToday();
   renderJournalHistory();
+  // planning
+  renderPlanningWeek();
   wrapEmojis(document.body);
 }
 </script>
