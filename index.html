@@ -283,18 +283,17 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 .je-empty{font-size:11px;color:var(--muted3);font-style:italic;}
 
 /* PLANNING SEMAINE */
-.planning-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:11px 14px;margin-bottom:8px;flex-wrap:wrap;}
-.planning-day{font-size:12.5px;font-weight:700;color:var(--text);width:78px;flex-shrink:0;}
-.planning-times{display:flex;align-items:center;gap:6px;flex:1;min-width:150px;}
+.planning-row{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:11px 14px;margin-bottom:8px;}
+.planning-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.planning-day{font-size:12.5px;font-weight:700;color:var(--text);}
+.planning-times{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .planning-input{background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:6px 8px;font-family:inherit;}
 .planning-input:disabled{opacity:0.35;}
 .planning-sep{color:var(--muted3);font-size:11px;}
 .planning-off{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted2);white-space:nowrap;cursor:pointer;}
 .planning-off input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
 .planning-checks{display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.planning-times2{width:100%;padding-left:88px;margin-top:-4px;}
 .planning-pause-lbl{font-size:9.5px;color:var(--muted3);text-transform:uppercase;letter-spacing:.5px;margin-right:2px;}
-@media (max-width:480px){ .planning-times2{padding-left:0;} }
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -1395,27 +1394,29 @@ function renderPlanningWeek(){
   wrap.innerHTML = PLANNING_DAYS.map(([key,label])=>{
     const d = planningWeek[key] || { off:false, pause:false, start:'09:00', end:'17:00', start2:'18:30', end2:'23:00' };
     return `<div class="planning-row" data-day="${key}">
-      <div class="planning-day">${label}</div>
+      <div class="planning-row-top">
+        <div class="planning-day">${label}</div>
+        <div class="planning-checks">
+          <label class="planning-off">
+            <input type="checkbox" id="pl-${key}-pause" onchange="togglePlanningPause('${key}')" ${d.pause?'checked':''}>
+            Pause
+          </label>
+          <label class="planning-off">
+            <input type="checkbox" id="pl-${key}-off" onchange="togglePlanningOff('${key}')" ${d.off?'checked':''}>
+            Repos
+          </label>
+        </div>
+      </div>
       <div class="planning-times">
         <input type="time" class="planning-input" id="pl-${key}-start" value="${d.start || '09:00'}" ${d.off?'disabled':''}>
         <span class="planning-sep">→</span>
         <input type="time" class="planning-input" id="pl-${key}-end" value="${d.end || '17:00'}" ${d.off?'disabled':''}>
       </div>
-      <div class="planning-times planning-times2" id="pl-${key}-row2" style="${d.pause && !d.off ? '' : 'display:none;'}">
+      <div class="planning-times" id="pl-${key}-row2" style="${d.pause && !d.off ? '' : 'display:none;'}">
         <span class="planning-pause-lbl">Reprise</span>
         <input type="time" class="planning-input" id="pl-${key}-start2" value="${d.start2 || '18:30'}" ${d.off?'disabled':''}>
         <span class="planning-sep">→</span>
         <input type="time" class="planning-input" id="pl-${key}-end2" value="${d.end2 || '23:00'}" ${d.off?'disabled':''}>
-      </div>
-      <div class="planning-checks">
-        <label class="planning-off">
-          <input type="checkbox" id="pl-${key}-pause" onchange="togglePlanningPause('${key}')" ${d.pause?'checked':''}>
-          Pause
-        </label>
-        <label class="planning-off">
-          <input type="checkbox" id="pl-${key}-off" onchange="togglePlanningOff('${key}')" ${d.off?'checked':''}>
-          Repos
-        </label>
       </div>
     </div>`;
   }).join('');
