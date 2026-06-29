@@ -63,6 +63,7 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 
 /* VIEWS */
 .view{display:none;}
+.view-banner{width:100%;height:92px;object-fit:cover;border-radius:14px;margin-bottom:14px;display:block;opacity:0.85;border:1px solid var(--border2);}
 .view.active{display:block;animation:fadein .25s ease;}
 @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 
@@ -355,6 +356,8 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 <!-- ============ VIEW: HOME ============ -->
 <div class="view active" id="view-home">
 
+  <img class="view-banner" src="brand/gifs/vibe-1.gif" alt="">
+
   <div class="hero">
     <div class="hero-top">
       <div>
@@ -407,6 +410,8 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 
 <!-- ============ VIEW: TASKS ============ -->
 <div class="view" id="view-tasks">
+
+  <img class="view-banner" src="brand/gifs/vibe-2.gif" alt="">
 
   <div class="card" style="background:var(--surface2);">
     <div class="ring-row">
@@ -515,6 +520,8 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 
 <!-- ============ VIEW: GOAL ============ -->
 <div class="view" id="view-goal">
+
+  <img class="view-banner" src="brand/gifs/vibe-3.gif" alt="">
 
   <div class="card" style="background:linear-gradient(135deg,#131313,#161616);border-color:#ffffff22;">
     <div style="display:flex;align-items:center;gap:14px;">
@@ -631,6 +638,8 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 
 <!-- ============ VIEW: PLAN 30 JOURS ============ -->
 <div class="view" id="view-plan30">
+
+  <img class="view-banner" src="brand/gifs/vibe-5.gif" alt="">
 
   <div class="card">
     <div class="ring-row">
@@ -847,6 +856,8 @@ html.theme-light .emoji-fix{ filter:invert(1); }
 
 <!-- ============ VIEW: PLANNING SEMAINE ============ -->
 <div class="view" id="view-planning">
+  <img class="view-banner" src="brand/gifs/vibe-4.gif" alt="">
+
   <div class="card">
     <div class="card-title">🗓️ Mon planning de la semaine <div class="line"></div></div>
     <div id="planning-week"></div>
