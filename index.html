@@ -297,6 +297,19 @@ html.theme-light .view-banner{ filter:invert(1); }
 .planning-checks{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .planning-pause-lbl{font-size:9.5px;color:var(--muted3);text-transform:uppercase;letter-spacing:.5px;margin-right:2px;}
 
+/* SALAIRES */
+.money-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.money-input-label{flex:1;min-width:0;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;}
+.money-input-amount{width:90px;flex-shrink:0;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;text-align:right;}
+.money-del-btn{flex-shrink:0;width:30px;height:30px;border-radius:8px;border:1px solid #2a2a2a;background:none;color:var(--muted3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.money-del-btn:hover{color:#ffffff;border-color:#444444;}
+.money-add-btn{width:100%;margin-top:4px;padding:9px;border-radius:8px;border:1px dashed var(--border2);background:none;color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.money-add-btn:hover{color:var(--text);border-color:#555555;}
+.money-empty{font-size:11px;color:var(--muted3);font-style:italic;margin-bottom:8px;}
+.money-summary-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted2);padding:7px 0;border-bottom:1px solid var(--border);}
+.money-summary-row:last-child{border-bottom:none;}
+.money-summary-reste{font-size:15px;font-weight:800;color:var(--text);padding-top:10px;}
+
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-overlay.hidden{display:none;}
@@ -334,6 +347,7 @@ html.theme-light .view-banner{ filter:invert(1); }
   <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
   <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
   <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
+  <button class="nav-btn" data-view="salaires" onclick="goTo('salaires')"><span class="ic">💶</span><span class="lb">Salaires</span></button>
   <button class="nav-btn" data-view="planning" onclick="goTo('planning')"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
   <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
   <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
@@ -357,7 +371,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 <!-- ============ VIEW: HOME ============ -->
 <div class="view active" id="view-home">
 
-  <img class="view-banner" src="gifs/vibe-1.gif" alt="">
+  <img class="view-banner" id="banner-home" alt="">
 
   <div class="hero">
     <div class="hero-top">
@@ -412,7 +426,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 <!-- ============ VIEW: TASKS ============ -->
 <div class="view" id="view-tasks">
 
-  <img class="view-banner" src="gifs/vibe-2.gif" alt="">
+  <img class="view-banner" id="banner-tasks" alt="">
 
   <div class="card" style="background:var(--surface2);">
     <div class="ring-row">
@@ -522,7 +536,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 <!-- ============ VIEW: GOAL ============ -->
 <div class="view" id="view-goal">
 
-  <img class="view-banner" src="gifs/vibe-3.gif" alt="">
+  <img class="view-banner" id="banner-goal" alt="">
 
   <div class="card" style="background:linear-gradient(135deg,#131313,#161616);border-color:#ffffff22;">
     <div style="display:flex;align-items:center;gap:14px;">
@@ -637,10 +651,38 @@ html.theme-light .view-banner{ filter:invert(1); }
   </div>
 </div>
 
+<!-- ============ VIEW: SALAIRES ============ -->
+<div class="view" id="view-salaires">
+
+  <img class="view-banner" id="banner-salaires" alt="">
+
+  <div class="card">
+    <div class="card-title">💶 Revenus mensuels <div class="line"></div></div>
+    <div id="sal-revenus-list"></div>
+    <button class="money-add-btn" onclick="addSalaireRow('revenus')">+ Ajouter un revenu</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📉 Dépenses obligatoires <div class="line"></div></div>
+    <div id="sal-depenses-list"></div>
+    <button class="money-add-btn" onclick="addSalaireRow('depenses')">+ Ajouter une dépense</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧮 Bilan du mois <div class="line"></div></div>
+    <div class="money-summary">
+      <div class="money-summary-row"><span>Total revenus</span><span id="sal-total-revenus" class="mono">0,00 €</span></div>
+      <div class="money-summary-row"><span>Total dépenses</span><span id="sal-total-depenses" class="mono">0,00 €</span></div>
+      <div class="money-summary-row money-summary-reste"><span>Reste à vivre</span><span id="sal-reste" class="mono">0,00 €</span></div>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:14px;" onclick="saveSalaires()">💾 Enregistrer</button>
+  </div>
+</div>
+
 <!-- ============ VIEW: PLAN 30 JOURS ============ -->
 <div class="view" id="view-plan30">
 
-  <img class="view-banner" src="gifs/vibe-5.gif" alt="">
+  <img class="view-banner" id="banner-plan30" alt="">
 
   <div class="card">
     <div class="ring-row">
@@ -726,6 +768,8 @@ html.theme-light .view-banner{ filter:invert(1); }
 
 <!-- ============ VIEW: SLEEP ============ -->
 <div class="view" id="view-sleep">
+
+  <img class="view-banner" id="banner-sleep" alt="">
 
   <div class="subtabs">
     <button class="subtab active" data-sleep-tab="entry" onclick="showSubtab('sleep','entry')">📝 Saisie</button>
@@ -839,6 +883,8 @@ html.theme-light .view-banner{ filter:invert(1); }
 <!-- ============ VIEW: JOURNAL ============ -->
 <div class="view" id="view-journal">
 
+  <img class="view-banner" id="banner-journal" alt="">
+
   <div class="card">
     <div class="card-title">📌 Mes 3 priorités pour demain <div class="line"></div></div>
     <textarea id="j-priorities" placeholder="1. ...&#10;2. ...&#10;3. ..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:90px;resize:vertical;"></textarea>
@@ -857,7 +903,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 
 <!-- ============ VIEW: PLANNING SEMAINE ============ -->
 <div class="view" id="view-planning">
-  <img class="view-banner" src="gifs/vibe-4.gif" alt="">
+  <img class="view-banner" id="banner-planning" alt="">
 
   <div class="card">
     <div class="card-title">🗓️ Mon planning de la semaine <div class="line"></div></div>
@@ -967,7 +1013,32 @@ function goTo(view){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
   document.querySelector('.nav-btn[data-view="'+view+'"]').classList.add('active');
+  rotateViewBanner(view);
   window.scrollTo(0,0);
+}
+
+/* ============ BANNIÈRES GIF (rotation si plusieurs par onglet) ============ */
+const VIEW_GIFS = {
+  home: ['vibe-1'],
+  tasks: ['vibe-2'],
+  goal: ['vibe-3'],
+  salaires: ['vibe-6', 'vibe-9'],
+  planning: ['vibe-4'],
+  plan30: ['vibe-5'],
+  sleep: ['vibe-7'],
+  journal: ['vibe-8']
+};
+const bannerRotation = {};
+function rotateViewBanner(view){
+  const list = VIEW_GIFS[view];
+  const el = document.getElementById('banner-'+view);
+  if(!list || !list.length || !el) return;
+  const next = bannerRotation[view] === undefined ? 0 : (bannerRotation[view] + 1) % list.length;
+  bannerRotation[view] = next;
+  el.src = 'gifs/' + list[next] + '.gif';
+}
+function initViewBanners(){
+  Object.keys(VIEW_GIFS).forEach(view => rotateViewBanner(view));
 }
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -1459,6 +1530,67 @@ function savePlanningWeek(){
   showToast('💾 Planning enregistré');
 }
 
+/* ============ SALAIRES ============ */
+const SALAIRES_KEY = 'salaires_data';
+let salairesData = { revenus: [], depenses: [] };
+function renderSalaires(){
+  renderSalaireList('revenus');
+  renderSalaireList('depenses');
+  recalcSalaires();
+}
+function renderSalaireList(type){
+  const wrap = document.getElementById('sal-'+type+'-list');
+  const items = salairesData[type];
+  if(!items.length){
+    wrap.innerHTML = '<div class="money-empty">'+(type==='revenus' ? 'Aucun revenu ajouté.' : 'Aucune dépense ajoutée.')+'</div>';
+    return;
+  }
+  wrap.innerHTML = items.map((item,i)=>`<div class="money-row">
+    <input type="text" class="money-input-label" placeholder="${type==='revenus'?'Ex. Salaire KFC':'Ex. Abonnement téléphone'}" value="${escapeHtml(item.label||'')}" oninput="recalcSalaires()">
+    <input type="number" class="money-input-amount" placeholder="0" step="0.01" value="${item.amount || ''}" oninput="recalcSalaires()">
+    <button class="money-del-btn" onclick="removeSalaireRow('${type}',${i})" title="Supprimer">✕</button>
+  </div>`).join('');
+}
+function addSalaireRow(type){
+  syncSalairesFromDOM();
+  salairesData[type].push({ label:'', amount:0 });
+  renderSalaireList(type);
+  recalcSalaires();
+}
+function removeSalaireRow(type, idx){
+  syncSalairesFromDOM();
+  salairesData[type].splice(idx, 1);
+  renderSalaireList(type);
+  recalcSalaires();
+}
+function syncSalairesFromDOM(){
+  ['revenus','depenses'].forEach(type=>{
+    const wrap = document.getElementById('sal-'+type+'-list');
+    const items = [];
+    wrap.querySelectorAll('.money-row').forEach(row=>{
+      items.push({
+        label: row.querySelector('.money-input-label').value,
+        amount: parseFloat(row.querySelector('.money-input-amount').value) || 0
+      });
+    });
+    salairesData[type] = items;
+  });
+}
+function formatEuro(n){ return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €'; }
+function recalcSalaires(){
+  let totalRevenus = 0, totalDepenses = 0;
+  document.querySelectorAll('#sal-revenus-list .money-input-amount').forEach(inp=>{ totalRevenus += parseFloat(inp.value) || 0; });
+  document.querySelectorAll('#sal-depenses-list .money-input-amount').forEach(inp=>{ totalDepenses += parseFloat(inp.value) || 0; });
+  document.getElementById('sal-total-revenus').textContent = formatEuro(totalRevenus);
+  document.getElementById('sal-total-depenses').textContent = formatEuro(totalDepenses);
+  document.getElementById('sal-reste').textContent = formatEuro(totalRevenus - totalDepenses);
+}
+function saveSalaires(){
+  syncSalairesFromDOM();
+  saveKey(SALAIRES_KEY, JSON.stringify(salairesData));
+  showToast('💾 Bilan enregistré');
+}
+
 /* ============ INIT ============ */
 function initApp(){
   initTheme();
@@ -1467,6 +1599,9 @@ function initApp(){
   sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
   journalEntries = JSON.parse(loadKey(JOURNAL_KEY) || '{}');
   planningWeek = JSON.parse(loadKey(PLANNING_KEY) || '{}');
+  salairesData = JSON.parse(loadKey(SALAIRES_KEY) || '{}');
+  if(!salairesData.revenus) salairesData.revenus = [];
+  if(!salairesData.depenses) salairesData.depenses = [];
   // tasks
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
@@ -1491,6 +1626,10 @@ function initApp(){
   renderJournalHistory();
   // planning
   renderPlanningWeek();
+  // salaires
+  renderSalaires();
+  // bannières gif
+  initViewBanners();
   wrapEmojis(document.body);
 }
 </script>
