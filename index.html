@@ -297,6 +297,10 @@ html.theme-light .view-banner{ filter:invert(1); }
 .planning-checks{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .planning-pause-lbl{font-size:9.5px;color:var(--muted3);text-transform:uppercase;letter-spacing:.5px;margin-right:2px;}
 
+/* MINDSET */
+.mindset-quote{font-size:15px;font-weight:700;color:#ffffff;line-height:1.5;font-style:italic;}
+.mindset-quote-sm{font-size:13px;font-weight:600;color:#cccccc;font-style:normal;}
+
 /* SALAIRES */
 .money-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .money-input-label{flex:1;min-width:0;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;}
@@ -346,6 +350,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 <nav class="side-nav">
   <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
   <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
+  <button class="nav-btn" data-view="mindset" onclick="goTo('mindset')"><span class="ic">✨</span><span class="lb">Mindset</span></button>
   <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
   <button class="nav-btn" data-view="salaires" onclick="goTo('salaires')"><span class="ic">💶</span><span class="lb">Salaires</span></button>
   <button class="nav-btn" data-view="planning" onclick="goTo('planning')"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
@@ -531,6 +536,43 @@ html.theme-light .view-banner{ filter:invert(1); }
   </div>
 
   <div class="reset-bar"><button class="btn-ghost" onclick="resetTasksDay()">↺ Réinitialiser la journée</button></div>
+</div>
+
+<!-- ============ VIEW: MINDSET ============ -->
+<div class="view" id="view-mindset">
+
+  <img class="view-banner" id="banner-mindset" alt="">
+
+  <div class="card" style="background:linear-gradient(135deg,#131313,#161616);border-color:#ffffff22;">
+    <div class="card-title">✨ Affirmation du jour <div class="line"></div></div>
+    <div class="mindset-quote" id="mindset-affirmation">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔔 Rappel du jour <div class="line"></div></div>
+    <div class="mindset-quote mindset-quote-sm" id="mindset-reminder">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧭 Check-in de ton état d'esprit <div class="line"></div></div>
+    <div class="field-row">
+      <div class="field"><label>Confiance (1-5)</label><div class="scale-row" id="m-confiance"></div></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Motivation (1-5)</label><div class="scale-row" id="m-motivation"></div></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Énergie positive (1-5)</label><div class="scale-row" id="m-energie"></div></div>
+    </div>
+    <textarea id="m-note" placeholder="Ce qui occupe ton esprit aujourd'hui, ce que tu ressens..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:80px;resize:vertical;margin-top:10px;"></textarea>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveMindsetCheckin()">💾 Enregistrer mon check-in</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Visualisation & Focus — Ma marque de bijoux <div class="line"></div></div>
+    <textarea id="m-vision" placeholder="Décris ta vision : à quoi ressemble le succès de ta marque de bijoux ? Comment tu te sens quand elle décolle ? Sois précis(e), ressens-le comme si c'était déjà vrai..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:120px;resize:vertical;"></textarea>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveMindsetVision()">💾 Enregistrer ma vision</button>
+  </div>
 </div>
 
 <!-- ============ VIEW: GOAL ============ -->
@@ -1021,6 +1063,7 @@ function goTo(view){
 const VIEW_GIFS = {
   home: ['vibe-1', 'vibe-10', 'vibe-11'],
   tasks: ['vibe-2', 'vibe-12', 'vibe-13'],
+  mindset: ['vibe-9', 'vibe-13', 'vibe-19'],
   goal: ['vibe-3', 'vibe-14', 'vibe-15'],
   salaires: ['vibe-6', 'vibe-9', 'vibe-22'],
   planning: ['vibe-4', 'vibe-16'],
@@ -1531,6 +1574,80 @@ function savePlanningWeek(){
   showToast('💾 Planning enregistré');
 }
 
+/* ============ MINDSET ============ */
+const MINDSET_CHECKIN_KEY = 'mindset_checkins';
+const MINDSET_VISION_KEY = 'mindset_vision';
+const MINDSET_AFFIRMATIONS = [
+  "Je suis aligné(e) avec l'abondance et le succès.",
+  "Chaque jour, j'attire les bonnes opportunités pour ma marque de bijoux.",
+  "Ma confiance grandit à chaque pas que je fais vers mes objectifs.",
+  "L'argent et les bonnes personnes viennent facilement à moi.",
+  "Je mérite la réussite et je l'accueille pleinement.",
+  "Ma marque de bijoux est un aimant à clients fidèles.",
+  "Je transforme chaque obstacle en opportunité de grandir.",
+  "Mon focus est puissant, mes actions sont alignées avec ma vision.",
+  "Je suis reconnaissant(e) pour tout ce qui se construit déjà.",
+  "Le succès est déjà en marche, je n'ai qu'à continuer d'avancer.",
+  "Je crée ma réalité par mes pensées et mes actions du jour.",
+  "Chaque vente est une preuve que ma marque trouve son public.",
+  "Je suis capable, déterminé(e), et rien ne m'arrête.",
+  "L'univers conspire en ma faveur quand j'agis avec foi."
+];
+const MINDSET_REMINDERS = [
+  "Rappelle-toi : une vente, un message, un pas à la fois.",
+  "Visualise ta marque de bijoux entre les mains de tes clients.",
+  "Reste concentré(e) sur ce que tu peux contrôler aujourd'hui.",
+  "Ton énergie attire ce qui te ressemble — reste positif(ve).",
+  "Chaque jour de discipline te rapproche de ta liberté.",
+  "Tu es exactement là où tu dois être pour réussir.",
+  "Respire, recentre-toi, puis avance avec intention.",
+  "Un petit pas aujourd'hui vaut mieux qu'un grand projet jamais commencé.",
+  "Ta détermination d'aujourd'hui construit ta liberté de demain.",
+  "Célèbre chaque petite victoire, elles s'additionnent."
+];
+let mindsetEntries = {};
+let mindsetDraft = { confiance:0, motivation:0, energie:0, note:'' };
+function dayOfYear(d){ const start = new Date(d.getFullYear(),0,0); return Math.floor((d - start) / 86400000); }
+function renderMindsetDaily(){
+  const doy = dayOfYear(new Date());
+  document.getElementById('mindset-affirmation').textContent = '« ' + MINDSET_AFFIRMATIONS[doy % MINDSET_AFFIRMATIONS.length] + ' »';
+  document.getElementById('mindset-reminder').textContent = MINDSET_REMINDERS[doy % MINDSET_REMINDERS.length];
+}
+function buildMindsetScale(containerId, key){
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  for(let i=1;i<=5;i++){
+    const b = document.createElement('div');
+    b.className = 'scale-btn'; b.textContent = i;
+    b.onclick = () => { mindsetDraft[key]=i; refreshMindsetScales(); };
+    c.appendChild(b);
+  }
+}
+function refreshMindsetScales(){
+  ['confiance','motivation','energie'].forEach(key=>{
+    const c = document.getElementById('m-'+key);
+    Array.from(c.children).forEach((b,idx)=> b.classList.toggle('sel', (idx+1)===mindsetDraft[key]));
+  });
+}
+function loadMindsetToday(){
+  const d = todayISO();
+  const e = mindsetEntries[d];
+  mindsetDraft = e ? { confiance:e.confiance||0, motivation:e.motivation||0, energie:e.energie||0, note:e.note||'' } : { confiance:0, motivation:0, energie:0, note:'' };
+  document.getElementById('m-note').value = mindsetDraft.note;
+  refreshMindsetScales();
+}
+function saveMindsetCheckin(){
+  const d = todayISO();
+  mindsetDraft.note = document.getElementById('m-note').value;
+  mindsetEntries[d] = { confiance:mindsetDraft.confiance, motivation:mindsetDraft.motivation, energie:mindsetDraft.energie, note:mindsetDraft.note };
+  saveKey(MINDSET_CHECKIN_KEY, JSON.stringify(mindsetEntries));
+  showToast('✨ Check-in enregistré');
+}
+function saveMindsetVision(){
+  saveKey(MINDSET_VISION_KEY, document.getElementById('m-vision').value);
+  showToast('💾 Vision enregistrée');
+}
+
 /* ============ SALAIRES ============ */
 const SALAIRES_KEY = 'salaires_data';
 let salairesData = { revenus: [], depenses: [] };
@@ -1603,6 +1720,7 @@ function initApp(){
   salairesData = JSON.parse(loadKey(SALAIRES_KEY) || '{}');
   if(!salairesData.revenus) salairesData.revenus = [];
   if(!salairesData.depenses) salairesData.depenses = [];
+  mindsetEntries = JSON.parse(loadKey(MINDSET_CHECKIN_KEY) || '{}');
   // tasks
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
@@ -1629,6 +1747,13 @@ function initApp(){
   renderPlanningWeek();
   // salaires
   renderSalaires();
+  // mindset
+  renderMindsetDaily();
+  buildMindsetScale('m-confiance','confiance');
+  buildMindsetScale('m-motivation','motivation');
+  buildMindsetScale('m-energie','energie');
+  loadMindsetToday();
+  document.getElementById('m-vision').value = loadKey(MINDSET_VISION_KEY) || '';
   // bannières gif
   initViewBanners();
   wrapEmojis(document.body);
