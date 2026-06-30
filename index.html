@@ -64,7 +64,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 
 /* VIEWS */
 .view{display:none;}
-.view-banner{width:100%;height:92px;object-fit:cover;border-radius:14px;margin-bottom:14px;display:block;opacity:0.85;border:1px solid var(--border2);}
+.view-banner{width:100%;height:150px;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:14px;display:block;opacity:0.85;border:1px solid var(--border2);}
 .view.active{display:block;animation:fadein .25s ease;}
 @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 
@@ -1019,21 +1019,22 @@ function goTo(view){
 
 /* ============ BANNIÈRES GIF (rotation si plusieurs par onglet) ============ */
 const VIEW_GIFS = {
-  home: ['vibe-1'],
-  tasks: ['vibe-2'],
-  goal: ['vibe-3'],
-  salaires: ['vibe-6', 'vibe-9'],
-  planning: ['vibe-4'],
-  plan30: ['vibe-5'],
-  sleep: ['vibe-7'],
-  journal: ['vibe-8']
+  home: ['vibe-1', 'vibe-10', 'vibe-11'],
+  tasks: ['vibe-2', 'vibe-12', 'vibe-13'],
+  goal: ['vibe-3', 'vibe-14', 'vibe-15'],
+  salaires: ['vibe-6', 'vibe-9', 'vibe-22'],
+  planning: ['vibe-4', 'vibe-16'],
+  plan30: ['vibe-5', 'vibe-17'],
+  sleep: ['vibe-7', 'vibe-18', 'vibe-19'],
+  journal: ['vibe-8', 'vibe-20', 'vibe-21']
 };
 const bannerRotation = {};
 function rotateViewBanner(view){
   const list = VIEW_GIFS[view];
   const el = document.getElementById('banner-'+view);
   if(!list || !list.length || !el) return;
-  const next = bannerRotation[view] === undefined ? 0 : (bannerRotation[view] + 1) % list.length;
+  let next = Math.floor(Math.random() * list.length);
+  if(list.length > 1 && next === bannerRotation[view]) next = (next + 1) % list.length;
   bannerRotation[view] = next;
   el.src = 'gifs/' + list[next] + '.gif';
 }
