@@ -71,9 +71,30 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 
 /* VIEWS */
 .view{display:none;}
-.view-banner{width:100%;height:150px;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:14px;display:block;opacity:0.85;border:1px solid var(--border2);}
 .view.active{display:block;animation:fadein .25s ease;}
+.subview{display:none;}
+.subview.active{display:block;animation:fadein .25s ease;}
+.view-banner{width:100%;height:150px;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:14px;display:block;opacity:0.85;border:1px solid var(--border2);}
 @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.group-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.group-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.group-tab.active{background:rgba(224,53,53,0.12);border-color:var(--accent);color:var(--accent);}
+/* BIBLIO YOUTUBE */
+.yt-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px;}
+.yt-thumb{width:100%;height:120px;object-fit:cover;display:block;}
+.yt-thumb-placeholder{width:100%;height:120px;background:#111;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.yt-body{padding:12px 14px;}
+.yt-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4;}
+.yt-notes-toggle{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;padding:0;}
+.yt-notes{margin-top:10px;display:none;}
+.yt-notes.open{display:block;}
+.yt-note-section{margin-bottom:10px;}
+.yt-note-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.yt-note-content{font-size:12.5px;color:#cccccc;line-height:1.6;white-space:pre-wrap;}
+.yt-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.yt-btn{font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted2);cursor:pointer;font-family:inherit;}
+.yt-btn:hover{color:var(--text);border-color:#444;}
+.yt-btn.primary{border-color:var(--accent);color:var(--accent);}
 
 /* CARD base */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
@@ -406,12 +427,10 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
   <button class="nav-btn active" data-view="home" onclick="goTo('home')"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
   <button class="nav-btn" data-view="tasks" onclick="goTo('tasks')"><span class="ic">✅</span><span class="lb">Tâches</span></button>
   <button class="nav-btn" data-view="mindset" onclick="goTo('mindset')"><span class="ic">✨</span><span class="lb">Mindset</span></button>
-  <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
-  <button class="nav-btn" data-view="salaires" onclick="goTo('salaires')"><span class="ic">💶</span><span class="lb">Salaires</span></button>
-  <button class="nav-btn" data-view="planning" onclick="goTo('planning')"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
-  <button class="nav-btn" data-view="ventes" onclick="goTo('ventes')"><span class="ic">🛍️</span><span class="lb">Ventes</span></button>
-  <button class="nav-btn" data-view="habitudes" onclick="goTo('habitudes')"><span class="ic">🔥</span><span class="lb">Habitudes</span></button>
-  <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
+  <button class="nav-btn" data-view="finance" onclick="goTo('finance')"><span class="ic">💰</span><span class="lb">Finance</span></button>
+  <button class="nav-btn" data-view="objectifs" onclick="goTo('objectifs')"><span class="ic">🎯</span><span class="lb">Objectifs</span></button>
+  <button class="nav-btn" data-view="routine" onclick="goTo('routine')"><span class="ic">🔥</span><span class="lb">Routine</span></button>
+  <button class="nav-btn" data-view="biblio" onclick="goTo('biblio')"><span class="ic">📺</span><span class="lb">Biblio</span></button>
   <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
   <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
 </nav>
@@ -1130,6 +1149,36 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
   </div>
 </div>
 
+<!-- ============ VIEW: BIBLIO YOUTUBE ============ -->
+<div class="view" id="view-biblio">
+  <img class="view-banner" id="banner-biblio" alt="">
+
+  <div class="card">
+    <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
+    <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
+    <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
+  </div>
+
+  <div id="yt-notes-list"></div>
+</div>
+
+<!-- ============ VUES GROUPÉES (créées par JS) ============ -->
+<div class="view" id="view-finance">
+  <img class="view-banner" id="banner-finance" alt="">
+  <div class="group-tabs" id="finance-tabs"></div>
+  <div id="finance-content"></div>
+</div>
+<div class="view" id="view-objectifs">
+  <img class="view-banner" id="banner-objectifs" alt="">
+  <div class="group-tabs" id="objectifs-tabs"></div>
+  <div id="objectifs-content"></div>
+</div>
+<div class="view" id="view-routine">
+  <img class="view-banner" id="banner-routine" alt="">
+  <div class="group-tabs" id="routine-tabs"></div>
+  <div id="routine-content"></div>
+</div>
+
 </div><!-- /app-shell -->
 
 <div class="toast" id="toast"></div>
@@ -1226,13 +1275,53 @@ auth.onAuthStateChanged(user => {
 
 <script>
 /* ============ NAVIGATION ============ */
+const svState = {};
 function goTo(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
-  document.querySelector('.nav-btn[data-view="'+view+'"]').classList.add('active');
+  const navBtn = document.querySelector('.nav-btn[data-view="'+view+'"]');
+  if(navBtn) navBtn.classList.add('active');
   rotateViewBanner(view);
+  if(svState[view]) showSV(view, svState[view]);
   window.scrollTo(0,0);
+}
+function showSV(groupId, svId){
+  svState[groupId] = svId;
+  const content = document.getElementById(groupId+'-content');
+  if(!content) return;
+  content.querySelectorAll('.subview').forEach(sv=>sv.classList.remove('active'));
+  const target = document.getElementById('sv-'+svId);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('#'+groupId+'-tabs .group-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.sv===svId);
+  });
+}
+
+/* ============ VUES GROUPÉES ============ */
+const GROUPS = {
+  finance: { tabs:[{id:'salaires',label:'💶 Salaires'},{id:'ventes',label:'🛍️ Ventes'}] },
+  objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] },
+  routine: { tabs:[{id:'habitudes',label:'🔥 Habitudes'},{id:'planning',label:'🗓️ Planning'}] }
+};
+function buildGroupedViews(){
+  Object.entries(GROUPS).forEach(([groupId, group])=>{
+    const tabsEl = document.getElementById(groupId+'-tabs');
+    const contentEl = document.getElementById(groupId+'-content');
+    tabsEl.innerHTML = group.tabs.map((t,i)=>
+      `<button class="group-tab${i===0?' active':''}" data-sv="${t.id}" onclick="showSV('${groupId}','${t.id}')">${t.label}</button>`
+    ).join('');
+    group.tabs.forEach((t,i)=>{
+      const oldView = document.getElementById('view-'+t.id);
+      if(!oldView) return;
+      oldView.className = 'subview'+(i===0?' active':'');
+      oldView.id = 'sv-'+t.id;
+      const banner = oldView.querySelector('.view-banner');
+      if(banner) banner.remove();
+      contentEl.appendChild(oldView);
+    });
+    svState[groupId] = group.tabs[0].id;
+  });
 }
 
 /* ============ BANNIÈRES GIF (rotation si plusieurs par onglet) ============ */
@@ -1240,12 +1329,10 @@ const VIEW_GIFS = {
   home: ['vibe-1', 'vibe-10', 'vibe-11'],
   tasks: ['vibe-2', 'vibe-12', 'vibe-13'],
   mindset: ['vibe-9', 'vibe-13', 'vibe-19'],
-  goal: ['vibe-3', 'vibe-14', 'vibe-15'],
-  salaires: ['vibe-6', 'vibe-9', 'vibe-22'],
-  ventes: ['vibe-1', 'vibe-6', 'vibe-22'],
-  habitudes: ['vibe-2', 'vibe-11', 'vibe-20'],
-  planning: ['vibe-4', 'vibe-16'],
-  plan30: ['vibe-5', 'vibe-17'],
+  finance: ['vibe-6', 'vibe-9', 'vibe-22'],
+  objectifs: ['vibe-3', 'vibe-14', 'vibe-15'],
+  routine: ['vibe-4', 'vibe-16', 'vibe-20'],
+  biblio: ['vibe-5', 'vibe-17', 'vibe-21'],
   sleep: ['vibe-7', 'vibe-18', 'vibe-19'],
   journal: ['vibe-8', 'vibe-20', 'vibe-21']
 };
@@ -2124,9 +2211,93 @@ function maybeShowNotifBanner(){
   shell.insertBefore(banner, shell.firstChild);
 }
 
+/* ============ BIBLIOTHÈQUE YOUTUBE ============ */
+const YT_KEY = 'yt_notes';
+let ytNotes = [];
+function extractYtId(url){
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+async function addYtNote(){
+  const inp = document.getElementById('yt-url-input');
+  const url = inp.value.trim();
+  if(!url){ showToast('Colle un lien YouTube valide'); return; }
+  const vid = extractYtId(url);
+  if(!vid){ showToast('Lien non reconnu'); return; }
+  showToast('⏳ Récupération en cours...');
+  let title = 'Vidéo YouTube'; let thumb = '';
+  try {
+    const r = await fetch('https://www.youtube.com/oembed?url=https://youtu.be/'+vid+'&format=json');
+    const d = await r.json();
+    title = d.title || title;
+    thumb = d.thumbnail_url || '';
+  } catch(e){ }
+  ytNotes.unshift({ vid, url:'https://youtu.be/'+vid, title, thumb, date:todayISO(), resume:'', points:'', actions:'' });
+  saveKey(YT_KEY, JSON.stringify(ytNotes));
+  inp.value = '';
+  renderYtNotes();
+  showToast('📺 Vidéo ajoutée !');
+}
+function renderYtNotes(){
+  const wrap = document.getElementById('yt-notes-list');
+  if(!ytNotes.length){
+    wrap.innerHTML='<div style="font-size:13px;color:var(--muted3);font-style:italic;text-align:center;padding:20px 0;">Aucune vidéo enregistrée.<br>Colle un lien ci-dessus pour commencer.</div>';
+    return;
+  }
+  wrap.innerHTML = ytNotes.map((n,i)=>`
+    <div class="yt-card">
+      ${n.thumb ? `<img class="yt-thumb" src="${n.thumb}" alt="">` : `<div class="yt-thumb-placeholder">📺</div>`}
+      <div class="yt-body">
+        <div class="yt-title">${escapeHtml(n.title)}</div>
+        <div style="font-size:10px;color:var(--muted3);margin-bottom:8px;">${n.date}</div>
+        <div class="yt-actions">
+          <button class="yt-btn primary" onclick="toggleYtNotes(${i})">📝 Notes</button>
+          <button class="yt-btn" onclick="copyYtPrompt(${i})">📋 Prompt Claude</button>
+          <a href="${n.url}" target="_blank" style="text-decoration:none;"><button class="yt-btn">▶ Regarder</button></a>
+          <button class="yt-btn" onclick="removeYtNote(${i})" style="margin-left:auto;">✕</button>
+        </div>
+        <div class="yt-notes" id="yt-notes-${i}">
+          <div class="yt-note-section">
+            <div class="yt-note-label">Résumé</div>
+            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:60px;resize:vertical;" placeholder="Résumé de la vidéo..." oninput="ytNotes[${i}].resume=this.value">${escapeHtml(n.resume||'')}</textarea>
+          </div>
+          <div class="yt-note-section">
+            <div class="yt-note-label">Points essentiels</div>
+            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:80px;resize:vertical;" placeholder="1. ...&#10;2. ...&#10;3. ..." oninput="ytNotes[${i}].points=this.value">${escapeHtml(n.points||'')}</textarea>
+          </div>
+          <div class="yt-note-section">
+            <div class="yt-note-label">Actions à prendre</div>
+            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:60px;resize:vertical;" placeholder="Ce que je vais appliquer..." oninput="ytNotes[${i}].actions=this.value">${escapeHtml(n.actions||'')}</textarea>
+          </div>
+          <button class="btn-primary" style="width:100%;margin-top:8px;" onclick="saveYtNote(${i})">💾 Enregistrer les notes</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleYtNotes(i){
+  const el = document.getElementById('yt-notes-'+i);
+  el.classList.toggle('open');
+}
+function saveYtNote(i){
+  saveKey(YT_KEY, JSON.stringify(ytNotes));
+  showToast('💾 Notes enregistrées');
+}
+function removeYtNote(i){
+  ytNotes.splice(i,1);
+  saveKey(YT_KEY, JSON.stringify(ytNotes));
+  renderYtNotes();
+}
+function copyYtPrompt(i){
+  const n = ytNotes[i];
+  const prompt = `Génère-moi des notes de cette vidéo YouTube comme si je les avais prises moi-même :\n${n.url}\n\nDonne-moi :\n1. Un résumé en 3 phrases\n2. Les 5 points essentiels à retenir\n3. Les 3 actions concrètes à appliquer immédiatement\n\nSois précis et concis.`;
+  navigator.clipboard.writeText(prompt).then(()=>showToast('📋 Prompt copié ! Colle-le dans Claude.ai')).catch(()=>showToast('Copie manuelle : ouvre Claude.ai et colle le prompt'));
+}
+
 /* ============ INIT ============ */
 function initApp(){
   initTheme();
+  // grouper les vues en premier (avant tout rendu)
+  buildGroupedViews();
   // repeupler les données en mémoire depuis le cloud (cloudData) avant tout rendu
   p30Done = JSON.parse(loadKey('plan30_done') || '[]');
   sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
@@ -2144,6 +2315,7 @@ function initApp(){
   if(!ventesData.chaussures.items) ventesData.chaussures.items = [];
   objHebdo = JSON.parse(loadKey(OBJ_HEBDO_KEY) || '[{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false}]');
   ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
+  ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
   // tasks
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
@@ -2185,6 +2357,8 @@ function initApp(){
   renderObjHebdo();
   // idées
   renderIdees();
+  // biblio youtube
+  renderYtNotes();
   // notifications
   maybeShowNotifBanner();
   setupNotifications();
