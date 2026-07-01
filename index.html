@@ -361,11 +361,16 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .habit-streak{font-size:10px;font-weight:700;color:var(--accent);background:rgba(224,53,53,0.12);border-radius:20px;padding:3px 8px;white-space:nowrap;flex-shrink:0;margin-top:3px;}
 .habit-add-form{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
 .habit-add-form input{background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;width:100%;}
-.habit-rec-item{background:#0d0d0d;border:1px solid var(--border2);border-radius:10px;padding:10px 13px;cursor:pointer;transition:border-color .2s;margin-bottom:6px;}
+.habit-rec-item{background:#0d0d0d;border:1px solid var(--border2);border-radius:10px;padding:10px 13px;transition:border-color .2s;margin-bottom:6px;}
 .habit-rec-item:hover{border-color:var(--accent);}
+.habit-rec-top{display:flex;align-items:flex-start;gap:10px;}
+.habit-rec-info{flex:1;min-width:0;}
 .habit-rec-name{font-size:12px;font-weight:700;color:var(--text);}
 .habit-rec-consequence{font-size:10.5px;color:var(--muted);margin-top:2px;}
-.habit-rec-add{font-size:10px;font-weight:700;color:var(--accent);margin-top:5px;}
+.habit-rec-add-btn{font-size:10px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);background:none;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.habit-rec-toggle{font-size:10px;font-weight:600;color:var(--muted2);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-top:7px;display:inline-block;letter-spacing:.3px;}
+.habit-rec-toggle:hover{color:var(--text);}
+.habit-rec-desc{font-size:12px;color:#b0b0b0;line-height:1.65;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);display:none;}
 .habit-rec-cat{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:10px;margin-bottom:4px;}
 .night-banner{background:rgba(255,200,0,0.07);border:1px solid rgba(255,200,0,0.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .night-banner-txt{font-size:11.5px;color:#ccaa00;flex:1;}
@@ -2021,18 +2026,30 @@ let habitsState = {};
 let habitRefDate = todayISO();
 
 const RECOMMENDED_HABITS = [
-  { cat:'💰 Vente de chaussures', name:'Poster 1 annonce ou story sur les chaussures', consequence:'Pas de Netflix / séries ce soir' },
-  { cat:'💰 Vente de chaussures', name:'Répondre à tous les messages acheteurs dans la journée', consequence:'1h en moins sur les réseaux demain' },
-  { cat:'💰 Vente de chaussures', name:'Identifier 1 nouveau lot ou opportunité de revente', consequence:'Pas de musique pendant les trajets demain' },
-  { cat:'🧠 Mindset', name:'Écouter 20 min de podcast business ou mindset', consequence:'Pas de TikTok / Reels pendant 24h' },
-  { cat:'🧠 Mindset', name:'Écrire 3 victoires de la journée dans mon journal', consequence:'Pas de réseaux sociaux avant 12h demain' },
-  { cat:'🧠 Mindset', name:'Visualiser ma version 2.0 pendant 5 minutes', consequence:'Pas de grignotage non planifié aujourd\'hui' },
-  { cat:'💪 Discipline', name:'Se lever sans snooze', consequence:'Pas de téléphone dans le lit le soir' },
-  { cat:'💪 Discipline', name:'Préparer demain la veille (tâches + tenue)', consequence:'Coucher 30 min plus tard = fatigue assumée' },
-  { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain' },
-  { cat:'📚 Compétences', name:'Étudier 1 créatrice de bijoux : prix, photos, comment elle vend', consequence:'Pas de série avant d\'avoir étudié' },
-  { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé' },
-  { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction jusqu\'à ce que ce soit fait' },
+  { cat:'💰 Vente de chaussures', name:'Poster 1 annonce ou story sur les chaussures', consequence:'Pas de Netflix / séries ce soir',
+    desc:'Prends une photo de la paire sur fond neutre (sol blanc, mur clair), lumière naturelle. Sur Vinted : titre = marque + modèle + pointure + état (ex : Nike Air Max 90 blanc T42 TBE). Compare 5 annonces similaires pour fixer ton prix, ni trop haut ni trop bas. Sur Instagram : story avec le prix bien visible, la taille, et une phrase courte type "disponible maintenant". Réponds aux DM le jour même.' },
+  { cat:'💰 Vente de chaussures', name:'Répondre à tous les messages acheteurs dans la journée', consequence:'1h en moins sur les réseaux demain',
+    desc:'Ouvre Vinted, LeBonCoin ou Instagram une fois le matin et une fois le soir. Réponds à chaque message — même "ce n\'est plus dispo" vaut mieux que le silence. Les réponses rapides boostent ta note vendeur = plus de visibilité = plus de ventes. Si quelqu\'un négocie, fixe à l\'avance ton prix plancher pour ne pas brader sous pression.' },
+  { cat:'💰 Vente de chaussures', name:'Identifier 1 nouveau lot ou opportunité de revente', consequence:'Pas de musique pendant les trajets demain',
+    desc:'Cherche sur Vinted (filtre "lot" dans chaussures), LeBonCoin, Facebook Marketplace. Calcule la marge avant d\'acheter : prix d\'achat ÷ nombre de paires = coût unitaire. Objectif minimum : revendre 2,5× le coût unitaire. Pense aussi aux vide-greniers locaux, aux dépôts-ventes, aux amis ou famille qui veulent vider leurs placards. Note les opportunités dans ton app.' },
+  { cat:'🧠 Mindset', name:'Écouter 20 min de podcast business ou mindset', consequence:'Pas de TikTok / Reels pendant 24h',
+    desc:'Pendant un trajet, la pause déjeuner ou une tâche répétitive. Podcasts FR : Génération Do It Yourself (Matthieu Stefani), Le Gratin (Pauline Laigneau), Marketing Mania. EN : School of Greatness, How I Built This. Astuce : écoute à x1.25. Note 1 idée clé dans ton Carnet après chaque épisode — sinon tu oublies tout.' },
+  { cat:'🧠 Mindset', name:'Écrire 3 victoires de la journée dans mon journal', consequence:'Pas de réseaux sociaux avant 12h demain',
+    desc:'Le soir, avant de dormir. Pas besoin d\'un grand exploit — "j\'ai répondu à tous mes messages", "je me suis levée sans snooze", "j\'ai bu 1,5L d\'eau" comptent. Le but : entraîner ton cerveau à voir le progrès et pas le manque. Sur le long terme, ça change réellement ton rapport à l\'effort et ta motivation. Utilise l\'onglet Carnet ici.' },
+  { cat:'🧠 Mindset', name:'Visualiser ma version 2.0 pendant 5 minutes', consequence:'Pas de grignotage non planifié',
+    desc:'Ferme les yeux, assieds-toi confortablement. Imagine la version de toi qui a atteint ses objectifs : comment tu te lèves, comment se passe ta journée, comment tu te sens dans ton corps et ta tête, comment les gens te voient. Sois très précise dans les détails — pas vague. C\'est de la programmation mentale sérieuse. Fais-le le matin au réveil ou avant de dormir, 5 min chrono.' },
+  { cat:'💪 Discipline', name:'Se lever sans snooze', consequence:'Pas de téléphone dans le lit le soir',
+    desc:'Règle une seule alarme et pose ton téléphone à l\'autre bout de la chambre pour être obligée de te lever pour l\'éteindre. Quand ça sonne : compte 5-4-3-2-1 et lève-toi physiquement, ne te réallonge pas. Les 5 premières secondes sont les pires — après, le corps suit tout seul. Pas de négociation avec toi-même : si tu snoozes, la conséquence s\'applique sans exception.' },
+  { cat:'💪 Discipline', name:'Préparer demain la veille (tâches + tenue)', consequence:'Coucher 30 min plus tard = fatigue assumée',
+    desc:'10 minutes max avant de dormir. 1) Écris tes 3 priorités du lendemain dans l\'onglet Tâches ici. 2) Prépare ta tenue sur la chaise ou dans un endroit visible. 3) Vérifie ton réveil. C\'est tout. L\'objectif : ne pas prendre de décisions fatigantes le matin. Le matin, ton énergie mentale est à son maximum — utilise-la pour avancer, pas pour chercher tes affaires.' },
+  { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain',
+    desc:'Astuce simple : remplis une bouteille de 75cl le matin et une autre à midi — objectif, finir les deux. Quand la bouteille est sur la table, tu bois automatiquement sans y penser. Au KFC, bois un verre entre chaque pause. La déshydratation est la première cause de fatigue, maux de tête et difficultés à se concentrer. L\'impact sur l\'énergie est réel en 2 semaines.' },
+  { cat:'📚 Compétences', name:'Étudier 1 créateur de bijoux : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
+    desc:'Va sur Instagram, TikTok ou Etsy. Cherche un créateur de bijoux (FR : "bijoux fait main", "bijoux acier inoxydable", "bijoux créateur". INT : "handmade jewelry", "jewelry brand"). Observe : Quels sont ses prix pour quels types de pièces ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
+  { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé',
+    desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer une marque de bijoux", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Prends des notes dans l\'onglet Biblio ici — colle le lien pour ne pas perdre la vidéo.' },
+  { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction avant d\'avoir lu',
+    desc:'10 pages = 10 à 15 minutes. Livres recommandés pour ta situation : "Atomic Habits" (James Clear — transformer ses habitudes en profondeur), "The Compound Effect" (Darren Hardy — les petites actions quotidiennes qui font tout), "L\'art de se lancer" (Reid Hoffman). Lis le matin ou avant de dormir. Jamais sur téléphone — papier ou liseuse uniquement, sinon tu te retrouves à scroller.' },
 ];
 
 function initNightBanner(){
@@ -2098,12 +2115,24 @@ function renderRecommendedHabits(){
   wrap.innerHTML = notAdded.map(r=>{
     let h='';
     if(r.cat!==lastCat){ h=`<div class="habit-rec-cat">${r.cat}</div>`; lastCat=r.cat; }
-    return h+`<div class="habit-rec-item" onclick="addRecommendedHabit(${JSON.stringify(r.name)},${JSON.stringify(r.consequence)})">
-      <div class="habit-rec-name">${escapeHtml(r.name)}</div>
-      <div class="habit-rec-consequence">⚠️ Si non faite : ${escapeHtml(r.consequence)}</div>
-      <div class="habit-rec-add">+ Ajouter</div>
+    return h+`<div class="habit-rec-item">
+      <div class="habit-rec-top">
+        <div class="habit-rec-info">
+          <div class="habit-rec-name">${escapeHtml(r.name)}</div>
+          <div class="habit-rec-consequence">⚠️ Si non faite : ${escapeHtml(r.consequence)}</div>
+        </div>
+        <button class="habit-rec-add-btn" onclick="addRecommendedHabit(${JSON.stringify(r.name)},${JSON.stringify(r.consequence)})">+ Ajouter</button>
+      </div>
+      <button class="habit-rec-toggle" onclick="toggleRecDesc(this)">▼ Comment faire ?</button>
+      <div class="habit-rec-desc">${escapeHtml(r.desc||'')}</div>
     </div>`;
   }).join('');
+}
+function toggleRecDesc(btn){
+  const desc = btn.nextElementSibling;
+  const open = desc.style.display === 'block';
+  desc.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '▼ Comment faire ?' : '▲ Réduire';
 }
 function calcStreak(idx){
   let streak=0;
