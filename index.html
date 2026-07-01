@@ -79,22 +79,30 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .group-tabs{display:flex;gap:6px;margin-bottom:14px;}
 .group-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
 .group-tab.active{background:rgba(224,53,53,0.12);border-color:var(--accent);color:var(--accent);}
-/* BIBLIO YOUTUBE */
-.yt-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px;}
-.yt-thumb{width:100%;height:120px;object-fit:cover;display:block;}
-.yt-thumb-placeholder{width:100%;height:120px;background:#111;display:flex;align-items:center;justify-content:center;font-size:32px;}
-.yt-body{padding:12px 14px;}
-.yt-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4;}
-.yt-notes-toggle{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;padding:0;}
-.yt-notes{margin-top:10px;display:none;}
-.yt-notes.open{display:block;}
-.yt-note-section{margin-bottom:10px;}
-.yt-note-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.yt-note-content{font-size:12.5px;color:#cccccc;line-height:1.6;white-space:pre-wrap;}
-.yt-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.yt-btn{font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted2);cursor:pointer;font-family:inherit;}
-.yt-btn:hover{color:var(--text);border-color:#444;}
-.yt-btn.primary{border-color:var(--accent);color:var(--accent);}
+/* BIBLIO YOUTUBE — grille de vignettes */
+.yt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.yt-tile{background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.yt-tile:hover{border-color:var(--accent);transform:translateY(-2px);}
+.yt-tile-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+.yt-tile-ph{width:100%;aspect-ratio:16/9;background:#111;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.yt-tile-body{padding:8px 10px 10px;}
+.yt-tile-title{font-size:11.5px;font-weight:700;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;}
+.yt-tile-date{font-size:9px;color:var(--muted3);letter-spacing:.5px;}
+/* BIBLIO — panneau détail */
+.yt-detail-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.yt-back-btn{background:none;border:1px solid var(--border2);color:var(--muted2);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;flex-shrink:0;}
+.yt-back-btn:hover{color:var(--text);border-color:#555;}
+.yt-detail-vtitle{font-size:14px;font-weight:800;color:var(--text);line-height:1.3;flex:1;}
+.yt-detail-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block;margin-bottom:12px;}
+.yt-detail-ph{width:100%;aspect-ratio:16/9;background:#111;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:12px;}
+.yt-detail-meta{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.yt-detail-btn{font-size:11px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted2);cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block;transition:all .15s;}
+.yt-detail-btn:hover{color:var(--text);border-color:#555;}
+.yt-detail-btn.primary{border-color:var(--accent);color:var(--accent);}
+.yt-detail-btn.danger{border-color:#333;color:#555;}
+.yt-detail-btn.danger:hover{border-color:#e03535;color:#e03535;}
+.yt-section-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:16px;}
+.yt-detail-ta{width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:10px;color:var(--text);font-size:14px;padding:13px 15px;font-family:inherit;resize:vertical;line-height:1.65;}
 
 /* CARD base */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
@@ -1153,13 +1161,18 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 <div class="view" id="view-biblio">
   <img class="view-banner" id="banner-biblio" alt="">
 
-  <div class="card">
-    <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
-    <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
-    <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
+  <!-- Section principale : ajout + grille -->
+  <div id="yt-add-section">
+    <div class="card">
+      <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
+      <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
+      <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
+    </div>
+    <div class="yt-grid" id="yt-cards-grid"></div>
   </div>
 
-  <div id="yt-notes-list"></div>
+  <!-- Panneau détail (s'ouvre au clic sur une vignette) -->
+  <div id="yt-detail-panel" style="display:none;"></div>
 </div>
 
 <!-- ============ VUES GROUPÉES (créées par JS) ============ -->
@@ -2232,55 +2245,70 @@ async function addYtNote(){
     title = d.title || title;
     thumb = d.thumbnail_url || '';
   } catch(e){ }
-  ytNotes.unshift({ vid, url:'https://youtu.be/'+vid, title, thumb, date:todayISO(), resume:'', points:'', actions:'' });
+  ytNotes.push({ vid, url:'https://youtu.be/'+vid, title, thumb, date:todayISO(), resume:'', points:'', actions:'' });
   saveKey(YT_KEY, JSON.stringify(ytNotes));
   inp.value = '';
   renderYtNotes();
   showToast('📺 Vidéo ajoutée !');
 }
 function renderYtNotes(){
-  const wrap = document.getElementById('yt-notes-list');
+  const grid = document.getElementById('yt-cards-grid');
+  if(!grid) return;
   if(!ytNotes.length){
-    wrap.innerHTML='<div style="font-size:13px;color:var(--muted3);font-style:italic;text-align:center;padding:20px 0;">Aucune vidéo enregistrée.<br>Colle un lien ci-dessus pour commencer.</div>';
+    grid.innerHTML='<div style="grid-column:1/-1;font-size:13px;color:var(--muted3);font-style:italic;text-align:center;padding:20px 0;">Aucune vidéo enregistrée.<br>Colle un lien ci-dessus pour commencer.</div>';
     return;
   }
-  wrap.innerHTML = ytNotes.map((n,i)=>`
-    <div class="yt-card">
-      ${n.thumb ? `<img class="yt-thumb" src="${n.thumb}" alt="">` : `<div class="yt-thumb-placeholder">📺</div>`}
-      <div class="yt-body">
-        <div class="yt-title">${escapeHtml(n.title)}</div>
-        <div style="font-size:10px;color:var(--muted3);margin-bottom:8px;">${n.date}</div>
-        <div class="yt-actions">
-          <button class="yt-btn primary" onclick="toggleYtNotes(${i})">📝 Notes</button>
-          <button class="yt-btn" onclick="copyYtPrompt(${i})">📋 Prompt Claude</button>
-          <a href="${n.url}" target="_blank" style="text-decoration:none;"><button class="yt-btn">▶ Regarder</button></a>
-          <button class="yt-btn" onclick="removeYtNote(${i})" style="margin-left:auto;">✕</button>
-        </div>
-        <div class="yt-notes" id="yt-notes-${i}">
-          <div class="yt-note-section">
-            <div class="yt-note-label">Résumé</div>
-            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:60px;resize:vertical;" placeholder="Résumé de la vidéo..." oninput="ytNotes[${i}].resume=this.value">${escapeHtml(n.resume||'')}</textarea>
-          </div>
-          <div class="yt-note-section">
-            <div class="yt-note-label">Points essentiels</div>
-            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:80px;resize:vertical;" placeholder="1. ...&#10;2. ...&#10;3. ..." oninput="ytNotes[${i}].points=this.value">${escapeHtml(n.points||'')}</textarea>
-          </div>
-          <div class="yt-note-section">
-            <div class="yt-note-label">Actions à prendre</div>
-            <textarea style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px;font-family:inherit;min-height:60px;resize:vertical;" placeholder="Ce que je vais appliquer..." oninput="ytNotes[${i}].actions=this.value">${escapeHtml(n.actions||'')}</textarea>
-          </div>
-          <button class="btn-primary" style="width:100%;margin-top:8px;" onclick="saveYtNote(${i})">💾 Enregistrer les notes</button>
-        </div>
+  grid.innerHTML = ytNotes.map((n,i)=>`
+    <div class="yt-tile" onclick="openYtDetail(${i})">
+      ${n.thumb ? `<img class="yt-tile-thumb" src="${escapeHtml(n.thumb)}" alt="">` : `<div class="yt-tile-ph">📺</div>`}
+      <div class="yt-tile-body">
+        <div class="yt-tile-title">${escapeHtml(n.title)}</div>
+        <div class="yt-tile-date">${n.date}</div>
       </div>
     </div>`).join('');
 }
-function toggleYtNotes(i){
-  const el = document.getElementById('yt-notes-'+i);
-  el.classList.toggle('open');
+function openYtDetail(i){
+  const n = ytNotes[i];
+  document.getElementById('yt-add-section').style.display = 'none';
+  const panel = document.getElementById('yt-detail-panel');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="yt-detail-header">
+      <button class="yt-back-btn" onclick="closeYtDetail()">← Retour</button>
+      <div class="yt-detail-vtitle">${escapeHtml(n.title)}</div>
+    </div>
+    ${n.thumb ? `<img class="yt-detail-thumb" src="${escapeHtml(n.thumb)}" alt="">` : `<div class="yt-detail-ph">📺</div>`}
+    <div class="yt-detail-meta">
+      <a href="${n.url}" target="_blank" style="text-decoration:none;"><button class="yt-detail-btn">▶ Regarder</button></a>
+      <button class="yt-detail-btn primary" onclick="copyYtPrompt(${i})">📋 Prompt Claude</button>
+      <button class="yt-detail-btn danger" onclick="confirmRemoveYt(${i})">🗑 Supprimer</button>
+    </div>
+    <div class="yt-section-label">📌 Résumé</div>
+    <textarea class="yt-detail-ta" rows="5" placeholder="Résumé de la vidéo en quelques phrases..." oninput="ytNotes[${i}].resume=this.value">${escapeHtml(n.resume||'')}</textarea>
+    <div class="yt-section-label">💡 Points essentiels</div>
+    <textarea class="yt-detail-ta" rows="7" placeholder="• Point 1&#10;• Point 2&#10;• Point 3..." oninput="ytNotes[${i}].points=this.value">${escapeHtml(n.points||'')}</textarea>
+    <div class="yt-section-label">✅ Actions à prendre</div>
+    <textarea class="yt-detail-ta" rows="5" placeholder="Ce que je vais appliquer concrètement..." oninput="ytNotes[${i}].actions=this.value">${escapeHtml(n.actions||'')}</textarea>
+    <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="saveYtNote(${i})">💾 Enregistrer les notes</button>
+  `;
+  window.scrollTo(0,0);
+}
+function closeYtDetail(){
+  document.getElementById('yt-detail-panel').style.display = 'none';
+  document.getElementById('yt-add-section').style.display = 'block';
+  window.scrollTo(0,0);
 }
 function saveYtNote(i){
   saveKey(YT_KEY, JSON.stringify(ytNotes));
   showToast('💾 Notes enregistrées');
+}
+function confirmRemoveYt(i){
+  if(confirm('Supprimer cette vidéo ?')){
+    ytNotes.splice(i,1);
+    saveKey(YT_KEY, JSON.stringify(ytNotes));
+    closeYtDetail();
+    renderYtNotes();
+  }
 }
 function removeYtNote(i){
   ytNotes.splice(i,1);
@@ -2289,8 +2317,28 @@ function removeYtNote(i){
 }
 function copyYtPrompt(i){
   const n = ytNotes[i];
-  const prompt = `Génère-moi des notes de cette vidéo YouTube comme si je les avais prises moi-même :\n${n.url}\n\nDonne-moi :\n1. Un résumé en 3 phrases\n2. Les 5 points essentiels à retenir\n3. Les 3 actions concrètes à appliquer immédiatement\n\nSois précis et concis.`;
-  navigator.clipboard.writeText(prompt).then(()=>showToast('📋 Prompt copié ! Colle-le dans Claude.ai')).catch(()=>showToast('Copie manuelle : ouvre Claude.ai et colle le prompt'));
+  const prompt = `Tu vas m'aider à prendre des notes sur une vidéo YouTube que j'ai regardée.
+
+📺 Vidéo : ${n.title}
+🔗 Lien : ${n.url}
+
+Pour récupérer la transcription sur YouTube :
+1. Ouvre la vidéo → clique sur "..." sous la vidéo → "Afficher la transcription"
+2. Sélectionne tout le texte → copie → colle ci-dessous entre les balises
+
+⬇️ COLLE LA TRANSCRIPTION ICI :
+<transcription>
+
+</transcription>
+
+Une fois la transcription collée, génère-moi des notes structurées :
+
+📌 RÉSUMÉ (3-5 phrases, l'essentiel de la vidéo)
+💡 POINTS ESSENTIELS (liste à puces, les idées clés à retenir)
+✅ ACTIONS À PRENDRE (ce que je vais appliquer concrètement, très pratique)
+
+Écris comme si c'étaient mes propres notes, de façon concise et directe.`;
+  navigator.clipboard.writeText(prompt).then(()=>showToast('📋 Prompt copié ! Colle-le dans Claude.ai puis ajoute la transcription')).catch(()=>showToast('Erreur copie — réessaie'));
 }
 
 /* ============ INIT ============ */
