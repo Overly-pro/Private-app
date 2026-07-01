@@ -2635,10 +2635,9 @@ function initApp(){
 }
 let scWidget = null;
 let scPlaying = false;
-let scNavLock = false;
 
 function initSCWidget(){
-  if(scWidget) return; // évite les doubles initialisations
+  if(scWidget) return;
   const iframe = document.getElementById('sc-iframe');
   if(!iframe || !window.SC) return;
   scWidget = SC.Widget(iframe);
@@ -2673,22 +2672,16 @@ function scToggle(){
 }
 
 function scPrev(){
-  if(!scWidget || scNavLock) return;
-  scNavLock = true;
-  // getCurrentSoundIndex + skip contourne le comportement "redémarrage si > 2s"
-  scWidget.getCurrentSoundIndex(idx=>{
-    scWidget.skip(Math.max(0, idx - 1));
-    setTimeout(()=>{ scNavLock = false; }, 1200);
-  });
+  if(!scWidget) return;
+  // seekTo(0) force le widget à considérer qu'on est au début → prev() passe au morceau précédent
+  scWidget.seekTo(0);
+  setTimeout(()=>{ if(scWidget) scWidget.prev(); }, 150);
 }
 
 function scNext(){
-  if(!scWidget || scNavLock) return;
-  scNavLock = true;
-  scWidget.getCurrentSoundIndex(idx=>{
-    scWidget.skip(idx + 1);
-    setTimeout(()=>{ scNavLock = false; }, 1200);
-  });
+  if(!scWidget) return;
+  // next() natif : avance d'exactement 1 piste, sans risque d'index décalé
+  scWidget.next();
 }
 </script>
 
