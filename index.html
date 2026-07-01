@@ -2635,14 +2635,28 @@ function initApp(){
 }
 let scWidget = null;
 let scPlaying = false;
+let scNavLock = false;
 
 function initSCWidget(){
+  if(scWidget) return; // évite les doubles initialisations
   const iframe = document.getElementById('sc-iframe');
   if(!iframe || !window.SC) return;
   scWidget = SC.Widget(iframe);
-  scWidget.bind(SC.Widget.Events.PLAY, ()=>{ scPlaying=true; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='⏸'; });
-  scWidget.bind(SC.Widget.Events.PAUSE, ()=>{ scPlaying=false; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='▶'; });
-  scWidget.bind(SC.Widget.Events.FINISH, ()=>{ scPlaying=false; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='▶'; });
+  scWidget.bind(SC.Widget.Events.PLAY, ()=>{
+    scPlaying = true;
+    const b = document.getElementById('sc-play-btn');
+    if(b) b.textContent = '⏸';
+  });
+  scWidget.bind(SC.Widget.Events.PAUSE, ()=>{
+    scPlaying = false;
+    const b = document.getElementById('sc-play-btn');
+    if(b) b.textContent = '▶';
+  });
+  scWidget.bind(SC.Widget.Events.FINISH, ()=>{
+    scPlaying = false;
+    const b = document.getElementById('sc-play-btn');
+    if(b) b.textContent = '▶';
+  });
 }
 
 function toggleMusic(){
@@ -2650,22 +2664,31 @@ function toggleMusic(){
   const btn = document.getElementById('music-fab');
   const open = panel.classList.toggle('open');
   btn.textContent = open ? '✕' : '🎵';
-  if(open && !scWidget) setTimeout(initSCWidget, 300);
+  if(open && !scWidget) setTimeout(initSCWidget, 400);
 }
 
 function scToggle(){
-  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.toggle(), 400); return; }
+  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.toggle(), 500); return; }
   scWidget.toggle();
 }
 
 function scPrev(){
-  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.prev(), 400); return; }
-  scWidget.prev();
+  if(!scWidget || scNavLock) return;
+  scNavLock = true;
+  // getCurrentSoundIndex + skip contourne le comportement "redémarrage si > 2s"
+  scWidget.getCurrentSoundIndex(idx=>{
+    scWidget.skip(Math.max(0, idx - 1));
+    setTimeout(()=>{ scNavLock = false; }, 1200);
+  });
 }
 
 function scNext(){
-  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.next(), 400); return; }
-  scWidget.next();
+  if(!scWidget || scNavLock) return;
+  scNavLock = true;
+  scWidget.getCurrentSoundIndex(idx=>{
+    scWidget.skip(idx + 1);
+    setTimeout(()=>{ scNavLock = false; }, 1200);
+  });
 }
 </script>
 
