@@ -415,10 +415,23 @@ html.theme-light .night-banner-btn{border-color:rgba(0,55,55,0.35);background:rg
 .hebdo-kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
 .hebdo-kpi-val{font-size:19px;font-weight:900;color:var(--text);}
 .hebdo-kpi-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;letter-spacing:.5px;line-height:1.3;}
-/* NOTIF BANNER */
+/* NOTIF BANNER + SETTINGS */
 .notif-banner{background:rgba(224,53,53,0.1);border:1px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .notif-banner-txt{font-size:12px;color:var(--muted2);flex:1;}
 .notif-banner-btn{flex-shrink:0;background:rgba(224,53,53,0.15);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.notif-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.notif-row:last-of-type{border-bottom:none;}
+.notif-row-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.notif-row-label{flex:1;font-size:12.5px;font-weight:600;color:var(--text);}
+.notif-time-sel{background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:11.5px;padding:5px 8px;font-family:inherit;cursor:pointer;}
+.notif-sw{position:relative;width:38px;height:22px;flex-shrink:0;}
+.notif-sw input{opacity:0;width:0;height:0;position:absolute;}
+.notif-sw-track{position:absolute;inset:0;background:#222;border-radius:22px;cursor:pointer;transition:.2s;}
+.notif-sw-track:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#555;border-radius:50%;transition:.2s;}
+.notif-sw input:checked ~ .notif-sw-track{background:rgba(224,53,53,0.35);}
+.notif-sw input:checked ~ .notif-sw-track:before{transform:translateX(16px);background:var(--accent);}
+html.theme-light .notif-sw input:checked ~ .notif-sw-track{background:rgba(31,202,202,0.35);}
+html.theme-light .notif-sw input:checked ~ .notif-sw-track:before{background:var(--accent);}
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -545,6 +558,11 @@ html.theme-light .night-banner-btn{border-color:rgba(0,55,55,0.35);background:rg
     <div class="card-title">🗓️ Mes objectifs de la semaine <div class="line"></div></div>
     <div id="obj-hebdo-list"></div>
     <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveObjHebdo()">💾 Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔔 Notifications <div class="line"></div></div>
+    <div id="notif-settings-wrap"></div>
   </div>
 
 </div>
@@ -2317,39 +2335,82 @@ function removeIdee(i){
 }
 
 /* ============ NOTIFICATIONS ============ */
-function setupNotifications(){
-  if(!('Notification' in window)) return;
-  const now = new Date();
-  const h = now.getHours();
-  const todayKey = 'notif_shown_'+todayISO();
-  if(Notification.permission === 'granted'){
-    if(h>=7 && h<10 && !loadKey(todayKey+'_am')){
-      const doy = dayOfYear(new Date());
-      new Notification('✨ Mon Espace — Affirmation du jour', { body: MINDSET_AFFIRMATIONS[doy % MINDSET_AFFIRMATIONS.length], icon: 'brand/logo-mark-white.png' });
-      saveKey(todayKey+'_am', '1');
-    }
-    if(h>=20 && h<23 && !loadKey(todayKey+'_pm')){
-      new Notification('📓 Mon Espace — Journal du soir', { body: 'C\'est l\'heure de ton bilan de journée. Prends 5 minutes pour toi.', icon: 'brand/logo-mark-white.png' });
-      saveKey(todayKey+'_pm', '1');
-    }
+const NOTIF_TYPES = [
+  { key:'am',     icon:'✨', label:'Affirmation du matin',  defHour:8,  title:'✨ Mon Espace — Affirmation du jour',  bodyFn: ()=> MINDSET_AFFIRMATIONS[dayOfYear(new Date()) % MINDSET_AFFIRMATIONS.length] },
+  { key:'tasks',  icon:'✅', label:'Rappel tâches du midi',  defHour:12, title:'✅ Mon Espace — Tâches du jour',       bodyFn: ()=>'Tu as des tâches à accomplir aujourd\'hui. Ouvre l\'app pour les voir !' },
+  { key:'habits', icon:'🔥', label:'Rappel habitudes',       defHour:18, title:'🔥 Mon Espace — Habitudes du soir',   bodyFn: ()=>'As-tu coché toutes tes habitudes d\'aujourd\'hui ?' },
+  { key:'pm',     icon:'📓', label:'Journal du soir',        defHour:21, title:'📓 Mon Espace — Journal du soir',     bodyFn: ()=>'C\'est l\'heure de ton bilan. Prends 5 minutes pour toi.' },
+];
+function renderNotifSettings(){
+  const wrap = document.getElementById('notif-settings-wrap');
+  if(!wrap) return;
+  if(!('Notification' in window)){
+    wrap.innerHTML='<div style="font-size:12px;color:var(--muted3);">Les notifications ne sont pas disponibles sur ce navigateur.</div>';
+    return;
   }
+  if(Notification.permission !== 'granted'){
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--muted2);margin-bottom:10px;">Active les notifications pour recevoir ton affirmation du matin, tes rappels de tâches et habitudes, et ton journal du soir.</div>
+      <button class="btn-primary" style="width:100%;" onclick="requestNotifPermission()">🔔 Activer les notifications</button>`;
+    return;
+  }
+  const hourOpts = (sel)=> Array.from({length:18},(_,i)=>{const h=i+6;return `<option value="${h}"${h===sel?' selected':''}>` + String(h).padStart(2,'0')+'h00</option>';}).join('');
+  wrap.innerHTML = NOTIF_TYPES.map(n=>{
+    const on = loadKey('notif_'+n.key+'_on') !== '0';
+    const hour = parseInt(loadKey('notif_'+n.key+'_hour') || String(n.defHour));
+    return `<div class="notif-row">
+      <span class="notif-row-icon">${n.icon}</span>
+      <span class="notif-row-label">${n.label}</span>
+      <select class="notif-time-sel" onchange="saveNotifPref('${n.key}','hour',this.value)">${hourOpts(hour)}</select>
+      <label class="notif-sw"><input type="checkbox" ${on?'checked':''} onchange="saveNotifPref('${n.key}','on',this.checked?'1':'0')"><span class="notif-sw-track"></span></label>
+    </div>`;
+  }).join('')
+  + `<button class="btn-primary" style="width:100%;margin-top:12px;" onclick="scheduleAllNotifs(true)">🔔 Programmer pour aujourd'hui</button>
+     <div style="font-size:10px;color:var(--muted3);margin-top:6px;text-align:center;">Les notifications se reprogramment automatiquement à chaque ouverture de l'app.</div>`;
+}
+function saveNotifPref(key, field, val){
+  saveKey('notif_'+key+'_'+field, val);
+  scheduleAllNotifs(false);
 }
 function requestNotifPermission(){
   if(!('Notification' in window)){ showToast('Notifications non supportées'); return; }
   Notification.requestPermission().then(p=>{
-    if(p==='granted'){ showToast('🔔 Notifications activées !'); document.getElementById('notif-banner')?.remove(); }
-    else showToast('Notifications refusées');
+    if(p==='granted'){
+      showToast('🔔 Notifications activées !');
+      renderNotifSettings();
+      scheduleAllNotifs(true);
+    } else {
+      showToast('Notifications refusées — vérifie les réglages de ton téléphone');
+    }
   });
 }
-function maybeShowNotifBanner(){
-  if(!('Notification' in window)) return;
-  if(Notification.permission !== 'default') return;
-  const banner = document.createElement('div');
-  banner.id = 'notif-banner'; banner.className = 'notif-banner';
-  banner.innerHTML = '<div class="notif-banner-txt">🔔 Active les notifications pour recevoir ton affirmation du matin et ton rappel journal le soir.</div><button class="notif-banner-btn" onclick="requestNotifPermission()">Activer</button>';
-  const shell = document.querySelector('.app-shell');
-  shell.insertBefore(banner, shell.firstChild);
+function scheduleAllNotifs(showConfirm){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date();
+  const iconUrl = new URL('brand/logo-mark-white.png', location.href).href;
+  const items = [];
+  NOTIF_TYPES.forEach(n=>{
+    const on = loadKey('notif_'+n.key+'_on') !== '0';
+    if(!on) return;
+    const hour = parseInt(loadKey('notif_'+n.key+'_hour') || String(n.defHour));
+    const fireAt = new Date(); fireAt.setHours(hour, 0, 0, 0);
+    items.push({ title:n.title, body:n.bodyFn(), fireAt:fireAt.getTime(), tag:'me-'+n.key, icon:iconUrl });
+    // Fallback direct : si on est exactement dans la fenêtre horaire (±30 min) et pas encore envoyé
+    const diff = Math.abs(now.getHours() - hour);
+    if(diff === 0 && !loadKey('notif_direct_'+todayISO()+'_'+n.key)){
+      new Notification(n.title, { body:n.bodyFn(), icon:'brand/logo-mark-white.png' });
+      saveKey('notif_direct_'+todayISO()+'_'+n.key, '1');
+    }
+  });
+  // Envoyer le planning au service worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.ready.then(reg=>{
+      if(reg.active) reg.active.postMessage({ type:'SCHEDULE_NOTIFS', items });
+    }).catch(()=>{});
+  }
+  if(showConfirm) showToast('🔔 Notifications programmées !');
 }
+function maybeShowNotifBanner(){ renderNotifSettings(); }
+function setupNotifications(){ scheduleAllNotifs(false); }
 
 /* ============ BIBLIOTHÈQUE YOUTUBE ============ */
 const YT_KEY = 'yt_notes';
@@ -2472,6 +2533,10 @@ Une fois la transcription collée, génère-moi des notes structurées :
 
 /* ============ INIT ============ */
 function initApp(){
+  // Enregistrer le service worker (notifications en arrière-plan)
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
   initTheme();
   // grouper les vues en premier (avant tout rendu)
   buildGroupedViews();
