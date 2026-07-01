@@ -446,6 +446,13 @@ html.theme-light .notif-sw input:checked ~ .notif-sw-track:before{background:var
 .music-ctrl-btn.play{background:var(--accent);border-color:var(--accent);color:#fff;width:42px;height:42px;font-size:17px;}
 html.theme-light .music-panel{filter:invert(1);}
 html.theme-light .music-panel iframe{filter:invert(1);}
+.music-playlist{max-height:220px;overflow-y:auto;border-top:1px solid var(--border);}
+.music-pl-item{display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:11.5px;color:var(--text);cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);}
+.music-pl-item:hover{background:rgba(224,53,53,0.1);}
+.music-pl-item.active{color:var(--accent);font-weight:700;background:rgba(224,53,53,0.07);}
+.music-pl-num{font-size:9.5px;color:var(--muted3);min-width:20px;flex-shrink:0;text-align:right;}
+.music-pl-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-pl-loading{padding:14px;text-align:center;font-size:11px;color:var(--muted3);}
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -2635,6 +2642,9 @@ function initApp(){
 }
 let scWidget = null;
 let scPlaying = false;
+let scSounds = [];
+let scCurrentIdx = 0;
+let scPlaylistVisible = false;
 
 function initSCWidget(){
   if(scWidget) return;
@@ -2645,6 +2655,10 @@ function initSCWidget(){
     scPlaying = true;
     const b = document.getElementById('sc-play-btn');
     if(b) b.textContent = '⏸';
+    scWidget.getCurrentSoundIndex(idx=>{
+      scCurrentIdx = idx;
+      if(scPlaylistVisible) renderScPlaylist();
+    });
   });
   scWidget.bind(SC.Widget.Events.PAUSE, ()=>{
     scPlaying = false;
@@ -2656,6 +2670,48 @@ function initSCWidget(){
     const b = document.getElementById('sc-play-btn');
     if(b) b.textContent = '▶';
   });
+}
+
+function loadScSounds(cb){
+  if(scSounds.length){ if(cb) cb(); return; }
+  scWidget.getSounds(sounds=>{
+    scSounds = sounds || [];
+    if(cb) cb();
+  });
+}
+
+function renderScPlaylist(){
+  const pl = document.getElementById('sc-playlist');
+  if(!pl) return;
+  if(!scSounds.length){ pl.innerHTML='<div class="music-pl-loading">Playlist vide.</div>'; return; }
+  pl.innerHTML = scSounds.map((s,i)=>`
+    <div class="music-pl-item${i===scCurrentIdx?' active':''}" onclick="scSkipTo(${i})">
+      <span class="music-pl-num">${i+1}</span>
+      <span class="music-pl-title">${escapeHtml(s.title||'Piste '+(i+1))}</span>
+    </div>`).join('');
+  // scroll vers la piste active
+  const active = pl.querySelector('.active');
+  if(active) active.scrollIntoView({block:'nearest'});
+}
+
+function toggleScPlaylist(){
+  const pl = document.getElementById('sc-playlist');
+  const btn = document.getElementById('sc-pl-btn');
+  if(!pl) return;
+  scPlaylistVisible = !scPlaylistVisible;
+  pl.style.display = scPlaylistVisible ? 'block' : 'none';
+  if(btn) btn.style.color = scPlaylistVisible ? 'var(--accent)' : '';
+  if(scPlaylistVisible){
+    if(!scWidget){ initSCWidget(); setTimeout(()=>loadScSounds(renderScPlaylist), 600); return; }
+    loadScSounds(renderScPlaylist);
+  }
+}
+
+function scSkipTo(idx){
+  if(!scWidget) return;
+  scCurrentIdx = idx;
+  scWidget.skip(idx);
+  renderScPlaylist();
 }
 
 function toggleMusic(){
@@ -2699,6 +2755,10 @@ function scNext(){
       <button class="music-ctrl-btn" onclick="scPrev()" title="Précédent">⏮</button>
       <button class="music-ctrl-btn play" id="sc-play-btn" onclick="scToggle()" title="Play / Pause">▶</button>
       <button class="music-ctrl-btn" onclick="scNext()" title="Suivant">⏭</button>
+      <button class="music-ctrl-btn" id="sc-pl-btn" onclick="toggleScPlaylist()" title="Playlist">☰</button>
+    </div>
+    <div class="music-playlist" id="sc-playlist" style="display:none;">
+      <div class="music-pl-loading">Chargement de la playlist…</div>
     </div>
   </div>
   <button class="music-fab-btn" id="music-fab" onclick="toggleMusic()" title="Musique">🎵</button>
