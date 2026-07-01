@@ -440,6 +440,10 @@ html.theme-light .notif-sw input:checked ~ .notif-sw-track:before{background:var
 .music-panel iframe{width:100%;height:166px;display:block;border:none;}
 .music-fab-btn{width:48px;height:48px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(224,53,53,0.45);transition:transform .15s;flex-shrink:0;}
 .music-fab-btn:active{transform:scale(0.9);}
+.music-controls{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border-top:1px solid var(--border);}
+.music-ctrl-btn{background:none;border:1px solid var(--border2);color:var(--text);border-radius:50%;width:36px;height:36px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.music-ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.music-ctrl-btn.play{background:var(--accent);border-color:var(--accent);color:#fff;width:42px;height:42px;font-size:17px;}
 html.theme-light .music-panel{filter:invert(1);}
 html.theme-light .music-panel iframe{filter:invert(1);}
 
@@ -456,6 +460,7 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 .auth-error{font-size:11px;color:#f0f0f0;text-align:center;margin-top:8px;min-height:14px;}
 .logout-btn{font-size:9px;color:var(--muted3);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;}
 </style>
+<script src="https://w.soundcloud.com/player/api.js"></script>
 </head>
 <body>
 
@@ -2634,20 +2639,53 @@ function initApp(){
   initViewBanners();
   wrapEmojis(document.body);
 }
+let scWidget = null;
+let scPlaying = false;
+
+function initSCWidget(){
+  const iframe = document.getElementById('sc-iframe');
+  if(!iframe || !window.SC) return;
+  scWidget = SC.Widget(iframe);
+  scWidget.bind(SC.Widget.Events.PLAY, ()=>{ scPlaying=true; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='⏸'; });
+  scWidget.bind(SC.Widget.Events.PAUSE, ()=>{ scPlaying=false; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='▶'; });
+  scWidget.bind(SC.Widget.Events.FINISH, ()=>{ scPlaying=false; const b=document.getElementById('sc-play-btn'); if(b) b.textContent='▶'; });
+}
+
 function toggleMusic(){
   const panel = document.getElementById('music-panel');
   const btn = document.getElementById('music-fab');
   const open = panel.classList.toggle('open');
   btn.textContent = open ? '✕' : '🎵';
+  if(open && !scWidget) setTimeout(initSCWidget, 300);
+}
+
+function scToggle(){
+  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.toggle(), 400); return; }
+  scWidget.toggle();
+}
+
+function scPrev(){
+  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.prev(), 400); return; }
+  scWidget.prev();
+}
+
+function scNext(){
+  if(!scWidget){ initSCWidget(); setTimeout(()=>scWidget&&scWidget.next(), 400); return; }
+  scWidget.next();
 }
 </script>
 
 <!-- LECTEUR MUSIC FLOTTANT -->
 <div class="music-fab-wrap">
   <div class="music-panel" id="music-panel">
-    <iframe allow="autoplay" scrolling="no" frameborder="no"
+    <iframe id="sc-iframe" allow="autoplay" scrolling="no" frameborder="no"
       src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/nanou972123/sets/music-private-app&color=%23e03535&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false">
     </iframe>
+    <div class="music-controls">
+      <button class="music-ctrl-btn" onclick="scPrev()" title="Précédent">⏮</button>
+      <button class="music-ctrl-btn play" id="sc-play-btn" onclick="scToggle()" title="Play / Pause">▶</button>
+      <button class="music-ctrl-btn" onclick="scNext()" title="Suivant">⏭</button>
+    </div>
   </div>
   <button class="music-fab-btn" id="music-fab" onclick="toggleMusic()" title="Musique">🎵</button>
 </div>
