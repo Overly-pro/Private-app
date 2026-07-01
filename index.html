@@ -351,14 +351,31 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .money-summary-reste{font-size:15px;font-weight:800;color:var(--text);padding-top:10px;}
 
 /* HABITUDES */
-.habit-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.habit-row{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
 .habit-row:last-child{border-bottom:none;}
-.habit-check{width:26px;height:26px;flex-shrink:0;border-radius:8px;border:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;transition:all .2s;font-size:13px;}
+.habit-check{width:28px;height:28px;flex-shrink:0;border-radius:8px;border:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;transition:all .2s;font-size:13px;margin-top:1px;}
 .habit-check.done{background:linear-gradient(135deg,var(--accent2),var(--accent));border-color:transparent;}
-.habit-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
-.habit-streak{font-size:10px;font-weight:700;color:var(--accent);background:rgba(224,53,53,0.12);border-radius:20px;padding:3px 8px;white-space:nowrap;}
-.habit-add-row{display:flex;gap:8px;margin-top:10px;}
-.habit-add-row input{flex:1;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;}
+.habit-info{flex:1;min-width:0;}
+.habit-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.habit-consequence{font-size:10.5px;color:#e03535;font-weight:600;margin-top:3px;}
+.habit-streak{font-size:10px;font-weight:700;color:var(--accent);background:rgba(224,53,53,0.12);border-radius:20px;padding:3px 8px;white-space:nowrap;flex-shrink:0;margin-top:3px;}
+.habit-add-form{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+.habit-add-form input{background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;width:100%;}
+.habit-rec-item{background:#0d0d0d;border:1px solid var(--border2);border-radius:10px;padding:10px 13px;cursor:pointer;transition:border-color .2s;margin-bottom:6px;}
+.habit-rec-item:hover{border-color:var(--accent);}
+.habit-rec-name{font-size:12px;font-weight:700;color:var(--text);}
+.habit-rec-consequence{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.habit-rec-add{font-size:10px;font-weight:700;color:var(--accent);margin-top:5px;}
+.habit-rec-cat{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:10px;margin-bottom:4px;}
+.night-banner{background:rgba(255,200,0,0.07);border:1px solid rgba(255,200,0,0.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.night-banner-txt{font-size:11.5px;color:#ccaa00;flex:1;}
+.night-banner-btn{font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid rgba(255,200,0,0.35);background:rgba(255,200,0,0.1);color:#ccaa00;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.habit-refdate-banner{background:rgba(255,200,0,0.1);border:1px solid rgba(255,200,0,0.3);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.habit-refdate-txt{font-size:11.5px;font-weight:700;color:#d4a800;}
+html.theme-light .habit-consequence{color:#b81f1f;}
+html.theme-light .night-banner{background:rgba(0,55,55,0.07);border-color:rgba(0,55,55,0.2);}
+html.theme-light .night-banner-txt,.theme-light .habit-refdate-txt{color:#006666;}
+html.theme-light .night-banner-btn{border-color:rgba(0,55,55,0.35);background:rgba(0,55,55,0.1);color:#006666;}
 @keyframes stat-pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .stat-val{animation:stat-pop .4s ease;}
 /* VENTES */
@@ -1142,17 +1159,26 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 <div class="view" id="view-habitudes">
   <img class="view-banner" id="banner-habitudes" alt="">
 
+  <div id="habit-night-banner"></div>
+
   <div class="card">
-    <div class="card-title">🔥 Mes habitudes du jour <div class="line"></div></div>
+    <div class="card-title">🔥 Habitudes du jour <div class="line"></div></div>
     <div id="habits-list"></div>
-    <div class="habit-add-row">
-      <input type="text" id="habit-new-name" placeholder="Nouvelle habitude (ex. Boire 2L d'eau)">
-      <button class="btn-primary" style="padding:8px 14px;white-space:nowrap;" onclick="addHabit()">+ Ajouter</button>
+    <div class="habit-add-form">
+      <input type="text" id="habit-new-name" placeholder="Nom de l'habitude (ex: Poster 1 annonce)">
+      <input type="text" id="habit-new-consequence" placeholder="Conséquence si non faite (ex: Pas de Netflix ce soir)">
+      <button class="btn-primary" onclick="addHabit()">+ Ajouter</button>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">🏆 Mes records de streaks <div class="line"></div></div>
+    <div class="card-title">⚡ Habitudes recommandées <div class="line"></div></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Sélectionnées pour tes projets. Clique pour ajouter instantanément.</div>
+    <div id="habits-recommended"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 Records de streaks <div class="line"></div></div>
     <div id="habits-streaks"></div>
   </div>
 </div>
@@ -1992,64 +2018,136 @@ const HABITS_KEY = 'habits_data';
 const HABITS_STATE_KEY = 'habits_state';
 let habitsData = [];
 let habitsState = {};
+let habitRefDate = todayISO();
+
+const RECOMMENDED_HABITS = [
+  { cat:'💰 Vente de chaussures', name:'Poster 1 annonce ou story sur les chaussures', consequence:'Pas de Netflix / séries ce soir' },
+  { cat:'💰 Vente de chaussures', name:'Répondre à tous les messages acheteurs dans la journée', consequence:'1h en moins sur les réseaux demain' },
+  { cat:'💰 Vente de chaussures', name:'Identifier 1 nouveau lot ou opportunité de revente', consequence:'Pas de musique pendant les trajets demain' },
+  { cat:'🧠 Mindset', name:'Écouter 20 min de podcast business ou mindset', consequence:'Pas de TikTok / Reels pendant 24h' },
+  { cat:'🧠 Mindset', name:'Écrire 3 victoires de la journée dans mon journal', consequence:'Pas de réseaux sociaux avant 12h demain' },
+  { cat:'🧠 Mindset', name:'Visualiser ma version 2.0 pendant 5 minutes', consequence:'Pas de grignotage non planifié aujourd\'hui' },
+  { cat:'💪 Discipline', name:'Se lever sans snooze', consequence:'Pas de téléphone dans le lit le soir' },
+  { cat:'💪 Discipline', name:'Préparer demain la veille (tâches + tenue)', consequence:'Coucher 30 min plus tard = fatigue assumée' },
+  { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain' },
+  { cat:'📚 Compétences', name:'Étudier 1 créatrice de bijoux : prix, photos, comment elle vend', consequence:'Pas de série avant d\'avoir étudié' },
+  { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé' },
+  { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction jusqu\'à ce que ce soit fait' },
+];
+
+function initNightBanner(){
+  const banner = document.getElementById('habit-night-banner');
+  if(!banner) return;
+  const isNightMode = habitRefDate !== todayISO();
+  if(isNightMode){
+    banner.innerHTML = `<div class="habit-refdate-banner"><span class="habit-refdate-txt">📅 Mode nuit — tu valides pour ${habitRefDate}</span><button class="night-banner-btn" onclick="resetNightMode()">↩ Revenir à aujourd'hui</button></div>`;
+  } else if(new Date().getHours() < 5){
+    banner.innerHTML = `<div class="night-banner"><span class="night-banner-txt">🌙 Tu rentres tard du KFC ? Valide tes habitudes pour hier sans casser ta streak.</span><button class="night-banner-btn" onclick="setNightMode()">Valider pour hier</button></div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+}
+function setNightMode(){
+  const d = new Date(); d.setDate(d.getDate()-1);
+  habitRefDate = d.toISOString().slice(0,10);
+  initNightBanner(); renderHabits();
+}
+function resetNightMode(){
+  habitRefDate = todayISO();
+  initNightBanner(); renderHabits();
+}
+
 function renderHabits(){
   const list = document.getElementById('habits-list');
   const streaks = document.getElementById('habits-streaks');
-  const today = todayISO();
+  const today = habitRefDate;
   if(!habitsData.length){
-    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:8px 0;">Ajoute ta première habitude ci-dessous.</div>';
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:8px 0;">Ajoute ta première habitude ou choisis dans les recommandations ci-dessous.</div>';
     streaks.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;">Aucune habitude enregistrée.</div>';
     return;
   }
   list.innerHTML = habitsData.map((h,i)=>{
     const done = !!(habitsState[today] && habitsState[today][i]);
+    const consq = h.consequence || '';
     return `<div class="habit-row">
       <div class="habit-check ${done?'done':''}" onclick="toggleHabit(${i})">${done?'✓':''}</div>
-      <div class="habit-name">${escapeHtml(h.name)}</div>
+      <div class="habit-info">
+        <div class="habit-name">${escapeHtml(h.name)}</div>
+        ${consq && !done ? `<div class="habit-consequence">⚠️ ${escapeHtml(consq)}</div>` : ''}
+      </div>
       <div class="habit-streak">🔥 ${calcStreak(i)} j</div>
-      <button class="vente-del" onclick="removeHabit(${i})">✕</button>
+      <button class="vente-del" onclick="removeHabit(${i})" style="margin-left:4px;flex-shrink:0;">✕</button>
     </div>`;
   }).join('');
   streaks.innerHTML = habitsData.map((h,i)=>`
-    <div class="habit-row">
-      <div class="habit-name">${escapeHtml(h.name)}</div>
-      <div class="habit-streak">🔥 ${calcStreak(i)} jours consécutifs · record ${h.best||0}j</div>
+    <div class="habit-row" style="align-items:center;">
+      <div class="habit-info"><div class="habit-name">${escapeHtml(h.name)}</div></div>
+      <div class="habit-streak">🔥 ${calcStreak(i)} j · record ${h.best||0}j</div>
     </div>`).join('');
 }
+function renderRecommendedHabits(){
+  const wrap = document.getElementById('habits-recommended');
+  if(!wrap) return;
+  const existing = new Set(habitsData.map(h=>h.name));
+  const notAdded = RECOMMENDED_HABITS.filter(r=>!existing.has(r.name));
+  if(!notAdded.length){
+    wrap.innerHTML='<div style="font-size:12px;color:var(--muted3);font-style:italic;">Toutes les habitudes recommandées sont déjà ajoutées 🎉</div>';
+    return;
+  }
+  let lastCat='';
+  wrap.innerHTML = notAdded.map(r=>{
+    let h='';
+    if(r.cat!==lastCat){ h=`<div class="habit-rec-cat">${r.cat}</div>`; lastCat=r.cat; }
+    return h+`<div class="habit-rec-item" onclick="addRecommendedHabit(${JSON.stringify(r.name)},${JSON.stringify(r.consequence)})">
+      <div class="habit-rec-name">${escapeHtml(r.name)}</div>
+      <div class="habit-rec-consequence">⚠️ Si non faite : ${escapeHtml(r.consequence)}</div>
+      <div class="habit-rec-add">+ Ajouter</div>
+    </div>`;
+  }).join('');
+}
 function calcStreak(idx){
-  let streak = 0;
-  const d = new Date(); d.setHours(0,0,0,0);
+  let streak=0;
+  const d=new Date(habitRefDate); d.setHours(0,0,0,0);
   while(true){
-    const key = d.toISOString().slice(0,10);
-    if(habitsState[key] && habitsState[key][idx]) streak++;
+    const key=d.toISOString().slice(0,10);
+    if(habitsState[key]&&habitsState[key][idx]) streak++;
     else break;
     d.setDate(d.getDate()-1);
   }
   return streak;
 }
 function toggleHabit(idx){
-  const today = todayISO();
-  if(!habitsState[today]) habitsState[today] = {};
-  habitsState[today][idx] = !habitsState[today][idx];
-  const streak = calcStreak(idx);
-  if(streak > (habitsData[idx].best||0)) habitsData[idx].best = streak;
-  saveKey(HABITS_KEY, JSON.stringify(habitsData));
-  saveKey(HABITS_STATE_KEY, JSON.stringify(habitsState));
+  const today=habitRefDate;
+  if(!habitsState[today]) habitsState[today]={};
+  habitsState[today][idx]=!habitsState[today][idx];
+  const streak=calcStreak(idx);
+  if(streak>(habitsData[idx].best||0)) habitsData[idx].best=streak;
+  saveKey(HABITS_KEY,JSON.stringify(habitsData));
+  saveKey(HABITS_STATE_KEY,JSON.stringify(habitsState));
   renderHabits();
 }
 function addHabit(){
-  const inp = document.getElementById('habit-new-name');
-  const name = inp.value.trim();
+  const nameInp=document.getElementById('habit-new-name');
+  const consqInp=document.getElementById('habit-new-consequence');
+  const name=nameInp.value.trim();
   if(!name) return;
-  habitsData.push({name, best:0});
-  saveKey(HABITS_KEY, JSON.stringify(habitsData));
-  inp.value = '';
-  renderHabits();
+  const consequence=consqInp?consqInp.value.trim():'';
+  habitsData.push({name,consequence,best:0});
+  saveKey(HABITS_KEY,JSON.stringify(habitsData));
+  nameInp.value=''; if(consqInp) consqInp.value='';
+  renderHabits(); renderRecommendedHabits();
+}
+function addRecommendedHabit(name,consequence){
+  if(habitsData.find(h=>h.name===name)){ showToast('Déjà dans tes habitudes'); return; }
+  habitsData.push({name,consequence,best:0});
+  saveKey(HABITS_KEY,JSON.stringify(habitsData));
+  renderHabits(); renderRecommendedHabits();
+  showToast('✅ Habitude ajoutée !');
 }
 function removeHabit(idx){
   habitsData.splice(idx,1);
-  saveKey(HABITS_KEY, JSON.stringify(habitsData));
-  renderHabits();
+  saveKey(HABITS_KEY,JSON.stringify(habitsData));
+  renderHabits(); renderRecommendedHabits();
 }
 
 /* ============ VENTES ============ */
@@ -2400,7 +2498,9 @@ function initApp(){
   loadMindsetToday();
   document.getElementById('m-vision').value = loadKey(MINDSET_VISION_KEY) || '';
   // habitudes
+  initNightBanner();
   renderHabits();
+  renderRecommendedHabits();
   // ventes
   renderVentes();
   // objectifs hebdo + résumé
