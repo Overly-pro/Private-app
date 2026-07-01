@@ -2125,14 +2125,14 @@ function renderHabits(){
         <div class="habit-name">${escapeHtml(h.name)}</div>
         ${consq && !done ? `<div class="habit-consequence">⚠️ ${escapeHtml(consq)}</div>` : ''}
       </div>
-      <div class="habit-streak">🔥 ${calcStreak(i)} j</div>
+      <div class="habit-streak">${calcStreak(i)>0?'🔥 '+calcStreak(i)+' j':'—'}</div>
       <button class="vente-del" onclick="removeHabit(${i})" style="margin-left:4px;flex-shrink:0;">✕</button>
     </div>`;
   }).join('');
   streaks.innerHTML = habitsData.map((h,i)=>`
     <div class="habit-row" style="align-items:center;">
       <div class="habit-info"><div class="habit-name">${escapeHtml(h.name)}</div></div>
-      <div class="habit-streak">🔥 ${calcStreak(i)} j · record ${h.best||0}j</div>
+      <div class="habit-streak">${calcStreak(i)>0?'🔥 '+calcStreak(i)+' j · record '+(h.best||0)+'j':'À démarrer'}</div>
     </div>`).join('');
 }
 let _recMap = {};
@@ -2212,13 +2212,6 @@ function addHabit(){
   nameInp.value=''; if(consqInp) consqInp.value='';
   renderHabits(); renderRecommendedHabits();
   showToast('🔥 Habitude ajoutée !');
-}
-function addRecommendedHabit(name,consequence){
-  if(habitsData.find(h=>h.name===name)){ showToast('Déjà dans tes habitudes'); return; }
-  habitsData.push({name,consequence,best:0});
-  saveKey(HABITS_KEY,JSON.stringify(habitsData));
-  renderHabits(); renderRecommendedHabits();
-  showToast('✅ Habitude ajoutée !');
 }
 function removeHabit(idx){
   habitsData.splice(idx,1);
@@ -2579,6 +2572,7 @@ function initApp(){
   if(!salairesData.depenses) salairesData.depenses = [];
   mindsetEntries = JSON.parse(loadKey(MINDSET_CHECKIN_KEY) || '{}');
   habitsData = JSON.parse(loadKey(HABITS_KEY) || '[]');
+  habitsData = habitsData.filter(h => h && typeof h.name === 'string' && h.name.trim() !== '');
   habitsState = JSON.parse(loadKey(HABITS_STATE_KEY) || '{}');
   ventesData = JSON.parse(loadKey(VENTES_KEY) || '{}');
   if(!ventesData.bijoux) ventesData.bijoux = [];
