@@ -102,7 +102,7 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .yt-detail-btn.danger{border-color:#333;color:#555;}
 .yt-detail-btn.danger:hover{border-color:#e03535;color:#e03535;}
 .yt-section-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:16px;}
-.yt-detail-ta{width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:10px;color:var(--text);font-size:14px;padding:13px 15px;font-family:inherit;resize:vertical;line-height:1.65;}
+.yt-detail-ta{width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:10px;color:var(--text);font-size:14px;padding:13px 15px;font-family:inherit;resize:none;line-height:1.65;overflow:hidden;min-height:52px;display:block;}
 
 /* CARD base */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;}
@@ -2267,6 +2267,7 @@ function renderYtNotes(){
       </div>
     </div>`).join('');
 }
+function ytAutoResize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
 function openYtDetail(i){
   const n = ytNotes[i];
   document.getElementById('yt-add-section').style.display = 'none';
@@ -2284,14 +2285,15 @@ function openYtDetail(i){
       <button class="yt-detail-btn danger" onclick="confirmRemoveYt(${i})">🗑 Supprimer</button>
     </div>
     <div class="yt-section-label">📌 Résumé</div>
-    <textarea class="yt-detail-ta" rows="5" placeholder="Résumé de la vidéo en quelques phrases..." oninput="ytNotes[${i}].resume=this.value">${escapeHtml(n.resume||'')}</textarea>
+    <textarea class="yt-detail-ta" placeholder="Résumé de la vidéo en quelques phrases..." oninput="ytNotes[${i}].resume=this.value;ytAutoResize(this)">${escapeHtml(n.resume||'')}</textarea>
     <div class="yt-section-label">💡 Points essentiels</div>
-    <textarea class="yt-detail-ta" rows="7" placeholder="• Point 1&#10;• Point 2&#10;• Point 3..." oninput="ytNotes[${i}].points=this.value">${escapeHtml(n.points||'')}</textarea>
+    <textarea class="yt-detail-ta" placeholder="• Point 1&#10;• Point 2&#10;• Point 3..." oninput="ytNotes[${i}].points=this.value;ytAutoResize(this)">${escapeHtml(n.points||'')}</textarea>
     <div class="yt-section-label">✅ Actions à prendre</div>
-    <textarea class="yt-detail-ta" rows="5" placeholder="Ce que je vais appliquer concrètement..." oninput="ytNotes[${i}].actions=this.value">${escapeHtml(n.actions||'')}</textarea>
+    <textarea class="yt-detail-ta" placeholder="Ce que je vais appliquer concrètement..." oninput="ytNotes[${i}].actions=this.value;ytAutoResize(this)">${escapeHtml(n.actions||'')}</textarea>
     <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="saveYtNote(${i})">💾 Enregistrer les notes</button>
   `;
   window.scrollTo(0,0);
+  requestAnimationFrame(()=>{ panel.querySelectorAll('.yt-detail-ta').forEach(ta=>ytAutoResize(ta)); });
 }
 function closeYtDetail(){
   document.getElementById('yt-detail-panel').style.display = 'none';
