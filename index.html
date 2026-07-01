@@ -19,7 +19,7 @@
 :root{
   --bg:#070707; --surface:#111111; --surface2:#131313; --border:#1f1f1f; --border2:#242424;
   --text:#f0f0f0; --muted:#888888; --muted2:#707070; --muted3:#333333;
-  --accent:#ffffff; --accent2:#cccccc; --gold:#e0e0e0; --orange:#999999;
+  --accent:#c9a84c; --accent2:#a07830; --gold:#c9a84c; --orange:#c9a84c;
   --blue:#bbbbbb; --green:#ffffff; --red:#ffffff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -108,7 +108,7 @@ html.theme-light .view-banner{ filter:invert(1); }
 .nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:none;color:var(--muted3);padding:11px 2px;border-radius:12px;cursor:pointer;font-family:inherit;transition:color .2s,background .2s;}
 .nav-btn .ic{font-size:21px;line-height:1;}
 .nav-btn .lb{font-size:8.5px;font-weight:600;letter-spacing:.3px;text-align:center;line-height:1.2;}
-.nav-btn.active{color:var(--accent);background:rgba(255,255,255,0.08);}
+.nav-btn.active{color:var(--accent);background:rgba(201,168,76,0.14);}
 @media (max-width:480px){
   .side-nav{width:62px;padding:14px 4px calc(14px + env(safe-area-inset-bottom));}
   .nav-btn .ic{font-size:19px;}
@@ -314,6 +314,54 @@ html.theme-light .view-banner{ filter:invert(1); }
 .money-summary-row:last-child{border-bottom:none;}
 .money-summary-reste{font-size:15px;font-weight:800;color:var(--text);padding-top:10px;}
 
+/* HABITUDES */
+.habit-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.habit-row:last-child{border-bottom:none;}
+.habit-check{width:26px;height:26px;flex-shrink:0;border-radius:8px;border:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;transition:all .2s;font-size:13px;}
+.habit-check.done{background:linear-gradient(135deg,var(--accent2),var(--accent));border-color:transparent;}
+.habit-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.habit-streak{font-size:10px;font-weight:700;color:var(--accent);background:rgba(201,168,76,0.12);border-radius:20px;padding:3px 8px;white-space:nowrap;}
+.habit-add-row{display:flex;gap:8px;margin-top:10px;}
+.habit-add-row input{flex:1;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;}
+@keyframes stat-pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.stat-val{animation:stat-pop .4s ease;}
+/* VENTES */
+.ventes-subtabs{display:flex;gap:6px;margin-bottom:14px;}
+.ventes-subtab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.ventes-subtab.active{background:rgba(201,168,76,0.12);border-color:var(--accent);color:var(--accent);}
+.vente-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
+.vente-row:last-child{border-bottom:none;}
+.vente-nom{flex:1;font-size:13px;color:var(--text);}
+.vente-prix{font-size:13px;font-weight:700;color:var(--accent);min-width:60px;text-align:right;}
+.vente-del{background:none;border:none;color:var(--muted3);cursor:pointer;font-size:14px;padding:4px;}
+.vente-del:hover{color:#ffffff;}
+.ventes-bilan{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.ventes-kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.ventes-kpi-val{font-size:17px;font-weight:900;color:var(--accent);}
+.ventes-kpi-lbl{font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
+.calc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.calc-row label{font-size:12px;color:var(--muted2);width:140px;flex-shrink:0;}
+.calc-input{flex:1;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit;}
+.calc-result{background:rgba(201,168,76,0.1);border:1px solid var(--accent);border-radius:10px;padding:12px;text-align:center;margin-top:10px;}
+.calc-result-val{font-size:22px;font-weight:900;color:var(--accent);}
+.calc-result-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+/* OBJECTIFS HEBDO */
+.obj-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.obj-row:last-child{border-bottom:none;}
+.obj-check{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;font-size:11px;transition:all .2s;}
+.obj-check.done{background:linear-gradient(135deg,var(--accent2),var(--accent));border-color:transparent;}
+.obj-input{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+.obj-input::placeholder{color:var(--muted3);}
+/* RÉSUMÉ HEBDO */
+.hebdo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.hebdo-kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.hebdo-kpi-val{font-size:19px;font-weight:900;color:var(--text);}
+.hebdo-kpi-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;letter-spacing:.5px;line-height:1.3;}
+/* NOTIF BANNER */
+.notif-banner{background:rgba(201,168,76,0.1);border:1px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.notif-banner-txt{font-size:12px;color:var(--muted2);flex:1;}
+.notif-banner-btn{flex-shrink:0;background:rgba(201,168,76,0.15);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-overlay.hidden{display:none;}
@@ -354,6 +402,8 @@ html.theme-light .view-banner{ filter:invert(1); }
   <button class="nav-btn" data-view="goal" onclick="goTo('goal')"><span class="ic">💰</span><span class="lb">Objectif</span></button>
   <button class="nav-btn" data-view="salaires" onclick="goTo('salaires')"><span class="ic">💶</span><span class="lb">Salaires</span></button>
   <button class="nav-btn" data-view="planning" onclick="goTo('planning')"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
+  <button class="nav-btn" data-view="ventes" onclick="goTo('ventes')"><span class="ic">🛍️</span><span class="lb">Ventes</span></button>
+  <button class="nav-btn" data-view="habitudes" onclick="goTo('habitudes')"><span class="ic">🔥</span><span class="lb">Habitudes</span></button>
   <button class="nav-btn" data-view="plan30" onclick="goTo('plan30')"><span class="ic">🎥</span><span class="lb">Plan 30j</span></button>
   <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
   <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
@@ -424,6 +474,21 @@ html.theme-light .view-banner{ filter:invert(1); }
   <div class="card" style="cursor:pointer;" onclick="goTo('goal');showSubtab('goal','hill')">
     <div class="card-title">✨ Rappel — Déclaration Hill <div class="line"></div></div>
     <div style="font-size:12px;color:#bbbbbb;line-height:1.6;font-style:italic;">« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. » <span style="color:var(--accent);font-style:normal;">Lire en entier →</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Bilan de la semaine <div class="line"></div></div>
+    <div class="hebdo-grid">
+      <div class="hebdo-kpi"><div class="hebdo-kpi-val" id="hebdo-taches">—</div><div class="hebdo-kpi-lbl">tâches aujourd'hui</div></div>
+      <div class="hebdo-kpi"><div class="hebdo-kpi-val" id="hebdo-sommeil">—</div><div class="hebdo-kpi-lbl">sommeil moy. 7j</div></div>
+      <div class="hebdo-kpi"><div class="hebdo-kpi-val" id="hebdo-mindset">—</div><div class="hebdo-kpi-lbl">mindset moy. 7j</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🗓️ Mes objectifs de la semaine <div class="line"></div></div>
+    <div id="obj-hebdo-list"></div>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveObjHebdo()">💾 Enregistrer</button>
   </div>
 
 </div>
@@ -572,6 +637,15 @@ html.theme-light .view-banner{ filter:invert(1); }
     <div class="card-title">🎯 Visualisation & Focus — Ma marque de bijoux <div class="line"></div></div>
     <textarea id="m-vision" placeholder="Décris ta vision : à quoi ressemble le succès de ta marque de bijoux ? Comment tu te sens quand elle décolle ? Sois précis(e), ressens-le comme si c'était déjà vrai..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:120px;resize:vertical;"></textarea>
     <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveMindsetVision()">💾 Enregistrer ma vision</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 Capture d'idées — bijoux &amp; business <div class="line"></div></div>
+    <div id="idees-list" style="margin-bottom:8px;"></div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="idee-input" placeholder="Une idée de collection, de post, de client..." style="flex:1;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;" onkeydown="if(event.key==='Enter')addIdee()">
+      <button class="btn-primary" style="padding:8px 14px;" onclick="addIdee()">+</button>
+    </div>
   </div>
 </div>
 
@@ -954,6 +1028,101 @@ html.theme-light .view-banner{ filter:invert(1); }
   </div>
 </div>
 
+<!-- ============ VIEW: VENTES ============ -->
+<div class="view" id="view-ventes">
+  <img class="view-banner" id="banner-ventes" alt="">
+
+  <div class="ventes-subtabs">
+    <button class="ventes-subtab active" data-vt="bijoux" onclick="showVentesTab('bijoux')">💍 Bijoux</button>
+    <button class="ventes-subtab" data-vt="chaussures" onclick="showVentesTab('chaussures')">👟 Chaussures</button>
+    <button class="ventes-subtab" data-vt="calc" onclick="showVentesTab('calc')">🧮 Prix</button>
+  </div>
+
+  <!-- Bijoux -->
+  <div id="vt-bijoux">
+    <div class="card">
+      <div class="card-title">💍 Ventes bijoux <div class="line"></div></div>
+      <div id="ventes-bijoux-list"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <input type="text" id="vb-nom" placeholder="Nom de l'article" style="flex:2;min-width:120px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
+        <input type="number" id="vb-prix" placeholder="Prix €" style="flex:1;min-width:70px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
+        <button class="btn-primary" style="padding:8px 14px;" onclick="addVente('bijoux')">+ Ajouter</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Bilan bijoux <div class="line"></div></div>
+      <div class="ventes-bilan">
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-nb">0</div><div class="ventes-kpi-lbl">ventes</div></div>
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-total">0 €</div><div class="ventes-kpi-lbl">total encaissé</div></div>
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-moy">0 €</div><div class="ventes-kpi-lbl">panier moyen</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chaussures -->
+  <div id="vt-chaussures" style="display:none;">
+    <div class="card">
+      <div class="card-title">💰 Coût du lot <div class="line"></div></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="font-size:12px;color:var(--muted2);white-space:nowrap;">Prix payé pour le lot (€)</label>
+        <input type="number" id="vc-lot" placeholder="Ex. 80" style="flex:1;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit;" oninput="recalcVentes('chaussures')">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👟 Ventes chaussures <div class="line"></div></div>
+      <div id="ventes-chaussures-list"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <input type="text" id="vc-nom" placeholder="Modèle / pointure" style="flex:2;min-width:120px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
+        <input type="number" id="vc-prix" placeholder="Prix €" style="flex:1;min-width:70px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
+        <button class="btn-primary" style="padding:8px 14px;" onclick="addVente('chaussures')">+ Ajouter</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Bilan chaussures <div class="line"></div></div>
+      <div class="ventes-bilan">
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-nb">0</div><div class="ventes-kpi-lbl">paires vendues</div></div>
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-total">0 €</div><div class="ventes-kpi-lbl">total encaissé</div></div>
+        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-profit">0 €</div><div class="ventes-kpi-lbl">bénéfice net</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculateur prix -->
+  <div id="vt-calc" style="display:none;">
+    <div class="card">
+      <div class="card-title">🧮 Calculateur de prix de vente <div class="line"></div></div>
+      <div class="calc-row"><label>Coût des matériaux (€)</label><input type="number" class="calc-input" id="calc-cout" placeholder="Ex. 12" oninput="calcPrix()"></div>
+      <div class="calc-row"><label>Temps passé (heures)</label><input type="number" class="calc-input" id="calc-temps" placeholder="Ex. 2" oninput="calcPrix()"></div>
+      <div class="calc-row"><label>Valeur heure travail (€)</label><input type="number" class="calc-input" id="calc-taux" placeholder="Ex. 15" oninput="calcPrix()"></div>
+      <div class="calc-row"><label>Marge souhaitée (%)</label><input type="number" class="calc-input" id="calc-marge" placeholder="Ex. 50" oninput="calcPrix()"></div>
+      <div class="calc-result" id="calc-result" style="display:none;">
+        <div class="calc-result-val" id="calc-prix-final">—</div>
+        <div class="calc-result-lbl">prix de vente recommandé</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;" id="calc-detail">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VIEW: HABITUDES ============ -->
+<div class="view" id="view-habitudes">
+  <img class="view-banner" id="banner-habitudes" alt="">
+
+  <div class="card">
+    <div class="card-title">🔥 Mes habitudes du jour <div class="line"></div></div>
+    <div id="habits-list"></div>
+    <div class="habit-add-row">
+      <input type="text" id="habit-new-name" placeholder="Nouvelle habitude (ex. Boire 2L d'eau)">
+      <button class="btn-primary" style="padding:8px 14px;white-space:nowrap;" onclick="addHabit()">+ Ajouter</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 Mes records de streaks <div class="line"></div></div>
+    <div id="habits-streaks"></div>
+  </div>
+</div>
+
 </div><!-- /app-shell -->
 
 <div class="toast" id="toast"></div>
@@ -1066,6 +1235,8 @@ const VIEW_GIFS = {
   mindset: ['vibe-9', 'vibe-13', 'vibe-19'],
   goal: ['vibe-3', 'vibe-14', 'vibe-15'],
   salaires: ['vibe-6', 'vibe-9', 'vibe-22'],
+  ventes: ['vibe-1', 'vibe-6', 'vibe-22'],
+  habitudes: ['vibe-2', 'vibe-11', 'vibe-20'],
   planning: ['vibe-4', 'vibe-16'],
   plan30: ['vibe-5', 'vibe-17'],
   sleep: ['vibe-7', 'vibe-18', 'vibe-19'],
@@ -1709,6 +1880,243 @@ function saveSalaires(){
   showToast('💾 Bilan enregistré');
 }
 
+/* ============ HABITUDES ============ */
+const HABITS_KEY = 'habits_data';
+const HABITS_STATE_KEY = 'habits_state';
+let habitsData = [];
+let habitsState = {};
+function renderHabits(){
+  const list = document.getElementById('habits-list');
+  const streaks = document.getElementById('habits-streaks');
+  const today = todayISO();
+  if(!habitsData.length){
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:8px 0;">Ajoute ta première habitude ci-dessous.</div>';
+    streaks.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;">Aucune habitude enregistrée.</div>';
+    return;
+  }
+  list.innerHTML = habitsData.map((h,i)=>{
+    const done = !!(habitsState[today] && habitsState[today][i]);
+    return `<div class="habit-row">
+      <div class="habit-check ${done?'done':''}" onclick="toggleHabit(${i})">${done?'✓':''}</div>
+      <div class="habit-name">${escapeHtml(h.name)}</div>
+      <div class="habit-streak">🔥 ${calcStreak(i)} j</div>
+      <button class="vente-del" onclick="removeHabit(${i})">✕</button>
+    </div>`;
+  }).join('');
+  streaks.innerHTML = habitsData.map((h,i)=>`
+    <div class="habit-row">
+      <div class="habit-name">${escapeHtml(h.name)}</div>
+      <div class="habit-streak">🔥 ${calcStreak(i)} jours consécutifs · record ${h.best||0}j</div>
+    </div>`).join('');
+}
+function calcStreak(idx){
+  let streak = 0;
+  const d = new Date(); d.setHours(0,0,0,0);
+  while(true){
+    const key = d.toISOString().slice(0,10);
+    if(habitsState[key] && habitsState[key][idx]) streak++;
+    else break;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function toggleHabit(idx){
+  const today = todayISO();
+  if(!habitsState[today]) habitsState[today] = {};
+  habitsState[today][idx] = !habitsState[today][idx];
+  const streak = calcStreak(idx);
+  if(streak > (habitsData[idx].best||0)) habitsData[idx].best = streak;
+  saveKey(HABITS_KEY, JSON.stringify(habitsData));
+  saveKey(HABITS_STATE_KEY, JSON.stringify(habitsState));
+  renderHabits();
+}
+function addHabit(){
+  const inp = document.getElementById('habit-new-name');
+  const name = inp.value.trim();
+  if(!name) return;
+  habitsData.push({name, best:0});
+  saveKey(HABITS_KEY, JSON.stringify(habitsData));
+  inp.value = '';
+  renderHabits();
+}
+function removeHabit(idx){
+  habitsData.splice(idx,1);
+  saveKey(HABITS_KEY, JSON.stringify(habitsData));
+  renderHabits();
+}
+
+/* ============ VENTES ============ */
+const VENTES_KEY = 'ventes_data';
+let ventesData = { bijoux:[], chaussures:{ lot:0, items:[] } };
+function showVentesTab(tab){
+  ['bijoux','chaussures','calc'].forEach(t=>{
+    document.getElementById('vt-'+t).style.display = t===tab ? '' : 'none';
+    document.querySelector('.ventes-subtab[data-vt="'+t+'"]').classList.toggle('active', t===tab);
+  });
+}
+function renderVentes(){
+  renderVentesList('bijoux');
+  renderVentesList('chaussures');
+  const lot = ventesData.chaussures.lot || 0;
+  document.getElementById('vc-lot').value = lot || '';
+}
+function renderVentesList(type){
+  const items = type==='bijoux' ? ventesData.bijoux : ventesData.chaussures.items;
+  const listEl = document.getElementById('ventes-'+type+'-list');
+  if(!items.length){ listEl.innerHTML='<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:6px 0;">Aucune vente enregistrée.</div>'; }
+  else {
+    listEl.innerHTML = items.map((v,i)=>`<div class="vente-row">
+      <div class="vente-nom">${escapeHtml(v.nom)}</div>
+      <div class="vente-prix">+${v.prix.toFixed(2)} €</div>
+      <button class="vente-del" onclick="removeVente('${type}',${i})">✕</button>
+    </div>`).join('');
+  }
+  recalcVentes(type);
+}
+function addVente(type){
+  const nom = document.getElementById(type==='bijoux'?'vb-nom':'vc-nom').value.trim();
+  const prix = parseFloat(document.getElementById(type==='bijoux'?'vb-prix':'vc-prix').value)||0;
+  if(!nom||!prix) return;
+  if(type==='bijoux') ventesData.bijoux.push({nom,prix,date:todayISO()});
+  else ventesData.chaussures.items.push({nom,prix,date:todayISO()});
+  saveKey(VENTES_KEY, JSON.stringify(ventesData));
+  document.getElementById(type==='bijoux'?'vb-nom':'vc-nom').value='';
+  document.getElementById(type==='bijoux'?'vb-prix':'vc-prix').value='';
+  renderVentesList(type);
+}
+function removeVente(type,idx){
+  if(type==='bijoux') ventesData.bijoux.splice(idx,1);
+  else ventesData.chaussures.items.splice(idx,1);
+  saveKey(VENTES_KEY, JSON.stringify(ventesData));
+  renderVentesList(type);
+}
+function recalcVentes(type){
+  if(type==='bijoux'){
+    const items = ventesData.bijoux;
+    const total = items.reduce((s,v)=>s+v.prix,0);
+    document.getElementById('vb-nb').textContent = items.length;
+    document.getElementById('vb-total').textContent = total.toFixed(2)+' €';
+    document.getElementById('vb-moy').textContent = items.length ? (total/items.length).toFixed(2)+' €' : '0 €';
+  } else {
+    const lot = parseFloat(document.getElementById('vc-lot').value)||0;
+    ventesData.chaussures.lot = lot;
+    saveKey(VENTES_KEY, JSON.stringify(ventesData));
+    const items = ventesData.chaussures.items;
+    const total = items.reduce((s,v)=>s+v.prix,0);
+    document.getElementById('vc-nb').textContent = items.length;
+    document.getElementById('vc-total').textContent = total.toFixed(2)+' €';
+    document.getElementById('vc-profit').textContent = (total-lot).toFixed(2)+' €';
+  }
+}
+function calcPrix(){
+  const cout = parseFloat(document.getElementById('calc-cout').value)||0;
+  const temps = parseFloat(document.getElementById('calc-temps').value)||0;
+  const taux = parseFloat(document.getElementById('calc-taux').value)||0;
+  const marge = parseFloat(document.getElementById('calc-marge').value)||0;
+  const base = cout + (temps*taux);
+  if(!base){ document.getElementById('calc-result').style.display='none'; return; }
+  const prix = base * (1 + marge/100);
+  document.getElementById('calc-result').style.display='';
+  document.getElementById('calc-prix-final').textContent = prix.toFixed(2)+' €';
+  document.getElementById('calc-detail').textContent = 'Coût total: '+base.toFixed(2)+' € · Marge: +'+(prix-base).toFixed(2)+' €';
+}
+
+/* ============ OBJECTIFS HEBDO ============ */
+const OBJ_HEBDO_KEY = 'obj_hebdo';
+let objHebdo = [{txt:'',done:false},{txt:'',done:false},{txt:'',done:false},{txt:'',done:false},{txt:'',done:false}];
+function renderObjHebdo(){
+  const wrap = document.getElementById('obj-hebdo-list');
+  wrap.innerHTML = objHebdo.map((o,i)=>`<div class="obj-row">
+    <div class="obj-check ${o.done?'done':''}" onclick="toggleObj(${i})">${o.done?'✓':''}</div>
+    <input class="obj-input" type="text" placeholder="Objectif ${i+1} pour cette semaine..." value="${escapeHtml(o.txt)}" oninput="objHebdo[${i}].txt=this.value">
+  </div>`).join('');
+  renderHebdoResume();
+}
+function toggleObj(i){
+  objHebdo[i].done = !objHebdo[i].done;
+  saveKey(OBJ_HEBDO_KEY, JSON.stringify(objHebdo));
+  renderObjHebdo();
+}
+function saveObjHebdo(){
+  saveKey(OBJ_HEBDO_KEY, JSON.stringify(objHebdo));
+  showToast('💾 Objectifs enregistrés');
+}
+
+/* ============ RÉSUMÉ HEBDO ============ */
+function renderHebdoResume(){
+  const done = objHebdo.filter(o=>o.done).length;
+  const total = objHebdo.filter(o=>o.txt.trim()).length;
+  document.getElementById('hebdo-taches').textContent = done+'/'+total;
+  const sevenDays = [];
+  for(let i=0;i<7;i++){ const d=new Date(); d.setDate(d.getDate()-i); sevenDays.push(d.toISOString().slice(0,10)); }
+  const sleepVals = sevenDays.map(d=>sleepEntries[d]?.duration).filter(v=>v>0);
+  document.getElementById('hebdo-sommeil').textContent = sleepVals.length ? (sleepVals.reduce((a,b)=>a+b,0)/sleepVals.length).toFixed(1)+'h' : '—';
+  const mindsetVals = sevenDays.map(d=>mindsetEntries[d]).filter(Boolean).map(e=>(((e.confiance||0)+(e.motivation||0)+(e.energie||0))/3));
+  document.getElementById('hebdo-mindset').textContent = mindsetVals.length ? (mindsetVals.reduce((a,b)=>a+b,0)/mindsetVals.length).toFixed(1)+'/5' : '—';
+}
+
+/* ============ CAPTURE IDÉES ============ */
+const IDEES_KEY = 'idees_business';
+let ideesList = [];
+function renderIdees(){
+  const wrap = document.getElementById('idees-list');
+  if(!ideesList.length){ wrap.innerHTML='<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:4px 0;">Aucune idée capturée. Lance-toi !</div>'; return; }
+  wrap.innerHTML = ideesList.map((idea,i)=>`<div class="vente-row">
+    <div class="vente-nom" style="font-size:12.5px;">${escapeHtml(idea)}</div>
+    <button class="vente-del" onclick="removeIdee(${i})">✕</button>
+  </div>`).join('');
+}
+function addIdee(){
+  const inp = document.getElementById('idee-input');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  ideesList.unshift(txt);
+  saveKey(IDEES_KEY, JSON.stringify(ideesList));
+  inp.value = '';
+  renderIdees();
+  showToast('💡 Idée capturée !');
+}
+function removeIdee(i){
+  ideesList.splice(i,1);
+  saveKey(IDEES_KEY, JSON.stringify(ideesList));
+  renderIdees();
+}
+
+/* ============ NOTIFICATIONS ============ */
+function setupNotifications(){
+  if(!('Notification' in window)) return;
+  const now = new Date();
+  const h = now.getHours();
+  const todayKey = 'notif_shown_'+todayISO();
+  if(Notification.permission === 'granted'){
+    if(h>=7 && h<10 && !loadKey(todayKey+'_am')){
+      const doy = dayOfYear(new Date());
+      new Notification('✨ Mon Espace — Affirmation du jour', { body: MINDSET_AFFIRMATIONS[doy % MINDSET_AFFIRMATIONS.length], icon: 'brand/logo-mark-white.png' });
+      saveKey(todayKey+'_am', '1');
+    }
+    if(h>=20 && h<23 && !loadKey(todayKey+'_pm')){
+      new Notification('📓 Mon Espace — Journal du soir', { body: 'C\'est l\'heure de ton bilan de journée. Prends 5 minutes pour toi.', icon: 'brand/logo-mark-white.png' });
+      saveKey(todayKey+'_pm', '1');
+    }
+  }
+}
+function requestNotifPermission(){
+  if(!('Notification' in window)){ showToast('Notifications non supportées'); return; }
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){ showToast('🔔 Notifications activées !'); document.getElementById('notif-banner')?.remove(); }
+    else showToast('Notifications refusées');
+  });
+}
+function maybeShowNotifBanner(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'default') return;
+  const banner = document.createElement('div');
+  banner.id = 'notif-banner'; banner.className = 'notif-banner';
+  banner.innerHTML = '<div class="notif-banner-txt">🔔 Active les notifications pour recevoir ton affirmation du matin et ton rappel journal le soir.</div><button class="notif-banner-btn" onclick="requestNotifPermission()">Activer</button>';
+  const shell = document.querySelector('.app-shell');
+  shell.insertBefore(banner, shell.firstChild);
+}
+
 /* ============ INIT ============ */
 function initApp(){
   initTheme();
@@ -1721,6 +2129,14 @@ function initApp(){
   if(!salairesData.revenus) salairesData.revenus = [];
   if(!salairesData.depenses) salairesData.depenses = [];
   mindsetEntries = JSON.parse(loadKey(MINDSET_CHECKIN_KEY) || '{}');
+  habitsData = JSON.parse(loadKey(HABITS_KEY) || '[]');
+  habitsState = JSON.parse(loadKey(HABITS_STATE_KEY) || '{}');
+  ventesData = JSON.parse(loadKey(VENTES_KEY) || '{}');
+  if(!ventesData.bijoux) ventesData.bijoux = [];
+  if(!ventesData.chaussures) ventesData.chaussures = { lot:0, items:[] };
+  if(!ventesData.chaussures.items) ventesData.chaussures.items = [];
+  objHebdo = JSON.parse(loadKey(OBJ_HEBDO_KEY) || '[{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false}]');
+  ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
   // tasks
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
@@ -1754,6 +2170,17 @@ function initApp(){
   buildMindsetScale('m-energie','energie');
   loadMindsetToday();
   document.getElementById('m-vision').value = loadKey(MINDSET_VISION_KEY) || '';
+  // habitudes
+  renderHabits();
+  // ventes
+  renderVentes();
+  // objectifs hebdo + résumé
+  renderObjHebdo();
+  // idées
+  renderIdees();
+  // notifications
+  maybeShowNotifBanner();
+  setupNotifications();
   // bannières gif
   initViewBanners();
   wrapEmojis(document.body);
