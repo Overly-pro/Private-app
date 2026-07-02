@@ -30,7 +30,7 @@ body{
   display:flex; align-items:stretch;
 }
 .app-shell{
-  flex:1; min-width:0; padding:18px 14px 28px; max-width:680px; margin:0 auto;
+  flex:1; min-width:0; padding:18px 14px 96px; max-width:680px; margin:0 auto;
 }
 .mono{font-family:'Space Mono',monospace;}
 
@@ -133,23 +133,32 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .ring-pct{font-weight:900;color:#ffffff;line-height:1;}
 .ring-lbl{font-size:8px;color:var(--muted);letter-spacing:1.5px;margin-top:1px;}
 
-/* SIDE NAV (style Discord) */
-.side-nav{
-  flex-shrink:0; width:78px; background:#0a0a0a; border-right:1px solid var(--border);
-  display:flex; flex-direction:column; align-items:stretch; gap:4px;
-  padding:18px 8px calc(18px + env(safe-area-inset-bottom));
-  position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
-  z-index:50;
+/* SIDE NAV — masqué, remplacé par la bottom nav */
+.side-nav{display:none;}
+.nav-btn{display:none;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  display:flex; background:#090909;
+  border-top:1px solid var(--border2);
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
-.nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:none;color:var(--muted3);padding:11px 2px;border-radius:12px;cursor:pointer;font-family:inherit;transition:color .2s,background .2s;}
-.nav-btn .ic{font-size:21px;line-height:1;}
-.nav-btn .lb{font-size:8.5px;font-weight:600;letter-spacing:.3px;text-align:center;line-height:1.2;}
-.nav-btn.active{color:var(--accent);background:rgba(224,53,53,0.14);}
-@media (max-width:480px){
-  .side-nav{width:62px;padding:14px 4px calc(14px + env(safe-area-inset-bottom));}
-  .nav-btn .ic{font-size:19px;}
-  .nav-btn .lb{font-size:7.5px;}
+.bnav-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:10px 2px 9px; background:none; border:none; cursor:pointer;
+  font-family:inherit; color:var(--muted3); transition:color .15s;
 }
+.bnav-ic{font-size:20px; line-height:1;}
+.bnav-lb{font-size:8px; font-weight:700; letter-spacing:.4px;}
+.bnav-btn.active{color:var(--accent);}
+
+/* SECTION SUB-NAV */
+.section-subnav{display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; scrollbar-width:none;}
+.section-subnav:empty{display:none;}
+.section-subnav::-webkit-scrollbar{display:none;}
+.snav-btn{flex-shrink:0; font-size:11.5px; font-weight:700; padding:7px 16px; border-radius:20px; border:1px solid var(--border2); background:none; color:var(--muted2); cursor:pointer; font-family:inherit; transition:all .15s;}
+.snav-btn.active{background:rgba(224,53,53,0.12); border-color:var(--accent); color:var(--accent);}
 
 /* TASK CARD (checklist) */
 .section{margin-bottom:16px;}
@@ -434,7 +443,7 @@ html.theme-light .notif-sw input:checked ~ .notif-sw-track{background:rgba(31,20
 html.theme-light .notif-sw input:checked ~ .notif-sw-track:before{background:var(--accent);}
 
 /* MUSIC PLAYER FLOTTANT */
-.music-fab-wrap{position:fixed;bottom:22px;right:16px;z-index:990;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+.music-fab-wrap{position:fixed;bottom:82px;right:16px;z-index:990;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
 .music-panel{background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;width:min(310px,calc(100vw - 80px));box-shadow:0 8px 32px rgba(0,0,0,0.55);display:none;}
 .music-panel.open{display:block;animation:fadein .2s ease;}
 .music-panel iframe{width:100%;height:166px;display:block;border:none;}
@@ -513,6 +522,8 @@ html.theme-light .music-panel iframe{filter:invert(1);}
     <button class="logout-btn" onclick="authLogout()">déconnexion</button>
   </div>
 </div>
+
+<div id="section-subnav" class="section-subnav"></div>
 
 <!-- ============ VIEW: HOME ============ -->
 <div class="view active" id="view-home">
@@ -1267,6 +1278,25 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 
 <div class="toast" id="toast"></div>
 
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bnav-btn active" data-section="home" onclick="goToSection('home')">
+    <span class="bnav-ic">🏠</span><span class="bnav-lb">Accueil</span>
+  </button>
+  <button class="bnav-btn" data-section="today" onclick="goToSection('today')">
+    <span class="bnav-ic">✅</span><span class="bnav-lb">Aujourd'hui</span>
+  </button>
+  <button class="bnav-btn" data-section="argent" onclick="goToSection('argent')">
+    <span class="bnav-ic">💰</span><span class="bnav-lb">Argent</span>
+  </button>
+  <button class="bnav-btn" data-section="perso" onclick="goToSection('perso')">
+    <span class="bnav-ic">✨</span><span class="bnav-lb">Perso</span>
+  </button>
+  <button class="bnav-btn" data-section="vie" onclick="goToSection('vie')">
+    <span class="bnav-ic">🌙</span><span class="bnav-lb">Vie</span>
+  </button>
+</nav>
+
 <!-- ============ FIREBASE (cloud sync) ============ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1362,12 +1392,12 @@ auth.onAuthStateChanged(user => {
 const svState = {};
 function goTo(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('view-'+view).classList.add('active');
-  const navBtn = document.querySelector('.nav-btn[data-view="'+view+'"]');
-  if(navBtn) navBtn.classList.add('active');
+  const el = document.getElementById('view-'+view);
+  if(el) el.classList.add('active');
   rotateViewBanner(view);
   if(svState[view]) showSV(view, svState[view]);
+  const section = VIEW_TO_SECTION[view] || 'home';
+  updateSectionNav(section, view);
   window.scrollTo(0,0);
 }
 function showSV(groupId, svId){
@@ -1385,9 +1415,42 @@ function showSV(groupId, svId){
 /* ============ VUES GROUPÉES ============ */
 const GROUPS = {
   finance: { tabs:[{id:'salaires',label:'💶 Salaires'},{id:'ventes',label:'🛍️ Ventes'}] },
-  objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] },
-  routine: { tabs:[{id:'habitudes',label:'🔥 Habitudes'},{id:'planning',label:'🗓️ Planning'}] }
+  objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] }
+  // routine retiré — habitudes et planning sont des vues autonomes
 };
+
+/* ============ SECTIONS (bottom nav) ============ */
+const SECTIONS = {
+  home:   { views:['home'],                              tabs:[] },
+  today:  { views:['tasks','habitudes'],                 tabs:['✅ Tâches','🔥 Habitudes'] },
+  argent: { views:['finance','objectifs'],               tabs:['💰 Finance','🎯 Objectifs'] },
+  perso:  { views:['mindset','journal','biblio'],        tabs:['✨ Mindset','📓 Journal','📺 Biblio'] },
+  vie:    { views:['sleep','planning'],                  tabs:['😴 Sommeil','📅 Planning'] }
+};
+const VIEW_TO_SECTION = {};
+Object.entries(SECTIONS).forEach(([sec,s])=>s.views.forEach(v=>VIEW_TO_SECTION[v]=sec));
+let currentSection = 'home';
+
+function goToSection(section){
+  currentSection = section;
+  goTo(SECTIONS[section].views[0]);
+}
+
+function updateSectionNav(section, activeView){
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('active', b.dataset.section===section));
+  const bar = document.getElementById('section-subnav');
+  if(!bar) return;
+  const s = SECTIONS[section];
+  if(!s || s.tabs.length===0){ bar.innerHTML=''; return; }
+  bar.innerHTML = s.views.map((v,i)=>
+    `<button class="snav-btn${v===activeView?' active':''}" onclick="goSubView('${section}','${v}')">${s.tabs[i]}</button>`
+  ).join('');
+}
+
+function goSubView(section, view){
+  currentSection = section;
+  goTo(view);
+}
 function buildGroupedViews(){
   Object.entries(GROUPS).forEach(([groupId, group])=>{
     const tabsEl = document.getElementById(groupId+'-tabs');
@@ -1410,15 +1473,16 @@ function buildGroupedViews(){
 
 /* ============ BANNIÈRES GIF (rotation si plusieurs par onglet) ============ */
 const VIEW_GIFS = {
-  home: ['vibe-1', 'vibe-10', 'vibe-11'],
-  tasks: ['vibe-2', 'vibe-12', 'vibe-13'],
-  mindset: ['vibe-9', 'vibe-13', 'vibe-19'],
-  finance: ['vibe-6', 'vibe-9', 'vibe-22'],
+  home:      ['vibe-1', 'vibe-10', 'vibe-11'],
+  tasks:     ['vibe-2', 'vibe-12', 'vibe-13'],
+  habitudes: ['vibe-4', 'vibe-16', 'vibe-20'],
+  mindset:   ['vibe-9', 'vibe-13', 'vibe-19'],
+  finance:   ['vibe-6', 'vibe-9', 'vibe-22'],
   objectifs: ['vibe-3', 'vibe-14', 'vibe-15'],
-  routine: ['vibe-4', 'vibe-16', 'vibe-20'],
-  biblio: ['vibe-5', 'vibe-17', 'vibe-21'],
-  sleep: ['vibe-7', 'vibe-18', 'vibe-19'],
-  journal: ['vibe-8', 'vibe-20', 'vibe-21']
+  biblio:    ['vibe-5', 'vibe-17', 'vibe-21'],
+  sleep:     ['vibe-7', 'vibe-18', 'vibe-19'],
+  journal:   ['vibe-8', 'vibe-20', 'vibe-21'],
+  planning:  ['vibe-4', 'vibe-16', 'vibe-20']
 };
 const bannerRotation = {};
 function rotateViewBanner(view){
