@@ -386,6 +386,13 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .night-banner-btn{font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid rgba(255,200,0,0.35);background:rgba(255,200,0,0.1);color:#ccaa00;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .habit-refdate-banner{background:rgba(255,200,0,0.1);border:1px solid rgba(255,200,0,0.3);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
 .habit-refdate-txt{font-size:11.5px;font-weight:700;color:#d4a800;}
+.task-refdate-banner{background:rgba(255,200,0,0.1);border:1px solid rgba(255,200,0,0.3);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.task-refdate-txt{font-size:11.5px;font-weight:700;color:#d4a800;flex:1;text-align:center;}
+.task-nav-btn{font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,200,0,0.35);background:rgba(255,200,0,0.1);color:#d4a800;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.task-nav-btn:disabled{opacity:.3;cursor:default;}
+html.theme-light .task-refdate-banner{background:rgba(0,55,55,0.07);border-color:rgba(0,55,55,0.2);}
+html.theme-light .task-refdate-txt{color:#006666;}
+html.theme-light .task-nav-btn{border-color:rgba(0,55,55,0.35);background:rgba(0,55,55,0.1);color:#006666;}
 html.theme-light .habit-consequence{color:#b81f1f;}
 html.theme-light .night-banner{background:rgba(0,55,55,0.07);border-color:rgba(0,55,55,0.2);}
 html.theme-light .night-banner-txt,.theme-light .habit-refdate-txt{color:#006666;}
@@ -604,6 +611,8 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 <div class="view" id="view-tasks">
 
   <img class="view-banner" id="banner-tasks" alt="">
+
+  <div id="task-night-banner"></div>
 
   <div class="card" style="background:var(--surface2);">
     <div class="ring-row">
@@ -1573,33 +1582,36 @@ function showSubtab(group, tab){
 /* ============ TASKS ============ */
 const T_TOTAL = 10;
 const TK_STATE='tasks_state', TK_DATE='tasks_date', TK_STREAK='tasks_streak', TK_LASTOK='tasks_lastok';
+const TK_STATE_PREFIX='tasks_state_';
 function yesterdayISO(){ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
 let taskState = {};
+let taskRefDate = todayISO();
 function loadTaskState(){
-  const savedDate = loadKey(TK_DATE);
-  const today = todayISO();
-  if(savedDate !== today){
-    const savedState = JSON.parse(loadKey(TK_STATE) || '{}');
-    const yesterdayDone = Object.keys(savedState).filter(k=>savedState[k]).length === T_TOTAL;
+  // Migration from old single-key storage to per-date storage
+  const oldDate = loadKey(TK_DATE);
+  if(oldDate && oldDate.length === 10){
+    const oldState = loadKey(TK_STATE) || '{}';
+    const existing = loadKey(TK_STATE_PREFIX + oldDate);
+    if((!existing || existing === '{}') && oldState !== '{}') saveKey(TK_STATE_PREFIX + oldDate, oldState);
+    const oldObj = JSON.parse(oldState);
+    const oldDone = Object.keys(oldObj).filter(k=>oldObj[k]).length === T_TOTAL;
     let streak = parseInt(loadKey(TK_STREAK) || '0');
-    if(savedDate === yesterdayISO() && yesterdayDone){ saveKey(TK_LASTOK, yesterdayISO()); }
-    else if(savedDate && savedDate < yesterdayISO()){ streak = 0; saveKey(TK_STREAK, streak); }
-    saveKey(TK_DATE, today);
-    saveKey(TK_STATE, '{}');
-    return {};
+    if(oldDate === yesterdayISO() && oldDone){ saveKey(TK_LASTOK, yesterdayISO()); }
+    else if(oldDate < yesterdayISO()){ streak = 0; saveKey(TK_STREAK, String(streak)); }
+    saveKey(TK_DATE, '');
+    saveKey(TK_STATE, '');
   }
-  return JSON.parse(loadKey(TK_STATE) || '{}');
+  return JSON.parse(loadKey(TK_STATE_PREFIX + taskRefDate) || '{}');
 }
 function saveTaskState(s){
-  saveKey(TK_STATE, JSON.stringify(s));
+  saveKey(TK_STATE_PREFIX + taskRefDate, JSON.stringify(s));
   const done = Object.keys(s).filter(k=>s[k]).length;
   if(done === T_TOTAL){
     const lastOk = loadKey(TK_LASTOK);
-    const today = todayISO();
-    if(lastOk !== today){
+    if(lastOk !== taskRefDate){
       let streak = parseInt(loadKey(TK_STREAK) || '0') + 1;
-      saveKey(TK_STREAK, streak);
-      saveKey(TK_LASTOK, today);
+      saveKey(TK_STREAK, String(streak));
+      saveKey(TK_LASTOK, taskRefDate);
     }
   }
 }
@@ -1638,10 +1650,12 @@ function expandHow(e, hid, eid){
 }
 function resetTasksDay(){
   if(!confirm('Réinitialiser toutes les tâches du jour ?')) return;
+  taskRefDate = todayISO();
   taskState = {};
-  saveKey(TK_STATE, '{}');
+  saveKey(TK_STATE_PREFIX + taskRefDate, '{}');
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
   updateTaskProgress();
+  initTaskNightBanner();
 }
 
 /* ============ GOAL / CASH ============ */
@@ -2178,6 +2192,46 @@ function resetNightMode(){
   initNightBanner(); renderHabits();
 }
 
+/* ============ TASKS — navigation par date ============ */
+function initTaskNightBanner(){
+  const banner = document.getElementById('task-night-banner');
+  if(!banner) return;
+  const today = todayISO();
+  const isToday = taskRefDate === today;
+  const hour = new Date().getHours();
+  const cur = new Date(taskRefDate + 'T12:00:00');
+  const prev = new Date(cur); prev.setDate(prev.getDate()-1);
+  const next = new Date(cur); next.setDate(next.getDate()+1);
+  const prevISO = prev.toISOString().slice(0,10);
+  const nextISO = next.toISOString().slice(0,10);
+  const minDate = new Date(); minDate.setDate(minDate.getDate()-7);
+  const minISO = minDate.toISOString().slice(0,10);
+  const maxDate = new Date(); maxDate.setDate(maxDate.getDate()+1);
+  const maxISO = maxDate.toISOString().slice(0,10);
+  if(!isToday){
+    const label = new Date(taskRefDate+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    const prevDis = prevISO < minISO ? 'disabled' : '';
+    const nextDis = nextISO > maxISO ? 'disabled' : '';
+    banner.innerHTML = `<div class="task-refdate-banner">
+      <button class="task-nav-btn" onclick="setTaskRefDate('${prevISO}')" ${prevDis}>◀</button>
+      <span class="task-refdate-txt">📅 ${label}</span>
+      <button class="task-nav-btn" onclick="setTaskRefDate('${nextISO}')" ${nextDis}>▶</button>
+      <button class="task-nav-btn" onclick="setTaskRefDate('${today}')" style="margin-left:6px;">↩ Auj.</button>
+    </div>`;
+  } else if(hour < 5){
+    banner.innerHTML = `<div class="night-banner"><span class="night-banner-txt">🌙 Tu rentres tard ? Valide tes tâches pour hier sans casser ta streak.</span><button class="night-banner-btn" onclick="setTaskRefDate('${yesterdayISO()}')">Valider pour hier</button></div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+}
+function setTaskRefDate(date){
+  taskRefDate = date;
+  taskState = JSON.parse(loadKey(TK_STATE_PREFIX + date) || '{}');
+  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  updateTaskProgress();
+  initTaskNightBanner();
+}
+
 function renderHabits(){
   const list = document.getElementById('habits-list');
   const streaks = document.getElementById('habits-streaks');
@@ -2656,6 +2710,7 @@ function initApp(){
   taskState = loadTaskState();
   for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
   updateTaskProgress();
+  initTaskNightBanner();
   // goal
   updateCountdown();
   loadCashProgress();
