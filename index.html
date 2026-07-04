@@ -559,8 +559,9 @@ html.theme-light .marquee-item{color:rgba(0,0,0,0.28);}
 /* === HEADER OVERLY BRAND === */
 .logo-overly-wrap{display:flex;align-items:center;gap:8px;}
 .logo-mark{height:20px;width:auto;vertical-align:middle;opacity:0.95;}
-.logo-detailed{font-size:12px;font-weight:900;letter-spacing:4px;color:#fff;vertical-align:middle;opacity:0.92;text-transform:uppercase;}
-html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
+.logo-detailed{height:16px;width:auto;vertical-align:middle;mix-blend-mode:screen;}
+.splash-wordmark{height:32px;width:auto;opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;mix-blend-mode:screen;}
+html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -584,7 +585,7 @@ html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
 <!-- SPLASH SCREEN -->
 <div id="splash-screen">
   <img src="brand/logo-mark-white.png" class="splash-icon" alt="Overly">
-  <div class="splash-wordmark" style="font-size:26px;font-weight:900;letter-spacing:7px;color:#fff;">OVERLY</div>
+  <img src="brand/logo-detailed-white.png" class="splash-wordmark" alt="OVERLY">
   <div class="splash-sep"></div>
   <div class="splash-sub">Collection privée</div>
 </div>
@@ -596,7 +597,7 @@ html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
     <img src="brand/logo-mark-white.png" alt="" style="height:44px;display:block;margin:0 auto 8px;opacity:0.95;">
-    <div style="font-size:18px;font-weight:900;letter-spacing:6px;color:#fff;text-align:center;margin-bottom:14px;">OVERLY</div>
+    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:22px;width:auto;display:block;margin:0 auto 14px;mix-blend-mode:screen;">
     <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
     <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
     <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
@@ -625,7 +626,7 @@ html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
   <div>
     <div class="title logo-overly-wrap">
       <img class="logo-mark" src="brand/logo-mark-white.png" alt="Overly">
-      <span class="logo-detailed">OVERLY</span>
+      <img class="logo-detailed" src="brand/logo-detailed-white.png" alt="OVERLY">
     </div>
     <div class="date mono" id="headerDate">—</div>
   </div>
