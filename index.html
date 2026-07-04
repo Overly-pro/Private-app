@@ -41,6 +41,7 @@ body{
   background-position:center center; background-repeat:no-repeat;
   background-size:95% auto;
   opacity:0.14;
+  mix-blend-mode:screen;
 }
 .app-header, .view, .side-nav, .toast, .auth-overlay{ position:relative; z-index:1; }
 .logo-mark{ height:18px; width:auto; vertical-align:middle; margin-right:7px; opacity:0.92; }
@@ -533,7 +534,7 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 #splash-screen.fade-out{animation:splashOut 0.7s cubic-bezier(0.4,0,1,1) forwards;}
 #splash-screen.gone{display:none;}
 .splash-icon{height:72px;width:auto;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;filter:drop-shadow(0 0 20px rgba(255,255,255,0.15));}
-.splash-wordmark{height:28px;width:auto;opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;}
+.splash-wordmark{height:28px;width:auto;opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;mix-blend-mode:screen;}
 .splash-sep{width:0;height:0.5px;background:rgba(255,255,255,0.2);animation:splashSepIn 0.6s ease forwards 1.5s;margin-top:22px;}
 .splash-sub{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);opacity:0;animation:splashSubIn 0.5s ease forwards 1.9s;margin-top:14px;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;}
 @keyframes splashIconIn{from{opacity:0;transform:scale(0.88) translateY(6px);filter:blur(8px) drop-shadow(0 0 0 rgba(255,255,255,0));}to{opacity:1;transform:scale(1) translateY(0);filter:blur(0) drop-shadow(0 0 20px rgba(255,255,255,0.15));}}
@@ -558,7 +559,7 @@ html.theme-light .marquee-item{color:rgba(0,0,0,0.28);}
 /* === HEADER OVERLY BRAND === */
 .logo-overly-wrap{display:flex;align-items:center;gap:8px;}
 .logo-mark{height:20px;width:auto;vertical-align:middle;opacity:0.95;}
-.logo-detailed{height:16px;width:auto;vertical-align:middle;opacity:0.92;}
+.logo-detailed{height:16px;width:auto;vertical-align:middle;opacity:0.92;mix-blend-mode:screen;}
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -595,7 +596,7 @@ html.theme-light .marquee-item{color:rgba(0,0,0,0.28);}
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
     <img src="brand/logo-mark-white.png" alt="" style="height:44px;display:block;margin:0 auto 8px;opacity:0.95;">
-    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:16px;display:block;margin:0 auto 14px;opacity:0.8;" onerror="this.outerHTML='<h2 style=\'margin-bottom:14px\'>OVERLY</h2>'">
+    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:16px;display:block;margin:0 auto 14px;opacity:0.8;mix-blend-mode:screen;" onerror="this.outerHTML='<h2 style=\'margin-bottom:14px\'>OVERLY</h2>'">
     <h2 style="display:none">OVERLY</h2>
     <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
     <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
