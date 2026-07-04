@@ -533,11 +533,11 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 #splash-screen{position:fixed;inset:0;z-index:3000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:none;}
 #splash-screen.fade-out{animation:splashOut 0.7s cubic-bezier(0.4,0,1,1) forwards;}
 #splash-screen.gone{display:none;}
-.splash-icon{height:72px;width:auto;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;filter:drop-shadow(0 0 20px rgba(255,255,255,0.15));}
-.splash-wordmark{height:28px;width:auto;opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;mix-blend-mode:screen;}
+.splash-icon{height:72px;width:auto;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;}
+.splash-wordmark{opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;}
 .splash-sep{width:0;height:0.5px;background:rgba(255,255,255,0.2);animation:splashSepIn 0.6s ease forwards 1.5s;margin-top:22px;}
 .splash-sub{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);opacity:0;animation:splashSubIn 0.5s ease forwards 1.9s;margin-top:14px;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;}
-@keyframes splashIconIn{from{opacity:0;transform:scale(0.88) translateY(6px);filter:blur(8px) drop-shadow(0 0 0 rgba(255,255,255,0));}to{opacity:1;transform:scale(1) translateY(0);filter:blur(0) drop-shadow(0 0 20px rgba(255,255,255,0.15));}}
+@keyframes splashIconIn{from{opacity:0;transform:scale(0.88) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
 @keyframes splashWordIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 @keyframes splashSepIn{from{width:0;}to{width:80px;}}
 @keyframes splashSubIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
@@ -559,8 +559,8 @@ html.theme-light .marquee-item{color:rgba(0,0,0,0.28);}
 /* === HEADER OVERLY BRAND === */
 .logo-overly-wrap{display:flex;align-items:center;gap:8px;}
 .logo-mark{height:20px;width:auto;vertical-align:middle;opacity:0.95;}
-.logo-detailed{height:16px;width:auto;vertical-align:middle;opacity:0.92;mix-blend-mode:screen;}
-html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
+.logo-detailed{font-size:12px;font-weight:900;letter-spacing:4px;color:#fff;vertical-align:middle;opacity:0.92;text-transform:uppercase;}
+html.theme-light .splash-wordmark{mix-blend-mode:multiply;}
 
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -584,8 +584,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 <!-- SPLASH SCREEN -->
 <div id="splash-screen">
   <img src="brand/logo-mark-white.png" class="splash-icon" alt="Overly">
-  <img src="brand/logo-detailed-white.png" class="splash-wordmark" alt="OVERLY" onerror="this.style.display='none';var fb=document.getElementById('splash-fb');if(fb)fb.style.animation='splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s'">
-  <div id="splash-fb" style="font-size:26px;font-weight:900;letter-spacing:7px;color:#fff;opacity:0;margin-top:16px;font-family:-apple-system,sans-serif;">OVERLY</div>
+  <div class="splash-wordmark" style="font-size:26px;font-weight:900;letter-spacing:7px;color:#fff;">OVERLY</div>
   <div class="splash-sep"></div>
   <div class="splash-sub">Collection privée</div>
 </div>
@@ -597,8 +596,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
     <img src="brand/logo-mark-white.png" alt="" style="height:44px;display:block;margin:0 auto 8px;opacity:0.95;">
-    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:16px;display:block;margin:0 auto 14px;opacity:0.8;mix-blend-mode:screen;" onerror="this.outerHTML='<h2 style=\'margin-bottom:14px\'>OVERLY</h2>'">
-    <h2 style="display:none">OVERLY</h2>
+    <div style="font-size:18px;font-weight:900;letter-spacing:6px;color:#fff;text-align:center;margin-bottom:14px;">OVERLY</div>
     <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
     <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
     <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
@@ -627,7 +625,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   <div>
     <div class="title logo-overly-wrap">
       <img class="logo-mark" src="brand/logo-mark-white.png" alt="Overly">
-      <img class="logo-detailed" src="brand/logo-detailed-white.png" alt="OVERLY" onerror="this.outerHTML='<span style=\'font-size:13px;font-weight:900;letter-spacing:4px;color:#fff\'>OVERLY</span>'">
+      <span class="logo-detailed">OVERLY</span>
     </div>
     <div class="date mono" id="headerDate">—</div>
   </div>
