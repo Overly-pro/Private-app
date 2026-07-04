@@ -528,6 +528,38 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 .music-pl-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .music-pl-loading{padding:14px;text-align:center;font-size:11px;color:var(--muted3);}
 
+/* === SPLASH SCREEN === */
+#splash-screen{position:fixed;inset:0;z-index:3000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:none;}
+#splash-screen.fade-out{animation:splashOut 0.7s cubic-bezier(0.4,0,1,1) forwards;}
+#splash-screen.gone{display:none;}
+.splash-icon{height:72px;width:auto;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;filter:drop-shadow(0 0 20px rgba(255,255,255,0.15));}
+.splash-wordmark{height:28px;width:auto;opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;}
+.splash-sep{width:0;height:0.5px;background:rgba(255,255,255,0.2);animation:splashSepIn 0.6s ease forwards 1.5s;margin-top:22px;}
+.splash-sub{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);opacity:0;animation:splashSubIn 0.5s ease forwards 1.9s;margin-top:14px;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;}
+@keyframes splashIconIn{from{opacity:0;transform:scale(0.88) translateY(6px);filter:blur(8px) drop-shadow(0 0 0 rgba(255,255,255,0));}to{opacity:1;transform:scale(1) translateY(0);filter:blur(0) drop-shadow(0 0 20px rgba(255,255,255,0.15));}}
+@keyframes splashWordIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes splashSepIn{from{width:0;}to{width:80px;}}
+@keyframes splashSubIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+@keyframes splashOut{from{opacity:1;}to{opacity:0;}}
+
+/* === POST-LOGIN TRANSITION === */
+#login-flash{position:fixed;inset:0;z-index:2000;background:#000;opacity:0;pointer-events:none;transition:opacity 0.25s ease;}
+#login-flash.on{opacity:1;}
+
+/* === MARQUEE TICKER === */
+.marquee-band{overflow:hidden;white-space:nowrap;border-top:0.5px solid rgba(255,255,255,0.07);border-bottom:0.5px solid rgba(255,255,255,0.07);padding:7px 0;margin-bottom:14px;}
+html.theme-light .marquee-band{border-color:rgba(0,0,0,0.07);}
+.marquee-track{display:inline-flex;animation:marqueeScroll 22s linear infinite;}
+.marquee-item{display:inline-flex;align-items:center;gap:14px;padding-right:28px;font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.32);}
+html.theme-light .marquee-item{color:rgba(0,0,0,0.28);}
+.marquee-star{opacity:0.5;}
+@keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* === HEADER OVERLY BRAND === */
+.logo-overly-wrap{display:flex;align-items:center;gap:8px;}
+.logo-mark{height:20px;width:auto;vertical-align:middle;opacity:0.95;}
+.logo-detailed{height:16px;width:auto;vertical-align:middle;opacity:0.92;}
+
 /* AUTH OVERLAY */
 .auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-overlay.hidden{display:none;}
@@ -547,11 +579,24 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 
 <div class="bg-watermark"></div>
 
+<!-- SPLASH SCREEN -->
+<div id="splash-screen">
+  <img src="brand/logo-mark-white.png" class="splash-icon" alt="Overly">
+  <img src="brand/logo-detailed-white.png" class="splash-wordmark" alt="OVERLY" onerror="this.style.display='none';var fb=document.getElementById('splash-fb');if(fb)fb.style.animation='splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s'">
+  <div id="splash-fb" style="font-size:26px;font-weight:900;letter-spacing:7px;color:#fff;opacity:0;margin-top:16px;font-family:-apple-system,sans-serif;">OVERLY</div>
+  <div class="splash-sep"></div>
+  <div class="splash-sub">Collection privée</div>
+</div>
+
+<!-- LOGIN FLASH -->
+<div id="login-flash"></div>
+
 <!-- ============ AUTH OVERLAY ============ -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
-    <img src="brand/logo-mark-white.png" alt="" style="height:40px;display:block;margin:0 auto 12px;opacity:0.95;">
-    <h2>Mon Espace</h2>
+    <img src="brand/logo-mark-white.png" alt="" style="height:44px;display:block;margin:0 auto 8px;opacity:0.95;">
+    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:16px;display:block;margin:0 auto 14px;opacity:0.8;" onerror="this.outerHTML='<h2 style=\'margin-bottom:14px\'>OVERLY</h2>'">
+    <h2 style="display:none">OVERLY</h2>
     <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
     <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
     <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
@@ -578,7 +623,10 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 
 <div class="app-header">
   <div>
-    <div class="title"><img class="logo-mark" src="brand/logo-mark-white.png" alt="">Mon Espace</div>
+    <div class="title logo-overly-wrap">
+      <img class="logo-mark" src="brand/logo-mark-white.png" alt="Overly">
+      <img class="logo-detailed" src="brand/logo-detailed-white.png" alt="OVERLY" onerror="this.outerHTML='<span style=\'font-size:13px;font-weight:900;letter-spacing:4px;color:#fff\'>OVERLY</span>'">
+    </div>
     <div class="date mono" id="headerDate">—</div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
@@ -592,6 +640,13 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 </div>
 
 <div id="section-subnav" class="section-subnav"></div>
+
+<!-- MARQUEE TICKER -->
+<div class="marquee-band">
+  <div class="marquee-track">
+    <span class="marquee-item">OVERLY <span class="marquee-star">✦</span> COLLECTION 001 <span class="marquee-star">✦</span> STERLING SILVER <span class="marquee-star">✦</span> LIMITED SERIES <span class="marquee-star">✦</span> MADE BY HAND <span class="marquee-star">✦</span> OVERLY <span class="marquee-star">✦</span> COLLECTION 001 <span class="marquee-star">✦</span> STERLING SILVER <span class="marquee-star">✦</span> LIMITED SERIES <span class="marquee-star">✦</span> MADE BY HAND <span class="marquee-star">✦</span></span>
+  </div>
+</div>
 
 <!-- ============ VIEW: HOME ============ -->
 <div class="view active" id="view-home">
@@ -1576,19 +1631,53 @@ function authLogout(){
   auth.signOut();
 }
 
+/* ============ SPLASH SCREEN ============ */
+function initSplash(){
+  const splash = document.getElementById('splash-screen');
+  if(!splash) return;
+  // Only show once per session
+  if(sessionStorage.getItem('overly_splash_done')){
+    splash.classList.add('gone');
+    return;
+  }
+  // Splash plays for 2.8s then fades out
+  setTimeout(()=>{
+    splash.classList.add('fade-out');
+    splash.addEventListener('animationend', ()=>{
+      splash.classList.add('gone');
+      sessionStorage.setItem('overly_splash_done','1');
+    }, {once:true});
+  }, 2800);
+}
+initSplash();
+
+function playLoginTransition(cb){
+  const flash = document.getElementById('login-flash');
+  if(!flash){ cb(); return; }
+  flash.classList.add('on');
+  setTimeout(()=>{
+    cb();
+    setTimeout(()=>flash.classList.remove('on'), 350);
+  }, 220);
+}
+
 auth.onAuthStateChanged(user => {
   const overlay = document.getElementById('auth-overlay');
   if(user){
     currentUid = user.uid;
     db.collection('users').doc(currentUid).get().then(doc => {
       cloudData = doc.exists ? doc.data() : {};
-      overlay.classList.add('hidden');
-      initApp();
+      playLoginTransition(()=>{
+        overlay.classList.add('hidden');
+        initApp();
+      });
     }).catch(e => {
       console.error('Chargement cloud échoué, utilisation du cache local:', e);
       cloudData = {};
-      overlay.classList.add('hidden');
-      initApp();
+      playLoginTransition(()=>{
+        overlay.classList.add('hidden');
+        initApp();
+      });
     });
   } else {
     currentUid = null;
