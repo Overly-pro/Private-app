@@ -80,6 +80,35 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .group-tabs{display:flex;gap:6px;margin-bottom:14px;}
 .group-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
 .group-tab.active{background:rgba(224,53,53,0.12);border-color:var(--accent);color:var(--accent);}
+/* BIBLIO TABS */
+.biblio-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.biblio-tab{flex:1;padding:9px;font-size:11px;font-weight:700;letter-spacing:.5px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
+.biblio-tab.active{background:rgba(224,53,53,0.08);border-color:rgba(224,53,53,0.3);color:var(--accent);}
+/* BOOK CARDS */
+.book-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+.book-header{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:none;border:none;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;}
+.book-emoji{font-size:26px;flex-shrink:0;}
+.book-info{flex:1;min-width:0;}
+.book-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.book-author{font-size:11px;color:var(--muted);}
+.book-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;flex-shrink:0;}
+.book-badge.done{background:rgba(80,180,120,0.1);color:#5ab;border:1px solid rgba(80,180,120,0.25);}
+.book-badge.reading{background:rgba(224,53,53,0.08);color:var(--accent);border:1px solid rgba(224,53,53,0.25);}
+.book-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .2s;}
+.book-card.open .book-arrow{transform:rotate(90deg);}
+.book-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
+.book-card.open .book-body{display:block;}
+.book-summary-txt{font-size:12px;color:var(--muted);line-height:1.7;padding:12px 0 4px;}
+.book-sec-lbl{font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
+.book-sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.book-pts{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.book-pts li{font-size:12px;color:var(--text);line-height:1.55;padding-left:14px;position:relative;}
+.book-pts li::before{content:'—';position:absolute;left:0;color:var(--muted2);}
+.book-lessons{background:rgba(224,53,53,0.05);border:1px solid rgba(224,53,53,0.15);border-radius:10px;padding:12px 14px;margin-top:14px;}
+.book-lessons-ttl{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.book-lessons ol{counter-reset:ls;list-style:none;display:flex;flex-direction:column;gap:7px;}
+.book-lessons ol li{font-size:12px;color:var(--text);line-height:1.55;padding-left:20px;position:relative;counter-increment:ls;}
+.book-lessons ol li::before{content:counter(ls);position:absolute;left:0;font-size:9px;font-weight:800;color:var(--accent);top:1px;}
 /* BIBLIO YOUTUBE — grille de vignettes */
 .yt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
 .yt-tile{background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
@@ -1366,22 +1395,221 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   </div>
 </div>
 
-<!-- ============ VIEW: BIBLIO YOUTUBE ============ -->
+<!-- ============ VIEW: BIBLIO ============ -->
 <div class="view" id="view-biblio">
   <img class="view-banner" id="banner-biblio" alt="">
 
-  <!-- Section principale : ajout + grille -->
-  <div id="yt-add-section">
-    <div class="card">
-      <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
-      <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
-      <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
-    </div>
-    <div class="yt-grid" id="yt-cards-grid"></div>
+  <!-- Onglets -->
+  <div class="biblio-tabs">
+    <button class="biblio-tab active" id="btab-videos" onclick="switchBiblioTab('videos')">📺 Vidéos</button>
+    <button class="biblio-tab" id="btab-livres" onclick="switchBiblioTab('livres')">📚 Livres</button>
   </div>
 
-  <!-- Panneau détail (s'ouvre au clic sur une vignette) -->
-  <div id="yt-detail-panel" style="display:none;"></div>
+  <!-- SECTION VIDÉOS -->
+  <div id="biblio-videos-section">
+    <div id="yt-add-section">
+      <div class="card">
+        <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
+        <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
+        <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
+      </div>
+      <div class="yt-grid" id="yt-cards-grid"></div>
+    </div>
+    <div id="yt-detail-panel" style="display:none;"></div>
+  </div>
+
+  <!-- SECTION LIVRES -->
+  <div id="biblio-livres-section" style="display:none;">
+
+    <!-- James Clear -->
+    <div class="book-card" id="book-clear">
+      <button class="book-header" onclick="toggleBook('book-clear')">
+        <span class="book-emoji">📗</span>
+        <div class="book-info">
+          <div class="book-title">Un rien peut tout changer</div>
+          <div class="book-author">James Clear</div>
+        </div>
+        <span class="book-badge done">✓ Lu</span>
+        <span class="book-arrow">▶</span>
+      </button>
+      <div class="book-body" id="book-clear-body">
+        <p class="book-summary-txt">De minuscules changements de comportement peuvent mener à des résultats remarquables. Le succès n'est pas le fruit de transformations radicales, mais de l'accumulation de petites améliorations de 1% chaque jour — qui finissent par composer un avantage décisif.</p>
+        <div class="book-sec-lbl">📖 Début — Les fondations</div>
+        <ul class="book-pts">
+          <li>1% d'amélioration par jour = 37× mieux en un an. 1% de régression = presque zéro.</li>
+          <li>Les systèmes > les objectifs : l'objectif dit où aller, le système détermine si tu y arrives.</li>
+          <li>L'identité d'abord : "Je suis quelqu'un qui..." avant même les résultats.</li>
+          <li>Le plateau du potentiel latent : les résultats tardent, mais s'accumulent en silence.</li>
+        </ul>
+        <div class="book-sec-lbl">⚙️ Milieu — Les 4 lois</div>
+        <ul class="book-pts">
+          <li><strong>Loi 1 — Évidente :</strong> design de l'environnement, empilement d'habitudes.</li>
+          <li><strong>Loi 2 — Attrayante :</strong> associer la nouvelle habitude à quelque chose qu'on aime.</li>
+          <li><strong>Loi 3 — Facile :</strong> règle des 2 minutes, réduire la friction au minimum.</li>
+          <li><strong>Loi 4 — Satisfaisante :</strong> récompense immédiate pour ancrer l'habitude.</li>
+        </ul>
+        <div class="book-sec-lbl">🏁 Fin — Maîtrise avancée</div>
+        <ul class="book-pts">
+          <li>La règle de Goldilocks : travailler à la limite de ses capacités pour rester motivé.</li>
+          <li>Attention aux automatismes : les bonnes habitudes peuvent aussi devenir des pièges.</li>
+          <li>Chaque action est un vote pour la personne que tu veux devenir.</li>
+        </ul>
+        <div class="book-lessons">
+          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
+          <ol>
+            <li>"Tu ne monteras pas au niveau de tes objectifs, tu tomberas au niveau de tes systèmes."</li>
+            <li>Deviens la personne d'abord — les preuves (habitudes) suivront.</li>
+            <li>Rends le bien facile, rends le mal difficile. Le design de l'environnement fait tout.</li>
+            <li>Règle des 2 minutes : toute nouvelle habitude doit pouvoir se faire en moins de 2 min.</li>
+            <li>Continue même quand tu ne vois pas de résultats — le plateau précède le décollage.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Napoleon Hill -->
+    <div class="book-card" id="book-hill">
+      <button class="book-header" onclick="toggleBook('book-hill')">
+        <span class="book-emoji">💰</span>
+        <div class="book-info">
+          <div class="book-title">Réfléchissez et devenez riche</div>
+          <div class="book-author">Napoleon Hill</div>
+        </div>
+        <span class="book-badge done">✓ Lu</span>
+        <span class="book-arrow">▶</span>
+      </button>
+      <div class="book-body" id="book-hill-body">
+        <p class="book-summary-txt">Basé sur 20 ans d'étude des hommes les plus riches d'Amérique (Carnegie, Ford, Edison...), Napoleon Hill identifie 13 principes universels du succès. Le point de départ absolu : un désir ardent, pas un simple souhait — une obsession brûlante.</p>
+        <div class="book-sec-lbl">📖 Début — Le désir et la foi</div>
+        <ul class="book-pts">
+          <li>Le désir : définir précisément la somme voulue, la date, la contrepartie, le plan.</li>
+          <li>La foi : visualiser et croire en la réalisation de son désir comme s'il était déjà là.</li>
+          <li>L'auto-suggestion : programmer le subconscient par répétition d'affirmations chaque jour.</li>
+          <li>La connaissance spécialisée : savoir n'est rien — l'action organisée crée la richesse.</li>
+        </ul>
+        <div class="book-sec-lbl">⚙️ Milieu — Les leviers du succès</div>
+        <ul class="book-pts">
+          <li>L'imagination créatrice : source de toutes les grandes idées et innovations.</li>
+          <li>La planification : transformer le désir en plan écrit, concret, immédiatement actionnable.</li>
+          <li>La décision : les riches décident vite, changent d'avis lentement. Les pauvres : l'inverse.</li>
+          <li>La persévérance : seule la volonté de continuer malgré les échecs distingue les winners.</li>
+          <li>Le Mastermind : s'entourer de personnes alignées sur ses objectifs crée une intelligence collective.</li>
+        </ul>
+        <div class="book-sec-lbl">🏁 Fin — Subconscient et peurs</div>
+        <ul class="book-pts">
+          <li>Le subconscient travaille 24h/24 — nourris-le de désirs positifs, pas de peurs.</li>
+          <li>Le 6e sens s'active après la maîtrise des 12 autres principes.</li>
+          <li>Les 6 peurs fondamentales : pauvreté, critiques, mauvaise santé, amour perdu, vieillesse, mort.</li>
+        </ul>
+        <div class="book-lessons">
+          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
+          <ol>
+            <li>"Tout ce que l'esprit peut concevoir et croire, il peut l'atteindre."</li>
+            <li>Le désir ardent est la seule monnaie que l'univers accepte — pas les vœux pieux.</li>
+            <li>Crée ton Mastermind : 2 personnes ou plus, travaillant vers un but commun en harmonie.</li>
+            <li>Décide rapidement, agis immédiatement, persévère toujours.</li>
+            <li>Tes pensées deviennent des choses — protège ton esprit des pensées négatives.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Robert Greene -->
+    <div class="book-card" id="book-greene">
+      <button class="book-header" onclick="toggleBook('book-greene')">
+        <span class="book-emoji">♟️</span>
+        <div class="book-info">
+          <div class="book-title">Les 48 lois du pouvoir</div>
+          <div class="book-author">Robert Greene</div>
+        </div>
+        <span class="book-badge reading">En cours</span>
+        <span class="book-arrow">▶</span>
+      </button>
+      <div class="book-body" id="book-greene-body">
+        <p class="book-summary-txt">À travers des centaines d'exemples historiques, Greene expose les règles immuables du jeu du pouvoir. Un manuel de stratégie tiré de Machiavel, Sun Tzu et des grands manipulateurs de l'histoire — indispensable pour comprendre les dynamiques sociales et s'y positionner.</p>
+        <div class="book-sec-lbl">📖 Début — Lois 1 à 16</div>
+        <ul class="book-pts">
+          <li><strong>Loi 1 :</strong> Ne jamais éclipser le maître — fais-le paraître toujours brillant.</li>
+          <li><strong>Loi 3 :</strong> Dissimuler ses intentions — garde tes plans secrets jusqu'à l'exécution.</li>
+          <li><strong>Loi 4 :</strong> Toujours en dire moins — le mystère crée le pouvoir.</li>
+          <li><strong>Loi 6 :</strong> Attirer l'attention à tout prix — être ignoré est pire qu'être critiqué.</li>
+          <li><strong>Loi 15 :</strong> Écraser totalement son ennemi — la demi-victoire plante les graines de la revanche.</li>
+        </ul>
+        <div class="book-sec-lbl">⚙️ Milieu — Lois 17 à 32</div>
+        <ul class="book-pts">
+          <li><strong>Loi 17 :</strong> Cultiver l'imprévisibilité — tenir les autres en haleine.</li>
+          <li><strong>Loi 21 :</strong> Faire croire les gens qu'ils ont le choix alors qu'on tient les ficelles.</li>
+          <li><strong>Loi 25 :</strong> Se recréer — contrôle ton image, ne laisse pas les autres la définir.</li>
+          <li><strong>Loi 28 :</strong> Agir avec audace — les hésitants inspirent le mépris.</li>
+        </ul>
+        <div class="book-sec-lbl">🏁 Fin — Lois 33 à 48</div>
+        <ul class="book-pts">
+          <li><strong>Loi 34 :</strong> Être royal dans sa manière d'agir — l'attitude crée la réalité.</li>
+          <li><strong>Loi 40 :</strong> Mépriser ce qu'on ne peut avoir — l'ignorer le rend moins puissant.</li>
+          <li><strong>Loi 46 :</strong> Ne jamais paraître trop parfait — l'envie est dangereuse.</li>
+          <li><strong>Loi 48 :</strong> Assumer une forme sans forme — être adaptable, insaisissable.</li>
+        </ul>
+        <div class="book-lessons">
+          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
+          <ol>
+            <li>Le pouvoir se joue toujours — consciemment ou non, tu es dans la partie.</li>
+            <li>Contrôle ton image avant que les autres ne le fassent pour toi.</li>
+            <li>La patience et le timing valent plus que la force brute.</li>
+            <li>L'information est pouvoir : écoute plus que tu ne parles.</li>
+            <li>Ne révèle jamais tes intentions ni tes faiblesses — même à tes proches.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sabri Suby -->
+    <div class="book-card" id="book-suby">
+      <button class="book-header" onclick="toggleBook('book-suby')">
+        <span class="book-emoji">🚀</span>
+        <div class="book-info">
+          <div class="book-title">Sell Like Crazy</div>
+          <div class="book-author">Sabri Suby</div>
+        </div>
+        <span class="book-badge done">✓ Lu</span>
+        <span class="book-arrow">▶</span>
+      </button>
+      <div class="book-body" id="book-suby-body">
+        <p class="book-summary-txt">Sabri Suby, fondateur de King Kong (une des agences marketing les plus rentables d'Australie), révèle son système en 8 phases pour transformer n'importe quelle activité en machine à vendre. Une approche directe, mesurable et ultra-pratique du marketing moderne.</p>
+        <div class="book-sec-lbl">📖 Début — Connaître et attirer</div>
+        <ul class="book-pts">
+          <li>Le "Dream Buyer" : profil ultra-précis du client idéal — peurs, désirs, blocages, rêves.</li>
+          <li>Le Halo Strategy : donner un maximum de valeur gratuitement avant de demander quoi que ce soit.</li>
+          <li>L'offre irrésistible : si refuser ton offre paraît stupide, tu as réussi.</li>
+          <li>Contrôle la conversation : celui qui éduque devient celui qui vend.</li>
+        </ul>
+        <div class="book-sec-lbl">⚙️ Milieu — Convertir et convaincre</div>
+        <ul class="book-pts">
+          <li>Les entonnoirs de conversion : chaque étape doit qualifier davantage le prospect.</li>
+          <li>Le trafic payant : investis comme dans une machine à intérêts composés, pas comme une dépense.</li>
+          <li>80% des ventes se font après le 5e contact — la plupart abandonnent au 1er.</li>
+          <li>La preuve sociale : témoignages, études de cas et résultats concrets valent plus que n'importe quel argument.</li>
+        </ul>
+        <div class="book-sec-lbl">🏁 Fin — Scaler et fidéliser</div>
+        <ul class="book-pts">
+          <li>Maximiser la valeur vie client (LTV) : vendre plus à ceux qui ont déjà acheté.</li>
+          <li>Upsells et cross-sells : augmenter la valeur de chaque transaction dès l'achat initial.</li>
+          <li>Réactiver les clients dormants : de l'argent caché dans ta base de données.</li>
+          <li>Scale seulement quand les fondamentaux sont rentables — jamais avant.</li>
+        </ul>
+        <div class="book-lessons">
+          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
+          <ol>
+            <li>Vends d'abord la valeur, ensuite le produit — donne avant de demander.</li>
+            <li>Connais ton client idéal mieux qu'il ne se connaît lui-même.</li>
+            <li>Une seule offre irrésistible vaut mieux que 10 produits moyens.</li>
+            <li>Le suivi est roi : la fortune est dans le follow-up.</li>
+            <li>Mesure tout — le marketing sans données, c'est de l'art, pas du business.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /biblio-livres-section -->
 </div>
 
 <!-- ============ VUES GROUPÉES (créées par JS) ============ -->
@@ -2931,6 +3159,16 @@ let ytNotes = [];
 function extractYtId(url){
   const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
   return m ? m[1] : null;
+}
+function switchBiblioTab(tab){
+  document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
+  document.getElementById('biblio-livres-section').style.display = tab==='livres'  ? '' : 'none';
+  document.getElementById('btab-videos').classList.toggle('active', tab==='videos');
+  document.getElementById('btab-livres').classList.toggle('active', tab==='livres');
+}
+function toggleBook(id){
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
 }
 async function addYtNote(){
   const inp = document.getElementById('yt-url-input');
