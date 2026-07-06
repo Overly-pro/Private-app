@@ -91,9 +91,10 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .book-info{flex:1;min-width:0;}
 .book-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
 .book-author{font-size:11px;color:var(--muted);}
-.book-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;flex-shrink:0;}
+.book-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;flex-shrink:0;cursor:pointer;user-select:none;transition:all .15s;}
 .book-badge.done{background:rgba(80,180,120,0.1);color:#5ab;border:1px solid rgba(80,180,120,0.25);}
 .book-badge.reading{background:rgba(224,53,53,0.08);color:var(--accent);border:1px solid rgba(224,53,53,0.25);}
+.book-badge:active{transform:scale(0.93);}
 .book-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .2s;}
 .book-card.open .book-arrow{transform:rotate(90deg);}
 .book-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
@@ -1429,7 +1430,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
           <div class="book-title">Un rien peut tout changer</div>
           <div class="book-author">James Clear</div>
         </div>
-        <span class="book-badge done">✓ Lu</span>
+        <span class="book-badge done" id="badge-book-clear" onclick="toggleBookStatus('book-clear',event)">✓ Lu</span>
         <span class="book-arrow">▶</span>
       </button>
       <div class="book-body" id="book-clear-body">
@@ -1475,7 +1476,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
           <div class="book-title">Réfléchissez et devenez riche</div>
           <div class="book-author">Napoleon Hill</div>
         </div>
-        <span class="book-badge done">✓ Lu</span>
+        <span class="book-badge done" id="badge-book-hill" onclick="toggleBookStatus('book-hill',event)">✓ Lu</span>
         <span class="book-arrow">▶</span>
       </button>
       <div class="book-body" id="book-hill-body">
@@ -1522,7 +1523,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
           <div class="book-title">Les 48 lois du pouvoir</div>
           <div class="book-author">Robert Greene</div>
         </div>
-        <span class="book-badge reading">En cours</span>
+        <span class="book-badge reading" id="badge-book-greene" onclick="toggleBookStatus('book-greene',event)">En cours</span>
         <span class="book-arrow">▶</span>
       </button>
       <div class="book-body" id="book-greene-body">
@@ -1570,7 +1571,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
           <div class="book-title">Sell Like Crazy</div>
           <div class="book-author">Sabri Suby</div>
         </div>
-        <span class="book-badge done">✓ Lu</span>
+        <span class="book-badge done" id="badge-book-suby" onclick="toggleBookStatus('book-suby',event)">✓ Lu</span>
         <span class="book-arrow">▶</span>
       </button>
       <div class="book-body" id="book-suby-body">
@@ -3160,6 +3161,26 @@ function extractYtId(url){
   const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
   return m ? m[1] : null;
 }
+function toggleBookStatus(bookId, e){
+  e.stopPropagation();
+  const badge = document.getElementById('badge-'+bookId);
+  if(!badge) return;
+  const isDone = badge.classList.contains('done');
+  const newStatus = isDone ? 'reading' : 'done';
+  badge.className = 'book-badge ' + newStatus;
+  badge.textContent = newStatus === 'done' ? '✓ Lu' : 'En cours';
+  saveKey('book_status_'+bookId, newStatus);
+}
+function loadBookStatuses(){
+  ['book-clear','book-hill','book-greene','book-suby'].forEach(id=>{
+    const saved = loadKey('book_status_'+id);
+    if(!saved) return;
+    const badge = document.getElementById('badge-'+id);
+    if(!badge) return;
+    badge.className = 'book-badge ' + saved;
+    badge.textContent = saved === 'done' ? '✓ Lu' : 'En cours';
+  });
+}
 function switchBiblioTab(tab){
   document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
   document.getElementById('biblio-livres-section').style.display = tab==='livres'  ? '' : 'none';
@@ -3317,6 +3338,7 @@ function initApp(){
   initTaskNightBanner();
   // nav tree
   initNavTreePeeks();
+  loadBookStatuses();
   updateNavTreeActive('home','home');
   // goal
   updateCountdown();
