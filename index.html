@@ -2002,28 +2002,30 @@ function stRenderSubs(){
 
 function stDrawLines(){
   const svg = document.getElementById('st-svg');
-  const panel = document.getElementById('nav-tree-panel');
-  if(!svg||!panel){ if(svg) svg.innerHTML=''; return; }
+  const wrap = document.getElementById('st-svg-wrap');
+  if(!svg||!wrap){ if(svg) svg.innerHTML=''; return; }
   if(!stActiveCat){ svg.innerHTML=''; return; }
-  const pRect = panel.getBoundingClientRect();
   const catBtn = document.getElementById('stcat-'+stActiveCat);
   if(!catBtn){ svg.innerHTML=''; return; }
+  const wRect = wrap.getBoundingClientRect();
   const cRect = catBtn.getBoundingClientRect();
-  const x1 = cRect.right - pRect.left;
-  const y1 = cRect.top + cRect.height/2 - pRect.top;
+  /* x1 = right edge of cat node relative to SVG origin (left of wrap) */
+  const x1 = cRect.right - wRect.left;
+  const y1 = cRect.top + cRect.height / 2 - wRect.top;
   const isDark = !document.documentElement.classList.contains('theme-light');
   const lc = isDark ? 'rgba(224,53,53,0.55)' : 'rgba(224,53,53,0.45)';
   const dc = isDark ? 'rgba(224,53,53,0.8)'  : 'rgba(224,53,53,0.65)';
-  let inner = '';
+  let inner = `<circle cx="${x1}" cy="${y1}" r="3.5" fill="${dc}"/>`;
   (ST_CATS[stActiveCat].views||[]).forEach(v=>{
     const sub = document.getElementById('stsub-'+v.id);
     if(!sub) return;
     const sRect = sub.getBoundingClientRect();
-    const x2 = sRect.left - pRect.left;
-    const y2 = sRect.top + sRect.height/2 - pRect.top;
-    const cx = (x1+x2)/2;
-    inner += `<path d="M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}" fill="none" stroke="${lc}" stroke-width="1.5"/>`;
-    inner += `<circle cx="${x1}" cy="${y1}" r="3" fill="${dc}"/>`;
+    /* x2 = left edge of sub node relative to SVG origin */
+    const x2 = sRect.left - wRect.left;
+    const y2 = sRect.top + sRect.height / 2 - wRect.top;
+    const cx1 = x1 + (x2 - x1) * 0.55;
+    const cx2 = x2 - (x2 - x1) * 0.55;
+    inner += `<path d="M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}" fill="none" stroke="${lc}" stroke-width="1.5" stroke-linecap="round"/>`;
     inner += `<circle cx="${x2}" cy="${y2}" r="3" fill="${dc}"/>`;
   });
   svg.innerHTML = inner;
