@@ -1786,6 +1786,53 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
       </div>
     </div>
 
+    <!-- Rhonda Byrne -->
+    <div class="book-card" id="book-byrne">
+      <button class="book-header" onclick="toggleBook('book-byrne')">
+        <span class="book-emoji">✨</span>
+        <div class="book-info">
+          <div class="book-title">Le Secret</div>
+          <div class="book-author">Rhonda Byrne</div>
+        </div>
+        <span class="book-badge done" id="badge-book-byrne" onclick="toggleBookStatus('book-byrne',event)">✓ Lu</span>
+        <span class="book-arrow">▶</span>
+      </button>
+      <div class="book-body" id="book-byrne-body">
+        <p class="book-summary-txt">Rhonda Byrne révèle le "secret" transmis selon elle par les plus grands esprits de l'histoire : la loi de l'attraction. Tes pensées dominantes attirent leur équivalent dans ta vie — pense abondance et tu attires l'abondance, pense manque et tu attires le manque. Un manuel pour reprendre le contrôle de ton esprit et de ta réalité.</p>
+        <div class="book-sec-lbl">📖 Début — La loi de l'attraction</div>
+        <ul class="book-pts">
+          <li>La loi de l'attraction : le semblable attire le semblable — tes pensées deviennent des choses.</li>
+          <li>Tu es un aimant : ce sur quoi tu te concentres, tu l'attires — que tu le veuilles ou non.</li>
+          <li>Les pensées émettent une fréquence ; change ta fréquence et tu changes ce qui vient à toi.</li>
+          <li>Se plaindre et craindre attirent exactement ce qu'on redoute — focalise sur ce que tu veux, pas sur ce que tu fuis.</li>
+        </ul>
+        <div class="book-sec-lbl">⚙️ Milieu — Le processus créatif</div>
+        <ul class="book-pts">
+          <li>Les 3 étapes : Demander (clarté absolue), Croire (agir comme si c'était déjà acquis), Recevoir (ressentir la joie d'avance).</li>
+          <li>La visualisation : voir et ressentir le résultat final imprègne le subconscient et guide l'action.</li>
+          <li>La gratitude est l'accélérateur le plus puissant — remercier pour ce qu'on a attire davantage.</li>
+          <li>Tes sentiments sont ta boussole : bien-être = bonne fréquence, mal-être = signal pour repenser.</li>
+        </ul>
+        <div class="book-sec-lbl">🏁 Fin — Appliquer le Secret partout</div>
+        <ul class="book-pts">
+          <li>Argent : se concentrer sur l'abondance et non sur les dettes — le manque d'argent vient des pensées de manque.</li>
+          <li>Relations : se traiter soi-même avec respect d'abord — on attire ce qu'on projette.</li>
+          <li>Santé : le corps répond aux pensées ; le rire, la joie et les pensées de guérison soutiennent le corps.</li>
+          <li>Ton pouvoir est maintenant : le passé n'existe que dans ta tête, tout se joue dans l'instant présent.</li>
+        </ul>
+        <div class="book-lessons">
+          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
+          <ol>
+            <li>Tes pensées créent ta réalité — surveille-les comme ton bien le plus précieux.</li>
+            <li>Concentre-toi sur ce que tu veux, jamais sur ce que tu ne veux pas.</li>
+            <li>Demande, crois, reçois — et agis comme si c'était déjà fait.</li>
+            <li>La gratitude quotidienne est le levier le plus rapide pour changer de fréquence.</li>
+            <li>Tes émotions t'indiquent en temps réel si tu es aligné avec tes objectifs.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /biblio-livres-section -->
 </div>
 
@@ -3304,7 +3351,7 @@ function toggleBookStatus(bookId, e){
   saveKey('book_status_'+bookId, newStatus);
 }
 function loadBookStatuses(){
-  ['book-clear','book-hill','book-greene','book-suby'].forEach(id=>{
+  ['book-clear','book-hill','book-greene','book-suby','book-byrne'].forEach(id=>{
     const saved = loadKey('book_status_'+id);
     if(!saved) return;
     const badge = document.getElementById('badge-'+id);
