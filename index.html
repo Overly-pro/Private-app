@@ -3611,6 +3611,7 @@ function renderMannequin(){
   if(t) t.textContent = total.toLocaleString('fr-FR')+' €';
   const c2 = document.getElementById('shop-cash-2');
   if(c2) c2.textContent = shopCash().toLocaleString('fr-FR')+' €';
+  if(typeof updateOutfit3D === 'function') updateOutfit3D();
 }
 function renderShop(){
   const cash = shopCash();
@@ -3697,13 +3698,14 @@ function renderOutfits(){
 }
 
 /* ===== MANNEQUIN 3D (Three.js, chargé à la demande) ===== */
-let man3dReady = false, man3dGroup = null;
+let man3dReady = false, man3dGroup = null, man3dDims = null, man3dWraps = [];
 function ensureThree(cb){
-  if(window.THREE){ cb(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-  s.onload = cb;
-  document.head.appendChild(s);
+  const loadScript = (src, next)=>{ const s=document.createElement('script'); s.src=src; s.onload=next; document.head.appendChild(s); };
+  if(window.THREE && THREE.GLTFLoader){ cb(); return; }
+  if(window.THREE){ loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js', cb); return; }
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', ()=>{
+    loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js', cb);
+  });
 }
 function init3D(){
   if(man3dReady) return;
@@ -3732,28 +3734,8 @@ function init3D(){
   rim.position.set(-2, 1.2, -1.5);
   scene.add(rim);
 
-  const mat = new THREE.MeshStandardMaterial({color:0xe8e8e8, roughness:0.32, metalness:0.18});
   const g = new THREE.Group();
-  const add = (geo, x, y, z, rz)=>{
-    const m = new THREE.Mesh(geo, mat);
-    m.position.set(x, y, z);
-    if(rz) m.rotation.z = rz;
-    g.add(m); return m;
-  };
-  add(new THREE.SphereGeometry(0.155, 24, 18), 0, 1.62, 0);
-  add(new THREE.CylinderGeometry(0.05, 0.065, 0.1, 12), 0, 1.47, 0);
-  add(new THREE.CylinderGeometry(0.21, 0.145, 0.58, 20), 0, 1.13, 0);
-  add(new THREE.SphereGeometry(0.205, 20, 14), 0, 1.4, 0);
-  add(new THREE.CylinderGeometry(0.145, 0.19, 0.24, 20), 0, 0.72, 0);
-  add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12), -0.285, 0.95, 0, 0.09);
-  add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12),  0.285, 0.95, 0, -0.09);
-  add(new THREE.SphereGeometry(0.05, 12, 10), -0.33, 0.42, 0);
-  add(new THREE.SphereGeometry(0.05, 12, 10),  0.33, 0.42, 0);
-  add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14), -0.09, 0.13, 0);
-  add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14),  0.09, 0.13, 0);
-  const footGeo = new THREE.BoxGeometry(0.11, 0.06, 0.26);
-  add(footGeo, -0.09, -0.37, 0.06);
-  add(footGeo,  0.09, -0.37, 0.06);
+  const GROUND = -0.41;
   const base = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.035, 40), new THREE.MeshStandardMaterial({color:0x0d0d0d, roughness:0.6}));
   base.position.y = -0.43;
   g.add(base);
@@ -3764,6 +3746,55 @@ function init3D(){
   g.position.y = -0.35;
   scene.add(g);
   man3dGroup = g;
+
+  function buildPrimitiveMan(){
+    const mat = new THREE.MeshStandardMaterial({color:0xe8e8e8, roughness:0.32, metalness:0.18});
+    const add = (geo, x, y, z, rz)=>{
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, y, z);
+      if(rz) m.rotation.z = rz;
+      g.add(m); return m;
+    };
+    add(new THREE.SphereGeometry(0.155, 24, 18), 0, 1.62, 0);
+    add(new THREE.CylinderGeometry(0.05, 0.065, 0.1, 12), 0, 1.47, 0);
+    add(new THREE.CylinderGeometry(0.21, 0.145, 0.58, 20), 0, 1.13, 0);
+    add(new THREE.SphereGeometry(0.205, 20, 14), 0, 1.4, 0);
+    add(new THREE.CylinderGeometry(0.145, 0.19, 0.24, 20), 0, 0.72, 0);
+    add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12), -0.285, 0.95, 0, 0.09);
+    add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12),  0.285, 0.95, 0, -0.09);
+    add(new THREE.SphereGeometry(0.05, 12, 10), -0.33, 0.42, 0);
+    add(new THREE.SphereGeometry(0.05, 12, 10),  0.33, 0.42, 0);
+    add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14), -0.09, 0.13, 0);
+    add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14),  0.09, 0.13, 0);
+    const footGeo = new THREE.BoxGeometry(0.11, 0.06, 0.26);
+    add(footGeo, -0.09, -0.37, 0.06);
+    add(footGeo,  0.09, -0.37, 0.06);
+    man3dDims = {H:2.05, W:0.66, minY:GROUND};
+  }
+
+  const loader = new THREE.GLTFLoader();
+  loader.load('assets/mannequin.glb', (gltf)=>{
+    const model = gltf.scene;
+    model.traverse(o=>{
+      if(o.isMesh || o.isSkinnedMesh){
+        const m = new THREE.MeshStandardMaterial({color:0xf1f1f1, roughness:0.35, metalness:0.06});
+        if(o.isSkinnedMesh) m.skinning = true;
+        o.material = m;
+        o.frustumCulled = false;
+      }
+    });
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const s = 1.9 / size.y;
+    model.scale.setScalar(s);
+    const box2 = new THREE.Box3().setFromObject(model);
+    model.position.x = -(box2.min.x + box2.max.x) / 2;
+    model.position.z = -(box2.min.z + box2.max.z) / 2;
+    model.position.y = GROUND - box2.min.y;
+    g.add(model);
+    man3dDims = {H:1.9, W:Math.min(box2.max.x - box2.min.x, 0.8), minY:GROUND};
+    updateOutfit3D();
+  }, undefined, ()=>{ buildPrimitiveMan(); updateOutfit3D(); });
 
   let dragging = false, lastX = 0;
   const el = renderer.domElement;
@@ -3784,6 +3815,70 @@ function init3D(){
     if(!dragging) g.rotation.y += 0.0045;
     renderer.render(scene, camera);
   })();
+}
+/* ===== VÊTEMENTS 3D SUR LE CORPS ===== */
+function labelTexture(txt){
+  const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+  const x = c.getContext('2d');
+  x.fillStyle = '#161616'; x.fillRect(0, 0, 256, 128);
+  x.strokeStyle = '#e03535'; x.lineWidth = 6; x.strokeRect(3, 3, 250, 122);
+  x.fillStyle = '#fff'; x.font = 'bold 24px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(txt.slice(0, 16), 128, 64);
+  return new THREE.CanvasTexture(c);
+}
+function wrapMaterial(it){
+  const m = new THREE.MeshStandardMaterial({map:labelTexture(it.name), roughness:0.5, metalness:0.05, side:THREE.DoubleSide});
+  if(it.img){
+    const tl = new THREE.TextureLoader();
+    tl.setCrossOrigin('anonymous');
+    tl.load(it.img, t=>{ m.map = t; m.needsUpdate = true; }, undefined, ()=>{});
+  }
+  return m;
+}
+function updateOutfit3D(){
+  if(!man3dReady || !man3dGroup || !man3dDims || !window.THREE) return;
+  man3dWraps.forEach(m=>man3dGroup.remove(m));
+  man3dWraps = [];
+  const D = man3dDims;
+  const itemAt = slot => { const id = shopOutfit[slot]; return id ? shopItems.find(x=>x.id===id) : null; };
+  const addW = mesh => { man3dGroup.add(mesh); man3dWraps.push(mesh); };
+  const tee = itemAt('torse');
+  if(tee){
+    const r = D.W * 0.30;
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r*0.92, D.H*0.26, 28, 1, true), wrapMaterial(tee));
+    m.position.y = D.minY + D.H*0.62;
+    addW(m);
+  }
+  const shoes = itemAt('pieds');
+  if(shoes){
+    const smat = wrapMaterial(shoes);
+    [-1, 1].forEach(sgn=>{
+      const b = new THREE.Mesh(new THREE.BoxGeometry(D.H*0.055, D.H*0.05, D.H*0.15), smat);
+      b.position.set(sgn*D.W*0.10, D.minY + D.H*0.028, D.H*0.02);
+      addW(b);
+    });
+  }
+  const bij = itemAt('bijoux');
+  if(bij){
+    const m = new THREE.Mesh(new THREE.TorusGeometry(D.W*0.16, D.H*0.007, 10, 44), new THREE.MeshStandardMaterial({color:0xd4af37, metalness:0.95, roughness:0.2}));
+    m.rotation.x = Math.PI/2.15;
+    m.position.y = D.minY + D.H*0.80;
+    addW(m);
+  }
+  const acc = itemAt('acc');
+  if(acc){
+    const m = new THREE.Mesh(new THREE.TorusGeometry(D.W*0.24, D.H*0.009, 10, 44), new THREE.MeshStandardMaterial({color:0x1a1a1a, metalness:0.6, roughness:0.35}));
+    m.rotation.x = Math.PI/2;
+    m.position.y = D.minY + D.H*0.50;
+    addW(m);
+  }
+  const soin = itemAt('tete');
+  if(soin){
+    const m = new THREE.Mesh(new THREE.TorusGeometry(D.W*0.15, D.H*0.005, 10, 44), new THREE.MeshStandardMaterial({color:0xffffff, emissive:0xffffff, emissiveIntensity:0.7}));
+    m.rotation.x = Math.PI/2;
+    m.position.y = D.minY + D.H*1.03;
+    addW(m);
+  }
 }
 function switchBiblioTab(tab){
   document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
