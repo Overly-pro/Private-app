@@ -279,6 +279,14 @@ html.theme-light .nav-tree-panel{background:rgba(246,246,248,0.97);border-right-
 
 /* ===== ACHATS — mannequin + wishlist à seuils ===== */
 .man-stage{position:relative;height:400px;margin-bottom:10px;}
+.man-3d{position:absolute;inset:0;z-index:1;}
+.man-3d canvas{cursor:grab;touch-action:pan-y;}
+.man-3d canvas:active{cursor:grabbing;}
+.man-slot-img{width:24px;height:24px;border-radius:6px;object-fit:cover;display:block;margin-top:3px;border:0.5px solid rgba(255,255,255,0.25);}
+.shop-thumb{width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;border:0.5px solid rgba(255,255,255,0.16);}
+.outfit-row{display:flex;align-items:center;gap:9px;padding:8px 12px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;margin-bottom:7px;}
+.outfit-name{flex:1;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.outfit-meta{font-size:9px;color:var(--muted);white-space:nowrap;}
 .man-svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:330px;width:auto;opacity:0.85;}
 .man-svg path,.man-svg circle,.man-svg line{stroke:rgba(255,255,255,0.55);stroke-width:2;fill:none;vector-effect:non-scaling-stroke;}
 .man-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
@@ -1569,25 +1577,26 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <div class="card" style="overflow:visible;">
       <div class="card-title">👤 Ma tenue — tape un slot pour changer d'article</div>
       <div class="man-stage" id="man-stage">
+        <div class="man-3d" id="man-3d"></div>
         <svg class="man-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
           <line x1="24" y1="14" x2="44" y2="12" /><line x1="76" y1="14" x2="56" y2="12" />
           <line x1="22" y1="42" x2="42" y2="38" /><line x1="78" y1="42" x2="58" y2="34" />
           <line x1="22" y1="72" x2="45" y2="66" /><line x1="78" y1="72" x2="55" y2="60" />
           <line x1="76" y1="93" x2="54" y2="92" />
         </svg>
-        <svg class="man-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+        <svg class="man-svg" id="man-svg-fb" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
           <circle cx="50" cy="18" r="11"/>
           <path d="M50 29 L50 34 M30 42 Q50 32 70 42 M30 42 L26 78 M70 42 L74 78 M26 78 L30 82 M74 78 L70 82"/>
           <path d="M35 38 L35 95 L65 95 L65 38"/>
           <path d="M35 95 L33 150 L40 150 M65 95 L67 150 L60 150 M40 150 L42 188 L36 194 L48 194 L46 150 M60 150 L58 188 L64 194 L52 194 L54 150"/>
         </svg>
-        <button class="man-slot" style="left:2%;top:8%;" id="mslot-boost" onclick="slotTap('boost')"><span class="man-slot-lb">💊 Boost</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="right:2%;top:8%;" id="mslot-tete" onclick="slotTap('tete')"><span class="man-slot-lb">🧴 Soin</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="left:0%;top:36%;" id="mslot-torse" onclick="slotTap('torse')"><span class="man-slot-lb">👕 Vêtements</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="right:0%;top:36%;" id="mslot-bijoux" onclick="slotTap('bijoux')"><span class="man-slot-lb">💍 Bijoux</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="left:0%;top:66%;" id="mslot-esprit" onclick="slotTap('esprit')"><span class="man-slot-lb">📚 Esprit</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="right:0%;top:66%;" id="mslot-acc" onclick="slotTap('acc')"><span class="man-slot-lb">✨ Style</span><span class="man-slot-val">—</span></button>
-        <button class="man-slot" style="right:2%;top:88%;" id="mslot-pieds" onclick="slotTap('pieds')"><span class="man-slot-lb">👟 Chaussures</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="left:2%;top:8%;" id="mslot-boost" onclick="slotTap('boost')"><span class="man-slot-lb">💊 Boost</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="right:2%;top:8%;" id="mslot-tete" onclick="slotTap('tete')"><span class="man-slot-lb">🧴 Soin</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="left:0%;top:36%;" id="mslot-torse" onclick="slotTap('torse')"><span class="man-slot-lb">👕 Vêtements</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="right:0%;top:36%;" id="mslot-bijoux" onclick="slotTap('bijoux')"><span class="man-slot-lb">💍 Bijoux</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="left:0%;top:66%;" id="mslot-esprit" onclick="slotTap('esprit')"><span class="man-slot-lb">📚 Esprit</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="right:0%;top:66%;" id="mslot-acc" onclick="slotTap('acc')"><span class="man-slot-lb">✨ Style</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
+        <button class="man-slot" style="right:2%;top:88%;" id="mslot-pieds" onclick="slotTap('pieds')"><span class="man-slot-lb">👟 Chaussures</span><span class="man-slot-val">—</span><img class="man-slot-img" alt="" style="display:none;"></button>
       </div>
       <div style="font-size:9.5px;color:var(--muted2);text-align:center;">Seuls les articles débloqués par ton cash peuvent être portés</div>
     </div>
@@ -1597,6 +1606,14 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
         <div class="kpi"><div class="kpi-lbl">Total tenue</div><div class="kpi-val" id="outfit-total">0 €</div></div>
         <div class="kpi"><div class="kpi-lbl">Cash dispo</div><div class="kpi-val" id="shop-cash-2">0 €</div></div>
       </div>
+    </div>
+    <div class="card">
+      <div class="card-title">💾 Tenues sauvegardées</div>
+      <div class="shop-form" style="grid-template-columns:1fr 96px;margin-bottom:8px;">
+        <input type="text" id="outfit-name" placeholder="Nom de la tenue (ex. Fit lancement)">
+        <button class="btn-primary" style="padding:9px 0;" onclick="saveOutfit()">💾 Garder</button>
+      </div>
+      <div id="outfit-list"></div>
     </div>
   </div>
 
@@ -1622,6 +1639,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
         </select>
         <input type="number" id="shop-price" placeholder="Prix €">
         <input type="number" id="shop-seuil" placeholder="Débloqué quand mon cash atteint... €" class="full">
+        <input type="url" id="shop-img" placeholder="🖼️ Image de l'article (URL, optionnel)" class="full">
       </div>
       <button class="btn-primary" style="width:100%;" onclick="addShopItem()">Ajouter à la wishlist</button>
     </div>
@@ -2094,6 +2112,7 @@ function goTo(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el = document.getElementById('view-'+view);
   if(el) el.classList.add('active');
+  if(view === 'achats' && typeof ensureThree === 'function') ensureThree(init3D);
   rotateViewBanner(view);
   if(svState[view]) showSV(view, svState[view]);
   const section = VIEW_TO_SECTION[view] || 'home';
@@ -3532,12 +3551,14 @@ function addShopItem(){
   const cat = document.getElementById('shop-cat').value;
   const price = parseFloat(document.getElementById('shop-price').value) || 0;
   const seuil = parseFloat(document.getElementById('shop-seuil').value) || 0;
+  const img = (document.getElementById('shop-img').value || '').trim();
   if(!name){ showToast('⚠️ Donne un nom à l\'article'); return; }
-  shopItems.push({id:Date.now(), name, cat, price, seuil});
+  shopItems.push({id:Date.now(), name, cat, price, seuil, img});
   saveKey('shop_items', JSON.stringify(shopItems));
   document.getElementById('shop-name').value='';
   document.getElementById('shop-price').value='';
   document.getElementById('shop-seuil').value='';
+  document.getElementById('shop-img').value='';
   renderShop();
   showToast('🛍️ Ajouté à la wishlist !');
 }
@@ -3579,6 +3600,11 @@ function renderMannequin(){
     const it = id ? shopItems.find(x=>x.id===id) : null;
     el.classList.toggle('filled', !!it);
     el.querySelector('.man-slot-val').textContent = it ? it.name : '—';
+    const im = el.querySelector('.man-slot-img');
+    if(im){
+      if(it && it.img){ im.src = it.img; im.style.display = 'block'; im.onerror = ()=>{ im.style.display='none'; }; }
+      else { im.style.display = 'none'; im.removeAttribute('src'); }
+    }
     if(it) total += it.price;
   });
   const t = document.getElementById('outfit-total');
@@ -3605,7 +3631,7 @@ function renderShop(){
     const on = it.seuil <= cash;
     const pct = it.seuil>0 ? Math.min(Math.round(cash/it.seuil*100),100) : 100;
     return `<div class="shop-item${on?'':' locked'}">
-      <span class="shop-ic">${c.ic}</span>
+      ${it.img ? `<img class="shop-thumb" src="${escapeHtml(it.img)}" alt="" onerror="this.style.display='none'">` : `<span class="shop-ic">${c.ic}</span>`}
       <div class="shop-body">
         <div class="shop-name">${escapeHtml(it.name)}</div>
         <div class="shop-meta">${c.lb} · ${it.price.toLocaleString('fr-FR')} € · seuil ${it.seuil.toLocaleString('fr-FR')} €</div>
@@ -3620,7 +3646,144 @@ function renderShop(){
 function initShop(){
   try{ shopItems = JSON.parse(loadKey('shop_items')||'[]'); }catch(e){ shopItems=[]; }
   try{ shopOutfit = JSON.parse(loadKey('shop_outfit')||'{}'); }catch(e){ shopOutfit={}; }
-  renderShop(); renderMannequin();
+  try{ savedOutfits = JSON.parse(loadKey('shop_outfits')||'[]'); }catch(e){ savedOutfits=[]; }
+  renderShop(); renderMannequin(); renderOutfits();
+}
+
+/* ===== TENUES SAUVEGARDÉES ===== */
+let savedOutfits = [];
+function saveOutfit(){
+  const name = document.getElementById('outfit-name').value.trim();
+  if(!name){ showToast('⚠️ Donne un nom à ta tenue'); return; }
+  if(!Object.keys(shopOutfit).length){ showToast('⚠️ Habille d\'abord le mannequin'); return; }
+  savedOutfits.push({id:Date.now(), name, slots:{...shopOutfit}});
+  saveKey('shop_outfits', JSON.stringify(savedOutfits));
+  document.getElementById('outfit-name').value='';
+  renderOutfits();
+  showToast('💾 Tenue « '+name+' » sauvegardée !');
+}
+function loadOutfit(id){
+  const o = savedOutfits.find(x=>x.id===id);
+  if(!o) return;
+  shopOutfit = {...o.slots};
+  saveKey('shop_outfit', JSON.stringify(shopOutfit));
+  renderMannequin();
+  showToast('👤 Tenue « '+o.name+' » enfilée !');
+}
+function delOutfit(id){
+  savedOutfits = savedOutfits.filter(x=>x.id!==id);
+  saveKey('shop_outfits', JSON.stringify(savedOutfits));
+  renderOutfits();
+}
+function renderOutfits(){
+  const list = document.getElementById('outfit-list');
+  if(!list) return;
+  if(!savedOutfits.length){
+    list.innerHTML = '<div style="font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:8px 0;">Aucune tenue sauvegardée.</div>';
+    return;
+  }
+  list.innerHTML = savedOutfits.map(o=>{
+    const ids = Object.values(o.slots);
+    const its = ids.map(id=>shopItems.find(x=>x.id===id)).filter(Boolean);
+    const total = its.reduce((s,it)=>s+it.price,0);
+    return `<div class="outfit-row">
+      <span style="font-size:15px;">👤</span>
+      <span class="outfit-name">${escapeHtml(o.name)}</span>
+      <span class="outfit-meta">${its.length} pièce${its.length>1?'s':''} · ${total.toLocaleString('fr-FR')} €</span>
+      <button class="shop-wear" onclick="loadOutfit(${o.id})">Porter</button>
+      <button class="shop-del" onclick="delOutfit(${o.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+/* ===== MANNEQUIN 3D (Three.js, chargé à la demande) ===== */
+let man3dReady = false, man3dGroup = null;
+function ensureThree(cb){
+  if(window.THREE){ cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+function init3D(){
+  if(man3dReady) return;
+  const wrap = document.getElementById('man-3d');
+  if(!wrap || !window.THREE) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  if(!w || !h) return;
+  man3dReady = true;
+  const fb = document.getElementById('man-svg-fb');
+  if(fb) fb.style.display = 'none';
+  const renderer = new THREE.WebGLRenderer({alpha:true, antialias:true});
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  wrap.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, w/h, 0.1, 50);
+  camera.position.set(0, 0.95, 3.6);
+  camera.lookAt(0, 0.85, 0);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(2, 3, 2);
+  scene.add(key);
+  const rim = new THREE.PointLight(0xe03535, 1.1, 8);
+  rim.position.set(-2, 1.2, -1.5);
+  scene.add(rim);
+
+  const mat = new THREE.MeshStandardMaterial({color:0xe8e8e8, roughness:0.32, metalness:0.18});
+  const g = new THREE.Group();
+  const add = (geo, x, y, z, rz)=>{
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    if(rz) m.rotation.z = rz;
+    g.add(m); return m;
+  };
+  add(new THREE.SphereGeometry(0.155, 24, 18), 0, 1.62, 0);
+  add(new THREE.CylinderGeometry(0.05, 0.065, 0.1, 12), 0, 1.47, 0);
+  add(new THREE.CylinderGeometry(0.21, 0.145, 0.58, 20), 0, 1.13, 0);
+  add(new THREE.SphereGeometry(0.205, 20, 14), 0, 1.4, 0);
+  add(new THREE.CylinderGeometry(0.145, 0.19, 0.24, 20), 0, 0.72, 0);
+  add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12), -0.285, 0.95, 0, 0.09);
+  add(new THREE.CylinderGeometry(0.045, 0.04, 1.0, 12),  0.285, 0.95, 0, -0.09);
+  add(new THREE.SphereGeometry(0.05, 12, 10), -0.33, 0.42, 0);
+  add(new THREE.SphereGeometry(0.05, 12, 10),  0.33, 0.42, 0);
+  add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14), -0.09, 0.13, 0);
+  add(new THREE.CylinderGeometry(0.07, 0.055, 0.95, 14),  0.09, 0.13, 0);
+  const footGeo = new THREE.BoxGeometry(0.11, 0.06, 0.26);
+  add(footGeo, -0.09, -0.37, 0.06);
+  add(footGeo,  0.09, -0.37, 0.06);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.035, 40), new THREE.MeshStandardMaterial({color:0x0d0d0d, roughness:0.6}));
+  base.position.y = -0.43;
+  g.add(base);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.012, 10, 60), new THREE.MeshStandardMaterial({color:0xe03535, emissive:0xe03535, emissiveIntensity:0.9}));
+  ring.rotation.x = Math.PI/2;
+  ring.position.y = -0.4;
+  g.add(ring);
+  g.position.y = -0.35;
+  scene.add(g);
+  man3dGroup = g;
+
+  let dragging = false, lastX = 0;
+  const el = renderer.domElement;
+  el.addEventListener('pointerdown', e=>{ dragging = true; lastX = e.clientX; });
+  window.addEventListener('pointermove', e=>{ if(dragging){ g.rotation.y += (e.clientX - lastX) * 0.012; lastX = e.clientX; } });
+  window.addEventListener('pointerup', ()=>{ dragging = false; });
+
+  window.addEventListener('resize', ()=>{
+    const nw = wrap.clientWidth, nh = wrap.clientHeight;
+    if(!nw || !nh) return;
+    camera.aspect = nw/nh;
+    camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  });
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(!dragging) g.rotation.y += 0.0045;
+    renderer.render(scene, camera);
+  })();
 }
 function switchBiblioTab(tab){
   document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
