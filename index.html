@@ -277,6 +277,36 @@ html.theme-light .nav-tree-panel{background:rgba(246,246,248,0.97);border-right-
 .trend-src{font-size:9px;font-weight:600;padding:2px 7px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;color:var(--muted);}
 .trend-updated{font-size:9px;color:var(--muted2);text-align:right;margin-bottom:12px;}
 
+/* ===== ACHATS — mannequin + wishlist à seuils ===== */
+.man-stage{position:relative;height:400px;margin-bottom:10px;}
+.man-svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:330px;width:auto;opacity:0.85;}
+.man-svg path,.man-svg circle,.man-svg line{stroke:rgba(255,255,255,0.55);stroke-width:2;fill:none;vector-effect:non-scaling-stroke;}
+.man-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.man-lines line{stroke:rgba(224,53,53,0.5);stroke-width:1.2;}
+.man-slot{position:absolute;min-width:86px;max-width:118px;padding:7px 9px;border-radius:12px;border:0.5px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);cursor:pointer;text-align:left;font-family:inherit;color:var(--text);transition:background .15s,border-color .15s;z-index:2;}
+.man-slot:active{background:rgba(255,255,255,0.12);}
+.man-slot.filled{border-color:rgba(224,53,53,0.55);background:rgba(224,53,53,0.1);}
+.man-slot-lb{font-size:7.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);display:block;font-family:'New Rocker',cursive;margin-bottom:2px;}
+.man-slot-val{font-size:10px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shop-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8px;}
+.shop-sum .kpi{text-align:center;}
+.shop-item{display:flex;align-items:center;gap:9px;padding:9px 12px;background:rgba(255,255,255,0.05);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;margin-bottom:7px;}
+.shop-item.locked{opacity:0.55;}
+.shop-ic{font-size:17px;flex-shrink:0;}
+.shop-body{flex:1;min-width:0;}
+.shop-name{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shop-meta{font-size:9px;color:var(--muted);margin-top:1px;}
+.shop-bar{height:3px;border-radius:2px;background:rgba(255,255,255,0.09);margin-top:5px;overflow:hidden;}
+.shop-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .4s;}
+.shop-state{font-size:8px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;flex-shrink:0;white-space:nowrap;}
+.shop-state.on{background:rgba(80,200,120,0.12);color:#7dd8a0;border:1px solid rgba(80,200,120,0.3);}
+.shop-state.off{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid rgba(255,255,255,0.12);}
+.shop-wear{background:none;border:0.5px solid rgba(255,255,255,0.2);color:var(--muted);border-radius:9px;padding:4px 8px;font-size:10px;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.shop-del{font-size:13px;color:var(--muted2);cursor:pointer;background:none;border:none;padding:0 2px;line-height:1;flex-shrink:0;}
+.shop-form{display:grid;grid-template-columns:1fr 74px;gap:6px;margin-bottom:6px;}
+.shop-form input,.shop-form select{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.14);border-radius:10px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;min-width:0;}
+.shop-form .full{grid-column:1/-1;}
+
 /* ===== SKILL TREE NAV ===== */
 .st-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
 html.theme-light .st-header{border-bottom-color:rgba(0,0,0,0.06);}
@@ -424,7 +454,7 @@ html.theme-light .st-close{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0
   .view-banner{column-span:all;height:250px;}
   .hero{column-span:all;}
   .stat-grid{column-span:all;}
-  .launch-grid{column-span:all;grid-template-columns:repeat(9,1fr);}
+  .launch-grid{column-span:all;grid-template-columns:repeat(5,1fr);}
   .launch-tile{padding:18px 8px 14px;}
   .launch-ic{font-size:30px;margin-bottom:8px;}
   .launch-lb{font-size:9.5px;}
@@ -838,6 +868,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <button class="launch-tile" onclick="goTo('journal')"><span class="launch-ic">📓</span><span class="launch-lb">Journal</span></button>
     <button class="launch-tile" onclick="goTo('biblio')"><span class="launch-ic">📺</span><span class="launch-lb">Biblio</span></button>
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic">😴</span><span class="launch-lb">Sommeil</span></button>
+    <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic">🛍️</span><span class="launch-lb">Achats</span></button>
   </div>
 
   <div class="duo">
@@ -1524,6 +1555,80 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   </div>
 </div>
 
+<!-- ============ VIEW: ACHATS ============ -->
+<div class="view" id="view-achats">
+  <img class="view-banner" id="banner-achats" alt="">
+
+  <div class="bij-tabs">
+    <button class="bij-tab active" id="stab-mannequin" onclick="switchShopTab('mannequin')">👤 Mannequin</button>
+    <button class="bij-tab" id="stab-wishlist" onclick="switchShopTab('wishlist')">🛍️ Wishlist</button>
+  </div>
+
+  <!-- MANNEQUIN -->
+  <div id="shoptab-mannequin">
+    <div class="card" style="overflow:visible;">
+      <div class="card-title">👤 Ma tenue — tape un slot pour changer d'article</div>
+      <div class="man-stage" id="man-stage">
+        <svg class="man-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="24" y1="14" x2="44" y2="12" /><line x1="76" y1="14" x2="56" y2="12" />
+          <line x1="22" y1="42" x2="42" y2="38" /><line x1="78" y1="42" x2="58" y2="34" />
+          <line x1="22" y1="72" x2="45" y2="66" /><line x1="78" y1="72" x2="55" y2="60" />
+          <line x1="76" y1="93" x2="54" y2="92" />
+        </svg>
+        <svg class="man-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="18" r="11"/>
+          <path d="M50 29 L50 34 M30 42 Q50 32 70 42 M30 42 L26 78 M70 42 L74 78 M26 78 L30 82 M74 78 L70 82"/>
+          <path d="M35 38 L35 95 L65 95 L65 38"/>
+          <path d="M35 95 L33 150 L40 150 M65 95 L67 150 L60 150 M40 150 L42 188 L36 194 L48 194 L46 150 M60 150 L58 188 L64 194 L52 194 L54 150"/>
+        </svg>
+        <button class="man-slot" style="left:2%;top:8%;" id="mslot-boost" onclick="slotTap('boost')"><span class="man-slot-lb">💊 Boost</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="right:2%;top:8%;" id="mslot-tete" onclick="slotTap('tete')"><span class="man-slot-lb">🧴 Soin</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="left:0%;top:36%;" id="mslot-torse" onclick="slotTap('torse')"><span class="man-slot-lb">👕 Vêtements</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="right:0%;top:36%;" id="mslot-bijoux" onclick="slotTap('bijoux')"><span class="man-slot-lb">💍 Bijoux</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="left:0%;top:66%;" id="mslot-esprit" onclick="slotTap('esprit')"><span class="man-slot-lb">📚 Esprit</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="right:0%;top:66%;" id="mslot-acc" onclick="slotTap('acc')"><span class="man-slot-lb">✨ Style</span><span class="man-slot-val">—</span></button>
+        <button class="man-slot" style="right:2%;top:88%;" id="mslot-pieds" onclick="slotTap('pieds')"><span class="man-slot-lb">👟 Chaussures</span><span class="man-slot-val">—</span></button>
+      </div>
+      <div style="font-size:9.5px;color:var(--muted2);text-align:center;">Seuls les articles débloqués par ton cash peuvent être portés</div>
+    </div>
+    <div class="card">
+      <div class="card-title">💰 Valeur de la tenue</div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">Total tenue</div><div class="kpi-val" id="outfit-total">0 €</div></div>
+        <div class="kpi"><div class="kpi-lbl">Cash dispo</div><div class="kpi-val" id="shop-cash-2">0 €</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WISHLIST -->
+  <div id="shoptab-wishlist" style="display:none;">
+    <div class="shop-sum">
+      <div class="kpi"><div class="kpi-lbl">Cash actuel</div><div class="kpi-val" id="shop-cash">0 €</div></div>
+      <div class="kpi"><div class="kpi-lbl">Débloqués</div><div class="kpi-val" id="shop-unlocked">0/0</div></div>
+      <div class="kpi"><div class="kpi-lbl">Prochain à</div><div class="kpi-val" id="shop-next">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">➕ Ajouter un achat futur</div>
+      <div class="shop-form">
+        <input type="text" id="shop-name" placeholder="Article (ex. chaîne argent 925)" class="full">
+        <select id="shop-cat">
+          <option value="vet">👕 Vêtements</option>
+          <option value="bij">💍 Bijoux</option>
+          <option value="chau">👟 Chaussures</option>
+          <option value="comp">💊 Compléments</option>
+          <option value="soin">🧴 Soin & beauté</option>
+          <option value="dev">📚 Dev perso</option>
+          <option value="sty">✨ Style</option>
+        </select>
+        <input type="number" id="shop-price" placeholder="Prix €">
+        <input type="number" id="shop-seuil" placeholder="Débloqué quand mon cash atteint... €" class="full">
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="addShopItem()">Ajouter à la wishlist</button>
+    </div>
+    <div id="shop-list"></div>
+  </div>
+</div>
+
 <!-- ============ VIEW: BIJOUX ============ -->
 <div class="view" id="view-bijoux">
   <img class="view-banner" id="banner-bijoux" alt="">
@@ -1786,53 +1891,6 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
       </div>
     </div>
 
-    <!-- Rhonda Byrne -->
-    <div class="book-card" id="book-byrne">
-      <button class="book-header" onclick="toggleBook('book-byrne')">
-        <span class="book-emoji">✨</span>
-        <div class="book-info">
-          <div class="book-title">Le Secret</div>
-          <div class="book-author">Rhonda Byrne</div>
-        </div>
-        <span class="book-badge done" id="badge-book-byrne" onclick="toggleBookStatus('book-byrne',event)">✓ Lu</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-byrne-body">
-        <p class="book-summary-txt">Rhonda Byrne révèle le "secret" transmis selon elle par les plus grands esprits de l'histoire : la loi de l'attraction. Tes pensées dominantes attirent leur équivalent dans ta vie — pense abondance et tu attires l'abondance, pense manque et tu attires le manque. Un manuel pour reprendre le contrôle de ton esprit et de ta réalité.</p>
-        <div class="book-sec-lbl">📖 Début — La loi de l'attraction</div>
-        <ul class="book-pts">
-          <li>La loi de l'attraction : le semblable attire le semblable — tes pensées deviennent des choses.</li>
-          <li>Tu es un aimant : ce sur quoi tu te concentres, tu l'attires — que tu le veuilles ou non.</li>
-          <li>Les pensées émettent une fréquence ; change ta fréquence et tu changes ce qui vient à toi.</li>
-          <li>Se plaindre et craindre attirent exactement ce qu'on redoute — focalise sur ce que tu veux, pas sur ce que tu fuis.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Le processus créatif</div>
-        <ul class="book-pts">
-          <li>Les 3 étapes : Demander (clarté absolue), Croire (agir comme si c'était déjà acquis), Recevoir (ressentir la joie d'avance).</li>
-          <li>La visualisation : voir et ressentir le résultat final imprègne le subconscient et guide l'action.</li>
-          <li>La gratitude est l'accélérateur le plus puissant — remercier pour ce qu'on a attire davantage.</li>
-          <li>Tes sentiments sont ta boussole : bien-être = bonne fréquence, mal-être = signal pour repenser.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Appliquer le Secret partout</div>
-        <ul class="book-pts">
-          <li>Argent : se concentrer sur l'abondance et non sur les dettes — le manque d'argent vient des pensées de manque.</li>
-          <li>Relations : se traiter soi-même avec respect d'abord — on attire ce qu'on projette.</li>
-          <li>Santé : le corps répond aux pensées ; le rire, la joie et les pensées de guérison soutiennent le corps.</li>
-          <li>Ton pouvoir est maintenant : le passé n'existe que dans ta tête, tout se joue dans l'instant présent.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>Tes pensées créent ta réalité — surveille-les comme ton bien le plus précieux.</li>
-            <li>Concentre-toi sur ce que tu veux, jamais sur ce que tu ne veux pas.</li>
-            <li>Demande, crois, reçois — et agis comme si c'était déjà fait.</li>
-            <li>La gratitude quotidienne est le levier le plus rapide pour changer de fréquence.</li>
-            <li>Tes émotions t'indiquent en temps réel si tu es aligné avec tes objectifs.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /biblio-livres-section -->
 </div>
 
@@ -1873,6 +1931,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
       <button class="st-node" id="stcat-argent" onclick="stSelectCat('argent')">💰 Argent</button>
       <button class="st-node" id="stcat-perso" onclick="stSelectCat('perso')">✨ Perso</button>
       <button class="st-node" id="stcat-marque" onclick="stSelectCat('marque')">💎 Marque</button>
+      <button class="st-node" id="stcat-style" onclick="stSelectCat('style')">🛍️ Style</button>
       <button class="st-node" id="stcat-vie" onclick="stSelectCat('vie')">🌙 Vie</button>
     </div>
     <div class="st-svg-wrap" id="st-svg-wrap">
@@ -2091,7 +2150,7 @@ const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal', biblio:'Biblio',
-  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux'
+  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats'
 };
 const NAV_PEEKS = {
   tasks:     ['Déclaration Hill','💪 30 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
@@ -2109,7 +2168,7 @@ const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
   mindset:'perso', journal:'perso', biblio:'perso',
-  sleep:'vie', planning:'vie', bijoux:'marque'
+  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style'
 };
 
 /* ===== SKILL TREE NAV ===== */
@@ -2130,6 +2189,9 @@ const ST_CATS = {
   ]},
   marque: {icon:'💎', label:'Marque', views:[
     {id:'bijoux',    icon:'💍', label:'Bijoux'}
+  ]},
+  style:  {icon:'🛍️', label:'Style', views:[
+    {id:'achats',    icon:'🛍️', label:'Achats'}
   ]},
   vie:    {icon:'🌙', label:'Vie', views:[
     {id:'sleep',     icon:'😴', label:'Sommeil'},
@@ -2263,6 +2325,7 @@ const VIEW_GIFS = {
   finance:   ['vibe-6', 'vibe-9', 'vibe-22'],
   objectifs: ['vibe-3', 'vibe-14', 'vibe-15'],
   biblio:    ['vibe-5', 'vibe-17', 'vibe-21'],
+  achats:    ['vibe-3', 'vibe-9', 'vibe-15'],
   sleep:     ['vibe-7', 'vibe-18', 'vibe-19'],
   journal:   ['vibe-8', 'vibe-20', 'vibe-21'],
   planning:  ['vibe-4', 'vibe-16', 'vibe-20']
@@ -2450,6 +2513,7 @@ function updateCashProgress(){
   saveKey('cash_kfc', kfc);
   saveKey('cash_shoes', shoes);
   saveKey('cash_revolut', revolut);
+  if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
 function loadCashProgress(){
   const kfc = loadKey('cash_kfc');
@@ -3351,7 +3415,7 @@ function toggleBookStatus(bookId, e){
   saveKey('book_status_'+bookId, newStatus);
 }
 function loadBookStatuses(){
-  ['book-clear','book-hill','book-greene','book-suby','book-byrne'].forEach(id=>{
+  ['book-clear','book-hill','book-greene','book-suby'].forEach(id=>{
     const saved = loadKey('book_status_'+id);
     if(!saved) return;
     const badge = document.getElementById('badge-'+id);
@@ -3438,6 +3502,125 @@ function initBijoux(){
   renderProducts(prods);
   const ta = document.getElementById('bij-notes');
   if(ta) ta.value = loadKey('bij_notes')||'';
+}
+
+/* ============ ACHATS — wishlist à seuils + mannequin ============ */
+const SHOP_CATS = {
+  vet: {ic:'👕', lb:'Vêtements',    slot:'torse'},
+  bij: {ic:'💍', lb:'Bijoux',       slot:'bijoux'},
+  chau:{ic:'👟', lb:'Chaussures',   slot:'pieds'},
+  comp:{ic:'💊', lb:'Compléments',  slot:'boost'},
+  soin:{ic:'🧴', lb:'Soin & beauté',slot:'tete'},
+  dev: {ic:'📚', lb:'Dev perso',    slot:'esprit'},
+  sty: {ic:'✨', lb:'Style',        slot:'acc'}
+};
+let shopItems = [];
+let shopOutfit = {};
+
+function shopCash(){
+  const v = parseFloat(loadKey('cash_revolut'));
+  return isNaN(v) ? 0 : v;
+}
+function switchShopTab(tab){
+  document.getElementById('shoptab-mannequin').style.display = tab==='mannequin' ? '' : 'none';
+  document.getElementById('shoptab-wishlist').style.display  = tab==='wishlist'  ? '' : 'none';
+  document.getElementById('stab-mannequin').classList.toggle('active', tab==='mannequin');
+  document.getElementById('stab-wishlist').classList.toggle('active', tab==='wishlist');
+}
+function addShopItem(){
+  const name = document.getElementById('shop-name').value.trim();
+  const cat = document.getElementById('shop-cat').value;
+  const price = parseFloat(document.getElementById('shop-price').value) || 0;
+  const seuil = parseFloat(document.getElementById('shop-seuil').value) || 0;
+  if(!name){ showToast('⚠️ Donne un nom à l\'article'); return; }
+  shopItems.push({id:Date.now(), name, cat, price, seuil});
+  saveKey('shop_items', JSON.stringify(shopItems));
+  document.getElementById('shop-name').value='';
+  document.getElementById('shop-price').value='';
+  document.getElementById('shop-seuil').value='';
+  renderShop();
+  showToast('🛍️ Ajouté à la wishlist !');
+}
+function delShopItem(id){
+  shopItems = shopItems.filter(it=>it.id!==id);
+  Object.keys(shopOutfit).forEach(s=>{ if(shopOutfit[s]===id) delete shopOutfit[s]; });
+  saveKey('shop_items', JSON.stringify(shopItems));
+  saveKey('shop_outfit', JSON.stringify(shopOutfit));
+  renderShop(); renderMannequin();
+}
+function wearItem(id){
+  const it = shopItems.find(x=>x.id===id);
+  if(!it) return;
+  if(it.seuil > shopCash()){ showToast('🔒 Pas encore débloqué — atteins '+it.seuil.toLocaleString('fr-FR')+' €'); return; }
+  const slot = SHOP_CATS[it.cat].slot;
+  shopOutfit[slot] = id;
+  saveKey('shop_outfit', JSON.stringify(shopOutfit));
+  renderMannequin();
+  showToast('👤 '+it.name+' porté !');
+}
+function slotTap(slot){
+  const cash = shopCash();
+  const pool = shopItems.filter(it=>SHOP_CATS[it.cat].slot===slot && it.seuil<=cash);
+  if(!pool.length){ showToast('Aucun article débloqué pour ce slot'); return; }
+  const cur = shopOutfit[slot];
+  const idx = pool.findIndex(it=>it.id===cur);
+  if(idx===-1){ shopOutfit[slot]=pool[0].id; }
+  else if(idx===pool.length-1){ delete shopOutfit[slot]; }
+  else { shopOutfit[slot]=pool[idx+1].id; }
+  saveKey('shop_outfit', JSON.stringify(shopOutfit));
+  renderMannequin();
+}
+function renderMannequin(){
+  let total = 0;
+  ['tete','torse','bijoux','pieds','boost','esprit','acc'].forEach(slot=>{
+    const el = document.getElementById('mslot-'+slot);
+    if(!el) return;
+    const id = shopOutfit[slot];
+    const it = id ? shopItems.find(x=>x.id===id) : null;
+    el.classList.toggle('filled', !!it);
+    el.querySelector('.man-slot-val').textContent = it ? it.name : '—';
+    if(it) total += it.price;
+  });
+  const t = document.getElementById('outfit-total');
+  if(t) t.textContent = total.toLocaleString('fr-FR')+' €';
+  const c2 = document.getElementById('shop-cash-2');
+  if(c2) c2.textContent = shopCash().toLocaleString('fr-FR')+' €';
+}
+function renderShop(){
+  const cash = shopCash();
+  const list = document.getElementById('shop-list');
+  if(!list) return;
+  const sorted = [...shopItems].sort((a,b)=>a.seuil-b.seuil);
+  const unlocked = sorted.filter(it=>it.seuil<=cash);
+  document.getElementById('shop-cash').textContent = cash.toLocaleString('fr-FR')+' €';
+  document.getElementById('shop-unlocked').textContent = unlocked.length+'/'+sorted.length;
+  const next = sorted.find(it=>it.seuil>cash);
+  document.getElementById('shop-next').textContent = next ? next.seuil.toLocaleString('fr-FR')+' €' : '—';
+  if(!sorted.length){
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;text-align:center;padding:16px 0;">Wishlist vide — ajoute ton premier achat futur ci-dessus.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(it=>{
+    const c = SHOP_CATS[it.cat];
+    const on = it.seuil <= cash;
+    const pct = it.seuil>0 ? Math.min(Math.round(cash/it.seuil*100),100) : 100;
+    return `<div class="shop-item${on?'':' locked'}">
+      <span class="shop-ic">${c.ic}</span>
+      <div class="shop-body">
+        <div class="shop-name">${escapeHtml(it.name)}</div>
+        <div class="shop-meta">${c.lb} · ${it.price.toLocaleString('fr-FR')} € · seuil ${it.seuil.toLocaleString('fr-FR')} €</div>
+        <div class="shop-bar"><div class="shop-bar-fill" style="width:${pct}%;"></div></div>
+      </div>
+      <span class="shop-state ${on?'on':'off'}">${on?'✓ Débloqué':pct+'%'}</span>
+      ${on?`<button class="shop-wear" onclick="wearItem(${it.id})">👤</button>`:''}
+      <button class="shop-del" onclick="delShopItem(${it.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+function initShop(){
+  try{ shopItems = JSON.parse(loadKey('shop_items')||'[]'); }catch(e){ shopItems=[]; }
+  try{ shopOutfit = JSON.parse(loadKey('shop_outfit')||'{}'); }catch(e){ shopOutfit={}; }
+  renderShop(); renderMannequin();
 }
 function switchBiblioTab(tab){
   document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
@@ -3598,6 +3781,7 @@ function initApp(){
   initNavTreePeeks();
   loadBookStatuses();
   initBijoux();
+  initShop();
   updateNavTreeActive('home','home');
   // goal
   updateCountdown();
