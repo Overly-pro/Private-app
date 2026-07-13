@@ -1579,10 +1579,10 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
       <div class="man-stage" id="man-stage">
         <div class="man-3d" id="man-3d"></div>
         <svg class="man-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <line x1="24" y1="14" x2="44" y2="12" /><line x1="76" y1="14" x2="56" y2="12" />
-          <line x1="22" y1="42" x2="42" y2="38" /><line x1="78" y1="42" x2="58" y2="34" />
-          <line x1="22" y1="72" x2="45" y2="66" /><line x1="78" y1="72" x2="55" y2="60" />
-          <line x1="76" y1="93" x2="54" y2="92" />
+          <line x1="24" y1="14" x2="45" y2="11" /><line x1="76" y1="14" x2="55" y2="11" />
+          <line x1="22" y1="42" x2="42" y2="32" /><line x1="78" y1="42" x2="55" y2="22" />
+          <line x1="22" y1="72" x2="46" y2="64" /><line x1="78" y1="72" x2="56" y2="52" />
+          <line x1="76" y1="93" x2="54" y2="93" />
         </svg>
         <svg class="man-svg" id="man-svg-fb" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
           <circle cx="50" cy="18" r="11"/>
@@ -3724,8 +3724,8 @@ function init3D(){
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, w/h, 0.1, 50);
-  camera.position.set(0, 0.9, 2.95);
-  camera.lookAt(0, 0.78, 0);
+  camera.position.set(0, 0.35, 3.5);
+  camera.lookAt(0, 0.24, 0);
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.65));
   const key = new THREE.DirectionalLight(0xffffff, 0.85);
