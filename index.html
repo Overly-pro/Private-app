@@ -197,6 +197,23 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .launch-tile{background:rgba(255,255,255,0.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:0.5px solid rgba(255,255,255,0.13);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);border-radius:14px;padding:11px 6px 9px;text-align:center;cursor:pointer;font-family:inherit;color:var(--text);transition:background .15s,border-color .15s,transform .15s;}
 .launch-tile:active{background:rgba(255,255,255,0.11);transform:scale(0.96);}
 .launch-ic{font-size:19px;line-height:1;display:block;margin-bottom:5px;}
+/* RPG */
+.lv-chip{display:flex;align-items:center;background:rgba(224,53,53,0.1);border:0.5px solid rgba(224,53,53,0.4);border-radius:20px;padding:5px 11px;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--accent);cursor:pointer;font-family:'New Rocker',cursive;white-space:nowrap;}
+.rpg-card{border-color:rgba(224,53,53,0.3)!important;}
+.rpg-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.rpg-lv{font-size:15px;font-weight:400;font-family:'New Rocker',cursive;color:var(--accent);letter-spacing:1px;}
+.rpg-rank{font-size:11px;font-weight:400;font-family:'New Rocker',cursive;letter-spacing:2px;text-transform:uppercase;color:var(--text);flex:1;}
+.rpg-xp{font-size:10px;color:var(--muted);}
+.rpg-bar{height:7px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;border:0.5px solid rgba(255,255,255,0.1);}
+.rpg-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#8f1d1d,#e03535);box-shadow:0 0 10px rgba(224,53,53,0.6);transition:width .5s cubic-bezier(0.16,1,0.3,1);}
+.rpg-next{font-size:9px;color:var(--muted2);margin-top:6px;letter-spacing:.4px;}
+.quest-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.09);margin-bottom:6px;}
+.quest-row.done{opacity:.55;border-color:rgba(80,200,120,0.3);}
+.quest-ic{font-size:14px;flex-shrink:0;}
+.quest-name{flex:1;font-size:11px;font-weight:600;}
+.quest-prog{font-size:9px;color:var(--muted2);}
+.quest-xp{font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--accent);white-space:nowrap;}
+.quest-row.done .quest-xp{color:#7dd8a0;}
 .launch-lb{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-family:'New Rocker',cursive;display:block;}
 .stat:hover{border-color:#333333;}
 .stat-val{font-size:19px;font-weight:900;color:var(--text);line-height:1;}
@@ -815,6 +832,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <div class="date mono" id="headerDate">—</div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
+    <button class="lv-chip" id="lv-chip" onclick="goTo('home')">⚡ LV 1</button>
     <button class="nav-pill" onclick="openNavTree()" aria-label="Navigation">
       <div class="nav-pill-led" id="nav-pill-led"></div>
       <span id="nav-pill-text">Nav</span>
@@ -851,6 +869,16 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     </div>
   </div>
 
+  <div class="card rpg-card">
+    <div class="rpg-top">
+      <span class="rpg-lv" id="rpg-lv">LV 1</span>
+      <span class="rpg-rank" id="rpg-rank">Rookie</span>
+      <span class="rpg-xp mono" id="rpg-xp">0 XP</span>
+    </div>
+    <div class="rpg-bar"><div class="rpg-bar-fill" id="rpg-bar-fill" style="width:0%;"></div></div>
+    <div class="rpg-next" id="rpg-next">100 XP avant le niveau 2 · Apprenti</div>
+  </div>
+
   <div class="stat-grid">
     <div class="stat" onclick="goTo('tasks')">
       <div class="stat-val" id="home-tasks-done">0/10</div>
@@ -877,6 +905,11 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <button class="launch-tile" onclick="goTo('biblio')"><span class="launch-ic">📺</span><span class="launch-lb">Biblio</span></button>
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic">😴</span><span class="launch-lb">Sommeil</span></button>
     <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic">🛍️</span><span class="launch-lb">Achats</span></button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚔️ Quêtes du jour</div>
+    <div id="quest-list"></div>
   </div>
 
   <div class="duo">
@@ -963,7 +996,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     </div>
     <div class="task" id="t2" onclick="toggleTask('t2')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💪 Faire 35 pompes</div><div class="task-sub">Corps actif = esprit actif dès le réveil</div></div>
+        <div class="task-body"><div class="task-name">💪 Faire 40 pompes</div><div class="task-sub">Corps actif = esprit actif dès le réveil</div></div>
         <div class="expand-btn" id="e-t2" onclick="expandHow(event,'h-t2','e-t2')">▼</div></div>
       <div class="how-to" id="h-t2"><div class="how-to-inner"><strong>Comment faire :</strong> Au sol, mains à largeur d'épaules. 25 répétitions d'affilée ou en 2-3 séries si besoin. Active le corps, libère les endorphines, signale au cerveau que la journée commence fort.</div></div>
     </div>
@@ -2221,7 +2254,7 @@ const VIEW_LABELS = {
   sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats'
 };
 const NAV_PEEKS = {
-  tasks:     ['Déclaration Hill','💪 35 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
+  tasks:     ['Déclaration Hill','💪 40 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
   finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
   objectifs: ['Capital 16 août','Plan 30 jours vidéos'],
@@ -2527,7 +2560,8 @@ function toggleTask(id){
   saveTaskState(taskState);
   const done = Object.keys(taskState).filter(k=>taskState[k]).length;
   if(done === T_TOTAL) showToast('🔥 Journée parfaite — 10/10 accompli !');
-  else if(taskState[id]) showToast('✓ Tâche validée — continue comme ça !');
+  if(taskState[id]) addXp('task-'+id, 10); else removeXp('task-'+id);
+  checkQuests();
 }
 function renderTask(id){
   const el = document.getElementById(id);
@@ -2733,6 +2767,7 @@ function saveSleepEntry(){
   sleepEntries[dateStr] = JSON.parse(JSON.stringify(sleepDraft));
   saveKey(SLEEP_ENTRIES_KEY, JSON.stringify(sleepEntries));
   showToast('💾 Nuit enregistrée');
+  addXp('sleep', 10);
   renderSleepHistory();
   updateSleepDashboard();
   updateHomeSleepStats();
@@ -2816,6 +2851,7 @@ function saveJournalToday(){
   };
   saveKey(JOURNAL_KEY, JSON.stringify(journalEntries));
   showToast('💾 Carnet enregistré');
+  addXp('journal', 20);
   renderJournalHistory();
 }
 function loadJournalToday(){
@@ -3230,6 +3266,8 @@ function toggleHabit(idx){
   saveKey(HABITS_KEY,JSON.stringify(habitsData));
   saveKey(HABITS_STATE_KEY,JSON.stringify(habitsState));
   renderHabits();
+  if(habitsState[today][idx]) addXp('habit-'+idx, 15); else removeXp('habit-'+idx);
+  checkQuests();
 }
 function addHabit(){
   const nameInp=document.getElementById('habit-new-name');
@@ -3481,6 +3519,7 @@ function toggleBookStatus(bookId, e){
   badge.className = 'book-badge ' + newStatus;
   badge.textContent = newStatus === 'done' ? '✓ Lu' : 'En cours';
   saveKey('book_status_'+bookId, newStatus);
+  if(newStatus === 'done') addXp('bookxp-'+bookId, 50, true);
 }
 function loadBookStatuses(){
   ['book-clear','book-hill','book-greene','book-suby','book-byrne'].forEach(id=>{
@@ -4052,6 +4091,79 @@ Une fois la transcription collée, génère-moi des notes structurées :
 }
 
 /* ============ INIT ============ */
+/* ============ RPG — XP, NIVEAUX, QUÊTES ============ */
+const RPG_RANKS = ['Rookie','Apprenti','Grinder','Hustler','Self-Made','Boss','Mogul','Empire','Icône','Légende'];
+let xpTotal = 0, xpDay = {}, rpgOnce = {};
+function rankName(lv){ return RPG_RANKS[Math.min(lv-1, RPG_RANKS.length-1)]; }
+function levelInfo(xp){
+  let lv = 1, rem = xp;
+  while(rem >= lv*100){ rem -= lv*100; lv++; }
+  return {lv, into:rem, need:lv*100};
+}
+function persistRpg(){
+  saveKey('rpg_xp', xpTotal);
+  saveKey('rpg_day_'+todayISO(), JSON.stringify(xpDay));
+  saveKey('rpg_once', JSON.stringify(rpgOnce));
+}
+function addXp(key, amount, once){
+  if(once){ if(rpgOnce[key]) return; rpgOnce[key] = true; }
+  else { if(xpDay[key]) return; xpDay[key] = amount; }
+  const before = levelInfo(xpTotal).lv;
+  xpTotal += amount;
+  persistRpg();
+  const after = levelInfo(xpTotal).lv;
+  showToast('⚡ +'+amount+' XP');
+  if(after > before) setTimeout(()=>showToast('⬆️ NIVEAU '+after+' — '+rankName(after).toUpperCase()+' !'), 1100);
+  renderRpg();
+}
+function removeXp(key){
+  if(!xpDay[key]) return;
+  xpTotal = Math.max(0, xpTotal - xpDay[key]);
+  delete xpDay[key];
+  persistRpg();
+  renderRpg();
+}
+function rpgQuests(){
+  const tasksDone = Object.keys(xpDay).filter(k=>k.indexOf('task-')===0).length;
+  const habitsDone = Object.keys(xpDay).filter(k=>k.indexOf('habit-')===0).length;
+  return [
+    {ic:'✅', name:'Terminer les '+T_TOTAL+' tâches du jour', xp:50, done:!!xpDay['quest-alltasks'], prog:Math.min(tasksDone,T_TOTAL)+'/'+T_TOTAL},
+    {ic:'🔥', name:'Valider 3 habitudes', xp:30, done:!!xpDay['quest-3habits'], prog:Math.min(habitsDone,3)+'/3'},
+    {ic:'📓', name:'Écrire dans le journal', xp:20, done:!!xpDay['journal'], prog:xpDay['journal']?'1/1':'0/1'},
+    {ic:'😴', name:'Logger ma nuit de sommeil', xp:10, done:!!xpDay['sleep'], prog:xpDay['sleep']?'1/1':'0/1'}
+  ];
+}
+function checkQuests(){
+  const tasksDone = Object.keys(xpDay).filter(k=>k.indexOf('task-')===0).length;
+  if(tasksDone >= T_TOTAL) addXp('quest-alltasks', 50);
+  const habitsDone = Object.keys(xpDay).filter(k=>k.indexOf('habit-')===0).length;
+  if(habitsDone >= 3) addXp('quest-3habits', 30);
+}
+function renderRpg(){
+  const L = levelInfo(xpTotal);
+  const el = id => document.getElementById(id);
+  if(el('lv-chip')) el('lv-chip').textContent = '⚡ LV '+L.lv;
+  if(el('rpg-lv')) el('rpg-lv').textContent = 'LV '+L.lv;
+  if(el('rpg-rank')) el('rpg-rank').textContent = rankName(L.lv);
+  if(el('rpg-xp')) el('rpg-xp').textContent = xpTotal.toLocaleString('fr-FR')+' XP';
+  if(el('rpg-bar-fill')) el('rpg-bar-fill').style.width = Math.round(L.into/L.need*100)+'%';
+  if(el('rpg-next')) el('rpg-next').textContent = (L.need-L.into)+' XP avant le niveau '+(L.lv+1)+' · '+rankName(L.lv+1);
+  const ql = el('quest-list');
+  if(ql) ql.innerHTML = rpgQuests().map(q=>`
+    <div class="quest-row${q.done?' done':''}">
+      <span class="quest-ic">${q.ic}</span>
+      <span class="quest-name">${q.name}</span>
+      <span class="quest-prog mono">${q.prog}</span>
+      <span class="quest-xp">${q.done?'✓ Fait':'+'+q.xp+' XP'}</span>
+    </div>`).join('');
+}
+function initRpg(){
+  xpTotal = parseFloat(loadKey('rpg_xp')) || 0;
+  try{ xpDay = JSON.parse(loadKey('rpg_day_'+todayISO())||'{}'); }catch(e){ xpDay = {}; }
+  try{ rpgOnce = JSON.parse(loadKey('rpg_once')||'{}'); }catch(e){ rpgOnce = {}; }
+  renderRpg();
+}
+
 function initApp(){
   // Enregistrer le service worker (notifications en arrière-plan)
   if('serviceWorker' in navigator){
@@ -4089,6 +4201,7 @@ function initApp(){
   loadBookStatuses();
   initBijoux();
   initShop();
+  initRpg();
   updateNavTreeActive('home','home');
   // goal
   updateCountdown();
