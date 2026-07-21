@@ -248,11 +248,12 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .ht-bar.today{background:linear-gradient(180deg,#fff,#e03535);opacity:1;}
 .ht-bar.empty{background:rgba(255,255,255,0.06);}
 /* Top habits */
-.ht-top-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.ht-top-name{font-size:10px;width:96px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);}
-.ht-top-track{flex:1;height:9px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;}
-.ht-top-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#8f1d1d,#e03535);}
-.ht-top-pct{font-size:9px;width:30px;text-align:right;color:var(--muted2);font-family:'Space Mono',monospace;}
+.ht-top-row{margin-bottom:9px;}
+.ht-top-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.ht-top-name{font-size:11px;color:var(--text);line-height:1.25;}
+.ht-top-track{height:9px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;}
+.ht-top-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#8f1d1d,#e03535);min-width:2px;transition:width .3s;}
+.ht-top-pct{font-size:9px;text-align:right;color:var(--muted2);font-family:'Space Mono',monospace;white-space:nowrap;flex-shrink:0;}
 /* Active streaks */
 .ht-streaks{display:flex;flex-wrap:wrap;gap:6px;}
 .ht-streak-pill{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);font-size:10px;}
@@ -1682,16 +1683,16 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   <div class="ht-gauges" id="ht-gauges"></div>
 
   <div class="ht-sub">
-    <div class="kpi"><div class="kpi-lbl">Jours restants</div><div class="kpi-val" id="ht-daysleft">—</div></div>
-    <div class="kpi"><div class="kpi-lbl">Complétés</div><div class="kpi-val" id="ht-completed">0</div></div>
-    <div class="kpi"><div class="kpi-lbl">Restants</div><div class="kpi-val" id="ht-remaining">0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Days Left</div><div class="kpi-val" id="ht-daysleft">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Completed</div><div class="kpi-val" id="ht-completed">0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Remaining</div><div class="kpi-val" id="ht-remaining">0</div></div>
   </div>
 
   <div class="card rpg-card">
-    <div class="card-title">🔥 Challenge 100 jours parfaits</div>
-    <div style="display:flex;align-items:baseline;gap:8px;"><span class="ht-chal-num" id="ht-chal">0</span><span style="font-size:12px;color:var(--muted);">/ 100 jours parfaits</span></div>
+    <div class="card-title">🔥 100 Perfect Days Challenge</div>
+    <div style="display:flex;align-items:baseline;gap:8px;"><span class="ht-chal-num" id="ht-chal">0</span><span style="font-size:12px;color:var(--muted);">/ 100 perfect days</span></div>
     <div class="ht-chal-bar"><div class="ht-chal-fill" id="ht-chal-fill" style="width:0%;"></div></div>
-    <div style="font-size:9.5px;color:var(--muted2);margin-top:7px;line-height:1.5;">Une journée parfaite = toutes tes habitudes cochées. Screenshote-la pour le Skool AB Academy 📸</div>
+    <div style="font-size:9.5px;color:var(--muted2);margin-top:7px;line-height:1.5;">A perfect day = all habits checked. Screenshot it for the AB Academy Skool 📸</div>
   </div>
 
   <div class="card">
@@ -1705,12 +1706,12 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   </div>
 
   <div class="card">
-    <div class="card-title">🔥 Séries actives</div>
+    <div class="card-title">🔥 Active Streaks</div>
     <div class="ht-streaks" id="ht-streaks-box"></div>
   </div>
 
   <div class="card" style="padding:8px;">
-    <div class="card-title" style="padding:4px 4px 8px;">✅ Grille du mois</div>
+    <div class="card-title" style="padding:4px 4px 8px;">✅ Monthly Grid</div>
     <div class="ht-scroll">
       <table class="ht-grid">
         <thead><tr id="ht-head"></tr></thead>
@@ -1718,10 +1719,10 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
       </table>
     </div>
     <div class="ht-add">
-      <input type="text" id="ht-new" placeholder="Ajouter une habitude...">
+      <input type="text" id="ht-new" placeholder="Add a habit...">
       <button class="btn-primary" style="padding:9px 16px;" onclick="htAddHabit()">+</button>
     </div>
-    <div style="font-size:9px;color:var(--muted2);margin-top:6px;text-align:center;">Tape une case pour valider · tape le nom d'une habitude pour la renommer ou supprimer</div>
+    <div style="font-size:9px;color:var(--muted2);margin-top:6px;text-align:center;">Tap a cell to check · tap a habit name to rename or delete</div>
   </div>
 </div>
 
@@ -2420,7 +2421,7 @@ const NAV_PEEKS = {
   tasks:     ['Déclaration Hill','💪 40 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
   capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
-  tracker:   ['📊 Grille du mois','🔥 Séries par habitude','📈 Momentum'],
+  tracker:   ['📊 Monthly grid','🔥 Streaks per habit','📈 Momentum'],
   finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
   objectifs: ['Capital 16 août','Plan 30 jours vidéos'],
   mindset:   ['Check-in émotionnel','Affirmations','Vision'],
@@ -3570,7 +3571,17 @@ function recalcVentes(type){
     document.getElementById('vc-nb').textContent = items.length;
     document.getElementById('vc-total').textContent = total.toFixed(2)+' €';
     document.getElementById('vc-profit').textContent = (total-lot).toFixed(2)+' €';
+    syncShoesToGoal(total);
   }
+}
+/* Synchro : total des ventes de chaussures → champ "Chaussures vendues" des Objectifs */
+function syncShoesToGoal(total){
+  if(total===undefined) total = (ventesData.chaussures.items||[]).reduce((s,v)=>s+v.prix,0);
+  saveKey('cash_shoes', total);
+  const inp = document.getElementById('g-shoes-input');
+  if(inp) inp.value = total ? total : '';
+  const val = document.getElementById('g-shoes-val');
+  if(val) val.textContent = total.toLocaleString('fr-FR')+' €';
 }
 function calcPrix(){
   const cout = parseFloat(document.getElementById('calc-cout').value)||0;
@@ -4389,7 +4400,8 @@ function initRpg(){
 }
 
 /* ============ HABIT TRACKER (grille mensuelle, style AB Academy) ============ */
-const HT_DEFAULT = ['Dormir 8h','Boire de l\'eau','Pompes du jour','Lire 10 pages','Visualisation','1 vidéo YouTube AB Academy','1 vidéo Skool AB Academy','Apprendre le game de la joaillerie','Écrire 3 priorités pour demain','Filmer 1 vidéo de contenu'];
+const HT_DEFAULT = ['Sleep 8h','Drink water','Daily push ups','Read 10 pages of my book','Visualisation','minimum 1 ab academy youtube video','minimum 1 ab academy skool video','learn about the jewelery game','writte 3 priorities for tmrw','Record 1 video for content'];
+const HT_MIGRATE = {'Dormir 8h':'Sleep 8h','Boire de l\'eau':'Drink water','Pompes du jour':'Daily push ups','Lire 10 pages':'Read 10 pages of my book','1 vidéo YouTube AB Academy':'minimum 1 ab academy youtube video','1 vidéo Skool AB Academy':'minimum 1 ab academy skool video','Apprendre le game de la joaillerie':'learn about the jewelery game','Écrire 3 priorités pour demain':'writte 3 priorities for tmrw','Filmer 1 vidéo de contenu':'Record 1 video for content'};
 let htHabits = [];
 let htData = {};        // { "YYYY-M": { habitIdx: { day: 1 } } }
 let htCursor = null;    // {y, m}  m = 0-11
@@ -4398,6 +4410,10 @@ function htDaysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
 function htEnsure(y,m){ const k=htMonKey(y,m); if(!htData[k]) htData[k]={}; return htData[k]; }
 function htLoad(){
   try{ htHabits = JSON.parse(loadKey('ht_habits')||'null') || HT_DEFAULT.slice(); }catch(e){ htHabits = HT_DEFAULT.slice(); }
+  // migration FR -> EN des libellés d'habitudes
+  let changed = false;
+  htHabits = htHabits.map(h=>{ if(HT_MIGRATE[h]){ changed = true; return HT_MIGRATE[h]; } return h; });
+  if(changed) saveKey('ht_habits', JSON.stringify(htHabits));
   try{ htData = JSON.parse(loadKey('ht_data')||'{}'); }catch(e){ htData = {}; }
   const n = new Date();
   htCursor = {y:n.getFullYear(), m:n.getMonth()};
@@ -4430,13 +4446,13 @@ function htAddHabit(){
   htPersist();
   inp.value='';
   renderTracker();
-  showToast('✅ Habitude ajoutée au tracker');
+  showToast('✅ Habit added');
 }
 function htRenameHabit(idx){
-  const v = prompt('Renommer l\'habitude (laisse vide pour supprimer) :', htHabits[idx]);
+  const v = prompt('Rename habit (leave empty to delete):', htHabits[idx]);
   if(v===null) return;
   if(v.trim()===''){
-    if(!confirm('Supprimer « '+htHabits[idx]+' » du tracker ?')) return;
+    if(!confirm('Delete "'+htHabits[idx]+'" from the tracker?')) return;
     htHabits.splice(idx,1);
     Object.keys(htData).forEach(k=>{ if(htData[k]) delete htData[k][idx]; });
   } else {
@@ -4474,13 +4490,13 @@ function renderTracker(){
   const n = new Date();
   const isCurMonth = (y===n.getFullYear() && m===n.getMonth());
   const today = n.getDate();
-  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  const WD = ['D','L','M','M','J','V','S'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const WD = ['S','M','T','W','T','F','S'];
   const nbHabits = htHabits.length;
   document.getElementById('ht-month-lbl').textContent = MONTHS[m]+' '+y;
 
   // en-tête jours
-  let head = '<th class="ht-name-h">Habitude</th>';
+  let head = '<th class="ht-name-h">Habit</th>';
   for(let d=1; d<=dim; d++){
     const wd = new Date(y,m,d).getDay();
     const we = (wd===0||wd===6) ? ' wend' : '';
@@ -4536,9 +4552,9 @@ function renderTracker(){
   // Jauges anneaux
   document.getElementById('ht-gauges').innerHTML =
     `<div class="ht-gauge">${htDonut(pctMomentum,'#e03535')}<div class="ht-gauge-lbl">Momentum</div></div>`+
-    `<div class="ht-gauge">${htDonut(pctDaily,'#4bd4a0')}<div class="ht-gauge-lbl">Jour</div></div>`+
-    `<div class="ht-gauge">${htDonut(pctWeekly,'#8f7bff')}<div class="ht-gauge-lbl">Semaine</div></div>`+
-    `<div class="ht-gauge">${htDonut(pctMonthly,'#ffb020')}<div class="ht-gauge-lbl">Mois</div></div>`;
+    `<div class="ht-gauge">${htDonut(pctDaily,'#4bd4a0')}<div class="ht-gauge-lbl">Daily</div></div>`+
+    `<div class="ht-gauge">${htDonut(pctWeekly,'#8f7bff')}<div class="ht-gauge-lbl">Weekly</div></div>`+
+    `<div class="ht-gauge">${htDonut(pctMonthly,'#ffb020')}<div class="ht-gauge-lbl">Monthly</div></div>`;
 
   document.getElementById('ht-daysleft').textContent = isCurMonth ? (dim-today) : (y>n.getFullYear()||(y===n.getFullYear()&&m>n.getMonth()) ? dim : 0);
   document.getElementById('ht-completed').textContent = totalDone;
@@ -4560,18 +4576,19 @@ function renderTracker(){
 
   // Top Habits (triées par complétion du mois)
   const top = [...perHabit].sort((a,b)=>b.hDone-a.hDone);
-  document.getElementById('ht-top').innerHTML = top.map(h=>`
-    <div class="ht-top-row">
-      <span class="ht-top-name">${escapeHtml(h.name)}</span>
-      <span class="ht-top-track"><span class="ht-top-fill" style="width:${h.pct}%;"></span></span>
-      <span class="ht-top-pct">${h.pct}%</span>
-    </div>`).join('');
+  document.getElementById('ht-top').innerHTML = top.map(h=>{
+    const w = h.pct>0 ? Math.max(h.pct, 7) : 0; // toujours visible même à 1%
+    return `<div class="ht-top-row">
+      <div class="ht-top-head"><span class="ht-top-name">${escapeHtml(h.name)}</span><span class="ht-top-pct">${h.hDone}/${dim} · ${h.pct}%</span></div>
+      <div class="ht-top-track"><span class="ht-top-fill" style="width:${w}%;"></span></div>
+    </div>`;
+  }).join('');
 
   // Séries actives
   const active = perHabit.filter(h=>h.streak>0).sort((a,b)=>b.streak-a.streak);
   const sbox = document.getElementById('ht-streaks-box');
   sbox.innerHTML = active.length ? active.map(h=>`<div class="ht-streak-pill">${escapeHtml(h.name)} <b>${h.streak}🔥</b></div>`).join('')
-    : '<div style="font-size:11px;color:var(--muted3);font-style:italic;">Aucune série en cours — coche tes habitudes aujourd\'hui pour démarrer.</div>';
+    : '<div style="font-size:11px;color:var(--muted3);font-style:italic;">No active streak — check your habits today to start one.</div>';
 
   // Challenge 100 jours
   const chal = htChallengeCount();
@@ -4605,8 +4622,8 @@ function htCheckPerfectDay(){
   if(loadKey(flag)==='1') return;
   saveKey(flag,'1');
   addXp('ht-perfectday', 40);
-  showToast('🏆 JOURNÉE PARFAITE — toutes tes habitudes cochées !');
-  setTimeout(()=>showToast('📸 Screenshot ton tracker pour le Skool AB Academy !'), 1400);
+  showToast('🏆 PERFECT DAY — all habits checked!');
+  setTimeout(()=>showToast('📸 Screenshot your tracker for the AB Academy Skool!'), 1400);
 }
 function initTracker(){ htLoad(); renderTracker(); }
 
