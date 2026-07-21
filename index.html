@@ -214,6 +214,20 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .quest-prog{font-size:9px;color:var(--muted2);}
 .quest-xp{font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--accent);white-space:nowrap;}
 .quest-row.done .quest-xp{color:#7dd8a0;}
+/* CAPTURE VIDÉO */
+.cap-q{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;margin:10px 0 6px;}
+.cap-q-n{width:20px;height:20px;border-radius:50%;background:rgba(224,53,53,0.12);border:1px solid rgba(224,53,53,0.4);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-family:'New Rocker',cursive;}
+.cap-ta{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;resize:none;min-height:40px;}
+.cap-timer{font-size:44px;text-align:center;letter-spacing:3px;margin:6px 0 12px;color:var(--text);}
+.cap-timer.running{color:var(--accent);text-shadow:0 0 18px rgba(224,53,53,0.55);}
+.cap-rec{width:100%;padding:14px 0;font-size:13px;background:rgba(224,53,53,0.12);border:1px solid rgba(224,53,53,0.5);color:#fff;border-radius:12px;cursor:pointer;font-family:inherit;font-weight:700;}
+.cap-done-box{text-align:center;padding:10px 0;font-size:13px;color:#7dd8a0;}
+.cap-batch-row{display:flex;align-items:center;gap:9px;padding:8px 11px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;margin-bottom:6px;cursor:pointer;user-select:none;}
+.cap-b-date{flex:1;font-size:11px;font-weight:600;}
+.cap-b-tag{font-size:8.5px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;}
+.cap-b-tag.captured{background:rgba(255,180,0,0.1);color:#ca0;border:1px solid rgba(255,180,0,0.25);}
+.cap-b-tag.edited{background:rgba(100,160,255,0.1);color:#8ab4ff;border:1px solid rgba(100,160,255,0.28);}
+.cap-b-tag.posted{background:rgba(80,200,120,0.1);color:#7dd8a0;border:1px solid rgba(80,200,120,0.3);}
 .launch-lb{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-family:'New Rocker',cursive;display:block;}
 .stat:hover{border-color:#333333;}
 .stat-val{font-size:19px;font-weight:900;color:var(--text);line-height:1;}
@@ -905,6 +919,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <button class="launch-tile" onclick="goTo('biblio')"><span class="launch-ic">📺</span><span class="launch-lb">Biblio</span></button>
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic">😴</span><span class="launch-lb">Sommeil</span></button>
     <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic">🛍️</span><span class="launch-lb">Achats</span></button>
+    <button class="launch-tile" onclick="goTo('capture')"><span class="launch-ic">🎥</span><span class="launch-lb">Capture</span></button>
   </div>
 
   <div class="card">
@@ -1602,6 +1617,40 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   </div>
 </div>
 
+<!-- ============ VIEW: CAPTURE ============ -->
+<div class="view" id="view-capture">
+  <img class="view-banner" id="banner-capture" alt="">
+
+  <div class="card rpg-card">
+    <div class="card-title">🎥 Capture du jour</div>
+    <div id="cap-today-body"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎬 Les 3 questions — garde-les en tête</div>
+    <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;line-height:1.5;">Réponds en 2 mots si tu veux (juste pour t'aider), puis parle face caméra. Zéro script, zéro pression.</div>
+    <div class="cap-q"><span class="cap-q-n">1</span> Qu'est-ce que j'ai fait aujourd'hui pour le projet ?</div>
+    <textarea class="cap-ta" id="cap-q1" placeholder="Ex. contacté 3 fournisseurs, filmé les bagues..." oninput="capSaveDraft()"></textarea>
+    <div class="cap-q"><span class="cap-q-n">2</span> Une chose que j'ai apprise ?</div>
+    <textarea class="cap-ta" id="cap-q2" placeholder="Ex. le SEO Insta, négocier un prix..." oninput="capSaveDraft()"></textarea>
+    <div class="cap-q"><span class="cap-q-n">3</span> C'est quoi la suite ?</div>
+    <textarea class="cap-ta" id="cap-q3" placeholder="Ex. demain je monte 2 vidéos..." oninput="capSaveDraft()"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏱️ Minuteur 2 minutes</div>
+    <div class="cap-timer" id="cap-timer">2:00</div>
+    <button class="cap-rec" id="cap-timer-btn" onclick="capToggleTimer()">▶️ Lancer le minuteur</button>
+    <div style="font-size:9.5px;color:var(--muted2);text-align:center;margin-top:8px;line-height:1.5;">Le minuteur est juste un repère. Filme avec l'appli caméra de ton téléphone, puis reviens valider.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎞️ File de montage — batch 1-2×/semaine</div>
+    <div style="font-size:10px;color:var(--muted2);margin-bottom:8px;line-height:1.5;">Tes captures s'empilent ici. Tape sur une ligne pour la faire passer : Capturée → Montée → Postée.</div>
+    <div id="cap-batch-list"></div>
+  </div>
+</div>
+
 <!-- ============ VIEW: ACHATS ============ -->
 <div class="view" id="view-achats">
   <img class="view-banner" id="banner-achats" alt="">
@@ -2257,11 +2306,12 @@ const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal', biblio:'Biblio',
-  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats'
+  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture'
 };
 const NAV_PEEKS = {
   tasks:     ['Déclaration Hill','💪 40 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
+  capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
   finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
   objectifs: ['Capital 16 août','Plan 30 jours vidéos'],
   mindset:   ['Check-in émotionnel','Affirmations','Vision'],
@@ -2275,7 +2325,7 @@ const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
   mindset:'perso', journal:'perso', biblio:'perso',
-  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style'
+  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style', capture:'today'
 };
 
 /* ===== SKILL TREE NAV ===== */
@@ -2283,7 +2333,8 @@ const ST_CATS = {
   home:   {icon:'🏠', label:'Accueil',      direct:'home', views:[]},
   today:  {icon:'⚡', label:"Aujourd'hui",  views:[
     {id:'tasks',     icon:'✅', label:'Tâches'},
-    {id:'habitudes', icon:'🔁', label:'Habitudes'}
+    {id:'habitudes', icon:'🔁', label:'Habitudes'},
+    {id:'capture',   icon:'🎥', label:'Capture'}
   ]},
   argent: {icon:'💰', label:'Argent', views:[
     {id:'finance',   icon:'💸', label:'Finance'},
@@ -2433,6 +2484,7 @@ const VIEW_GIFS = {
   objectifs: ['vibe-3', 'vibe-14', 'vibe-15'],
   biblio:    ['vibe-5', 'vibe-17', 'vibe-21'],
   achats:    ['vibe-3', 'vibe-9', 'vibe-15'],
+  capture:   ['vibe-2', 'vibe-11', 'vibe-19'],
   sleep:     ['vibe-7', 'vibe-18', 'vibe-19'],
   journal:   ['vibe-8', 'vibe-20', 'vibe-21'],
   planning:  ['vibe-4', 'vibe-16', 'vibe-20']
@@ -4187,6 +4239,7 @@ function rpgQuests(){
   return [
     {ic:'✅', name:'Terminer les '+T_TOTAL+' tâches du jour', xp:50, done:!!xpDay['quest-alltasks'], prog:Math.min(tasksDone,T_TOTAL)+'/'+T_TOTAL},
     {ic:'🔥', name:'Valider 3 habitudes', xp:30, done:!!xpDay['quest-3habits'], prog:Math.min(habitsDone,3)+'/3'},
+    {ic:'🎥', name:'Filmer ma capture du jour', xp:15, done:!!xpDay['capture'], prog:xpDay['capture']?'1/1':'0/1'},
     {ic:'📓', name:'Écrire dans le journal', xp:20, done:!!xpDay['journal'], prog:xpDay['journal']?'1/1':'0/1'},
     {ic:'😴', name:'Logger ma nuit de sommeil', xp:10, done:!!xpDay['sleep'], prog:xpDay['sleep']?'1/1':'0/1'}
   ];
@@ -4220,6 +4273,120 @@ function initRpg(){
   try{ xpDay = JSON.parse(loadKey('rpg_day_'+todayISO())||'{}'); }catch(e){ xpDay = {}; }
   try{ rpgOnce = JSON.parse(loadKey('rpg_once')||'{}'); }catch(e){ rpgOnce = {}; }
   renderRpg();
+}
+
+/* ============ CAPTURE VIDÉO QUOTIDIENNE ============ */
+let capBatch = [];
+let capTimerInt = null, capTimerLeft = 120;
+function capSaveDraft(){
+  saveKey('cap_draft_'+todayISO(), JSON.stringify({
+    q1:document.getElementById('cap-q1').value,
+    q2:document.getElementById('cap-q2').value,
+    q3:document.getElementById('cap-q3').value
+  }));
+}
+function capLoadDraft(){
+  let d = {};
+  try{ d = JSON.parse(loadKey('cap_draft_'+todayISO())||'{}'); }catch(e){}
+  const e1=document.getElementById('cap-q1'), e2=document.getElementById('cap-q2'), e3=document.getElementById('cap-q3');
+  if(e1) e1.value = d.q1||''; if(e2) e2.value = d.q2||''; if(e3) e3.value = d.q3||'';
+}
+function capDoneToday(){ return capBatch.some(c=>c.date===todayISO()); }
+function renderCapToday(){
+  const wrap = document.getElementById('cap-today-body');
+  if(!wrap) return;
+  const streak = capStreak();
+  if(capDoneToday()){
+    wrap.innerHTML = `<div class="cap-done-box">✅ Capture faite aujourd'hui !<br><span style="font-size:11px;color:var(--muted);">🔥 ${streak} jour${streak>1?'s':''} d'affilée — ne casse pas la chaîne</span></div>`;
+  } else {
+    wrap.innerHTML = `
+      <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Le seul geste vraiment quotidien : 2 min face caméra sur ta journée. Même crevé à 23h. Les images d'aujourd'hui ne se refilmeront jamais.${streak>0?'<br>🔥 <b>'+streak+' jour'+(streak>1?'s':'')+'</b> d\'affilée — tiens la chaîne !':''}</div>
+      <button class="cap-rec" onclick="capMarkDone()">🎥 J'ai filmé ma capture — +15 XP</button>`;
+  }
+}
+function capMarkDone(){
+  if(capDoneToday()) return;
+  capBatch.unshift({id:Date.now(), date:todayISO(), status:'captured'});
+  saveKey('cap_batch', JSON.stringify(capBatch));
+  addXp('capture', 15);
+  showToast('🎥 Capture validée — la chaîne continue !');
+  renderCapToday();
+  renderCapBatch();
+}
+function capStreak(){
+  const days = capBatch.map(c=>c.date);
+  let streak = 0;
+  let cur = new Date();
+  if(!days.includes(todayISO())) cur.setDate(cur.getDate()-1);
+  for(let i=0;i<400;i++){
+    const iso = cur.toISOString().slice(0,10);
+    if(days.includes(iso)){ streak++; cur.setDate(cur.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+const CAP_FLOW = {captured:{lb:'📹 Capturée',next:'edited'}, edited:{lb:'✂️ Montée',next:'posted'}, posted:{lb:'✅ Postée',next:'captured'}};
+function capCycle(id){
+  const c = capBatch.find(x=>x.id===id);
+  if(!c) return;
+  c.status = CAP_FLOW[c.status].next;
+  saveKey('cap_batch', JSON.stringify(capBatch));
+  if(c.status==='posted') showToast('🚀 Postée — bravo !');
+  renderCapBatch();
+}
+function capDel(id, ev){
+  ev.stopPropagation();
+  capBatch = capBatch.filter(x=>x.id!==id);
+  saveKey('cap_batch', JSON.stringify(capBatch));
+  renderCapToday(); renderCapBatch();
+}
+function renderCapBatch(){
+  const list = document.getElementById('cap-batch-list');
+  if(!list) return;
+  if(!capBatch.length){ list.innerHTML = '<div style="font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:8px 0;">Aucune capture encore. Filme ta première aujourd\'hui !</div>'; return; }
+  const cls = {captured:'captured', edited:'edited', posted:'posted'};
+  list.innerHTML = capBatch.slice(0,30).map(c=>{
+    const f = CAP_FLOW[c.status];
+    return `<div class="cap-batch-row" onclick="capCycle(${c.id})">
+      <span style="font-size:14px;">🎬</span>
+      <span class="cap-b-date">${c.date===todayISO()?"Aujourd'hui":c.date}</span>
+      <span class="cap-b-tag ${cls[c.status]}">${f.lb}</span>
+      <button class="shop-del" onclick="capDel(${c.id},event)">✕</button>
+    </div>`;
+  }).join('');
+}
+function capToggleTimer(){
+  const btn = document.getElementById('cap-timer-btn');
+  const disp = document.getElementById('cap-timer');
+  if(capTimerInt){
+    clearInterval(capTimerInt); capTimerInt=null;
+    disp.classList.remove('running');
+    btn.textContent='▶️ Lancer le minuteur';
+    return;
+  }
+  capTimerLeft = 120;
+  disp.classList.add('running');
+  btn.textContent='⏸️ Stop';
+  const tick = ()=>{
+    const m = Math.floor(capTimerLeft/60), s = capTimerLeft%60;
+    disp.textContent = m+':'+(s<10?'0':'')+s;
+    if(capTimerLeft<=0){
+      clearInterval(capTimerInt); capTimerInt=null;
+      disp.classList.remove('running');
+      btn.textContent='▶️ Relancer';
+      showToast('⏱️ 2 minutes écoulées — coupe et valide ta capture !');
+      return;
+    }
+    capTimerLeft--;
+  };
+  tick();
+  capTimerInt = setInterval(tick, 1000);
+}
+function initCapture(){
+  try{ capBatch = JSON.parse(loadKey('cap_batch')||'[]'); }catch(e){ capBatch = []; }
+  capLoadDraft();
+  renderCapToday();
+  renderCapBatch();
 }
 
 function initApp(){
@@ -4261,6 +4428,7 @@ function initApp(){
   initBijoux();
   initShop();
   initRpg();
+  initCapture();
   updateNavTreeActive('home','home');
   // goal
   updateCountdown();
