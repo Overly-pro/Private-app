@@ -268,9 +268,12 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .ht-grid th,.ht-grid td{border:0.5px solid rgba(255,255,255,0.07);padding:0;text-align:center;}
 .ht-grid thead th{font-size:8.5px;color:var(--muted2);font-weight:400;height:30px;min-width:26px;font-family:'Space Mono',monospace;}
 .ht-grid thead th.wend{color:var(--accent);}
-.ht-name-h{position:sticky;left:0;z-index:3;background:#0c0c0c;min-width:150px!important;text-align:left!important;padding-left:11px!important;font-family:'New Rocker',cursive!important;font-size:9px!important;letter-spacing:.5px;}
-.ht-name{position:sticky;left:0;z-index:2;background:#0c0c0c;text-align:left;padding:8px 11px!important;font-size:11.5px;font-weight:600;min-width:150px;max-width:190px;line-height:1.25;white-space:normal;cursor:pointer;}
-.ht-cell{width:26px;height:30px;cursor:pointer;}
+.ht-name-h{position:sticky;left:0;z-index:3;background:#0c0c0c;min-width:158px!important;max-width:158px;text-align:left!important;padding-left:11px!important;font-family:'New Rocker',cursive!important;font-size:8px!important;letter-spacing:.3px;border-right:1.5px solid rgba(224,53,53,0.3)!important;}
+.ht-name{position:sticky;left:0;z-index:2;background:#0c0c0c;text-align:left;padding:6px 11px!important;min-width:158px;max-width:158px;cursor:pointer;border-right:1.5px solid rgba(224,53,53,0.3)!important;}
+.ht-name-txt{font-size:11px;font-weight:600;line-height:1.2;white-space:normal;}
+.ht-name-prog{font-size:8.5px;color:var(--muted2);font-family:'Space Mono',monospace;margin-top:3px;white-space:nowrap;}
+.ht-name-prog b{color:var(--accent);}
+.ht-cell{width:26px;height:34px;cursor:pointer;}
 .ht-dot{width:15px;height:15px;border-radius:5px;margin:0 auto;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.02);transition:all .12s;}
 .ht-cell.on .ht-dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 7px rgba(224,53,53,0.5);}
 .ht-cell.today .ht-dot{border-color:rgba(255,255,255,0.55);}
@@ -542,6 +545,7 @@ html.theme-light .st-close{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0
   .app-shell{max-width:1150px;padding:16px 32px 44px;}
   .view{column-count:2;column-gap:12px;}
   .view>*{break-inside:avoid;}
+  #view-tracker{column-count:1;}
   .view-banner{column-span:all;height:250px;}
   .hero{column-span:all;}
   .stat-grid{column-span:all;}
@@ -4495,14 +4499,13 @@ function renderTracker(){
   const nbHabits = htHabits.length;
   document.getElementById('ht-month-lbl').textContent = MONTHS[m]+' '+y;
 
-  // en-tête jours
-  let head = '<th class="ht-name-h">Habit</th>';
+  // en-tête : colonne figée nom+progress, puis jours
+  let head = '<th class="ht-name-h">Habit &nbsp;·&nbsp; done / '+dim+'</th>';
   for(let d=1; d<=dim; d++){
     const wd = new Date(y,m,d).getDay();
     const we = (wd===0||wd===6) ? ' wend' : '';
     head += `<th class="${we.trim()}">${WD[wd]}<br>${d}</th>`;
   }
-  head += '<th class="ht-stat">✓ / %</th><th class="ht-stat">🔥</th>';
   document.getElementById('ht-head').innerHTML = head;
 
   // lignes habitudes + collecte pour top habits
@@ -4510,22 +4513,24 @@ function renderTracker(){
   let totalDone = 0;
   const perHabit = [];
   htHabits.forEach((name, hIdx)=>{
-    let row = `<td class="ht-name" onclick="htRenameHabit(${hIdx})">${escapeHtml(name)}</td>`;
     let hDone = 0;
+    let cells = '';
     for(let d=1; d<=dim; d++){
       const on = md[hIdx] && md[hIdx][d];
       if(on){ hDone++; totalDone++; }
       const wd = new Date(y,m,d).getDay();
       const we = (wd===0||wd===6) ? ' wend' : '';
       const td = (isCurMonth && d===today) ? ' today' : '';
-      row += `<td class="ht-cell${on?' on':''}${we}${td}" onclick="htToggle(${hIdx},${d})"><div class="ht-dot"></div></td>`;
+      cells += `<td class="ht-cell${on?' on':''}${we}${td}" onclick="htToggle(${hIdx},${d})"><div class="ht-dot"></div></td>`;
     }
     const pct = Math.round(hDone/dim*100);
     const streak = htHabitStreak(hIdx);
     perHabit.push({name, hDone, pct, streak});
-    row += `<td class="ht-stat"><b>${hDone}</b>/${dim}<br>${pct}%</td>`;
-    row += `<td class="ht-stat"><span class="ht-streak-c">${streak}🔥</span></td>`;
-    body += '<tr>'+row+'</tr>';
+    const nameCell = `<td class="ht-name" onclick="htRenameHabit(${hIdx})">
+      <div class="ht-name-txt">${escapeHtml(name)}</div>
+      <div class="ht-name-prog"><b>${hDone}</b>/${dim} · ${pct}% · <span class="ht-streak-c">${streak}🔥</span></div>
+    </td>`;
+    body += '<tr>'+nameCell+cells+'</tr>';
   });
   document.getElementById('ht-body').innerHTML = body;
 
