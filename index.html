@@ -4584,6 +4584,27 @@ function htDonut(pct, color){
   </svg><div class="ht-ring-txt" style="color:${color};">${pct}%</div></div>`;
 }
 function htDayDone(md, d){ let c=0; htHabits.forEach((_,i)=>{ if(md[i]&&md[i][d]) c++; }); return c; }
+/* Nombre d'habitudes cochées à une date donnée (tous mois confondus) */
+function htDoneOnDate(dt){
+  const md = htData[htMonKey(dt.getFullYear(), dt.getMonth())];
+  if(!md) return 0;
+  return htDayDone(md, dt.getDate());
+}
+/* Première date jamais cochée — sert de départ au momentum */
+function htFirstTrackedDate(){
+  let best = null;
+  Object.keys(htData).forEach(k=>{
+    const p = k.split('-'); const yy = +p[0], mm = +p[1];
+    const md = htData[k] || {};
+    Object.keys(md).forEach(hi=>{
+      Object.keys(md[hi]||{}).forEach(ds=>{
+        const d = new Date(yy, mm, parseInt(ds,10));
+        if(!best || d < best) best = d;
+      });
+    });
+  });
+  return best;
+}
 function renderTracker(){
   if(!htCursor) return;
   const {y, m} = htCursor;
@@ -4634,20 +4655,42 @@ function renderTracker(){
 
   // ===== FORMULES =====
   const monthGoal = nbHabits * dim;
-  const daysElapsed = isCurMonth ? today : dim;
-  const paceGoal = nbHabits * daysElapsed;
+  const todayD = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+
+  // DAILY : habitudes cochées aujourd'hui / total habitudes
   let dailyDone = 0;
   if(isCurMonth) htHabits.forEach((_,hIdx)=>{ if(md[hIdx] && md[hIdx][today]) dailyDone++; });
+
+  // WEEKLY : semaine complète lundi→dimanche (7 jours pleins, pas seulement écoulés)
   let weekDone = 0, weekSlots = 0;
-  if(isCurMonth){
-    const dow = (n.getDay()+6)%7;
-    for(let off=0; off<=dow; off++){
-      const dd = today-off; if(dd<1) break;
-      weekSlots += nbHabits;
-      htHabits.forEach((_,hIdx)=>{ if(md[hIdx] && md[hIdx][dd]) weekDone++; });
+  if(isCurMonth && nbHabits>0){
+    const dow = (todayD.getDay()+6)%7;           // 0 = lundi
+    const monday = new Date(todayD);
+    monday.setDate(monday.getDate() - dow);
+    weekSlots = nbHabits * 7;
+    for(let i=0;i<7;i++){
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      weekDone += htDoneOnDate(d);               // gère le passage d'un mois à l'autre
     }
   }
-  const pctMomentum = paceGoal>0 ? Math.min(Math.round(totalDone/paceGoal*100),100) : 0;
+
+  // MOMENTUM : régularité jour après jour depuis le début du suivi (fenêtre glissante 30 j max)
+  let pctMomentum = 0;
+  if(nbHabits>0){
+    const first = htFirstTrackedDate();
+    if(first){
+      let start = new Date(todayD);
+      start.setDate(start.getDate() - 29);
+      if(first > start) start = new Date(first.getFullYear(), first.getMonth(), first.getDate());
+      let days = 0, sum = 0;
+      for(let d = new Date(start); d <= todayD; d.setDate(d.getDate()+1)){
+        days++;
+        sum += htDoneOnDate(d) / nbHabits;       // 1 = journée parfaite
+      }
+      pctMomentum = days ? Math.min(Math.round(sum/days*100), 100) : 0;
+    }
+  }
   const pctDaily = nbHabits>0 && isCurMonth ? Math.round(dailyDone/nbHabits*100) : 0;
   const pctWeekly = weekSlots>0 ? Math.round(weekDone/weekSlots*100) : 0;
   const pctMonthly = monthGoal>0 ? Math.round(totalDone/monthGoal*100) : 0;
