@@ -342,7 +342,15 @@ html.theme-light .nav-tree-panel{background:rgba(246,246,248,0.97);border-right-
 .mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
 .mood-tile{border-radius:10px;overflow:hidden;aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);position:relative;}
 .mood-tile img{width:100%;height:100%;object-fit:cover;display:block;}
-.mood-tile-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.72);border:none;color:#fff;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mood-tile-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.72);border:none;color:#fff;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+.mood-broken{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px;text-align:center;font-size:9px;color:var(--muted2);line-height:1.4;}
+.mood-tile.err .mood-broken{display:flex;}
+.mood-tile.err img{display:none;}
+/* Banque d'idées bijoux */
+.idea-card{background:rgba(17,17,17,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 13px;margin-bottom:8px;position:relative;}
+.idea-txt{font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:20px;}
+.idea-date{font-size:8.5px;color:var(--muted2);font-family:'Space Mono',monospace;margin-top:7px;letter-spacing:.5px;}
+.idea-del{position:absolute;top:9px;right:10px;background:none;border:none;color:var(--muted2);font-size:13px;cursor:pointer;padding:0;line-height:1;}
 .prod-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(17,17,17,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;margin-bottom:8px;}
 .prod-name{flex:1;font-size:12px;font-weight:600;}
 .prod-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;cursor:pointer;user-select:none;transition:all .15s;}
@@ -1862,17 +1870,24 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   <div id="bij-moodboard-section">
     <div class="card">
       <div class="card-title">🎨 Ajouter une inspiration <div class="line"></div></div>
-      <input type="url" id="mood-url-input" placeholder="Colle le lien d'une image Pinterest, Instagram..." style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
+      <input type="url" id="mood-url-input" placeholder="Colle l'ADRESSE DE L'IMAGE (finit par .jpg / .png)" style="width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:8px;">
       <button class="btn-primary" style="width:100%;" onclick="addMoodImage()">+ Ajouter au moodboard</button>
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;"><div style="flex:1;height:1px;background:var(--border2);"></div><span style="font-size:9px;color:var(--muted2);">OU</span><div style="flex:1;height:1px;background:var(--border2);"></div></div>
+      <button class="btn-primary" style="width:100%;background:rgba(255,255,255,0.06);" onclick="document.getElementById('mood-file').click()">📁 Importer depuis mon téléphone</button>
+      <input type="file" id="mood-file" accept="image/*" style="display:none;" onchange="addMoodFile(this)">
+      <div style="font-size:9.5px;color:var(--muted2);margin-top:9px;line-height:1.55;">💡 Sur Pinterest, un lien de type <b>pinterest.com/pin/...</b> ne marche pas — c'est une page, pas une image. Appuie longuement sur l'image → <b>« Copier l'adresse de l'image »</b>, ou utilise l'import ci-dessus (100% fiable).</div>
     </div>
     <div class="mood-grid" id="mood-grid"></div>
   </div>
   <!-- IDÉES -->
   <div id="bij-idees-section" style="display:none;">
     <div class="card">
-      <div class="card-title">💡 Notes & idées créatives <div class="line"></div></div>
-      <textarea id="bij-notes" placeholder="Concepts, directions, matières, formes, clientèle cible..." oninput="saveBijNotes()" style="width:100%;min-height:220px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12px;padding:12px;font-family:inherit;resize:vertical;line-height:1.65;"></textarea>
+      <div class="card-title">💡 Nouvelle idée <div class="line"></div></div>
+      <textarea id="bij-notes" placeholder="Une idée par enregistrement : concept, matière, forme, nom de pièce..." style="width:100%;min-height:110px;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:8px;color:var(--text);font-size:12px;padding:12px;font-family:inherit;resize:vertical;line-height:1.65;margin-bottom:10px;"></textarea>
+      <button class="btn-primary" style="width:100%;" onclick="saveBijIdea()">💾 Enregistrer cette idée</button>
     </div>
+    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">🏦 Banque d'idées — <span id="bij-idea-count">0</span></div>
+    <div id="bij-ideas-list"></div>
   </div>
   <!-- PRODUITS -->
   <div id="bij-produits-section" style="display:none;">
@@ -3776,15 +3791,57 @@ function switchBijTab(tab){
     document.getElementById('btab-'+t).classList.toggle('active', t===tab);
   });
 }
+function isPageUrl(u){
+  return /pinterest\.[a-z.]+\/pin\//i.test(u) || /\/pin\.it\//i.test(u) || /pin\.it\//i.test(u)
+      || /instagram\.com\/(p|reel)\//i.test(u) || /^https?:\/\/(www\.)?pinterest\./i.test(u);
+}
 function addMoodImage(){
   const inp = document.getElementById('mood-url-input');
   const url = inp.value.trim();
   if(!url) return;
+  if(isPageUrl(url)){
+    showToast('⚠️ Ça c\'est le lien de la PAGE, pas de l\'image');
+    setTimeout(()=>showToast('Appui long sur l\'image → « Copier l\'adresse de l\'image »'), 1500);
+    return;
+  }
+  if(!/^https?:\/\//i.test(url) && !/^data:image\//i.test(url)){
+    showToast('⚠️ Lien invalide — il doit commencer par https://');
+    return;
+  }
   let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
   imgs.push(url);
   saveKey('bij_moodboard', JSON.stringify(imgs));
   inp.value = '';
   renderMoodboard(imgs);
+  showToast('🎨 Ajouté au moodboard');
+}
+/* Import depuis la galerie : redimensionne pour rester léger */
+function addMoodFile(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const MAX = 620;
+      let w = img.width, h = img.height;
+      if(w>h && w>MAX){ h = Math.round(h*MAX/w); w = MAX; }
+      else if(h>=w && h>MAX){ w = Math.round(w*MAX/h); h = MAX; }
+      const cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = cv.toDataURL('image/jpeg', 0.72);
+      let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
+      imgs.push(data);
+      saveKey('bij_moodboard', JSON.stringify(imgs));
+      renderMoodboard(imgs);
+      showToast('🎨 Image importée !');
+    };
+    img.onerror = ()=> showToast('⚠️ Fichier image illisible');
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
 }
 function deleteMoodImage(idx){
   let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
@@ -3795,15 +3852,48 @@ function deleteMoodImage(idx){
 function renderMoodboard(imgs){
   const grid = document.getElementById('mood-grid');
   if(!grid) return;
+  if(!imgs.length){ grid.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:14px 0;">Moodboard vide — ajoute ta première inspiration.</div>'; return; }
   grid.innerHTML = imgs.map((url,i)=>`
     <div class="mood-tile">
-      <img src="${escapeHtml(url)}" alt="inspiration" onerror="this.parentElement.style.background='#1a1a1a'">
+      <img src="${escapeHtml(url)}" alt="inspiration" referrerpolicy="no-referrer" loading="lazy" onerror="this.closest('.mood-tile').classList.add('err')">
+      <div class="mood-broken">🚫<span>Image bloquée<br>par le site source</span></div>
       <button class="mood-tile-del" onclick="deleteMoodImage(${i})">✕</button>
     </div>`).join('');
 }
-function saveBijNotes(){
+/* ===== BANQUE D'IDÉES BIJOUX ===== */
+function saveBijIdea(){
   const ta = document.getElementById('bij-notes');
-  if(ta) saveKey('bij_notes', ta.value);
+  const txt = ta.value.trim();
+  if(!txt){ showToast('⚠️ Écris ton idée d\'abord'); return; }
+  let ideas = [];
+  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
+  ideas.unshift({id:Date.now(), txt, date:todayISO()});
+  saveKey('bij_ideas', JSON.stringify(ideas));
+  ta.value = '';
+  renderBijIdeas();
+  showToast('💡 Idée enregistrée !');
+}
+function deleteBijIdea(id){
+  let ideas = [];
+  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
+  ideas = ideas.filter(x=>x.id!==id);
+  saveKey('bij_ideas', JSON.stringify(ideas));
+  renderBijIdeas();
+}
+function renderBijIdeas(){
+  const list = document.getElementById('bij-ideas-list');
+  if(!list) return;
+  let ideas = [];
+  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
+  const cnt = document.getElementById('bij-idea-count');
+  if(cnt) cnt.textContent = ideas.length + (ideas.length>1?' idées':' idée');
+  if(!ideas.length){ list.innerHTML = '<div style="font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:12px 0;">Aucune idée enregistrée. Note ta première inspiration ci-dessus.</div>'; return; }
+  list.innerHTML = ideas.map(it=>`
+    <div class="idea-card">
+      <button class="idea-del" onclick="deleteBijIdea(${it.id})">✕</button>
+      <div class="idea-txt">${escapeHtml(it.txt)}</div>
+      <div class="idea-date">${it.date}</div>
+    </div>`).join('');
 }
 function addProduct(){
   const inp = document.getElementById('prod-input');
@@ -3845,8 +3935,16 @@ function initBijoux(){
   renderMoodboard(imgs);
   const prods = JSON.parse(loadKey('bij_products')||'[]');
   renderProducts(prods);
-  const ta = document.getElementById('bij-notes');
-  if(ta) ta.value = loadKey('bij_notes')||'';
+  // migration : l'ancien bloc de notes devient la première idée de la banque
+  const old = (loadKey('bij_notes')||'').trim();
+  let ideas = [];
+  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
+  if(old && !ideas.length){
+    ideas.push({id:Date.now(), txt:old, date:todayISO()});
+    saveKey('bij_ideas', JSON.stringify(ideas));
+    saveKey('bij_notes', '');
+  }
+  renderBijIdeas();
 }
 
 /* ============ ACHATS — wishlist à seuils + mannequin ============ */
