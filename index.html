@@ -548,32 +548,43 @@ html.theme-light .st-close{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0
 .p30-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:16px;}
 @media (max-width:480px){.p30-grid{grid-template-columns:repeat(5,1fr);}}
 
-/* ===== DESKTOP — pleine largeur, 2 colonnes, éléments agrandis ===== */
+/* ===== DESKTOP — pleine largeur alignée à gauche, colonnes multiples ===== */
 @media (min-width:900px){
-  .app-shell{max-width:1150px;padding:16px 32px 44px;}
+  body{align-items:flex-start;}
+  .app-shell{max-width:none;width:100%;margin:0;padding:12px 20px 36px;}
   .view{column-count:2;column-gap:12px;}
   .view>*{break-inside:avoid;}
   #view-tracker{column-count:1;}
-  .view-banner{column-span:all;height:250px;}
-  .hero{column-span:all;}
-  .stat-grid{column-span:all;}
-  .launch-grid{column-span:all;grid-template-columns:repeat(5,1fr);}
-  .launch-tile{padding:18px 8px 14px;}
-  .launch-ic{font-size:30px;margin-bottom:8px;}
-  .launch-lb{font-size:9.5px;}
-  .stat{padding:20px 12px;}
-  .stat-val{font-size:28px;}
-  .stat-lbl{font-size:10.5px;margin-top:7px;}
-  .app-header .title{font-size:22px;}
-  .app-header .badge{font-size:11px;padding:7px 15px;}
-  .card{padding:17px 20px;}
-  .card-title{font-size:11px;}
-  .hero-main{font-size:18px;}
-  .hero-days{font-size:48px;}
-  .section-title{font-size:12px;}
-  .kpi-val{font-size:20px;}
-  .bnav-btn .bnav-ic{font-size:20px;}
-  .bnav-btn .bnav-lb{font-size:11px;}
+  /* le GIF reste à gauche, il ne s'étire pas sur tout l'écran */
+  .view-banner{column-span:all;height:150px;max-width:520px;margin-right:auto;}
+  .hero{column-span:all;max-width:520px;margin-right:auto;}
+  .stat-grid{column-span:all;max-width:520px;margin-right:auto;}
+  /* la grille de lancement remplit toute la largeur */
+  .launch-grid{column-span:all;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));}
+  .launch-tile{padding:12px 6px 10px;}
+  .launch-ic{font-size:21px;margin-bottom:5px;}
+  .launch-lb{font-size:8px;}
+  .stat{padding:13px 10px;}
+  .stat-val{font-size:20px;}
+  .stat-lbl{font-size:9px;margin-top:5px;}
+  .app-header{margin-bottom:9px;}
+  .app-header .title{font-size:17px;}
+  .app-header .badge{font-size:9px;padding:5px 11px;}
+  .card{padding:13px 15px;}
+  .card-title{font-size:9.5px;}
+  .hero-main{font-size:15px;}
+  .hero-days{font-size:34px;}
+  .section-title{font-size:10px;}
+  .kpi-val{font-size:16px;}
+  .bnav-btn .bnav-ic{font-size:16px;}
+  .bnav-btn .bnav-lb{font-size:9.5px;}
+}
+/* Écrans larges : 3 colonnes pour combler la droite */
+@media (min-width:1450px){
+  .view{column-count:3;}
+}
+@media (min-width:1900px){
+  .view{column-count:4;}
 }
 .day-cell{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:8px;cursor:pointer;transition:all .15s;position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;}
 .day-cell:hover{border-color:var(--muted);}
@@ -783,7 +794,8 @@ html.theme-light .music-panel iframe{filter:invert(1);}
 #splash-screen{position:fixed;inset:0;z-index:3000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:none;}
 #splash-screen.fade-out{animation:splashOut 0.7s cubic-bezier(0.4,0,1,1) forwards;}
 #splash-screen.gone{display:none;}
-.splash-icon{height:72px;width:auto;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s,glitchShift 2.8s infinite 1.4s;}
+.splash-icon{width:min(74vw,360px);height:auto;mix-blend-mode:screen;opacity:0;animation:splashIconIn 1s cubic-bezier(0.16,1,0.3,1) forwards 0.3s,glitchShift 2.8s infinite 1.4s;}
+html.theme-light .splash-icon{mix-blend-mode:multiply;}
 .splash-wordmark{opacity:0;animation:splashWordIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.9s;margin-top:18px;}
 .splash-sep{width:0;height:0.5px;background:rgba(255,255,255,0.2);animation:splashSepIn 0.6s ease forwards 1.5s;margin-top:22px;}
 .splash-sub{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);opacity:0;animation:splashSubIn 0.5s ease forwards 1.9s;margin-top:14px;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;}
@@ -863,8 +875,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 
 <!-- SPLASH SCREEN -->
 <div id="splash-screen">
-  <img src="brand/logo-mark-white.png" class="splash-icon" alt="Overly">
-  <img src="brand/logo-detailed-white.png" class="splash-wordmark" alt="OVERLY">
+  <img src="brand/logo-detailed-white.png" class="splash-icon" alt="OVERLY">
   <div class="splash-sep"></div>
   <div class="splash-sub">Collection privée</div>
 </div>
@@ -875,8 +886,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 <!-- ============ AUTH OVERLAY ============ -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
-    <img src="brand/logo-mark-white.png" alt="" style="height:44px;display:block;margin:0 auto 8px;opacity:0.95;">
-    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="height:22px;width:auto;display:block;margin:0 auto 14px;mix-blend-mode:screen;">
+    <img src="brand/logo-detailed-white.png" alt="OVERLY" style="width:min(80%,230px);height:auto;display:block;margin:2px auto 16px;mix-blend-mode:screen;">
     <div class="auth-sub" id="auth-mode-sub">Connecte-toi pour retrouver tes données sur tous tes appareils</div>
     <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email">
     <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
