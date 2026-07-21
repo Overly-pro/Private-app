@@ -228,6 +228,33 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .cap-b-tag.captured{background:rgba(255,180,0,0.1);color:#ca0;border:1px solid rgba(255,180,0,0.25);}
 .cap-b-tag.edited{background:rgba(100,160,255,0.1);color:#8ab4ff;border:1px solid rgba(100,160,255,0.28);}
 .cap-b-tag.posted{background:rgba(80,200,120,0.1);color:#7dd8a0;border:1px solid rgba(80,200,120,0.3);}
+/* HABIT TRACKER (AB Academy style) */
+.ht-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px;}
+.ht-gauge{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 6px;text-align:center;}
+.ht-gauge-val{font-size:20px;font-weight:400;font-family:'New Rocker',cursive;color:var(--accent);line-height:1;}
+.ht-gauge-lbl{font-size:7.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:5px;line-height:1.3;}
+.ht-monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.ht-monthbar button{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.14);color:var(--text);border-radius:10px;width:34px;height:32px;font-size:15px;cursor:pointer;font-family:inherit;}
+.ht-month-lbl{font-size:14px;font-family:'New Rocker',cursive;letter-spacing:1px;text-transform:uppercase;}
+.ht-sub{display:flex;gap:7px;margin-bottom:8px;}
+.ht-sub .kpi{flex:1;text-align:center;}
+.ht-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:0.5px solid rgba(255,255,255,0.1);}
+.ht-grid{border-collapse:collapse;width:max-content;min-width:100%;}
+.ht-grid th,.ht-grid td{border:0.5px solid rgba(255,255,255,0.07);padding:0;text-align:center;}
+.ht-grid thead th{font-size:8px;color:var(--muted2);font-weight:400;height:28px;min-width:22px;font-family:'Space Mono',monospace;}
+.ht-grid thead th.wend{color:var(--accent);}
+.ht-name-h{position:sticky;left:0;z-index:3;background:#0c0c0c;min-width:120px!important;text-align:left!important;padding-left:10px!important;font-family:'New Rocker',cursive!important;font-size:8.5px!important;letter-spacing:.5px;}
+.ht-name{position:sticky;left:0;z-index:2;background:#0c0c0c;text-align:left;padding:7px 10px!important;font-size:11px;font-weight:600;min-width:120px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.ht-cell{width:22px;height:26px;cursor:pointer;}
+.ht-dot{width:13px;height:13px;border-radius:4px;margin:0 auto;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.02);transition:all .12s;}
+.ht-cell.on .ht-dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 7px rgba(224,53,53,0.5);}
+.ht-cell.today .ht-dot{border-color:rgba(255,255,255,0.5);}
+.ht-cell.wend{background:rgba(255,255,255,0.02);}
+.ht-stat{position:sticky;right:0;z-index:2;background:#0c0c0c;font-size:8.5px;padding:0 7px!important;white-space:nowrap;font-family:'Space Mono',monospace;color:var(--muted);min-width:52px;}
+.ht-stat b{color:var(--accent);}
+.ht-streak{font-size:8.5px;color:#ffb020;}
+.ht-add{display:flex;gap:6px;margin-top:8px;}
+.ht-add input{flex:1;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.14);border-radius:10px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;}
 .launch-lb{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-family:'New Rocker',cursive;display:block;}
 .stat:hover{border-color:#333333;}
 .stat-val{font-size:19px;font-weight:900;color:var(--text);line-height:1;}
@@ -920,6 +947,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic">😴</span><span class="launch-lb">Sommeil</span></button>
     <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic">🛍️</span><span class="launch-lb">Achats</span></button>
     <button class="launch-tile" onclick="goTo('capture')"><span class="launch-ic">🎥</span><span class="launch-lb">Capture</span></button>
+    <button class="launch-tile" onclick="goTo('tracker')"><span class="launch-ic">📊</span><span class="launch-lb">Tracker</span></button>
   </div>
 
   <div class="card">
@@ -1617,6 +1645,44 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
   </div>
 </div>
 
+<!-- ============ VIEW: HABIT TRACKER ============ -->
+<div class="view" id="view-tracker">
+  <img class="view-banner" id="banner-tracker" alt="">
+
+  <div class="ht-monthbar">
+    <button onclick="htShiftMonth(-1)">‹</button>
+    <span class="ht-month-lbl" id="ht-month-lbl">—</span>
+    <button onclick="htShiftMonth(1)">›</button>
+  </div>
+
+  <div class="ht-gauges">
+    <div class="ht-gauge"><div class="ht-gauge-val" id="ht-momentum">0%</div><div class="ht-gauge-lbl">Momentum</div></div>
+    <div class="ht-gauge"><div class="ht-gauge-val" id="ht-daily">0%</div><div class="ht-gauge-lbl">Jour</div></div>
+    <div class="ht-gauge"><div class="ht-gauge-val" id="ht-weekly">0%</div><div class="ht-gauge-lbl">Semaine</div></div>
+    <div class="ht-gauge"><div class="ht-gauge-val" id="ht-monthly">0%</div><div class="ht-gauge-lbl">Mois</div></div>
+  </div>
+
+  <div class="ht-sub">
+    <div class="kpi"><div class="kpi-lbl">Jours restants</div><div class="kpi-val" id="ht-daysleft">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Complétés</div><div class="kpi-val" id="ht-completed">0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Restants</div><div class="kpi-val" id="ht-remaining">0</div></div>
+  </div>
+
+  <div class="card" style="padding:8px;">
+    <div class="ht-scroll">
+      <table class="ht-grid">
+        <thead><tr id="ht-head"></tr></thead>
+        <tbody id="ht-body"></tbody>
+      </table>
+    </div>
+    <div class="ht-add">
+      <input type="text" id="ht-new" placeholder="Ajouter une habitude...">
+      <button class="btn-primary" style="padding:9px 16px;" onclick="htAddHabit()">+</button>
+    </div>
+    <div style="font-size:9px;color:var(--muted2);margin-top:6px;text-align:center;">Tape une case pour valider · tape le nom d'une habitude pour la renommer ou supprimer</div>
+  </div>
+</div>
+
 <!-- ============ VIEW: CAPTURE ============ -->
 <div class="view" id="view-capture">
   <img class="view-banner" id="banner-capture" alt="">
@@ -2306,12 +2372,13 @@ const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal', biblio:'Biblio',
-  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture'
+  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
 };
 const NAV_PEEKS = {
   tasks:     ['Déclaration Hill','💪 40 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
   capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
+  tracker:   ['📊 Grille du mois','🔥 Séries par habitude','📈 Momentum'],
   finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
   objectifs: ['Capital 16 août','Plan 30 jours vidéos'],
   mindset:   ['Check-in émotionnel','Affirmations','Vision'],
@@ -2325,7 +2392,7 @@ const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
   mindset:'perso', journal:'perso', biblio:'perso',
-  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style', capture:'today'
+  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style', capture:'today', tracker:'today'
 };
 
 /* ===== SKILL TREE NAV ===== */
@@ -2334,6 +2401,7 @@ const ST_CATS = {
   today:  {icon:'⚡', label:"Aujourd'hui",  views:[
     {id:'tasks',     icon:'✅', label:'Tâches'},
     {id:'habitudes', icon:'🔁', label:'Habitudes'},
+    {id:'tracker',   icon:'📊', label:'Habit Tracker'},
     {id:'capture',   icon:'🎥', label:'Capture'}
   ]},
   argent: {icon:'💰', label:'Argent', views:[
@@ -2485,6 +2553,7 @@ const VIEW_GIFS = {
   biblio:    ['vibe-5', 'vibe-17', 'vibe-21'],
   achats:    ['vibe-3', 'vibe-9', 'vibe-15'],
   capture:   ['vibe-2', 'vibe-11', 'vibe-19'],
+  tracker:   ['vibe-4', 'vibe-16', 'vibe-20'],
   sleep:     ['vibe-7', 'vibe-18', 'vibe-19'],
   journal:   ['vibe-8', 'vibe-20', 'vibe-21'],
   planning:  ['vibe-4', 'vibe-16', 'vibe-20']
@@ -3541,6 +3610,8 @@ const NOTIF_TYPES = [
   { key:'tasks',  icon:'✅', label:'Rappel tâches du midi',  defHour:12, title:'✅ Mon Espace — Tâches du jour',       bodyFn: ()=>'Tu as des tâches à accomplir aujourd\'hui. Ouvre l\'app pour les voir !' },
   { key:'habits', icon:'🔥', label:'Rappel habitudes',       defHour:18, title:'🔥 Mon Espace — Habitudes du soir',   bodyFn: ()=>'As-tu coché toutes tes habitudes d\'aujourd\'hui ?' },
   { key:'pm',     icon:'📓', label:'Journal du soir',        defHour:21, title:'📓 Mon Espace — Journal du soir',     bodyFn: ()=>'C\'est l\'heure de ton bilan. Prends 5 minutes pour toi.' },
+  { key:'capture',icon:'🎥', label:'Capture vidéo du jour',  defHour:22, title:'🎥 Overly — Ta capture du jour',      bodyFn: ()=> capDoneToday && capDoneToday() ? '✅ Déjà filmée aujourd\'hui — bien joué !' : '2 min face caméra sur ta journée. Les images d\'aujourd\'hui ne se refilmeront jamais.' },
+  { key:'sleep',  icon:'🌙', label:'Heure de dormir',        defHour:22, title:'🌙 Overly — Il est l\'heure',         bodyFn: ()=>'Lance ton suivi de sommeil et va te coucher. Ton corps te dira merci demain.' },
 ];
 function renderNotifSettings(){
   const wrap = document.getElementById('notif-settings-wrap');
@@ -4275,6 +4346,151 @@ function initRpg(){
   renderRpg();
 }
 
+/* ============ HABIT TRACKER (grille mensuelle, style AB Academy) ============ */
+const HT_DEFAULT = ['Dormir 8h','Boire de l\'eau','Pompes du jour','Lire 10 pages','Visualisation','1 vidéo YouTube AB Academy','1 vidéo Skool AB Academy','Apprendre le game de la joaillerie','Écrire 3 priorités pour demain','Filmer 1 vidéo de contenu'];
+let htHabits = [];
+let htData = {};        // { "YYYY-M": { habitIdx: { day: 1 } } }
+let htCursor = null;    // {y, m}  m = 0-11
+function htMonKey(y,m){ return y+'-'+m; }
+function htDaysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
+function htEnsure(y,m){ const k=htMonKey(y,m); if(!htData[k]) htData[k]={}; return htData[k]; }
+function htLoad(){
+  try{ htHabits = JSON.parse(loadKey('ht_habits')||'null') || HT_DEFAULT.slice(); }catch(e){ htHabits = HT_DEFAULT.slice(); }
+  try{ htData = JSON.parse(loadKey('ht_data')||'{}'); }catch(e){ htData = {}; }
+  const n = new Date();
+  htCursor = {y:n.getFullYear(), m:n.getMonth()};
+}
+function htPersist(){ saveKey('ht_habits', JSON.stringify(htHabits)); saveKey('ht_data', JSON.stringify(htData)); }
+function htShiftMonth(d){
+  let m = htCursor.m + d, y = htCursor.y;
+  if(m<0){ m=11; y--; } if(m>11){ m=0; y++; }
+  htCursor = {y, m};
+  renderTracker();
+}
+function htToggle(hIdx, day){
+  const md = htEnsure(htCursor.y, htCursor.m);
+  if(!md[hIdx]) md[hIdx] = {};
+  if(md[hIdx][day]) delete md[hIdx][day]; else md[hIdx][day] = 1;
+  htPersist();
+  renderTracker();
+  // XP si on coche aujourd'hui
+  const n = new Date();
+  if(htCursor.y===n.getFullYear() && htCursor.m===n.getMonth() && day===n.getDate() && md[hIdx][day]){
+    addXp('ht-'+hIdx+'-'+day, 5);
+  }
+}
+function htAddHabit(){
+  const inp = document.getElementById('ht-new');
+  const v = inp.value.trim();
+  if(!v){ showToast('Tape le nom de l\'habitude'); return; }
+  htHabits.push(v);
+  htPersist();
+  inp.value='';
+  renderTracker();
+  showToast('✅ Habitude ajoutée au tracker');
+}
+function htRenameHabit(idx){
+  const v = prompt('Renommer l\'habitude (laisse vide pour supprimer) :', htHabits[idx]);
+  if(v===null) return;
+  if(v.trim()===''){
+    if(!confirm('Supprimer « '+htHabits[idx]+' » du tracker ?')) return;
+    htHabits.splice(idx,1);
+    Object.keys(htData).forEach(k=>{ if(htData[k]) delete htData[k][idx]; });
+  } else {
+    htHabits[idx] = v.trim();
+  }
+  htPersist();
+  renderTracker();
+}
+function htHabitStreak(hIdx){
+  // série consécutive jusqu'à aujourd'hui (toutes dates confondues)
+  const n = new Date();
+  let cur = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  let streak = 0;
+  for(let i=0;i<400;i++){
+    const md = htData[htMonKey(cur.getFullYear(), cur.getMonth())];
+    const done = md && md[hIdx] && md[hIdx][cur.getDate()];
+    if(done){ streak++; cur.setDate(cur.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+function renderTracker(){
+  if(!htCursor) return;
+  const {y, m} = htCursor;
+  const dim = htDaysInMonth(y, m);
+  const md = htEnsure(y, m);
+  const n = new Date();
+  const isCurMonth = (y===n.getFullYear() && m===n.getMonth());
+  const today = n.getDate();
+  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const WD = ['D','L','M','M','J','V','S'];
+  document.getElementById('ht-month-lbl').textContent = MONTHS[m]+' '+y;
+
+  // en-tête jours
+  let head = '<th class="ht-name-h">Habitude</th>';
+  for(let d=1; d<=dim; d++){
+    const wd = new Date(y,m,d).getDay();
+    const we = (wd===0||wd===6) ? ' wend' : '';
+    head += `<th class="${we.trim()}">${WD[wd]}<br>${d}</th>`;
+  }
+  head += '<th class="ht-stat">✓ / %</th><th class="ht-stat">🔥</th>';
+  document.getElementById('ht-head').innerHTML = head;
+
+  // lignes habitudes
+  let body = '';
+  let totalDone = 0;
+  htHabits.forEach((name, hIdx)=>{
+    let row = `<td class="ht-name" onclick="htRenameHabit(${hIdx})">${escapeHtml(name)}</td>`;
+    let hDone = 0;
+    for(let d=1; d<=dim; d++){
+      const on = md[hIdx] && md[hIdx][d];
+      if(on){ hDone++; totalDone++; }
+      const wd = new Date(y,m,d).getDay();
+      const we = (wd===0||wd===6) ? ' wend' : '';
+      const td = (isCurMonth && d===today) ? ' today' : '';
+      row += `<td class="ht-cell${on?' on':''}${we}${td}" onclick="htToggle(${hIdx},${d})"><div class="ht-dot"></div></td>`;
+    }
+    const pct = Math.round(hDone/dim*100);
+    row += `<td class="ht-stat"><b>${hDone}</b>/${dim}<br>${pct}%</td>`;
+    row += `<td class="ht-stat"><span class="ht-streak">${htHabitStreak(hIdx)}🔥</span></td>`;
+    body += '<tr>'+row+'</tr>';
+  });
+  document.getElementById('ht-body').innerHTML = body;
+
+  // jauges & stats
+  const nbHabits = htHabits.length;
+  const monthGoal = nbHabits * dim;
+  const daysElapsed = isCurMonth ? today : dim;
+  const paceGoal = nbHabits * daysElapsed;
+  // Daily = habitudes cochées aujourd'hui
+  let dailyDone = 0;
+  if(isCurMonth) htHabits.forEach((_,hIdx)=>{ if(md[hIdx] && md[hIdx][today]) dailyDone++; });
+  // Weekly = cochées sur les 7 derniers jours (fenêtre lun-dim de la semaine courante)
+  let weekDone = 0, weekSlots = 0;
+  if(isCurMonth){
+    const dow = (n.getDay()+6)%7; // 0 = lundi
+    for(let off=0; off<=dow; off++){
+      const dd = today-off;
+      if(dd<1) break;
+      weekSlots += nbHabits;
+      htHabits.forEach((_,hIdx)=>{ if(md[hIdx] && md[hIdx][dd]) weekDone++; });
+    }
+  }
+  const pctMomentum = paceGoal>0 ? Math.round(totalDone/paceGoal*100) : 0;
+  const pctDaily = nbHabits>0 && isCurMonth ? Math.round(dailyDone/nbHabits*100) : 0;
+  const pctWeekly = weekSlots>0 ? Math.round(weekDone/weekSlots*100) : 0;
+  const pctMonthly = monthGoal>0 ? Math.round(totalDone/monthGoal*100) : 0;
+  document.getElementById('ht-momentum').textContent = Math.min(pctMomentum,100)+'%';
+  document.getElementById('ht-daily').textContent = pctDaily+'%';
+  document.getElementById('ht-weekly').textContent = pctWeekly+'%';
+  document.getElementById('ht-monthly').textContent = pctMonthly+'%';
+  document.getElementById('ht-daysleft').textContent = isCurMonth ? (dim-today) : (y>n.getFullYear()||(y===n.getFullYear()&&m>n.getMonth()) ? dim : 0);
+  document.getElementById('ht-completed').textContent = totalDone;
+  document.getElementById('ht-remaining').textContent = Math.max(monthGoal-totalDone,0);
+}
+function initTracker(){ htLoad(); renderTracker(); }
+
 /* ============ CAPTURE VIDÉO QUOTIDIENNE ============ */
 let capBatch = [];
 let capTimerInt = null, capTimerLeft = 120;
@@ -4429,6 +4645,7 @@ function initApp(){
   initShop();
   initRpg();
   initCapture();
+  initTracker();
   updateNavTreeActive('home','home');
   // goal
   updateCountdown();
