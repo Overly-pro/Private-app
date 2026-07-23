@@ -351,6 +351,15 @@ html.theme-light .nav-tree-panel{background:rgba(246,246,248,0.97);border-right-
 .idea-txt{font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:20px;}
 .idea-date{font-size:8.5px;color:var(--muted2);font-family:'Space Mono',monospace;margin-top:7px;letter-spacing:.5px;}
 .idea-del{position:absolute;top:9px;right:10px;background:none;border:none;color:var(--muted2);font-size:13px;cursor:pointer;padding:0;line-height:1;}
+/* Bibliothèque coupes & sertissages */
+.cut-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.cut-card{background:rgba(17,17,17,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:13px 10px 11px;text-align:center;}
+.cut-card svg{width:62px;height:62px;color:rgba(255,255,255,0.88);margin-bottom:8px;}
+.cut-name{font-size:11px;font-weight:700;margin-bottom:3px;line-height:1.25;}
+.cut-desc{font-size:9px;color:var(--muted);line-height:1.45;}
+.cut-tag{display:inline-block;font-size:7.5px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:rgba(224,53,53,0.1);color:var(--accent);border:1px solid rgba(224,53,53,0.28);margin-bottom:5px;}
+@media (min-width:900px){.cut-grid{grid-template-columns:repeat(4,1fr);}}
+@media (min-width:1450px){.cut-grid{grid-template-columns:repeat(6,1fr);}}
 .prod-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(17,17,17,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;margin-bottom:8px;}
 .prod-name{flex:1;font-size:12px;font-weight:600;}
 .prod-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;cursor:pointer;user-select:none;transition:all .15s;}
@@ -1875,6 +1884,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <button class="bij-tab" id="btab-idees" onclick="switchBijTab('idees')">💡 Idées</button>
     <button class="bij-tab" id="btab-produits" onclick="switchBijTab('produits')">💎 Produits</button>
     <button class="bij-tab" id="btab-tendances" onclick="switchBijTab('tendances')">📈 Tendances</button>
+    <button class="bij-tab" id="btab-coupes" onclick="switchBijTab('coupes')">💠 Coupes & Sertis</button>
   </div>
   <!-- MOODBOARD -->
   <div id="bij-moodboard-section">
@@ -1919,6 +1929,13 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
     <div class="trend-card"><div class="trend-row"><span class="trend-icon">🖤</span><span class="trend-title">Esthétique gothique / dark luxury</span><span class="trend-heat rising">📈 En hausse</span></div><div class="trend-desc">Croix, piques, designs asymétriques, noir et argent oxydé. Correspond exactement à la direction artistique Overly. Niche peu saturée en bijouterie accessible — forte identité de marque possible.</div><div class="trend-sources"><span class="trend-src">Pinterest</span><span class="trend-src">Grailed</span><span class="trend-src">TikTok</span></div></div>
     <div class="trend-card"><div class="trend-row"><span class="trend-icon">💠</span><span class="trend-title">Stacking minimaliste</span><span class="trend-heat stable">⚖️ Stable</span></div><div class="trend-desc">Superposition de bagues fines, bracelets délicats. Marché stable, très concurrentiel. Peut compléter une gamme mais peu différenciant pour l'identité Overly.</div><div class="trend-sources"><span class="trend-src">Instagram</span><span class="trend-src">Pinterest</span></div></div>
     <div class="card" style="margin-top:16px;"><div class="card-title">🔗 Sources à consulter <div class="line"></div></div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://trends.google.com/trends/explore?q=tennis+chain+jewelry" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;">→ Google Trends — Tennis chain jewelry</a><a href="https://www.pinterest.com/search/pins/?q=jewelry+trends+2025" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;">→ Pinterest — Jewelry trends 2025</a><a href="https://www.tiktok.com/search?q=jewelry+trend+2025" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;">→ TikTok — Jewelry trend 2025</a><a href="https://www.etsy.com/market/trending_jewelry" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;">→ Etsy — Bijoux tendance</a></div></div>
+  </div>
+  <!-- COUPES & SERTISSAGES -->
+  <div id="bij-coupes-section" style="display:none;">
+    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">💎 Coupes de pierres — <span id="cuts-count"></span></div>
+    <div class="cut-grid" id="cuts-grid"></div>
+    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 10px;">🔧 Sertissages — <span id="settings-count"></span></div>
+    <div class="cut-grid" id="settings-grid"></div>
   </div>
 </div>
 
@@ -3796,7 +3813,7 @@ function loadBookStatuses(){
 }
 /* ===== BIJOUX ===== */
 function switchBijTab(tab){
-  ['moodboard','idees','produits','tendances'].forEach(t=>{
+  ['moodboard','idees','produits','tendances','coupes'].forEach(t=>{
     document.getElementById('bij-'+t+'-section').style.display = t===tab ? '' : 'none';
     document.getElementById('btab-'+t).classList.toggle('active', t===tab);
   });
@@ -3870,6 +3887,62 @@ function renderMoodboard(imgs){
       <button class="mood-tile-del" onclick="deleteMoodImage(${i})">✕</button>
     </div>`).join('');
 }
+/* ===== BIBLIOTHÈQUE COUPES & SERTISSAGES ===== */
+const GEM_CUTS = [
+ {n:'Brillant rond', d:'57-58 facettes, éclat maximal. La référence absolue.', s:'<circle cx="50" cy="50" r="37"/><polygon points="50,13 76,24 87,50 76,76 50,87 24,76 13,50 24,24"/><path d="M50 13V87M13 50H87M24 24L76 76M76 24L24 76"/>'},
+ {n:'Princesse', d:'Carrée, angles vifs, très brillante. Moderne.', s:'<rect x="17" y="17" width="66" height="66"/><path d="M17 17L83 83M83 17L17 83M50 17L83 50L50 83L17 50Z"/>'},
+ {n:'Coussin', d:'Carré aux angles adoucis. Vibe vintage.', s:'<rect x="16" y="16" width="68" height="68" rx="20"/><path d="M50 16V84M16 50H84M28 26L72 74M72 26L28 74"/>'},
+ {n:'Ovale', d:'Allonge le doigt, brillance de type brillant.', s:'<ellipse cx="50" cy="50" rx="26" ry="37"/><path d="M50 13V87M24 50H76M33 26L67 74M67 26L33 74"/>'},
+ {n:'Émeraude', d:'Rectangulaire à degrés. Élégance Art déco.', s:'<polygon points="31,14 69,14 81,26 81,74 69,86 31,86 19,74 19,26"/><polygon points="36,24 64,24 73,32 73,68 64,76 36,76 27,68 27,32"/><rect x="36" y="38" width="28" height="24"/>'},
+ {n:'Asscher', d:'Émeraude carrée, effet miroirs infinis.', s:'<polygon points="31,16 69,16 84,31 84,69 69,84 31,84 16,69 16,31"/><polygon points="37,26 63,26 74,37 74,63 63,74 37,74 26,63 26,37"/><rect x="38" y="38" width="24" height="24"/>'},
+ {n:'Radiant', d:'Rectangle à coins coupés + éclat du brillant.', s:'<polygon points="30,14 70,14 82,26 82,74 70,86 30,86 18,74 18,26"/><path d="M18 26L50 50L18 74M82 26L50 50L82 74M30 14L50 50L70 14M30 86L50 50L70 86"/>'},
+ {n:'Poire', d:'Goutte d\'eau : pointe + arrondi. Pendentifs et bagues.', s:'<path d="M50 10C66 32 79 48 79 62A29 29 0 1 1 21 62C21 48 34 32 50 10Z"/><path d="M50 10V91M27 54H73M34 32L66 76M66 32L34 76"/>'},
+ {n:'Marquise', d:'Navette allongée à deux pointes. Doigt affiné.', s:'<path d="M50 10C67 27 75 39 75 50C75 61 67 73 50 90C33 73 25 61 25 50C25 39 33 27 50 10Z"/><path d="M50 10V90M29 40L71 60M71 40L29 60"/>'},
+ {n:'Cœur', d:'Symbole romantique, taille exigeante.', s:'<path d="M50 86C21 62 15 44 25 31C33 20 46 21 50 33C54 21 67 20 75 31C85 44 79 62 50 86Z"/><path d="M50 33V86M31 42L69 66M69 42L31 66"/>'},
+ {n:'Baguette', d:'Rectangle fin à degrés. Pierre d\'accompagnement.', s:'<rect x="31" y="12" width="38" height="76"/><rect x="39" y="22" width="22" height="56"/><rect x="45" y="34" width="10" height="32"/>'},
+ {n:'Trillion', d:'Triangle brillant, souvent en pierres latérales.', s:'<path d="M50 12C68 38 82 60 88 78C62 90 38 90 12 78C18 60 32 38 50 12Z"/><path d="M50 30L70 70H30Z M50 12L50 30M12 78L30 70M88 78L70 70"/>'},
+ {n:'Taille rose', d:'Dôme facetté, base plate. Taille antique.', s:'<circle cx="50" cy="50" r="37"/><polygon points="50,21 75,36 75,64 50,79 25,64 25,36"/><path d="M50 21L50 79M25 36L75 64M75 36L25 64"/>'},
+ {n:'Taille ancienne', d:'Old European — l\'ancêtre du brillant, facettes larges.', s:'<circle cx="50" cy="50" r="37"/><circle cx="50" cy="50" r="12"/><path d="M50 13V38M50 62V87M13 50H38M62 50H87M24 24L41 41M76 24L59 41M24 76L41 59M76 76L59 59"/>'},
+ {n:'Briolette', d:'Goutte 100% facettée. Boucles et pendentifs.', s:'<path d="M50 8C67 30 77 46 77 60A27 27 0 1 1 23 60C23 46 33 30 50 8Z"/><path d="M50 8L37 31L50 46L36 62L50 79L64 62L50 46L63 31Z M30 45L70 45M27 62L73 62"/>'},
+ {n:'Cabochon', d:'Dôme poli sans facettes. Pierres opaques (onyx, turquoise).', s:'<ellipse cx="50" cy="52" rx="34" ry="29"/><path d="M23 61Q50 78 77 61M33 38Q42 30 55 32"/>'},
+ {n:'Hexagonale', d:'Six côtés. Géométrique, éditorial, moderne.', s:'<polygon points="50,12 82,31 82,69 50,88 18,69 18,31"/><polygon points="50,28 68,39 68,61 50,72 32,61 32,39"/><path d="M50 12V28M82 31L68 39M82 69L68 61M50 88V72M18 69L32 61M18 31L32 39"/>'},
+ {n:'Cerf-volant (Kite)', d:'Losange asymétrique. Très utilisé en dark luxury.', s:'<polygon points="50,10 80,42 50,90 20,42"/><path d="M50 10V90M20 42H80"/>'},
+ {n:'Bouclier (Shield)', d:'Forme blindée unique. Chevalières et pièces fortes.', s:'<path d="M27 16H73L81 42L50 87L19 42Z"/><path d="M27 16L50 44L73 16M19 42L50 44L81 42M50 44V87"/>'},
+ {n:'Demi-lune', d:'Moitié de pierre. Pierre latérale élégante.', s:'<path d="M21 37H79C79 63 66 80 50 80C34 80 21 63 21 37Z"/><path d="M21 37L50 80M79 37L50 80M36 37L50 80M64 37L50 80"/>'},
+ {n:'Trapèze', d:'Épaule les pierres centrales dans les bagues 3 pierres.', s:'<polygon points="27,32 73,32 83,68 17,68"/><polygon points="35,42 65,42 71,58 29,58"/>'},
+ {n:'Portrait', d:'Plate et transparente comme une fenêtre. Rare.', s:'<rect x="22" y="27" width="56" height="46"/><rect x="29" y="34" width="42" height="32"/><path d="M22 27L29 34M78 27L71 34M22 73L29 66M78 73L71 66"/>'},
+ {n:'Taille française', d:'Croix au sommet. Vintage années 20.', s:'<rect x="18" y="18" width="64" height="64"/><path d="M18 18L82 82M82 18L18 82"/><polygon points="50,18 82,50 50,82 18,50"/>'}
+];
+const GEM_SETTINGS = [
+ {n:'Serti griffes', d:'4 à 6 griffes. Laisse passer un max de lumière. Le classique.', s:'<path d="M32 42H68L50 68Z M32 42L40 31H60L68 42"/><path d="M29 29C25 36 25 47 31 52M71 29C75 36 75 47 69 52"/><path d="M16 72C30 61 70 61 84 72"/>'},
+ {n:'Serti clos', d:'Le métal entoure toute la pierre. Protection maximale.', s:'<path d="M36 42H64L50 62Z M36 42L43 34H57L64 42"/><path d="M30 30V47H40M70 30V47H60"/><path d="M16 72C30 60 70 60 84 72"/>'},
+ {n:'Serti demi-clos', d:'La pierre n\'est entourée que partiellement.', s:'<path d="M36 42H64L50 62Z M36 42L43 34H57L64 42"/><path d="M30 30V47H40"/><path d="M70 33C74 38 74 45 69 49"/><path d="M16 72C30 60 70 60 84 72"/>'},
+ {n:'Serti rail', d:'Pierres alignées entre deux rails de métal.', s:'<path d="M12 40H88M12 62H88"/><polygon points="27,44 34,51 27,58 20,51"/><polygon points="50,44 57,51 50,58 43,51"/><polygon points="73,44 80,51 73,58 66,51"/>'},
+ {n:'Serti pavé', d:'Surface entièrement pavée de micro-pierres.', s:'<circle cx="30" cy="38" r="8"/><circle cx="50" cy="38" r="8"/><circle cx="70" cy="38" r="8"/><circle cx="40" cy="55" r="8"/><circle cx="60" cy="55" r="8"/><circle cx="50" cy="72" r="8"/>'},
+ {n:'Serti grain', d:'Petits grains de métal levés qui tiennent chaque pierre.', s:'<circle cx="30" cy="50" r="9"/><circle cx="50" cy="50" r="9"/><circle cx="70" cy="50" r="9"/><circle cx="40" cy="41" r="2" fill="currentColor"/><circle cx="40" cy="59" r="2" fill="currentColor"/><circle cx="60" cy="41" r="2" fill="currentColor"/><circle cx="60" cy="59" r="2" fill="currentColor"/><path d="M14 36H86M14 64H86"/>'},
+ {n:'Serti barrette', d:'Barres verticales entre chaque pierre.', s:'<path d="M22 34V66M46 34V66M70 34V66"/><polygon points="34,42 40,50 34,58 28,50"/><polygon points="58,42 64,50 58,58 52,50"/><polygon points="80,44 84,50 80,56 76,50"/>'},
+ {n:'Serti tension', d:'La pierre semble flotter, tenue par la pression du métal.', s:'<path d="M12 60C20 46 31 41 41 43M88 60C80 46 69 41 59 43"/><polygon points="42,40 58,40 50,58"/><path d="M42 40L46 32H54L58 40"/>'},
+ {n:'Serti invisible', d:'Aucun métal visible entre les pierres. Effet mystère.', s:'<rect x="26" y="26" width="23" height="23"/><rect x="51" y="26" width="23" height="23"/><rect x="26" y="51" width="23" height="23"/><rect x="51" y="51" width="23" height="23"/><path d="M26 37.5H74M37.5 26V74M62.5 26V74M26 62.5H74"/>'},
+ {n:'Serti étoilé (flush)', d:'Pierre encastrée au ras du métal. Discret et solide.', s:'<path d="M12 62C30 46 70 46 88 62"/><circle cx="50" cy="52" r="9"/><path d="M50 36V43M66 40L61 46M34 40L39 46M70 54H63M30 54H37"/>'},
+ {n:'Halo', d:'Couronne de petites pierres autour de la pierre centrale.', s:'<circle cx="50" cy="50" r="13"/><circle cx="50" cy="24" r="6"/><circle cx="69" cy="31" r="6"/><circle cx="76" cy="50" r="6"/><circle cx="69" cy="69" r="6"/><circle cx="50" cy="76" r="6"/><circle cx="31" cy="69" r="6"/><circle cx="24" cy="50" r="6"/><circle cx="31" cy="31" r="6"/>'},
+ {n:'Cathédrale', d:'Arches de métal qui élèvent la pierre comme une nef.', s:'<path d="M12 74C24 58 34 50 42 46M88 74C76 58 66 50 58 46"/><path d="M35 40H65L50 60Z M35 40L42 32H58L65 40"/><path d="M24 68C32 57 39 52 44 50M76 68C68 57 61 52 56 50"/>'},
+ {n:'Serti inversé', d:'Diamant monté à l\'envers, pointe vers le haut. Tendance récente, très dark luxury.', tag:'RÉCENT', s:'<path d="M32 58H68L50 30Z"/><path d="M32 58L40 66H60L68 58"/><path d="M14 76C30 65 70 65 86 76"/>'},
+ {n:'Serti illusion', d:'Plaque de métal facettée qui grossit visuellement la pierre.', s:'<polygon points="50,24 76,50 50,76 24,50"/><circle cx="50" cy="50" r="8"/><path d="M50 24V42M76 50H58M50 76V58M24 50H42"/>'},
+ {n:'Cluster', d:'Grappe de petites pierres = effet grosse pierre à petit prix.', s:'<circle cx="50" cy="50" r="9"/><circle cx="50" cy="31" r="8"/><circle cx="66" cy="40" r="8"/><circle cx="66" cy="60" r="8"/><circle cx="50" cy="69" r="8"/><circle cx="34" cy="60" r="8"/><circle cx="34" cy="40" r="8"/>'}
+];
+function renderGemLibrary(){
+  const wrap = s => `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+  const card = it => `<div class="cut-card">${wrap(it.s)}${it.tag?`<div><span class="cut-tag">${it.tag}</span></div>`:''}<div class="cut-name">${it.n}</div><div class="cut-desc">${it.d}</div></div>`;
+  const cg = document.getElementById('cuts-grid');
+  const sg = document.getElementById('settings-grid');
+  if(cg) cg.innerHTML = GEM_CUTS.map(card).join('');
+  if(sg) sg.innerHTML = GEM_SETTINGS.map(card).join('');
+  const cc = document.getElementById('cuts-count');
+  const sc = document.getElementById('settings-count');
+  if(cc) cc.textContent = GEM_CUTS.length + ' tailles';
+  if(sc) sc.textContent = GEM_SETTINGS.length + ' types';
+}
+
 /* ===== BANQUE D'IDÉES BIJOUX ===== */
 function saveBijIdea(){
   const ta = document.getElementById('bij-notes');
@@ -3955,6 +4028,7 @@ function initBijoux(){
     saveKey('bij_notes', '');
   }
   renderBijIdeas();
+  renderGemLibrary();
 }
 
 /* ============ ACHATS — wishlist à seuils + mannequin ============ */
