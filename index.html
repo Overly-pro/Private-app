@@ -1247,9 +1247,13 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
         <div class="pb-source"><div class="pbs-label">💼 KFC</div><div class="pbs-val" id="g-kfc-val" style="color:var(--orange);">0 €</div><div class="pbs-label" style="margin-top:2px;">gagné</div></div>
         <div class="pb-source"><div class="pbs-label">👟 Chaussures</div><div class="pbs-val" id="g-shoes-val" style="color:var(--blue);">0 €</div><div class="pbs-label" style="margin-top:2px;">vendu</div></div>
       </div>
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:14px 0 6px;">💳 Argent de côté — Pocket Revolut</div>
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:14px 0 6px;">💳 Argent de côté — Revolut + Liquide</div>
       <div class="pb-sources">
-        <div class="pb-source highlight-source" style="flex:2;"><div class="pbs-label">Solde actuel de ta pocket</div><div class="pbs-val" id="g-revolut-val" style="color:var(--green);font-size:22px;">0 €</div><div class="pbs-label" style="margin-top:3px;">→ c'est ce chiffre qui compte vers les 2 000 €</div></div>
+        <div class="pb-source"><div class="pbs-label">💳 Pocket Revolut</div><div class="pbs-val" id="g-revolut-val" style="color:var(--green);font-size:20px;">0 €</div></div>
+        <div class="pb-source"><div class="pbs-label">💵 Argent liquide</div><div class="pbs-val" id="g-cash-val" style="color:var(--green);font-size:20px;">0 €</div></div>
+      </div>
+      <div class="pb-sources" style="margin-top:8px;">
+        <div class="pb-source highlight-source" style="flex:2;"><div class="pbs-label">Total mis de côté</div><div class="pbs-val" id="g-total-val" style="color:var(--green);font-size:22px;">0 €</div><div class="pbs-label" style="margin-top:3px;">→ c'est ce chiffre qui compte vers les 2 000 €</div></div>
         <div class="pb-source"><div class="pbs-label">📊 Il manque</div><div class="pbs-val" id="g-reste-val" style="color:var(--accent);">2 000 €</div><div class="pbs-label" style="margin-top:2px;">pour l'objectif</div></div>
       </div>
       <div class="input-row">
@@ -1257,6 +1261,7 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
         <input type="number" id="g-kfc-input" placeholder="KFC gagné €">
         <input type="number" id="g-shoes-input" placeholder="Shoes vendues €">
         <input type="number" id="g-revolut-input" placeholder="Pocket Revolut €" style="border-color:#ffffff22;color:var(--green);">
+        <input type="number" id="g-cash-input" placeholder="Argent liquide €" style="border-color:#ffffff22;color:var(--green);">
         <button onclick="updateCashProgress()">Maj</button>
       </div>
     </div>
@@ -2818,9 +2823,14 @@ function updateCashProgress(){
   const kfc = parseFloat(document.getElementById('g-kfc-input').value) || 0;
   const shoes = parseFloat(document.getElementById('g-shoes-input').value) || 0;
   const revolut = parseFloat(document.getElementById('g-revolut-input').value) || 0;
+  const cash = parseFloat(document.getElementById('g-cash-input').value) || 0;
+  const totalSet = revolut + cash;
   const goal = 2000;
-  const pct = Math.min(Math.round((revolut / goal) * 100), 100);
-  const reste = Math.max(goal - revolut, 0);
+  const pct = Math.min(Math.round((totalSet / goal) * 100), 100);
+  const reste = Math.max(goal - totalSet, 0);
+  document.getElementById('g-cash-val').textContent = cash.toLocaleString('fr-FR') + ' €';
+  document.getElementById('g-total-val').textContent = totalSet.toLocaleString('fr-FR') + ' €';
+  saveKey('cash_liquide', cash);
   document.getElementById('g-kfc-val').textContent = kfc.toLocaleString('fr-FR') + ' €';
   document.getElementById('g-shoes-val').textContent = shoes.toLocaleString('fr-FR') + ' €';
   document.getElementById('g-revolut-val').textContent = revolut.toLocaleString('fr-FR') + ' €';
@@ -2837,9 +2847,11 @@ function loadCashProgress(){
   const kfc = loadKey('cash_kfc');
   const shoes = loadKey('cash_shoes');
   const revolut = loadKey('cash_revolut');
+  const cash = loadKey('cash_liquide');
   if(kfc !== null) document.getElementById('g-kfc-input').value = kfc;
   if(shoes !== null) document.getElementById('g-shoes-input').value = shoes;
   if(revolut !== null) document.getElementById('g-revolut-input').value = revolut;
+  if(cash !== null) document.getElementById('g-cash-input').value = cash;
   updateCashProgress();
 }
 function updateCountdown(){
@@ -4045,8 +4057,9 @@ let shopItems = [];
 let shopOutfit = {};
 
 function shopCash(){
-  const v = parseFloat(loadKey('cash_revolut'));
-  return isNaN(v) ? 0 : v;
+  const r = parseFloat(loadKey('cash_revolut'));
+  const c = parseFloat(loadKey('cash_liquide'));
+  return (isNaN(r)?0:r) + (isNaN(c)?0:c);
 }
 function switchShopTab(tab){
   document.getElementById('shoptab-mannequin').style.display = tab==='mannequin' ? '' : 'none';
