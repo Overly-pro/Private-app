@@ -283,6 +283,19 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .ht-streak-c{font-size:9px;color:#ffb020;min-width:34px;}
 .ht-add{display:flex;gap:6px;margin-top:8px;}
 .ht-add input{flex:1;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.14);border-radius:10px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;}
+/* Barre de contrôle grille : toggle semaine/mois + nav semaine */
+.ht-gridctl{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;flex-wrap:wrap;}
+.ht-seg{display:flex;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:9px;overflow:hidden;}
+.ht-seg button{background:none;border:none;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.5px;padding:6px 12px;cursor:pointer;font-family:inherit;}
+.ht-seg button.on{background:rgba(224,53,53,0.16);color:#fff;}
+.ht-weeknav{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.ht-weeknav button{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.14);color:var(--text);border-radius:8px;width:30px;height:28px;font-size:14px;cursor:pointer;font-family:inherit;}
+.ht-weeknav .lbl{font-size:11px;font-family:'New Rocker',cursive;letter-spacing:.5px;min-width:64px;text-align:center;}
+/* Vue semaine : grosses cases faciles à taper */
+.ht-grid.week thead th{min-width:38px;font-size:9.5px;height:34px;}
+.ht-grid.week .ht-cell{width:38px;height:46px;}
+.ht-grid.week .ht-dot{width:24px;height:24px;border-radius:7px;}
+.ht-grid.week .ht-name,.ht-grid.week .ht-name-h{min-width:132px!important;max-width:132px;}
 .launch-lb{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-family:'New Rocker',cursive;display:block;}
 .stat:hover{border-color:#333333;}
 .stat-val{font-size:19px;font-weight:900;color:var(--text);line-height:1;}
@@ -1748,8 +1761,19 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 
   <div class="card" style="padding:8px;">
     <div class="card-title" style="padding:4px 4px 8px;">✅ Monthly Grid</div>
+    <div class="ht-gridctl">
+      <div class="ht-seg">
+        <button id="ht-seg-week" onclick="htSetMode('week')">📅 Semaine</button>
+        <button id="ht-seg-month" onclick="htSetMode('month')">🗓️ Mois</button>
+      </div>
+      <div class="ht-weeknav" id="ht-weeknav">
+        <button onclick="htShiftWeek(-1)">‹</button>
+        <span class="lbl" id="ht-week-lbl">Week 1</span>
+        <button onclick="htShiftWeek(1)">›</button>
+      </div>
+    </div>
     <div class="ht-scroll">
-      <table class="ht-grid">
+      <table class="ht-grid" id="ht-grid-table">
         <thead><tr id="ht-head"></tr></thead>
         <tbody id="ht-body"></tbody>
       </table>
@@ -4604,6 +4628,15 @@ const HT_MIGRATE = {'Dormir 8h':'Sleep 8h','Boire de l\'eau':'Drink water','Pomp
 let htHabits = [];
 let htData = {};        // { "YYYY-M": { habitIdx: { day: 1 } } }
 let htCursor = null;    // {y, m}  m = 0-11
+let htMode = null;      // 'week' | 'month' (défaut : week sur mobile, month sur PC)
+let htWeekIdx = 0;      // bloc de semaine affiché (0 = jours 1-7, etc.)
+function htWeekCount(y,m){ return Math.ceil(htDaysInMonth(y,m)/7); }
+function htWeekRange(y,m,idx){
+  const dim = htDaysInMonth(y,m);
+  const start = idx*7 + 1;
+  const end = Math.min(start+6, dim);
+  return {start, end};
+}
 function htMonKey(y,m){ return y+'-'+m; }
 function htDaysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
 function htEnsure(y,m){ const k=htMonKey(y,m); if(!htData[k]) htData[k]={}; return htData[k]; }
@@ -4616,6 +4649,21 @@ function htLoad(){
   try{ htData = JSON.parse(loadKey('ht_data')||'{}'); }catch(e){ htData = {}; }
   const n = new Date();
   htCursor = {y:n.getFullYear(), m:n.getMonth()};
+  if(htMode===null){
+    const saved = loadKey('ht_gridmode');
+    htMode = (saved==='week'||saved==='month') ? saved : ((window.innerWidth < 900) ? 'week' : 'month');
+  }
+  htWeekIdx = Math.floor((n.getDate()-1)/7);
+}
+function htSetMode(mode){
+  htMode = mode;
+  saveKey('ht_gridmode', mode);
+  renderTracker();
+}
+function htShiftWeek(d){
+  const wc = htWeekCount(htCursor.y, htCursor.m);
+  htWeekIdx = Math.max(0, Math.min(wc-1, htWeekIdx + d));
+  renderTracker();
 }
 function htPersist(){ saveKey('ht_habits', JSON.stringify(htHabits)); saveKey('ht_data', JSON.stringify(htData)); }
 function htShiftMonth(d){
@@ -4715,16 +4763,31 @@ function renderTracker(){
   const nbHabits = htHabits.length;
   document.getElementById('ht-month-lbl').textContent = MONTHS[m]+' '+y;
 
-  // en-tête : colonne figée nom+progress, puis jours
+  // mode semaine ou mois : plage de jours affichée
+  const wc = htWeekCount(y, m);
+  if(htWeekIdx >= wc) htWeekIdx = wc-1;
+  const range = (htMode==='week') ? htWeekRange(y, m, htWeekIdx) : {start:1, end:dim};
+  // contrôles
+  const table = document.getElementById('ht-grid-table');
+  if(table) table.classList.toggle('week', htMode==='week');
+  const segW = document.getElementById('ht-seg-week'), segM = document.getElementById('ht-seg-month');
+  if(segW) segW.classList.toggle('on', htMode==='week');
+  if(segM) segM.classList.toggle('on', htMode==='month');
+  const wnav = document.getElementById('ht-weeknav');
+  if(wnav) wnav.style.visibility = (htMode==='week') ? 'visible' : 'hidden';
+  const wlbl = document.getElementById('ht-week-lbl');
+  if(wlbl) wlbl.textContent = (htWeekIdx < 4 ? 'Week '+(htWeekIdx+1) : 'Extra') + ' · ' + range.start + '-' + range.end;
+
+  // en-tête : colonne figée nom+progress, puis jours de la plage
   let head = '<th class="ht-name-h">Habit &nbsp;·&nbsp; done / '+dim+'</th>';
-  for(let d=1; d<=dim; d++){
+  for(let d=range.start; d<=range.end; d++){
     const wd = new Date(y,m,d).getDay();
     const we = (wd===0||wd===6) ? ' wend' : '';
     head += `<th class="${we.trim()}">${WD[wd]}<br>${d}</th>`;
   }
   document.getElementById('ht-head').innerHTML = head;
 
-  // lignes habitudes + collecte pour top habits
+  // lignes habitudes + collecte pour top habits (progress = tout le mois)
   let body = '';
   let totalDone = 0;
   const perHabit = [];
@@ -4734,6 +4797,7 @@ function renderTracker(){
     for(let d=1; d<=dim; d++){
       const on = md[hIdx] && md[hIdx][d];
       if(on){ hDone++; totalDone++; }
+      if(d < range.start || d > range.end) continue;
       const wd = new Date(y,m,d).getDay();
       const we = (wd===0||wd===6) ? ' wend' : '';
       const td = (isCurMonth && d===today) ? ' today' : '';
