@@ -1098,6 +1098,12 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 
   <div class="section">
     <div class="section-header"><span class="section-icon">🌅</span><span class="section-title">Matin</span><span class="section-time">06:30 – 07:30</span></div>
+    <div class="task" id="t11" onclick="toggleTask('t11')">
+      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
+        <div class="task-body"><div class="task-name">🙏 Prière avant de travailler</div><div class="task-sub">Super important — se recentrer et confier sa journée avant tout</div></div>
+        <div class="expand-btn" id="e-t11" onclick="expandHow(event,'h-t11','e-t11')">▼</div></div>
+      <div class="how-to" id="h-t11"><div class="how-to-inner"><strong>Comment faire :</strong> Prends un moment au calme, avant de commencer quoi que ce soit. Remercie, demande la force et la clarté pour la journée, et confie ton objectif. C'est le socle qui donne du sens à tout le reste — à faire en premier, chaque jour.</div></div>
+    </div>
     <div class="task" id="t1" onclick="toggleTask('t1')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
         <div class="task-body"><div class="task-name">Déclaration Hill à voix haute + Visualisation</div><div class="task-sub">Ancrer le désir, la foi et l'objectif du 16 août</div></div>
@@ -2763,7 +2769,7 @@ function showSubtab(group, tab){
 }
 
 /* ============ TASKS ============ */
-const T_TOTAL = 10;
+const T_TOTAL = 11;
 const TK_STATE='tasks_state', TK_DATE='tasks_date', TK_STREAK='tasks_streak', TK_LASTOK='tasks_lastok';
 const TK_STATE_PREFIX='tasks_state_';
 function yesterdayISO(){ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
@@ -2804,7 +2810,7 @@ function toggleTask(id){
   updateTaskProgress();
   saveTaskState(taskState);
   const done = Object.keys(taskState).filter(k=>taskState[k]).length;
-  if(done === T_TOTAL) showToast('🔥 Journée parfaite — 10/10 accompli !');
+  if(done === T_TOTAL) showToast('🔥 Journée parfaite — '+T_TOTAL+'/'+T_TOTAL+' accompli !');
   if(taskState[id]) addXp('task-'+id, 10); else removeXp('task-'+id);
   checkQuests();
 }
