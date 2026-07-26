@@ -239,7 +239,7 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .scr-lbl{display:block;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
 .scr-lbl small{display:block;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted2);font-size:9px;margin-top:1px;}
 .scr-in,.scr-ta{width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:9px;color:var(--text);font-size:12.5px;padding:9px 11px;font-family:inherit;line-height:1.55;}
-.scr-ta{resize:vertical;min-height:52px;}
+.scr-ta{resize:none;min-height:44px;overflow:hidden;}
 .scr-seg{display:flex;flex-wrap:wrap;gap:5px;}
 .scr-seg button{flex:1;min-width:70px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);color:var(--muted);font-size:10px;font-weight:700;padding:8px 6px;border-radius:9px;cursor:pointer;font-family:inherit;}
 .scr-seg button.on{background:rgba(224,53,53,0.16);border-color:rgba(224,53,53,0.4);color:#fff;}
@@ -5192,6 +5192,8 @@ function scrRenderSegs(){
 let scrDraftFormat = 'moyenne', scrDraftStatus = 'idee';
 function scrPickFormat(k){ scrDraftFormat = k; document.querySelectorAll('#scr-format button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
 function scrPickStatus(k){ scrDraftStatus = k; document.querySelectorAll('#scr-statusseg button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
+function scrGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+function scrAutosizeAll(){ document.querySelectorAll('#scr-editor .scr-ta').forEach(t=>{ t.oninput=()=>scrGrow(t); scrGrow(t); }); }
 function scrShowEditor(){
   document.getElementById('scr-list-view').style.display = 'none';
   document.getElementById('scr-editor').style.display = '';
@@ -5207,6 +5209,7 @@ function scrNew(){
   scrShowEditor();
   scrFields().forEach(f=> document.getElementById('scr-'+f).value = '');
   scrPickFormat('moyenne'); scrPickStatus('idee');
+  scrAutosizeAll();
   window.scrollTo(0,0);
 }
 function scrOpen(id){
@@ -5216,6 +5219,7 @@ function scrOpen(id){
   scrShowEditor();
   scrFields().forEach(f=> document.getElementById('scr-'+f).value = s[f]||'');
   scrPickFormat(s.format||'moyenne'); scrPickStatus(s.status||'idee');
+  scrAutosizeAll();
   window.scrollTo(0,0);
 }
 function scrSave(){
