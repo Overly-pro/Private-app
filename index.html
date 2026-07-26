@@ -223,6 +223,26 @@ html.theme-light .notif-banner-btn{ background:rgba(31,202,202,0.15); }
 .cap-rec{width:100%;padding:14px 0;font-size:13px;background:rgba(224,53,53,0.12);border:1px solid rgba(224,53,53,0.5);color:#fff;border-radius:12px;cursor:pointer;font-family:inherit;font-weight:700;}
 .cap-done-box{text-align:center;padding:10px 0;font-size:13px;color:#7dd8a0;}
 .cap-batch-row{display:flex;align-items:center;gap:9px;padding:8px 11px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;margin-bottom:6px;cursor:pointer;user-select:none;}
+/* Constructeur de scripts */
+.scr-card{background:rgba(17,17,17,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;position:relative;}
+.scr-card-top{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.scr-card-title{flex:1;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.scr-fmt{font-size:8px;font-weight:700;letter-spacing:.8px;padding:2px 8px;border-radius:20px;background:rgba(143,123,255,0.14);color:#b3a6ff;border:0.5px solid rgba(143,123,255,0.3);white-space:nowrap;}
+.scr-card-meta{font-size:9.5px;color:var(--muted);line-height:1.4;}
+.scr-status{font-size:8px;font-weight:700;letter-spacing:.8px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.scr-status.idee{background:rgba(180,180,180,0.08);color:#999;border:0.5px solid rgba(180,180,180,0.2);}
+.scr-status.afilmer{background:rgba(255,180,0,0.1);color:#ca0;border:0.5px solid rgba(255,180,0,0.24);}
+.scr-status.filme{background:rgba(100,160,255,0.1);color:#8ab4ff;border:0.5px solid rgba(100,160,255,0.28);}
+.scr-status.monte{background:rgba(143,123,255,0.12);color:#b3a6ff;border:0.5px solid rgba(143,123,255,0.3);}
+.scr-status.poste{background:rgba(80,200,120,0.1);color:#7dd8a0;border:0.5px solid rgba(80,200,120,0.3);}
+.scr-fld{margin-bottom:11px;}
+.scr-lbl{display:block;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.scr-lbl small{display:block;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted2);font-size:9px;margin-top:1px;}
+.scr-in,.scr-ta{width:100%;background:#0c0c0c;border:1px solid #2a2a2a;border-radius:9px;color:var(--text);font-size:12.5px;padding:9px 11px;font-family:inherit;line-height:1.55;}
+.scr-ta{resize:vertical;min-height:52px;}
+.scr-seg{display:flex;flex-wrap:wrap;gap:5px;}
+.scr-seg button{flex:1;min-width:70px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.12);color:var(--muted);font-size:10px;font-weight:700;padding:8px 6px;border-radius:9px;cursor:pointer;font-family:inherit;}
+.scr-seg button.on{background:rgba(224,53,53,0.16);border-color:rgba(224,53,53,0.4);color:#fff;}
 .cap-b-date{flex:1;font-size:11px;font-weight:600;}
 .cap-b-tag{font-size:8.5px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;}
 .cap-b-tag.captured{background:rgba(255,180,0,0.1);color:#ca0;border:1px solid rgba(255,180,0,0.25);}
@@ -1796,33 +1816,102 @@ html.theme-light .logo-detailed,html.theme-light .splash-wordmark{mix-blend-mode
 <div class="view" id="view-capture">
   <img class="view-banner" id="banner-capture" alt="">
 
-  <div class="card rpg-card">
-    <div class="card-title">🎥 Capture du jour</div>
-    <div id="cap-today-body"></div>
+  <div class="bij-tabs">
+    <button class="bij-tab active" id="captab-daily" onclick="switchCapTab('daily')">🎥 Quotidien</button>
+    <button class="bij-tab" id="captab-scripts" onclick="switchCapTab('scripts')">🎬 Scripts</button>
   </div>
 
-  <div class="card">
-    <div class="card-title">🎬 Les 3 questions — garde-les en tête</div>
-    <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;line-height:1.5;">Réponds en 2 mots si tu veux (juste pour t'aider), puis parle face caméra. Zéro script, zéro pression.</div>
-    <div class="cap-q"><span class="cap-q-n">1</span> Qu'est-ce que j'ai fait aujourd'hui pour le projet ?</div>
-    <textarea class="cap-ta" id="cap-q1" placeholder="Ex. contacté 3 fournisseurs, filmé les bagues..." oninput="capSaveDraft()"></textarea>
-    <div class="cap-q"><span class="cap-q-n">2</span> Une chose que j'ai apprise ?</div>
-    <textarea class="cap-ta" id="cap-q2" placeholder="Ex. le SEO Insta, négocier un prix..." oninput="capSaveDraft()"></textarea>
-    <div class="cap-q"><span class="cap-q-n">3</span> C'est quoi la suite ?</div>
-    <textarea class="cap-ta" id="cap-q3" placeholder="Ex. demain je monte 2 vidéos..." oninput="capSaveDraft()"></textarea>
+  <!-- QUOTIDIEN -->
+  <div id="cap-daily-section">
+    <div class="card rpg-card">
+      <div class="card-title">🎥 Capture du jour</div>
+      <div id="cap-today-body"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎬 Les 3 questions — garde-les en tête</div>
+      <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;line-height:1.5;">Réponds en 2 mots si tu veux (juste pour t'aider), puis parle face caméra. Zéro script, zéro pression.</div>
+      <div class="cap-q"><span class="cap-q-n">1</span> Qu'est-ce que j'ai fait aujourd'hui pour le projet ?</div>
+      <textarea class="cap-ta" id="cap-q1" placeholder="Ex. contacté 3 fournisseurs, filmé les bagues..." oninput="capSaveDraft()"></textarea>
+      <div class="cap-q"><span class="cap-q-n">2</span> Une chose que j'ai apprise ?</div>
+      <textarea class="cap-ta" id="cap-q2" placeholder="Ex. le SEO Insta, négocier un prix..." oninput="capSaveDraft()"></textarea>
+      <div class="cap-q"><span class="cap-q-n">3</span> C'est quoi la suite ?</div>
+      <textarea class="cap-ta" id="cap-q3" placeholder="Ex. demain je monte 2 vidéos..." oninput="capSaveDraft()"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⏱️ Minuteur 2 minutes</div>
+      <div class="cap-timer" id="cap-timer">2:00</div>
+      <button class="cap-rec" id="cap-timer-btn" onclick="capToggleTimer()">▶️ Lancer le minuteur</button>
+      <div style="font-size:9.5px;color:var(--muted2);text-align:center;margin-top:8px;line-height:1.5;">Le minuteur est juste un repère. Filme avec l'appli caméra de ton téléphone, puis reviens valider.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎞️ File de montage — batch 1-2×/semaine</div>
+      <div style="font-size:10px;color:var(--muted2);margin-bottom:8px;line-height:1.5;">Tes captures s'empilent ici. Tape sur une ligne pour la faire passer : Capturée → Montée → Postée.</div>
+      <div id="cap-batch-list"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">⏱️ Minuteur 2 minutes</div>
-    <div class="cap-timer" id="cap-timer">2:00</div>
-    <button class="cap-rec" id="cap-timer-btn" onclick="capToggleTimer()">▶️ Lancer le minuteur</button>
-    <div style="font-size:9.5px;color:var(--muted2);text-align:center;margin-top:8px;line-height:1.5;">Le minuteur est juste un repère. Filme avec l'appli caméra de ton téléphone, puis reviens valider.</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🎞️ File de montage — batch 1-2×/semaine</div>
-    <div style="font-size:10px;color:var(--muted2);margin-bottom:8px;line-height:1.5;">Tes captures s'empilent ici. Tape sur une ligne pour la faire passer : Capturée → Montée → Postée.</div>
-    <div id="cap-batch-list"></div>
+  <!-- SCRIPTS -->
+  <div id="cap-scripts-section" style="display:none;">
+    <!-- Liste -->
+    <div id="scr-list-view">
+      <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="scrNew()">+ Nouveau script</button>
+      <div id="scr-list"></div>
+    </div>
+    <!-- Éditeur -->
+    <div id="scr-editor" style="display:none;">
+      <button style="background:none;border:0.5px solid var(--border2);color:var(--muted2);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit;margin-bottom:10px;" onclick="scrCloseEditor()">← Retour</button>
+      <div class="card">
+        <div class="scr-fld">
+          <label class="scr-lbl">🎬 Titre de la vidéo</label>
+          <input class="scr-in" id="scr-title" placeholder="Ex. Comment j'ai lancé ma marque de bijoux à 0€">
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">📏 Format</label>
+          <div class="scr-seg" id="scr-format"></div>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">🎯 But de la vidéo<small>Qu'est-ce que le spectateur doit ressentir / faire à la fin ?</small></label>
+          <input class="scr-in" id="scr-goal" placeholder="Ex. Inspirer + montrer que c'est possible sans argent">
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">👥 Pour qui<small>Ton spectateur idéal</small></label>
+          <input class="scr-in" id="scr-audience" placeholder="Ex. Jeunes 16-25 qui veulent se lancer">
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">🪝 Hook — 3 premières secondes<small>La phrase qui empêche de scroller</small></label>
+          <textarea class="scr-ta" id="scr-hook" placeholder="Ex. « À 18 ans, j'ai lancé une marque avec 0€ en poche. Voilà comment. »"></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">📣 Intro<small>Contexte + promesse de la vidéo</small></label>
+          <textarea class="scr-ta" id="scr-intro" placeholder="Qui tu es, de quoi tu vas parler, pourquoi rester jusqu'au bout"></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">🗂️ Plan / points clés<small>Une idée par ligne — l'ossature de ta vidéo</small></label>
+          <textarea class="scr-ta" id="scr-points" style="min-height:120px;" placeholder="1. Le déclic&#10;2. Les 3 erreurs du début&#10;3. Ce qui a tout changé&#10;4. Les résultats aujourd'hui"></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">💬 Story / exemple perso<small>Le moment vécu qui rend la vidéo unique</small></label>
+          <textarea class="scr-ta" id="scr-story" placeholder="Une anecdote concrète, un échec, une victoire..."></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">📣 CTA — appel à l'action<small>Ce que tu demandes à la fin</small></label>
+          <textarea class="scr-ta" id="scr-cta" placeholder="Ex. Abonne-toi pour suivre le lancement · commente ton objectif"></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">🎞️ B-roll / notes de tournage<small>Plans à filmer, lieux, accessoires</small></label>
+          <textarea class="scr-ta" id="scr-broll" placeholder="Ex. gros plan sur les bagues, plan atelier, écran du tracker..."></textarea>
+        </div>
+        <div class="scr-fld">
+          <label class="scr-lbl">📌 Statut</label>
+          <div class="scr-seg" id="scr-statusseg"></div>
+        </div>
+        <button class="btn-primary" style="width:100%;" onclick="scrSave()">💾 Enregistrer le script</button>
+        <button style="width:100%;margin-top:8px;background:none;border:0.5px solid rgba(224,53,53,0.3);color:var(--accent);border-radius:10px;padding:9px;font-size:11px;cursor:pointer;font-family:inherit;" onclick="scrDelete()">🗑️ Supprimer ce script</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -5052,6 +5141,106 @@ function initCapture(){
   capLoadDraft();
   renderCapToday();
   renderCapBatch();
+  initScripts();
+}
+function switchCapTab(tab){
+  document.getElementById('cap-daily-section').style.display = tab==='daily' ? '' : 'none';
+  document.getElementById('cap-scripts-section').style.display = tab==='scripts' ? '' : 'none';
+  document.getElementById('captab-daily').classList.toggle('active', tab==='daily');
+  document.getElementById('captab-scripts').classList.toggle('active', tab==='scripts');
+  if(tab==='scripts'){ scrCloseEditor(); renderScrList(); }
+}
+
+/* ===== CONSTRUCTEUR DE SCRIPTS ===== */
+const SCR_FORMATS = [{k:'short',l:'⚡ Short (<60s)'},{k:'moyenne',l:'🎬 Moyenne (3-8min)'},{k:'longue',l:'🎥 Longue (10min+)'}];
+const SCR_STATUS = [{k:'idee',l:'Idée'},{k:'afilmer',l:'À filmer'},{k:'filme',l:'Filmé'},{k:'monte',l:'Monté'},{k:'poste',l:'Posté'}];
+const SCR_STATUS_L = {idee:'Idée',afilmer:'À filmer',filme:'Filmé',monte:'Monté',poste:'Posté'};
+const SCR_FMT_L = {short:'SHORT',moyenne:'MOYENNE',longue:'LONGUE'};
+let scripts = [];
+let scrCurrentId = null;
+function scrFields(){ return ['title','goal','audience','hook','intro','points','story','cta','broll']; }
+function initScripts(){
+  try{ scripts = JSON.parse(loadKey('cap_scripts')||'[]'); }catch(e){ scripts = []; }
+  renderScrList();
+}
+function renderScrList(){
+  const list = document.getElementById('scr-list');
+  if(!list) return;
+  if(!scripts.length){
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;text-align:center;padding:16px 0;">Aucun script. Crée ton premier — juste assez pour savoir de quoi tu parles, sans sur-scripter.</div>';
+    return;
+  }
+  list.innerHTML = scripts.map(s=>{
+    const nbPoints = (s.points||'').split('\n').filter(x=>x.trim()).length;
+    return `<div class="scr-card" onclick="scrOpen(${s.id})">
+      <div class="scr-card-top">
+        <span class="scr-card-title">${escapeHtml(s.title||'Script sans titre')}</span>
+        <span class="scr-fmt">${SCR_FMT_L[s.format]||'—'}</span>
+      </div>
+      <div class="scr-card-meta">${s.goal?escapeHtml(s.goal):'<span style=\"color:var(--muted3)\">But non défini</span>'}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:7px;">
+        <span class="scr-status ${s.status||'idee'}">${SCR_STATUS_L[s.status]||'Idée'}</span>
+        <span style="font-size:9px;color:var(--muted2);">${nbPoints} point${nbPoints>1?'s':''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function scrRenderSegs(){
+  document.getElementById('scr-format').innerHTML = SCR_FORMATS.map(f=>`<button data-k="${f.k}" onclick="scrPickFormat('${f.k}')">${f.l}</button>`).join('');
+  document.getElementById('scr-statusseg').innerHTML = SCR_STATUS.map(s=>`<button data-k="${s.k}" onclick="scrPickStatus('${s.k}')">${s.l}</button>`).join('');
+}
+let scrDraftFormat = 'moyenne', scrDraftStatus = 'idee';
+function scrPickFormat(k){ scrDraftFormat = k; document.querySelectorAll('#scr-format button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
+function scrPickStatus(k){ scrDraftStatus = k; document.querySelectorAll('#scr-statusseg button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
+function scrShowEditor(){
+  document.getElementById('scr-list-view').style.display = 'none';
+  document.getElementById('scr-editor').style.display = '';
+  scrRenderSegs();
+}
+function scrCloseEditor(){
+  document.getElementById('scr-editor').style.display = 'none';
+  document.getElementById('scr-list-view').style.display = '';
+}
+function scrNew(){
+  scrCurrentId = null;
+  scrDraftFormat = 'moyenne'; scrDraftStatus = 'idee';
+  scrShowEditor();
+  scrFields().forEach(f=> document.getElementById('scr-'+f).value = '');
+  scrPickFormat('moyenne'); scrPickStatus('idee');
+  window.scrollTo(0,0);
+}
+function scrOpen(id){
+  const s = scripts.find(x=>x.id===id);
+  if(!s) return;
+  scrCurrentId = id;
+  scrShowEditor();
+  scrFields().forEach(f=> document.getElementById('scr-'+f).value = s[f]||'');
+  scrPickFormat(s.format||'moyenne'); scrPickStatus(s.status||'idee');
+  window.scrollTo(0,0);
+}
+function scrSave(){
+  const data = {format:scrDraftFormat, status:scrDraftStatus};
+  scrFields().forEach(f=> data[f] = document.getElementById('scr-'+f).value.trim());
+  if(!data.title){ showToast('⚠️ Donne un titre à ton script'); return; }
+  if(scrCurrentId){
+    const i = scripts.findIndex(x=>x.id===scrCurrentId);
+    if(i>=0) scripts[i] = Object.assign({}, scripts[i], data);
+  } else {
+    data.id = Date.now();
+    scripts.unshift(data);
+  }
+  saveKey('cap_scripts', JSON.stringify(scripts));
+  renderScrList();
+  scrCloseEditor();
+  showToast('🎬 Script enregistré !');
+}
+function scrDelete(){
+  if(!scrCurrentId){ scrCloseEditor(); return; }
+  if(!confirm('Supprimer ce script ?')) return;
+  scripts = scripts.filter(x=>x.id!==scrCurrentId);
+  saveKey('cap_scripts', JSON.stringify(scripts));
+  renderScrList();
+  scrCloseEditor();
 }
 
 function initApp(){
