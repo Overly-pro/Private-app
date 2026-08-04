@@ -570,6 +570,45 @@ html.theme-light .man-stage{
 html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .st-close{background:rgba(var(--ink),0.07);border:0.5px solid rgba(var(--ink),0.12);color:rgba(var(--ink),0.5);font-size:14px;cursor:pointer;padding:5px 11px;line-height:1;font-family:inherit;border-radius:10px;transition:background .15s;}
 
+/* ===== OBJECTIF MODULABLE + HISTORIQUE ===== */
+.gl-src-row{display:flex;align-items:center;gap:7px;padding:8px 10px;background:rgba(var(--ink),0.04);border:0.5px solid rgba(var(--ink),0.1);border-radius:10px;margin-bottom:6px;}
+.gl-src-emoji{width:34px;flex-shrink:0;text-align:center;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:14px;padding:6px 0;font-family:inherit;}
+.gl-src-name{flex:1;min-width:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 9px;font-family:inherit;}
+.gl-src-val{width:88px;flex-shrink:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 9px;font-family:inherit;text-align:right;}
+.gl-src-del{flex-shrink:0;background:none;border:none;color:var(--muted3);font-size:14px;cursor:pointer;padding:0 3px;line-height:1;}
+.gl-src-del:hover{color:var(--accent);}
+.gl-counts{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);white-space:nowrap;cursor:pointer;user-select:none;flex-shrink:0;}
+.gl-counts input{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;}
+.gl-add{width:100%;margin-top:2px;padding:9px;border-radius:9px;border:1px dashed var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.gl-add:hover{color:var(--text);border-color:var(--accent);}
+.gl-field{margin-bottom:9px;}
+.gl-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.gl-field input,.gl-field textarea{width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:12.5px;padding:9px 11px;font-family:inherit;line-height:1.55;}
+.gl-field textarea{resize:none;min-height:120px;overflow:hidden;white-space:pre-wrap;}
+.gl-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.gl-pace{font-size:10px;color:var(--muted2);margin-top:7px;line-height:1.5;}
+.gl-pace b{color:var(--text);}
+.gl-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+.gl-btn{flex:1;min-width:130px;padding:10px;border-radius:9px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid var(--border2);background:none;color:var(--muted2);}
+.gl-btn:hover{color:var(--text);border-color:var(--muted2);}
+.gl-btn.primary{border-color:var(--accent);color:var(--accent-ink);background:rgba(var(--accent-rgb),0.1);}
+.gl-btn.done{border-color:rgba(var(--ok-rgb),0.5);color:var(--ok);background:rgba(var(--ok-rgb),0.1);}
+.gl-badge{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.gl-badge.reussi{background:rgba(var(--ok-rgb),0.12);color:var(--ok);border:1px solid rgba(var(--ok-rgb),0.35);}
+.gl-badge.attente{background:rgba(var(--amber-rgb),0.12);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.3);}
+.gl-badge.rate{background:rgba(var(--accent-rgb),0.1);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);}
+.gl-hist{background:var(--surface);border:1px solid var(--border2);border-radius:13px;padding:13px 15px;margin-bottom:9px;}
+.gl-hist-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.gl-hist-ttl{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;}
+.gl-hist-meta{font-size:10px;color:var(--muted);line-height:1.6;}
+.gl-hist-meta b{color:var(--text);font-family:'Space Mono',monospace;}
+.gl-hist-sel{background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:10.5px;padding:5px 8px;font-family:inherit;cursor:pointer;margin-top:8px;}
+.gl-hist-decl{margin-top:9px;padding-top:9px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;font-style:italic;display:none;}
+.gl-hist.open .gl-hist-decl{display:block;}
+.gl-hist-toggle{font-size:10px;font-weight:600;color:var(--muted2);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-top:7px;letter-spacing:.3px;}
+.gl-hist-toggle:hover{color:var(--text);}
+.gl-empty{font-size:11.5px;color:var(--muted2);font-style:italic;text-align:center;padding:22px 10px;line-height:1.6;}
+
 /* TASK CARD (checklist) */
 .section{margin-bottom:8px;}
 .section-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-left:2px;}
@@ -1134,7 +1173,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <div class="card" style="cursor:pointer;" onclick="goTo('goal');showSubtab('goal','hill')">
     <div class="card-title">✨ Rappel — Déclaration Hill <div class="line"></div></div>
-    <div style="font-size:12px;color:var(--text-dim);line-height:1.6;font-style:italic;">« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. » <span style="color:var(--accent-ink);font-style:normal;">Lire en entier →</span></div>
+    <div id="task-decl-reminder" style="font-size:12px;color:var(--text-dim);line-height:1.6;font-style:italic;">—</div>
   </div>
 
   <div class="card">
@@ -1198,11 +1237,11 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     </div>
     <div class="task" id="t1" onclick="toggleTask('t1')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">Déclaration Hill à voix haute + Visualisation</div><div class="task-sub">Ancrer le désir, la foi et l'objectif du 16 août</div></div>
+        <div class="task-body"><div class="task-name">Déclaration Hill à voix haute + Visualisation</div><div class="task-sub">Ancrer le désir, la foi et l'objectif en cours</div></div>
         <div class="expand-btn" id="e-t1" onclick="expandHow(event,'h-t1','e-t1')">▼</div></div>
       <div class="how-to" id="h-t1"><div class="how-to-inner"><strong>Comment faire :</strong> Debout, voix claire et confiante. Lis cette déclaration à voix haute :
-        <span class="quote-block">« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. La date est fixée, l'objectif est réel, je crois en ma capacité à l'atteindre. Je le vois, je le ressens — c'est déjà en route. »</span>
-        Puis ferme les yeux 2 min : vois-toi le 16 août, capital atteint, marque lancée. Ressens la fierté. Ouvre les yeux — commence ta journée.</div></div>
+        <span class="quote-block" id="t1-decl">—</span>
+        Puis ferme les yeux 2 min : vois-toi <span class="t-visu-date"></span>. Ressens la fierté. Ouvre les yeux — commence ta journée.</div></div>
     </div>
     <div class="task" id="t2" onclick="toggleTask('t2')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
@@ -1250,7 +1289,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     </div>
     <div class="task" id="t8" onclick="toggleTask('t8')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💰 Mettre à jour le compteur cash</div><div class="task-sub">Pocket Revolut → progression réelle vers le 16 août</div></div>
+        <div class="task-body"><div class="task-name">💰 Mettre à jour le compteur cash</div><div class="task-sub">Mes sources → progression réelle vers l'objectif</div></div>
         <div class="expand-btn" id="e-t8" onclick="expandHow(event,'h-t8','e-t8')">▼</div></div>
       <div class="how-to" id="h-t8"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Objectif, regarde le solde exact de ta pocket Revolut dédiée et mets-le à jour. C'est ton score du jour — chaque euro compte. Clarté des chiffres = clarté de la trajectoire.</div></div>
     </div>
@@ -1264,7 +1303,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
         <div class="task-body"><div class="task-name">Déclaration Hill + Visualisation — Soir</div><div class="task-sub">Planter la graine dans le subconscient avant le sommeil</div></div>
         <div class="expand-btn" id="e-t10" onclick="expandHow(event,'h-t10','e-t10')">▼</div></div>
-      <div class="how-to" id="h-t10"><div class="how-to-inner"><strong>Comment faire :</strong> Juste avant de te coucher, relis la même déclaration à voix basse. Visualise 2 min : le 16 août, tout est accompli, ressens la gratitude. Ton subconscient travaille pendant que tu dors — ne la saute jamais.</div></div>
+      <div class="how-to" id="h-t10"><div class="how-to-inner"><strong>Comment faire :</strong> Juste avant de te coucher, relis la même déclaration à voix basse. Visualise 2 min : <span class="t-visu-date"></span>, ressens la gratitude. Ton subconscient travaille pendant que tu dors — ne la saute jamais.</div></div>
     </div>
   </div>
 
@@ -1328,54 +1367,23 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <img class="view-banner" id="banner-goal" alt="">
 
-  <div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div style="flex:1;">
-        <div class="hero-label">🎯 Objectif</div>
-        <div style="font-size:16px;font-weight:800;color:var(--text-strong);">1 500 – 2 000 €+</div>
-        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;">pour lancer ma marque de bijoux</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="hero-days mono" id="goal-days" style="font-size:32px;">—</div>
-        <div class="hero-days-lbl">jours restants</div>
-      </div>
-    </div>
-  </div>
+  <div id="goal-hero-wrap"></div>
 
   <div class="subtabs">
     <button class="subtab active" data-goal-tab="progress" onclick="showSubtab('goal','progress')">💰 Cash</button>
     <button class="subtab" data-goal-tab="roadmap" onclick="showSubtab('goal','roadmap')">🗺 Vision</button>
     <button class="subtab" data-goal-tab="hill" onclick="showSubtab('goal','hill')">✨ Hill</button>
+    <button class="subtab" data-goal-tab="history" onclick="showSubtab('goal','history')">🏆 Historique</button>
   </div>
 
-  <!-- CASH -->
+  <!-- CASH — objectif courant, entièrement modulable -->
   <div class="subpanel active" id="goal-panel-progress">
-    <div class="card">
-      <div class="card-title">💰 Progression vers 2 000 € <div class="line"></div><span class="mono" id="g-pct" style="color:var(--accent-ink);font-weight:700;">0%</span></div>
-      <div class="pb-bar-wrap"><div class="pb-bar" id="g-bar" style="width:0%"></div></div>
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;">Sources d'argent</div>
-      <div class="pb-sources">
-        <div class="pb-source"><div class="pbs-label">💼 KFC</div><div class="pbs-val" id="g-kfc-val" style="color:var(--orange);">0 €</div><div class="pbs-label" style="margin-top:2px;">gagné</div></div>
-        <div class="pb-source"><div class="pbs-label">👟 Chaussures</div><div class="pbs-val" id="g-shoes-val" style="color:var(--blue);">0 €</div><div class="pbs-label" style="margin-top:2px;">vendu</div></div>
-      </div>
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:14px 0 6px;">💳 Argent de côté — Revolut + Liquide</div>
-      <div class="pb-sources">
-        <div class="pb-source"><div class="pbs-label">💳 Pocket Revolut</div><div class="pbs-val" id="g-revolut-val" style="color:var(--green);font-size:20px;">0 €</div></div>
-        <div class="pb-source"><div class="pbs-label">💵 Argent liquide</div><div class="pbs-val" id="g-cash-val" style="color:var(--green);font-size:20px;">0 €</div></div>
-      </div>
-      <div class="pb-sources" style="margin-top:8px;">
-        <div class="pb-source highlight-source" style="flex:2;"><div class="pbs-label">Total mis de côté</div><div class="pbs-val" id="g-total-val" style="color:var(--green);font-size:22px;">0 €</div><div class="pbs-label" style="margin-top:3px;">→ c'est ce chiffre qui compte vers les 2 000 €</div></div>
-        <div class="pb-source"><div class="pbs-label">📊 Il manque</div><div class="pbs-val" id="g-reste-val" style="color:var(--accent-ink);">2 000 €</div><div class="pbs-label" style="margin-top:2px;">pour l'objectif</div></div>
-      </div>
-      <div class="input-row">
-        <span style="font-size:11px;color:var(--muted);white-space:nowrap;">Maj :</span>
-        <input type="number" id="g-kfc-input" placeholder="KFC gagné €">
-        <input type="number" id="g-shoes-input" placeholder="Shoes vendues €">
-        <input type="number" id="g-revolut-input" placeholder="Pocket Revolut €" style="border-color:rgba(var(--ink),0.13);color:var(--green);">
-        <input type="number" id="g-cash-input" placeholder="Argent liquide €" style="border-color:rgba(var(--ink),0.13);color:var(--green);">
-        <button onclick="updateCashProgress()">Maj</button>
-      </div>
-    </div>
+    <div id="goal-active-wrap"></div>
+  </div>
+
+  <!-- HISTORIQUE -->
+  <div class="subpanel" id="goal-panel-history">
+    <div id="goal-history-wrap"></div>
   </div>
 
   <!-- ROADMAP -->
@@ -1423,14 +1431,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <!-- HILL -->
   <div class="subpanel" id="goal-panel-hill">
-    <div class="hill-formula">
-      <div class="hf-label">✨ Ta Déclaration de Désir — À lire 2x/jour à voix haute</div>
-      <div class="hf-text">« Je veux réunir <span>2 000 €</span> d'ici le <span>16 août 2026</span>.<br><br>
-        En échange, je m'engage à exceller à KFC pour obtenir mon CDI,<br>à vendre mes chaussures avec énergie et détermination,<br>et à apprendre chaque jour l'univers des bijoux.<br><br>
-        Cet argent est le carburant de <span>ma marque de bijoux</span>,<br>que je vais scaler jusqu'à devenir une marque lifestyle complète.<br><br>
-        Je crois profondément que je réussis.<br>Je le vois, je le ressens — <span>c'est déjà en chemin</span>. »</div>
-      <div class="hf-note">Lire à voix haute, avec émotion intense. L'émotion est le catalyseur qui grave ça dans le subconscient.</div>
-    </div>
+    <div id="goal-decl-wrap"></div>
     <div class="card-title">📋 Les 7 règles Hill adaptées à ta situation <div class="line"></div></div>
     <div class="card rule-card">
       <ul class="c-tasks">
@@ -2660,12 +2661,12 @@ const VIEW_LABELS = {
   sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
 };
 const NAV_PEEKS = {
-  tasks:     ['Déclaration Hill','💪 45 pompes','📖 Lire 10 pages','👟 Resell chaussures','💼 KFC'],
+  tasks:     ['Déclaration Hill','💪 45 pompes','📖 Lire 10 pages','🛵 Uber Eats','💰 Compteur cash'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
   capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
   tracker:   ['📊 Monthly grid','🔥 Streaks per habit','📈 Momentum'],
   finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
-  objectifs: ['Capital 16 août','Plan 30 jours vidéos'],
+  objectifs: ['Objectif en cours','Historique des objectifs','Plan 30 jours vidéos'],
   mindset:   ['Check-in émotionnel','Affirmations','Vision'],
   journal:   ['Entrées du journal'],
   biblio:    ['Notes vidéos YouTube'],
@@ -3012,50 +3013,362 @@ function resetTasksDay(){
   initTaskNightBanner();
 }
 
-/* ============ GOAL / CASH ============ */
-function updateCashProgress(){
-  const kfc = parseFloat(document.getElementById('g-kfc-input').value) || 0;
-  const shoes = parseFloat(document.getElementById('g-shoes-input').value) || 0;
-  const revolut = parseFloat(document.getElementById('g-revolut-input').value) || 0;
-  const cash = parseFloat(document.getElementById('g-cash-input').value) || 0;
-  const totalSet = revolut + cash;
-  const goal = 2000;
-  const pct = Math.min(Math.round((totalSet / goal) * 100), 100);
-  const reste = Math.max(goal - totalSet, 0);
-  document.getElementById('g-cash-val').textContent = cash.toLocaleString('fr-FR') + ' €';
-  document.getElementById('g-total-val').textContent = totalSet.toLocaleString('fr-FR') + ' €';
-  saveKey('cash_liquide', cash);
-  document.getElementById('g-kfc-val').textContent = kfc.toLocaleString('fr-FR') + ' €';
-  document.getElementById('g-shoes-val').textContent = shoes.toLocaleString('fr-FR') + ' €';
-  document.getElementById('g-revolut-val').textContent = revolut.toLocaleString('fr-FR') + ' €';
-  document.getElementById('g-reste-val').textContent = reste.toLocaleString('fr-FR') + ' €';
-  document.getElementById('g-pct').textContent = pct + '%';
-  document.getElementById('g-bar').style.width = pct + '%';
-  document.getElementById('home-cash-pct').textContent = pct + '%';
-  saveKey('cash_kfc', kfc);
-  saveKey('cash_shoes', shoes);
-  saveKey('cash_revolut', revolut);
+/* ============ OBJECTIF MODULABLE + HISTORIQUE ============
+   Un objectif = titre, pourquoi, montant, dates, déclaration, et une liste de
+   sources d'argent librement modifiable. Chaque source peut compter ou non dans
+   le total (ex : "Uber Eats gagné" est informatif, "Pocket Revolut" compte).
+   Quand un objectif est clôturé il part dans l'historique avec un statut. */
+
+/* Pas d'option "Abandonné" : un objectif raté se retente, il ne se classe pas. */
+const GL_STATUS = {
+  reussi:  { label:'Réussi',     emoji:'✅' },
+  attente: { label:'En attente', emoji:'⏳' },
+  rate:    { label:'Raté',       emoji:'❌' }
+};
+let glCurrent = null;
+let glHistory = [];
+
+function glBlank(){
+  return { id:Date.now(), title:'', why:'', amount:0,
+           startDate:todayISO(), deadline:'', sources:[], declaration:'',
+           status:'attente', closedAt:null, finalTotal:null };
+}
+function glTotal(g){ return (g.sources||[]).filter(s=>s.counts).reduce((a,s)=>a+(parseFloat(s.value)||0),0); }
+function glPct(g){ const a=parseFloat(g.amount)||0; return a<=0?0:Math.min(Math.round(glTotal(g)/a*100),100); }
+function glReached(g){ const a=parseFloat(g.amount)||0; return a>0 && glTotal(g)>=a; }
+function glDaysLeft(g){
+  if(!g.deadline) return null;
+  const t=new Date(g.deadline+'T00:00:00'), n=new Date(); n.setHours(0,0,0,0);
+  return Math.ceil((t-n)/86400000);
+}
+function glFmt(n){ return (parseFloat(n)||0).toLocaleString('fr-FR'); }
+function glDateFR(iso){
+  if(!iso) return '—';
+  const d=new Date(iso+'T00:00:00');
+  return isNaN(d) ? iso : d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+}
+function glEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function glAutoGrow(el){ el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+function glSave(){
+  saveKey('goal_current', JSON.stringify(glCurrent));
+  saveKey('goal_history', JSON.stringify(glHistory));
+}
+
+/* Première ouverture après la refonte : on archive l'objectif du 16 août 2026,
+   atteint en avance, en récupérant les montants déjà saisis. */
+function glBootstrap(){
+  const rawCur = loadKey('goal_current'), rawHist = loadKey('goal_history');
+  try { if(rawHist) glHistory = JSON.parse(rawHist) || []; } catch(e){ glHistory = []; }
+  try { if(rawCur) glCurrent = JSON.parse(rawCur); } catch(e){ glCurrent = null; }
+  if(glCurrent) return;
+
+  if(!rawHist){
+    const revolut = parseFloat(loadKey('cash_revolut')) || 0;
+    const liquide = parseFloat(loadKey('cash_liquide')) || 0;
+    const kfc     = parseFloat(loadKey('cash_kfc')) || 0;
+    const shoes   = parseFloat(loadKey('cash_shoes')) || 0;
+    glHistory = [{
+      id: 1,
+      title: '2 000 € pour lancer ma marque de bijoux',
+      why: 'Capital de départ pour le premier stock',
+      amount: 2000, startDate: '2026-06-26', deadline: '2026-08-16',
+      sources: [
+        { id:11, emoji:'💳', label:'Pocket Revolut', value:revolut, counts:true },
+        { id:12, emoji:'💵', label:'Argent liquide', value:liquide, counts:true },
+        { id:13, emoji:'💼', label:'KFC',            value:kfc,     counts:false },
+        { id:14, emoji:'👟', label:'Chaussures',     value:shoes,   counts:false }
+      ],
+      declaration: "« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. La date est fixée, l'objectif est réel, je crois en ma capacité à l'atteindre. Je le vois, je le ressens — c'est déjà en route. »",
+      status: 'reussi', closedAt: todayISO(), finalTotal: revolut + liquide
+    }];
+  }
+  glCurrent = glBlank();
+  glCurrent.sources = [
+    { id:Date.now()+1, emoji:'🛵', label:'Uber Eats',      value:0, counts:false },
+    { id:Date.now()+2, emoji:'💳', label:'Pocket Revolut', value:0, counts:true  },
+    { id:Date.now()+3, emoji:'💵', label:'Argent liquide', value:0, counts:true  }
+  ];
+  glSave();
+}
+
+/* ---- mutations ---- */
+function glSet(field, val){
+  glCurrent[field] = (field==='amount') ? (parseFloat(val)||0) : val;
+  glSave(); glRenderAll();
+}
+function glSrcSet(id, field, val){
+  const s = (glCurrent.sources||[]).find(x=>x.id===id); if(!s) return;
+  s[field] = (field==='value') ? (parseFloat(val)||0) : val;
+  glSave(); glRenderAll();
+}
+function glSrcAdd(){
+  glCurrent.sources = glCurrent.sources || [];
+  glCurrent.sources.push({ id:Date.now(), emoji:'💰', label:'', value:0, counts:true });
+  glSave(); glRenderAll();
+}
+function glSrcDel(id){
+  glCurrent.sources = (glCurrent.sources||[]).filter(x=>x.id!==id);
+  glSave(); glRenderAll();
+}
+function glClose(){
+  const g = glCurrent;
+  if(!g.title && !g.amount){ showToast('Rien à clôturer — cet objectif est vide'); return; }
+  const suggested = glReached(g) ? 'reussi' : 'rate';
+  const label = GL_STATUS[suggested].label;
+  if(!confirm(`Clôturer « ${g.title||'objectif sans titre'} » et l'archiver en « ${label} » ?\n\nTu pourras changer le statut à tout moment dans l'historique.`)) return;
+  g.status = suggested;
+  g.closedAt = todayISO();
+  g.finalTotal = glTotal(g);
+  glHistory.unshift(g);
+  glCurrent = glBlank();
+  glSave(); glRenderAll();
+  showToast(GL_STATUS[suggested].emoji + ' Objectif archivé');
+  showSubtab('goal','history');
+}
+function glNew(){
+  if((glCurrent.title || glCurrent.amount) &&
+     !confirm("Repartir d'un objectif vierge ?\n\nL'objectif en cours sera effacé sans être archivé. Utilise plutôt « Clôturer » si tu veux le garder dans l'historique.")) return;
+  glCurrent = glBlank();
+  glSave(); glRenderAll();
+  showToast('🎯 Nouvel objectif');
+}
+function glHistStatus(id, status){
+  const h = glHistory.find(x=>x.id===id); if(!h) return;
+  h.status = status; glSave(); glRenderHistory();
+  showToast(GL_STATUS[status].emoji + ' ' + GL_STATUS[status].label);
+}
+function glHistToggle(id){ document.getElementById('glh-'+id)?.classList.toggle('open'); }
+function glHistDel(id){
+  const h = glHistory.find(x=>x.id===id); if(!h) return;
+  if(!confirm(`Supprimer définitivement « ${h.title||'objectif sans titre'} » de l'historique ?`)) return;
+  glHistory = glHistory.filter(x=>x.id!==id);
+  glSave(); glRenderHistory();
+}
+function glReopen(id){
+  const h = glHistory.find(x=>x.id===id); if(!h) return;
+  if(glCurrent.title || glCurrent.amount){ showToast("Clôture d'abord l'objectif en cours"); return; }
+  glHistory = glHistory.filter(x=>x.id!==id);
+  h.status='attente'; h.closedAt=null; h.finalTotal=null;
+  glCurrent = h;
+  glSave(); glRenderAll();
+  showToast('↩ Objectif réouvert');
+  showSubtab('goal','progress');
+}
+
+/* ---- déclaration ---- */
+function glSuggestDecl(){
+  const g = glCurrent;
+  const amt = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : '[montant]';
+  const date = g.deadline ? glDateFR(g.deadline) : '[date]';
+  const srcs = (g.sources||[]).map(s=>s.label).filter(Boolean);
+  const via = srcs.length ? srcs.join(', ') : '[mes sources de revenus]';
+  const but = g.why || g.title || '[mon projet]';
+  const txt =
+`« Je réunis ${amt} d'ici le ${date}.
+
+En échange, je m'engage à donner le meilleur de moi-même sur ${via}, chaque jour, sans exception.
+
+Cet argent est le carburant de ${but}.
+
+La date est fixée, le montant est réel, je crois profondément en ma capacité à l'atteindre.
+Je le vois, je le ressens — c'est déjà en route. »`;
+  const ta = document.getElementById('gl-decl-ta');
+  if(ta){ ta.value = txt; glAutoGrow(ta); }
+  showToast('✨ Brouillon généré — à toi de le personnaliser');
+}
+function glSaveDecl(){
+  const ta = document.getElementById('gl-decl-ta'); if(!ta) return;
+  glCurrent.declaration = ta.value;
+  glSave(); glRenderAll();
+  showToast('✅ Déclaration enregistrée');
+}
+
+/* ---- rendu ---- */
+function glRenderHero(){
+  if(!glCurrent) return;
+  const g = glCurrent, w = document.getElementById('goal-hero-wrap'); if(!w) return;
+  const d = glDaysLeft(g), reached = glReached(g);
+  let right;
+  if(reached)        right = `<div class="hero-days mono" style="font-size:30px;color:var(--ok);">✓</div><div class="hero-days-lbl">objectif atteint</div>`;
+  else if(d === null) right = `<div class="hero-days mono" style="font-size:32px;">—</div><div class="hero-days-lbl">pas de date</div>`;
+  else if(d < 0)      right = `<div class="hero-days mono" style="font-size:32px;">${Math.abs(d)}</div><div class="hero-days-lbl">jours de retard</div>`;
+  else                right = `<div class="hero-days mono" style="font-size:32px;">${d}</div><div class="hero-days-lbl">jours restants</div>`;
+  w.innerHTML = `<div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="flex:1;min-width:0;">
+        <div class="hero-label">🎯 Objectif</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text-strong);">${g.title ? glEsc(g.title) : 'À définir'}</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;">${g.why ? glEsc(g.why) : "Renseigne ton objectif dans l'onglet Cash"}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">${right}</div>
+    </div></div>`;
+  const hd = document.getElementById('home-days');
+  if(hd) hd.textContent = reached ? '✓' : (d===null ? '—' : Math.max(d,0));
+  const hp = document.getElementById('home-cash-pct');
+  if(hp) hp.textContent = glPct(g) + '%';
+}
+
+function glRenderActive(){
+  if(!glCurrent) return;
+  const g = glCurrent, w = document.getElementById('goal-active-wrap'); if(!w) return;
+  const amt = parseFloat(g.amount)||0, tot = glTotal(g), pct = glPct(g), reste = Math.max(amt-tot,0);
+
+  const row = s => `<div class="gl-src-row">
+      <input class="gl-src-emoji" value="${glEsc(s.emoji)}" maxlength="4" onchange="glSrcSet(${s.id},'emoji',this.value)">
+      <input class="gl-src-name" value="${glEsc(s.label)}" placeholder="Nom de la source" onchange="glSrcSet(${s.id},'label',this.value)">
+      <input class="gl-src-val" type="number" step="any" value="${s.value}" onchange="glSrcSet(${s.id},'value',this.value)">
+      <label class="gl-counts"><input type="checkbox" ${s.counts?'checked':''} onchange="glSrcSet(${s.id},'counts',this.checked)">compte</label>
+      <button class="gl-src-del" onclick="glSrcDel(${s.id})" title="Supprimer cette source">✕</button>
+    </div>`;
+
+  /* rythme : es-tu en avance ou en retard sur le temps écoulé ? */
+  let pace = '';
+  if(amt > 0 && g.deadline && g.startDate){
+    const s = new Date(g.startDate+'T00:00:00'), e = new Date(g.deadline+'T00:00:00'), n = new Date(); n.setHours(0,0,0,0);
+    const span = (e-s)/86400000, gone = (n-s)/86400000;
+    if(span > 0){
+      const timePct = Math.max(0, Math.min(100, Math.round(gone/span*100)));
+      const delta = pct - timePct;
+      const word = glReached(g) ? 'Objectif atteint 🎉' : (delta >= 0 ? `En avance de ${delta} pts` : `En retard de ${Math.abs(delta)} pts`);
+      const col = glReached(g) ? 'var(--ok)' : (delta >= 0 ? 'var(--ok)' : 'var(--accent-ink)');
+      pace = `<div class="gl-pace">⏱ Temps écoulé <b>${timePct}%</b> · progression <b>${pct}%</b> — <b style="color:${col}">${word}</b></div>`;
+    }
+  }
+
+  w.innerHTML = `
+  <div class="card">
+    <div class="card-title">💰 Progression${amt>0?' vers '+glFmt(amt)+' €':''} <div class="line"></div><span class="mono" style="color:var(--accent-ink);font-weight:700;">${pct}%</span></div>
+    <div class="pb-bar-wrap"><div class="pb-bar" style="width:${pct}%"></div></div>
+    <div class="pb-sources" style="margin-top:12px;">
+      <div class="pb-source highlight-source" style="flex:2;">
+        <div class="pbs-label">Total qui compte</div>
+        <div class="pbs-val" style="color:var(--green);font-size:22px;">${glFmt(tot)} €</div>
+        <div class="pbs-label" style="margin-top:3px;">→ somme des sources cochées « compte »</div>
+      </div>
+      <div class="pb-source">
+        <div class="pbs-label">📊 Il manque</div>
+        <div class="pbs-val" style="color:var(--accent-ink);">${glFmt(reste)} €</div>
+        <div class="pbs-label" style="margin-top:2px;">pour l'objectif</div>
+      </div>
+    </div>
+    ${pace}
+  </div>
+
+  <div class="card">
+    <div class="card-title">💵 Mes sources d'argent <div class="line"></div></div>
+    <div style="font-size:10px;color:var(--muted2);line-height:1.5;margin-bottom:9px;">
+      Coche « compte » pour les sources qui alimentent réellement le total. Décoche pour celles que tu veux seulement suivre (ex : ce que tu as gagné au total).
+    </div>
+    ${(g.sources||[]).length ? (g.sources||[]).map(row).join('') : '<div class="gl-empty">Aucune source pour le moment.</div>'}
+    <button class="gl-add" onclick="glSrcAdd()">+ Ajouter une source</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Paramètres de l'objectif <div class="line"></div></div>
+    <div class="gl-field"><label>Objectif</label>
+      <input value="${glEsc(g.title)}" placeholder="Ex : 3 000 € pour lancer la production" onchange="glSet('title',this.value)"></div>
+    <div class="gl-field"><label>Pourquoi / à quoi ça sert</label>
+      <input value="${glEsc(g.why)}" placeholder="Ex : premier stock de la marque" onchange="glSet('why',this.value)"></div>
+    <div class="gl-grid2">
+      <div class="gl-field"><label>Montant à atteindre (€)</label>
+        <input type="number" step="any" value="${amt||''}" placeholder="0" onchange="glSet('amount',this.value)"></div>
+      <div class="gl-field"><label>Date de début</label>
+        <input type="date" value="${glEsc(g.startDate)}" onchange="glSet('startDate',this.value)"></div>
+    </div>
+    <div class="gl-field"><label>Date limite</label>
+      <input type="date" value="${glEsc(g.deadline)}" onchange="glSet('deadline',this.value)"></div>
+    <div class="gl-actions">
+      <button class="gl-btn done" onclick="glClose()">🏆 Clôturer et archiver</button>
+      <button class="gl-btn" onclick="glNew()">🎯 Repartir de zéro</button>
+    </div>
+  </div>`;
+}
+
+function glRenderDecl(){
+  if(!glCurrent) return;
+  const g = glCurrent, w = document.getElementById('goal-decl-wrap'); if(!w) return;
+  w.innerHTML = `
+  <div class="hill-formula">
+    <div class="hf-label">✨ Ta Déclaration de Désir — À lire 2x/jour à voix haute</div>
+    ${g.declaration
+      ? `<div class="hf-text">${glEsc(g.declaration).replace(/\n/g,'<br>')}</div>
+         <div class="hf-note">Lire à voix haute, avec émotion intense. L'émotion est le catalyseur qui grave ça dans le subconscient.</div>`
+      : `<div class="gl-empty">Pas encore de déclaration pour cet objectif.<br>Écris-la ci-dessous, ou génère un brouillon à partir de tes paramètres.</div>`}
+  </div>
+  <div class="card">
+    <div class="card-title">✍️ Écrire ma déclaration <div class="line"></div></div>
+    <div class="gl-field">
+      <textarea id="gl-decl-ta" placeholder="Ta déclaration, au présent, avec une date et un montant précis..." oninput="glAutoGrow(this)">${glEsc(g.declaration)}</textarea>
+    </div>
+    <div class="gl-actions">
+      <button class="gl-btn" onclick="glSuggestDecl()">✨ Générer un brouillon</button>
+      <button class="gl-btn primary" onclick="glSaveDecl()">Enregistrer</button>
+    </div>
+  </div>`;
+  const ta = document.getElementById('gl-decl-ta'); if(ta) glAutoGrow(ta);
+}
+
+function glRenderHistory(){
+  const w = document.getElementById('goal-history-wrap'); if(!w) return;
+  if(!glHistory.length){
+    w.innerHTML = `<div class="card"><div class="gl-empty">Aucun objectif archivé pour l'instant.<br>Clôture ton objectif en cours pour le retrouver ici.</div></div>`;
+    return;
+  }
+  const opts = st => Object.entries(GL_STATUS)
+    .map(([k,v])=>`<option value="${k}"${k===st?' selected':''}>${v.emoji} ${v.label}</option>`).join('');
+  w.innerHTML = glHistory.map(h=>{
+    const st = GL_STATUS[h.status] ? h.status : 'attente';
+    const total = h.finalTotal!=null ? h.finalTotal : glTotal(h);
+    const amt = parseFloat(h.amount)||0;
+    const pct = amt>0 ? Math.min(Math.round(total/amt*100),100) : 0;
+    return `<div class="gl-hist" id="glh-${h.id}">
+      <div class="gl-hist-top">
+        <div class="gl-hist-ttl">${glEsc(h.title)||'Objectif sans titre'}</div>
+        <span class="gl-badge ${st}">${GL_STATUS[st].emoji} ${GL_STATUS[st].label}</span>
+      </div>
+      <div class="gl-hist-meta">
+        ${h.why ? glEsc(h.why)+'<br>' : ''}
+        Atteint : <b>${glFmt(total)} €</b>${amt>0?` / ${glFmt(amt)} € · <b>${pct}%</b>`:''}<br>
+        Du ${glDateFR(h.startDate)} au ${glDateFR(h.deadline)}${h.closedAt?` · clôturé le ${glDateFR(h.closedAt)}`:''}
+        ${(h.sources||[]).length?`<br>Sources : ${(h.sources||[]).map(s=>glEsc((s.emoji||'')+' '+s.label)).join(' · ')}`:''}
+      </div>
+      <select class="gl-hist-sel" onchange="glHistStatus(${h.id},this.value)">${opts(st)}</select>
+      ${h.declaration?`<button class="gl-hist-toggle" onclick="glHistToggle(${h.id})">📜 Voir la déclaration de l'époque</button>
+      <div class="gl-hist-decl">${glEsc(h.declaration).replace(/\n/g,'<br>')}</div>`:''}
+      <div class="gl-actions">
+        <button class="gl-btn" onclick="glReopen(${h.id})">↩ Réouvrir</button>
+        <button class="gl-btn" onclick="glHistDel(${h.id})">🗑 Supprimer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* La déclaration alimente aussi les tâches du matin et du soir */
+function glRenderTaskEchoes(){
+  if(!glCurrent) return;
+  const g = glCurrent;
+  const short = g.declaration
+    ? g.declaration.replace(/\s+/g,' ').trim()
+    : "Aucune déclaration pour l'instant — écris-la dans Objectif → Hill.";
+  const rem = document.getElementById('task-decl-reminder');
+  if(rem) rem.innerHTML = `${glEsc(short.length>190?short.slice(0,190)+'…':short)} <span style="color:var(--accent-ink);font-style:normal;">Lire en entier →</span>`;
+  const q1 = document.getElementById('t1-decl');
+  if(q1) q1.textContent = short;
+  const when = g.deadline ? 'le '+glDateFR(g.deadline) : 'le jour J';
+  const goalTxt = g.title || 'ton objectif';
+  document.querySelectorAll('.t-visu-date').forEach(el=>{
+    el.textContent = `${when}, ${goalTxt} atteint`;
+  });
+}
+
+function glRenderAll(){
+  glRenderHero(); glRenderActive(); glRenderDecl(); glRenderHistory(); glRenderTaskEchoes();
   if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
-function loadCashProgress(){
-  const kfc = loadKey('cash_kfc');
-  const shoes = loadKey('cash_shoes');
-  const revolut = loadKey('cash_revolut');
-  const cash = loadKey('cash_liquide');
-  if(kfc !== null) document.getElementById('g-kfc-input').value = kfc;
-  if(shoes !== null) document.getElementById('g-shoes-input').value = shoes;
-  if(revolut !== null) document.getElementById('g-revolut-input').value = revolut;
-  if(cash !== null) document.getElementById('g-cash-input').value = cash;
-  updateCashProgress();
-}
-function updateCountdown(){
-  const target = new Date('2026-08-16');
-  const now = new Date(); now.setHours(0,0,0,0);
-  const diff = Math.ceil((target - now) / 86400000);
-  const val = diff > 0 ? diff : 0;
-  document.getElementById('goal-days').textContent = val;
-  document.getElementById('home-days').textContent = val;
-}
+
+/* compatibilité : anciens points d'appel */
+function updateCountdown(){ glRenderHero(); }
+function loadCashProgress(){ glBootstrap(); glRenderAll(); }
 
 /* ============ PLAN 30 JOURS ============ */
 const P30_START = new Date(2026, 5, 26);
@@ -3826,14 +4139,18 @@ function recalcVentes(type){
     syncShoesToGoal(total);
   }
 }
-/* Synchro : total des ventes de chaussures → champ "Chaussures vendues" des Objectifs */
+/* Synchro : total des ventes de chaussures → source "chaussures" de l'objectif,
+   si une telle source existe. Sinon on ne fait rien : l'objectif courant n'a
+   peut-être plus de revente dans ses sources. */
 function syncShoesToGoal(total){
   if(total===undefined) total = (ventesData.chaussures.items||[]).reduce((s,v)=>s+v.prix,0);
   saveKey('cash_shoes', total);
-  const inp = document.getElementById('g-shoes-input');
-  if(inp) inp.value = total ? total : '';
-  const val = document.getElementById('g-shoes-val');
-  if(val) val.textContent = total.toLocaleString('fr-FR')+' €';
+  if(typeof glCurrent === 'undefined' || !glCurrent) return;
+  const src = (glCurrent.sources||[]).find(s=>/chaussure|shoe|sneaker/i.test(s.label||''));
+  if(!src || src.value === total) return;
+  src.value = total;
+  glSave();
+  if(typeof glRenderAll === 'function') glRenderAll();
 }
 function calcPrix(){
   const cout = parseFloat(document.getElementById('calc-cout').value)||0;
@@ -4250,7 +4567,11 @@ const SHOP_CATS = {
 let shopItems = [];
 let shopOutfit = {};
 
+/* Cash disponible pour les seuils de la wishlist : le total qui compte dans
+   l'objectif en cours. Repli sur les anciennes clés tant que l'objectif n'est
+   pas chargé (premier rendu). */
 function shopCash(){
+  if(typeof glCurrent !== 'undefined' && glCurrent) return glTotal(glCurrent);
   const r = parseFloat(loadKey('cash_revolut'));
   const c = parseFloat(loadKey('cash_liquide'));
   return (isNaN(r)?0:r) + (isNaN(c)?0:c);
