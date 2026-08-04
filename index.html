@@ -585,12 +585,8 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-mini-open:hover{color:var(--text);border-color:var(--accent);}
 
 @media (min-width:900px){
-  /* la vue Objectif gère elle-même ses colonnes */
-  #view-goal{column-count:1;}
-  #view-goal .view-banner{max-width:520px;}
-  /* le contenu de l'onglet se répartit en colonnes de 360px minimum */
-  #view-goal .subpanel{columns:360px;column-gap:12px;}
-  #view-goal .subpanel>*{break-inside:avoid;}
+  /* (la sortie du multi-colonnes et les colonnes internes viennent
+      des règles .view-tabbed / .subpanel communes à toutes les vues) */
   /* onglets autres que Cash : rappel de l'objectif collé à droite */
   #view-goal:not([data-tab="progress"]) .goal-shell{
     display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start;
@@ -751,15 +747,59 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 @media (min-width:900px){
   body{align-items:flex-start;}
   .app-shell{max-width:none;width:100%;margin:0;padding:12px 20px 36px;}
-  .view{column-count:2;column-gap:12px;}
   .view>*{break-inside:avoid;}
-  #view-tracker{column-count:1;}
-  /* le GIF reste à gauche, il ne s'étire pas sur tout l'écran */
-  .view-banner{column-span:all;height:150px;max-width:520px;margin-right:auto;}
-  .hero{column-span:all;max-width:520px;margin-right:auto;}
-  .stat-grid{column-span:all;max-width:520px;margin-right:auto;}
-  /* la grille de lancement remplit toute la largeur */
+
+  /* Bannière, héros et stats rejoignent le flux des colonnes. Avant, ils
+     traversaient toute la largeur en étant bridés à 520px : ça créait une
+     bande vide de plus de 1000px en haut de chaque écran. */
+  .view-banner{height:170px;max-width:none;margin-right:0;}
+  .hero{max-width:none;margin-right:0;}
+  .stat-grid{max-width:none;margin-right:0;}
+  /* la grille de lancement garde toute la largeur : c'est une barre d'accès rapide */
   .launch-grid{column-span:all;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));}
+
+  /* Vues à onglets : tout leur contenu tient dans un seul bloc insécable que le
+     multi-colonnes ne peut pas découper. On les laisse en flux normal, et c'est
+     le contenu de l'onglet actif qui se répartit lui-même. */
+  .view-tabbed{column-width:auto;column-count:1;}
+  .view-tabbed .view-banner{max-width:520px;}
+
+  /* --- Grille de tableau de bord ---
+     Le multi-colonnes ne sait pas étirer une carte : une vue qui n'en a qu'une
+     laissait 3 colonnes mortes. auto-fit supprime les pistes inutilisées et
+     étire les cartes, donc la largeur est toujours remplie.
+     Tout est ciblé sur .active / .pane : une vue masquée le reste. */
+  .view.active:not(.view-tabbed),
+  .pane, .subpanel.active, .subview.active,
+  #goal-active-wrap, #goal-history-wrap,
+  #journal-history, #sleep-history, #shop-list, #prod-list,
+  #bij-ideas-list, #scr-list-view{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:10px;
+    align-items:start;
+    column-width:auto;column-count:1;
+  }
+  /* Titres, barres d'onglets, bandeaux et conteneurs prennent toute la largeur */
+  .view.active>.card-title, .view.active>.reset-bar, .view.active>.launch-grid,
+  .view.active>.p30-grid, .view.active>.subtabs, .view.active>.bij-tabs,
+  .view.active>.group-tabs, .view.active>.ventes-subtabs, .view.active>.biblio-tabs,
+  .view.active>.ht-monthbar, .view.active>.ht-gauges, .view.active>.ht-sub,
+  .view.active>#task-night-banner, .view.active>#habit-night-banner,
+  .view.active>.goal-shell, .view.active>.pane, .view.active>.subpanel,
+  .view.active>#finance-content, .view.active>#objectifs-content,
+  .view.active>#routine-content, .view.active>#journal-history,
+  .pane>.card-title, .subpanel>.card-title, .subview>.card-title,
+  .pane>.arrow, .subpanel>.arrow, .subview>.arrow,
+  .pane>.cut-grid, .pane>.mood-grid, .pane>.shop-sum, .pane>.trend-updated,
+  .pane>#yt-add-section, .pane>#yt-detail-panel, .pane>#shop-list,
+  .pane>#prod-list, .pane>#bij-ideas-list, .pane>#scr-list-view, .pane>#scr-editor,
+  .subpanel>#goal-active-wrap, .subpanel>#goal-history-wrap,
+  .subpanel>#goal-decl-wrap, .subpanel>#sleep-history{
+    grid-column:1/-1;
+  }
+  /* la bannière reste une vignette, elle ne s'étire pas sur toute la largeur */
+  .view.active>.view-banner{max-width:520px;}
   .launch-tile{padding:12px 6px 10px;}
   .launch-ic{font-size:21px;margin-bottom:5px;}
   .launch-lb{font-size:8px;}
@@ -778,13 +818,8 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   .bnav-btn .bnav-ic{font-size:16px;}
   .bnav-btn .bnav-lb{font-size:9.5px;}
 }
-/* Écrans larges : 3 colonnes pour combler la droite */
-@media (min-width:1450px){
-  .view{column-count:3;}
-}
-@media (min-width:1900px){
-  .view{column-count:4;}
-}
+/* (le nombre de colonnes est désormais déduit de la largeur disponible,
+    voir .view{columns:360px} — plus besoin de paliers fixes) */
 .day-cell{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:8px;cursor:pointer;transition:all .15s;position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;}
 .day-cell:hover{border-color:var(--muted);}
 .day-cell.is-today{border-color:var(--accent-ink);box-shadow:0 0 0 1px var(--accent);}
@@ -1394,7 +1429,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: GOAL ============ -->
-<div class="view" id="view-goal" data-tab="progress">
+<div class="view view-tabbed" id="view-goal" data-tab="progress">
 
   <img class="view-banner" id="banner-goal" alt="">
 
@@ -1601,7 +1636,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: SLEEP ============ -->
-<div class="view" id="view-sleep">
+<div class="view view-tabbed" id="view-sleep">
 
   <img class="view-banner" id="banner-sleep" alt="">
 
@@ -1753,7 +1788,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: VENTES ============ -->
-<div class="view" id="view-ventes">
+<div class="view view-tabbed" id="view-ventes">
   <img class="view-banner" id="banner-ventes" alt="">
 
   <div class="ventes-subtabs">
@@ -1763,7 +1798,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- Bijoux -->
-  <div id="vt-bijoux">
+  <div class="pane" id="vt-bijoux">
     <div class="card">
       <div class="card-title">💍 Ventes bijoux <div class="line"></div></div>
       <div id="ventes-bijoux-list"></div>
@@ -1784,7 +1819,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- Chaussures -->
-  <div id="vt-chaussures" style="display:none;">
+  <div class="pane" id="vt-chaussures" style="display:none;">
     <div class="card">
       <div class="card-title">💰 Coût du lot <div class="line"></div></div>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -1812,7 +1847,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- Calculateur prix -->
-  <div id="vt-calc" style="display:none;">
+  <div class="pane" id="vt-calc" style="display:none;">
     <div class="card">
       <div class="card-title">🧮 Calculateur de prix de vente <div class="line"></div></div>
       <div class="calc-row"><label>Coût des matériaux (€)</label><input type="number" class="calc-input" id="calc-cout" placeholder="Ex. 12" oninput="calcPrix()"></div>
@@ -1857,7 +1892,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: HABIT TRACKER ============ -->
-<div class="view" id="view-tracker">
+<div class="view view-tabbed" id="view-tracker">
   <img class="view-banner" id="banner-tracker" alt="">
 
   <div class="ht-monthbar">
@@ -1924,7 +1959,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: CAPTURE ============ -->
-<div class="view" id="view-capture">
+<div class="view view-tabbed" id="view-capture">
   <img class="view-banner" id="banner-capture" alt="">
 
   <div class="bij-tabs">
@@ -1933,7 +1968,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- QUOTIDIEN -->
-  <div id="cap-daily-section">
+  <div class="pane" id="cap-daily-section">
     <div class="card rpg-card">
       <div class="card-title">🎥 Capture du jour</div>
       <div id="cap-today-body"></div>
@@ -1965,7 +2000,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- SCRIPTS -->
-  <div id="cap-scripts-section" style="display:none;">
+  <div class="pane" id="cap-scripts-section" style="display:none;">
     <!-- Liste -->
     <div id="scr-list-view">
       <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="scrNew()">+ Nouveau script</button>
@@ -2027,7 +2062,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: ACHATS ============ -->
-<div class="view" id="view-achats">
+<div class="view view-tabbed" id="view-achats">
   <img class="view-banner" id="banner-achats" alt="">
 
   <div class="bij-tabs">
@@ -2036,7 +2071,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- MANNEQUIN -->
-  <div id="shoptab-mannequin">
+  <div class="pane" id="shoptab-mannequin">
     <div class="card" style="overflow:visible;">
       <div class="card-title">👤 Ma tenue — tape un slot pour changer d'article</div>
       <div class="man-stage" id="man-stage">
@@ -2082,7 +2117,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- WISHLIST -->
-  <div id="shoptab-wishlist" style="display:none;">
+  <div class="pane" id="shoptab-wishlist" style="display:none;">
     <div class="shop-sum">
       <div class="kpi"><div class="kpi-lbl">Cash actuel</div><div class="kpi-val" id="shop-cash">0 €</div></div>
       <div class="kpi"><div class="kpi-lbl">Débloqués</div><div class="kpi-val" id="shop-unlocked">0/0</div></div>
@@ -2112,7 +2147,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: BIJOUX ============ -->
-<div class="view" id="view-bijoux">
+<div class="view view-tabbed" id="view-bijoux">
   <img class="view-banner" id="banner-bijoux" alt="">
   <div class="bij-tabs">
     <button class="bij-tab active" id="btab-moodboard" onclick="switchBijTab('moodboard')">🎨 Moodboard</button>
@@ -2122,7 +2157,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="bij-tab" id="btab-coupes" onclick="switchBijTab('coupes')">💠 Coupes & Sertis</button>
   </div>
   <!-- MOODBOARD -->
-  <div id="bij-moodboard-section">
+  <div class="pane" id="bij-moodboard-section">
     <div class="card">
       <div class="card-title">🎨 Ajouter une inspiration <div class="line"></div></div>
       <input type="url" id="mood-url-input" placeholder="Colle l'ADRESSE DE L'IMAGE (finit par .jpg / .png)" style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:8px;">
@@ -2135,7 +2170,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div class="mood-grid" id="mood-grid"></div>
   </div>
   <!-- IDÉES -->
-  <div id="bij-idees-section" style="display:none;">
+  <div class="pane" id="bij-idees-section" style="display:none;">
     <div class="card">
       <div class="card-title">💡 Nouvelle idée <div class="line"></div></div>
       <textarea id="bij-notes" placeholder="Une idée par enregistrement : concept, matière, forme, nom de pièce..." style="width:100%;min-height:110px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12px;padding:12px;font-family:inherit;resize:vertical;line-height:1.65;margin-bottom:10px;"></textarea>
@@ -2145,7 +2180,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="bij-ideas-list"></div>
   </div>
   <!-- PRODUITS -->
-  <div id="bij-produits-section" style="display:none;">
+  <div class="pane" id="bij-produits-section" style="display:none;">
     <div class="card">
       <div class="card-title">💎 Ajouter un produit <div class="line"></div></div>
       <input type="text" id="prod-input" placeholder="Ex: Tennis Chain 4mm Argent 925..." style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
@@ -2155,7 +2190,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="prod-list"></div>
   </div>
   <!-- TENDANCES -->
-  <div id="bij-tendances-section" style="display:none;">
+  <div class="pane" id="bij-tendances-section" style="display:none;">
     <div class="trend-updated">Veille mise à jour · Juillet 2025</div>
     <div class="trend-card"><div class="trend-row"><span class="trend-icon">⛓️</span><span class="trend-title">Tennis Chain & Tennis Bracelet</span><span class="trend-heat hot">🔥 Dominant</span></div><div class="trend-desc">Le produit phare du moment. Porté seul ou en couches, en argent comme en doré. Best-seller n°1 bijouterie streetwear/luxe accessible depuis 2022 et continue de dominer. C'est le bon produit pour démarrer Overly.</div><div class="trend-sources"><span class="trend-src">TikTok</span><span class="trend-src">Pinterest</span><span class="trend-src">Etsy</span></div></div>
     <div class="trend-card"><div class="trend-row"><span class="trend-icon">🥇</span><span class="trend-title">Chaînes chunky or épaisses</span><span class="trend-heat hot">🔥 Dominant</span></div><div class="trend-desc">Chaînes larges façon hip-hop, très fortes en doré. Portées en statement piece ou superposées. Cible 18-35 ans streetwear & mode. Bonne marge possible car prix de vente élevé.</div><div class="trend-sources"><span class="trend-src">Instagram</span><span class="trend-src">TikTok Shop</span></div></div>
@@ -2166,7 +2201,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div class="card" style="margin-top:16px;"><div class="card-title">🔗 Sources à consulter <div class="line"></div></div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://trends.google.com/trends/explore?q=tennis+chain+jewelry" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Google Trends — Tennis chain jewelry</a><a href="https://www.pinterest.com/search/pins/?q=jewelry+trends+2025" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Pinterest — Jewelry trends 2025</a><a href="https://www.tiktok.com/search?q=jewelry+trend+2025" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ TikTok — Jewelry trend 2025</a><a href="https://www.etsy.com/market/trending_jewelry" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Etsy — Bijoux tendance</a></div></div>
   </div>
   <!-- COUPES & SERTISSAGES -->
-  <div id="bij-coupes-section" style="display:none;">
+  <div class="pane" id="bij-coupes-section" style="display:none;">
     <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">💎 Coupes de pierres — <span id="cuts-count"></span></div>
     <div class="cut-grid" id="cuts-grid"></div>
     <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 10px;">🔧 Sertissages — <span id="settings-count"></span></div>
@@ -2175,7 +2210,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: BIBLIO ============ -->
-<div class="view" id="view-biblio">
+<div class="view view-tabbed" id="view-biblio">
   <img class="view-banner" id="banner-biblio" alt="">
 
   <!-- Onglets -->
@@ -2185,7 +2220,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- SECTION VIDÉOS -->
-  <div id="biblio-videos-section">
+  <div class="pane" id="biblio-videos-section">
     <div id="yt-add-section">
       <div class="card">
         <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
@@ -2198,7 +2233,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <!-- SECTION LIVRES -->
-  <div id="biblio-livres-section" style="display:none;">
+  <div class="pane" id="biblio-livres-section" style="display:none;">
 
     <!-- James Clear -->
     <div class="book-card" id="book-clear">
@@ -2440,17 +2475,17 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VUES GROUPÉES (créées par JS) ============ -->
-<div class="view" id="view-finance">
+<div class="view view-tabbed" id="view-finance">
   <img class="view-banner" id="banner-finance" alt="">
   <div class="group-tabs" id="finance-tabs"></div>
   <div id="finance-content"></div>
 </div>
-<div class="view" id="view-objectifs">
+<div class="view view-tabbed" id="view-objectifs">
   <img class="view-banner" id="banner-objectifs" alt="">
   <div class="group-tabs" id="objectifs-tabs"></div>
   <div id="objectifs-content"></div>
 </div>
-<div class="view" id="view-routine">
+<div class="view view-tabbed" id="view-routine">
   <img class="view-banner" id="banner-routine" alt="">
   <div class="group-tabs" id="routine-tabs"></div>
   <div id="routine-content"></div>
