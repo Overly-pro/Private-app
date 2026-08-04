@@ -593,14 +593,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
    plus étroites qu'avant */
 .gl-recap dd,.gl-hist-ttl,.gl-hist-meta,.gl-mini-ttl,.hf-text,.card-title{overflow-wrap:break-word;}
 
-@media (min-width:900px){
-  /* La Vision est une chronologie : elle se lit de haut en bas, en une seule
-     colonne centrée. En grille, les flèches de liaison cassaient tout et
-     poussaient chaque phase sur sa propre ligne. */
-  /* .active est indispensable ici : sans lui, ce display:block écraserait le
-     display:none des panneaux inactifs et la Vision resterait à l'écran. */
-  #goal-panel-roadmap.active{display:block;max-width:760px;margin:0 auto;}
-}
 
 /* ===== OBJECTIF MODULABLE + HISTORIQUE ===== */
 .gl-src-row{display:flex;align-items:center;gap:7px;padding:8px 10px;background:rgba(var(--ink),0.04);border:0.5px solid rgba(var(--ink),0.1);border-radius:10px;margin-bottom:6px;}
@@ -748,70 +740,23 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .p30-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:16px;}
 @media (max-width:480px){.p30-grid{grid-template-columns:repeat(5,1fr);}}
 
-/* ===== DESKTOP — pleine largeur alignée à gauche, colonnes multiples ===== */
+/* ===== DESKTOP — une seule colonne, centrée =====
+   Les grilles à plusieurs colonnes laissaient toujours des trous à droite des
+   cartes courtes, et rien ne se lisait dans l'ordre. On garde donc exactement
+   la disposition du mobile — tout empilé, de haut en bas — simplement centrée
+   et un peu plus large. Une seule valeur à régler : max-width ci-dessous. */
 @media (min-width:900px){
   body{align-items:flex-start;}
-  /* Colonne de lecture centrée plutôt qu'un étalement d'un bord à l'autre :
-     l'application se lit de haut en bas, pas de gauche à droite. */
-  .app-shell{max-width:1180px;width:100%;margin:0 auto;padding:12px 20px 36px;}
-  .view>*{break-inside:avoid;}
+  .app-shell{max-width:900px;width:100%;margin:0 auto;padding:14px 20px 40px;}
 
-  /* Bannière, héros et stats rejoignent le flux des colonnes. Avant, ils
-     traversaient toute la largeur en étant bridés à 520px : ça créait une
-     bande vide de plus de 1000px en haut de chaque écran. */
-  .view-banner{height:170px;max-width:none;margin-right:0;}
+  /* Plus aucun multi-colonnes ni grille : tout reste en flux normal. */
+  .view,.view-tabbed,.pane,.subpanel,.subview{column-width:auto;column-count:1;}
+
+  .view-banner{height:210px;max-width:none;margin-right:0;}
   .hero{max-width:none;margin-right:0;}
   .stat-grid{max-width:none;margin-right:0;}
-  /* la grille de lancement garde toute la largeur : c'est une barre d'accès rapide */
-  .launch-grid{column-span:all;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));}
+  .launch-grid{grid-template-columns:repeat(auto-fit,minmax(92px,1fr));}
 
-  /* Vues à onglets : tout leur contenu tient dans un seul bloc insécable que le
-     multi-colonnes ne peut pas découper. On les laisse en flux normal, et c'est
-     le contenu de l'onglet actif qui se répartit lui-même. */
-  .view-tabbed{column-width:auto;column-count:1;}
-  /* La bannière prend toute la largeur au lieu d'être une vignette de 520px
-     laissant un grand vide à sa droite. */
-  .view.active>.view-banner{grid-column:1/-1;max-width:none;height:210px;}
-  .view-tabbed>.view-banner{max-width:none;height:210px;}
-
-  /* --- Grille de tableau de bord ---
-     Le multi-colonnes ne sait pas étirer une carte : une vue qui n'en a qu'une
-     laissait 3 colonnes mortes. auto-fit supprime les pistes inutilisées et
-     étire les cartes, donc la largeur est toujours remplie.
-     Tout est ciblé sur .active / .pane : une vue masquée le reste. */
-  .view.active:not(.view-tabbed),
-  .pane, .subpanel.active, .subview.active,
-  #goal-active-wrap, #goal-history-wrap,
-  #journal-history, #sleep-history, #shop-list, #prod-list,
-  #bij-ideas-list, #scr-list-view{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
-    gap:10px;
-    align-items:start;
-    column-width:auto;column-count:1;
-  }
-  /* Titres, barres d'onglets, bandeaux et conteneurs prennent toute la largeur */
-  .view.active>.card-title, .view.active>.reset-bar, .view.active>.launch-grid,
-  .view.active>.p30-grid, .view.active>.subtabs, .view.active>.bij-tabs,
-  .view.active>.group-tabs, .view.active>.ventes-subtabs, .view.active>.biblio-tabs,
-  .view.active>.ht-monthbar, .view.active>.ht-gauges, .view.active>.ht-sub,
-  .view.active>#task-night-banner, .view.active>#habit-night-banner,
-  .view.active>.goal-shell, .view.active>.pane, .view.active>.subpanel,
-  .view.active>#finance-content, .view.active>#objectifs-content,
-  .view.active>#routine-content, .view.active>#journal-history,
-  /* Une barre d'onglets et un panneau ne se placent jamais côte à côte :
-     ils s'empilent, le contenu se lit de haut en bas. */
-  .subview>.subtabs, .subview>.subpanel, .subview>.view-banner,
-  .pane>.subtabs, .pane>.subpanel,
-  .pane>.card-title, .subpanel>.card-title, .subview>.card-title,
-  .pane>.arrow, .subpanel>.arrow, .subview>.arrow,
-  .pane>.cut-grid, .pane>.mood-grid, .pane>.shop-sum, .pane>.trend-updated,
-  .pane>#yt-add-section, .pane>#yt-detail-panel, .pane>#shop-list,
-  .pane>#prod-list, .pane>#bij-ideas-list, .pane>#scr-list-view, .pane>#scr-editor,
-  .subpanel>#goal-active-wrap, .subpanel>#goal-history-wrap,
-  .subpanel>#goal-decl-wrap, .subpanel>#sleep-history{
-    grid-column:1/-1;
-  }
   .launch-tile{padding:12px 6px 10px;}
   .launch-ic{font-size:21px;margin-bottom:5px;}
   .launch-lb{font-size:8px;}
@@ -830,8 +775,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   .bnav-btn .bnav-ic{font-size:16px;}
   .bnav-btn .bnav-lb{font-size:9.5px;}
 }
-/* (le nombre de colonnes est désormais déduit de la largeur disponible,
-    voir .view{columns:360px} — plus besoin de paliers fixes) */
 .day-cell{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:8px;cursor:pointer;transition:all .15s;position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;}
 .day-cell:hover{border-color:var(--muted);}
 .day-cell.is-today{border-color:var(--accent-ink);box-shadow:0 0 0 1px var(--accent);}
