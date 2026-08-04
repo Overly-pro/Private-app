@@ -570,6 +570,37 @@ html.theme-light .man-stage{
 html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .st-close{background:rgba(var(--ink),0.07);border:0.5px solid rgba(var(--ink),0.12);color:rgba(var(--ink),0.5);font-size:14px;cursor:pointer;padding:5px 11px;line-height:1;font-family:inherit;border-radius:10px;transition:background .15s;}
 
+/* ===== VUE OBJECTIF — mise en page deux zones =====
+   Onglet Cash : l'objectif occupe toute la largeur, en grand.
+   Autres onglets : il se réduit en rappel collé à droite (en haut sur mobile),
+   et le contenu de l'onglet démarre tout en haut — un clic, rien à faire défiler. */
+.goal-shell{display:block;}
+.goal-side{display:block;margin-bottom:8px;}
+.goal-main{min-width:0;}
+.gl-mini-ttl{font-size:13.5px;font-weight:800;color:var(--text-strong);line-height:1.3;margin:2px 0 7px;}
+.gl-mini-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:10.5px;color:var(--muted);margin-bottom:5px;}
+.gl-mini-row .mono{font-size:15px;font-weight:800;color:var(--accent-ink);}
+.gl-mini-days{font-size:10px;color:var(--muted2);margin-top:6px;letter-spacing:.4px;}
+.gl-mini-open{width:100%;margin-top:9px;padding:8px;border-radius:9px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.gl-mini-open:hover{color:var(--text);border-color:var(--accent);}
+
+@media (min-width:900px){
+  /* la vue Objectif gère elle-même ses colonnes */
+  #view-goal{column-count:1;}
+  #view-goal .view-banner{max-width:520px;}
+  /* le contenu de l'onglet se répartit en colonnes de 360px minimum */
+  #view-goal .subpanel{columns:360px;column-gap:12px;}
+  #view-goal .subpanel>*{break-inside:avoid;}
+  /* onglets autres que Cash : rappel de l'objectif collé à droite */
+  #view-goal:not([data-tab="progress"]) .goal-shell{
+    display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start;
+  }
+  #view-goal:not([data-tab="progress"]) .goal-main{grid-column:1;grid-row:1;}
+  #view-goal:not([data-tab="progress"]) .goal-side{
+    grid-column:2;grid-row:1;position:sticky;top:12px;margin-bottom:0;
+  }
+}
+
 /* ===== OBJECTIF MODULABLE + HISTORIQUE ===== */
 .gl-src-row{display:flex;align-items:center;gap:7px;padding:8px 10px;background:rgba(var(--ink),0.04);border:0.5px solid rgba(var(--ink),0.1);border-radius:10px;margin-bottom:6px;}
 .gl-src-emoji{width:34px;flex-shrink:0;text-align:center;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:14px;padding:6px 0;font-family:inherit;}
@@ -1363,11 +1394,15 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 
 <!-- ============ VIEW: GOAL ============ -->
-<div class="view" id="view-goal">
+<div class="view" id="view-goal" data-tab="progress">
 
   <img class="view-banner" id="banner-goal" alt="">
 
-  <div id="goal-hero-wrap"></div>
+  <!-- Deux zones : le contenu de l'onglet à gauche, le rappel de l'objectif à droite.
+       Sur l'onglet Cash l'objectif reprend toute la largeur en grand. -->
+  <div class="goal-shell">
+   <aside class="goal-side" id="goal-hero-wrap"></aside>
+   <div class="goal-main">
 
   <div class="subtabs">
     <button class="subtab active" data-goal-tab="progress" onclick="showSubtab('goal','progress')">💰 Cash</button>
@@ -1445,6 +1480,9 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
       </ul>
     </div>
   </div>
+
+   </div><!-- /goal-main -->
+  </div><!-- /goal-shell -->
 </div>
 
 <!-- ============ VIEW: SALAIRES ============ -->
@@ -2931,6 +2969,19 @@ function showSubtab(group, tab){
   document.querySelector('[data-'+group+'-tab="'+tab+'"]').classList.add('active');
   document.querySelectorAll('#view-'+group+' .subpanel').forEach(p=>p.classList.remove('active'));
   document.getElementById(group+'-panel-'+tab).classList.add('active');
+  /* l'onglet actif pilote la mise en page (voir #view-goal[data-tab]) */
+  const view = document.getElementById('view-'+group);
+  if(view) view.dataset.tab = tab;
+  if(group === 'goal' && typeof glRenderHero === 'function') glRenderHero();
+  /* sur mobile : si la barre d'onglets n'est plus commodément visible, on la
+     ramène en haut pour que le contenu choisi apparaisse sans avoir à défiler */
+  if(view && window.innerWidth < 900){
+    const bar = view.querySelector('.subtabs');
+    if(bar){
+      const r = bar.getBoundingClientRect();
+      if(r.top < 0 || r.top > window.innerHeight * 0.5) bar.scrollIntoView({block:'start', behavior:'smooth'});
+    }
+  }
 }
 
 /* ============ TASKS ============ */
@@ -3184,28 +3235,56 @@ function glSaveDecl(){
 }
 
 /* ---- rendu ---- */
+function glActiveTab(){
+  const b = document.querySelector('#view-goal [data-goal-tab].active');
+  return b ? b.getAttribute('data-goal-tab') : 'progress';
+}
 function glRenderHero(){
   if(!glCurrent) return;
   const g = glCurrent, w = document.getElementById('goal-hero-wrap'); if(!w) return;
-  const d = glDaysLeft(g), reached = glReached(g);
-  let right;
-  if(reached)        right = `<div class="hero-days mono" style="font-size:30px;color:var(--ok);">✓</div><div class="hero-days-lbl">objectif atteint</div>`;
-  else if(d === null) right = `<div class="hero-days mono" style="font-size:32px;">—</div><div class="hero-days-lbl">pas de date</div>`;
-  else if(d < 0)      right = `<div class="hero-days mono" style="font-size:32px;">${Math.abs(d)}</div><div class="hero-days-lbl">jours de retard</div>`;
-  else                right = `<div class="hero-days mono" style="font-size:32px;">${d}</div><div class="hero-days-lbl">jours restants</div>`;
-  w.innerHTML = `<div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div style="flex:1;min-width:0;">
-        <div class="hero-label">🎯 Objectif</div>
-        <div style="font-size:16px;font-weight:800;color:var(--text-strong);">${g.title ? glEsc(g.title) : 'À définir'}</div>
-        <div style="font-size:11px;color:var(--text-soft);margin-top:2px;">${g.why ? glEsc(g.why) : "Renseigne ton objectif dans l'onglet Cash"}</div>
+  const d = glDaysLeft(g), reached = glReached(g), pct = glPct(g);
+  const amt = parseFloat(g.amount)||0, tot = glTotal(g);
+
+  /* libellé du compte à rebours, partagé par les deux formats */
+  let dLabel, dVal, dCol = '';
+  if(reached)         { dVal='✓';               dLabel='objectif atteint'; dCol='color:var(--ok);'; }
+  else if(d === null) { dVal='—';               dLabel='pas de date'; }
+  else if(d < 0)      { dVal=Math.abs(d);       dLabel='jours de retard'; }
+  else                { dVal=d;                 dLabel='jours restants'; }
+
+  if(glActiveTab() === 'progress'){
+    /* format long : l'objectif est le sujet de l'écran */
+    w.innerHTML = `<div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="flex:1;min-width:0;">
+          <div class="hero-label">🎯 Objectif</div>
+          <div style="font-size:16px;font-weight:800;color:var(--text-strong);">${g.title ? glEsc(g.title) : 'À définir'}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:2px;">${g.why ? glEsc(g.why) : "Renseigne ton objectif ci-dessous"}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div class="hero-days mono" style="font-size:32px;${dCol}">${dVal}</div>
+          <div class="hero-days-lbl">${dLabel}</div>
+        </div>
+      </div></div>`;
+  } else {
+    /* format court : simple rappel, le contenu de l'onglet a la vedette */
+    w.innerHTML = `<div class="card gl-mini">
+      <div class="hero-label">🎯 Objectif en cours</div>
+      <div class="gl-mini-ttl">${g.title ? glEsc(g.title) : 'À définir'}</div>
+      <div class="gl-mini-row">
+        <span class="mono">${pct}%</span>
+        <span>${glFmt(tot)} €${amt>0?' / '+glFmt(amt)+' €':''}</span>
       </div>
-      <div style="text-align:right;flex-shrink:0;">${right}</div>
-    </div></div>`;
+      <div class="pb-bar-wrap"><div class="pb-bar" style="width:${pct}%"></div></div>
+      <div class="gl-mini-days"><b style="${dCol}">${dVal}</b> ${dLabel}</div>
+      <button class="gl-mini-open" onclick="showSubtab('goal','progress')">← Revenir à l'objectif</button>
+    </div>`;
+  }
+
   const hd = document.getElementById('home-days');
   if(hd) hd.textContent = reached ? '✓' : (d===null ? '—' : Math.max(d,0));
   const hp = document.getElementById('home-cash-pct');
-  if(hp) hp.textContent = glPct(g) + '%';
+  if(hp) hp.textContent = pct + '%';
 }
 
 function glRenderActive(){
