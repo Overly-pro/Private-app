@@ -769,7 +769,10 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
      multi-colonnes ne peut pas découper. On les laisse en flux normal, et c'est
      le contenu de l'onglet actif qui se répartit lui-même. */
   .view-tabbed{column-width:auto;column-count:1;}
-  .view-tabbed .view-banner{max-width:520px;}
+  /* La bannière prend toute la largeur au lieu d'être une vignette de 520px
+     laissant un grand vide à sa droite. */
+  .view.active>.view-banner{grid-column:1/-1;max-width:none;height:210px;}
+  .view-tabbed>.view-banner{max-width:none;height:210px;}
 
   /* --- Grille de tableau de bord ---
      Le multi-colonnes ne sait pas étirer une carte : une vue qui n'en a qu'une
@@ -796,6 +799,10 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   .view.active>.goal-shell, .view.active>.pane, .view.active>.subpanel,
   .view.active>#finance-content, .view.active>#objectifs-content,
   .view.active>#routine-content, .view.active>#journal-history,
+  /* Une barre d'onglets et un panneau ne se placent jamais côte à côte :
+     ils s'empilent, le contenu se lit de haut en bas. */
+  .subview>.subtabs, .subview>.subpanel, .subview>.view-banner,
+  .pane>.subtabs, .pane>.subpanel,
   .pane>.card-title, .subpanel>.card-title, .subview>.card-title,
   .pane>.arrow, .subpanel>.arrow, .subview>.arrow,
   .pane>.cut-grid, .pane>.mood-grid, .pane>.shop-sum, .pane>.trend-updated,
@@ -805,8 +812,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   .subpanel>#goal-decl-wrap, .subpanel>#sleep-history{
     grid-column:1/-1;
   }
-  /* la bannière reste une vignette, elle ne s'étire pas sur toute la largeur */
-  .view.active>.view-banner{max-width:520px;}
   .launch-tile{padding:12px 6px 10px;}
   .launch-ic{font-size:21px;margin-bottom:5px;}
   .launch-lb{font-size:8px;}
@@ -3001,12 +3006,20 @@ function wrapEmojis(root){
 
 /* ============ GENERIC SUBTABS ============ */
 function showSubtab(group, tab){
-  document.querySelectorAll('[data-'+group+'-tab]').forEach(b=>b.classList.remove('active'));
-  document.querySelector('[data-'+group+'-tab="'+tab+'"]').classList.add('active');
-  document.querySelectorAll('#view-'+group+' .subpanel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(group+'-panel-'+tab).classList.add('active');
-  /* l'onglet actif pilote la mise en page (voir #view-goal[data-tab]) */
-  const view = document.getElementById('view-'+group);
+  const btn = document.querySelector('[data-'+group+'-tab="'+tab+'"]');
+  if(!btn) return;
+  /* Le conteneur n'est pas toujours #view-<group> : buildGroupedViews() replie
+     certaines vues dans un groupe et les renomme #sv-<group>. On part donc du
+     bouton pour retrouver le bon périmètre, sinon aucun panneau n'est
+     désactivé et ils s'empilent tous à l'écran. */
+  const view = btn.closest('.view, .subview');
+  const scope = view || document;
+  scope.querySelectorAll('[data-'+group+'-tab]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  scope.querySelectorAll('.subpanel').forEach(p=>p.classList.remove('active'));
+  const panel = document.getElementById(group+'-panel-'+tab);
+  if(panel) panel.classList.add('active');
+  /* l'onglet actif pilote la mise en page */
   if(view) view.dataset.tab = tab;
   if(group === 'goal' && typeof glRenderHero === 'function') glRenderHero();
   /* sur mobile : si la barre d'onglets n'est plus commodément visible, on la
