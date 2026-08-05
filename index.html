@@ -633,6 +633,16 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-hist-toggle:hover{color:var(--text);}
 .gl-empty{font-size:11.5px;color:var(--muted2);font-style:italic;text-align:center;padding:22px 10px;line-height:1.6;}
 
+/* Tâches modifiables */
+.tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
+.task:hover .tk-edit{opacity:1;}
+.tk-edit:hover{color:var(--accent-ink);}
+.tk-add{width:100%;margin-top:2px;padding:10px;border-radius:10px;border:1px dashed var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.tk-add:hover{color:var(--text);border-color:var(--accent);}
+.tk-empty{font-size:11.5px;color:var(--muted3);font-style:italic;padding:10px 2px;}
+.tk-form{background:var(--surface);border:1px solid var(--accent2);border-radius:12px;padding:14px 15px;margin-bottom:8px;}
+.tk-form select{width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:12.5px;padding:9px 11px;font-family:inherit;}
+@media (max-width:899px){ .tk-edit{opacity:1;} }
 /* TASK CARD (checklist) */
 .section{margin-bottom:8px;}
 .section-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-left:2px;}
@@ -1248,67 +1258,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-header"><span class="section-icon">🌅</span><span class="section-title">Matin</span><span class="section-time">06:30 – 07:30</span></div>
-    <div class="task" id="t11" onclick="toggleTask('t11')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">🙏 Prière avant de travailler</div><div class="task-sub">Super important — se recentrer et confier sa journée avant tout</div></div>
-        <div class="expand-btn" id="e-t11" onclick="expandHow(event,'h-t11','e-t11')">▼</div></div>
-      <div class="how-to" id="h-t11"><div class="how-to-inner"><strong>Comment faire :</strong> Prends un moment au calme, avant de commencer quoi que ce soit. Remercie, demande la force et la clarté pour la journée, et confie ton objectif. C'est le socle qui donne du sens à tout le reste — à faire en premier, chaque jour.</div></div>
-    </div>
-    <div class="task" id="t1" onclick="toggleTask('t1')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">Déclaration Hill à voix haute + Visualisation</div><div class="task-sub">Ancrer le désir, la foi et l'objectif en cours</div></div>
-        <div class="expand-btn" id="e-t1" onclick="expandHow(event,'h-t1','e-t1')">▼</div></div>
-      <div class="how-to" id="h-t1"><div class="how-to-inner"><strong>Comment faire :</strong> Debout, voix claire et confiante. Lis cette déclaration à voix haute :
-        <span class="quote-block" id="t1-decl">—</span>
-        Puis ferme les yeux 2 min : vois-toi <span class="t-visu-date"></span>. Ressens la fierté. Ouvre les yeux — commence ta journée.</div></div>
-    </div>
-    <div class="task" id="t2" onclick="toggleTask('t2')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💪 Faire 45 pompes</div><div class="task-sub">Corps actif = esprit actif dès le réveil</div></div>
-        <div class="expand-btn" id="e-t2" onclick="expandHow(event,'h-t2','e-t2')">▼</div></div>
-      <div class="how-to" id="h-t2"><div class="how-to-inner"><strong>Comment faire :</strong> Au sol, mains à largeur d'épaules. 25 répétitions d'affilée ou en 2-3 séries si besoin. Active le corps, libère les endorphines, signale au cerveau que la journée commence fort.</div></div>
-    </div>
-    <div class="task" id="t3" onclick="toggleTask('t3')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">📖 Lire 10 pages de mon livre</div><div class="task-sub">Nourrir l'esprit avant le bruit du monde</div></div>
-        <div class="expand-btn" id="e-t3" onclick="expandHow(event,'h-t3','e-t3')">▼</div></div>
-      <div class="how-to" id="h-t3"><div class="how-to-inner"><strong>Comment faire :</strong> Endroit calme, pas d'écran à proximité. 10 pages minimum. Marque ce qui te frappe — entre dans la journée avec une idée qui oriente tes actions.</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><span class="section-icon">⚡</span><span class="section-title">Journée</span><span class="section-time">07:15 – 18:00</span></div>
-    <div class="task" id="t7" onclick="toggleTask('t7')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💎 Session bijoux — Apprentissage &amp; vision marque</div><div class="task-sub">Pinterest · Instagram · branding · lexique</div></div>
-        <div class="expand-btn" id="e-t7" onclick="expandHow(event,'h-t7','e-t7')">▼</div></div>
-      <div class="how-to" id="h-t7"><div class="how-to-inner"><strong>Comment faire :</strong> 20-30 min. Étudie avec ton contact bijoux ou en solo : comment identifier un bijou, marges, fournisseurs. Analyse 2-3 bijoux en vente (prix, état, vitesse de vente). Note du nouveau vocabulaire (argent 925, plaqué or, poinçons...) dans ton Carnet de bord. Explore Pinterest/Instagram pour ton branding, pose-toi 1 question (nom de marque ? client idéal ?).</div></div>
-    </div>
-    <div class="task" id="t8" onclick="toggleTask('t8')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💰 Mettre à jour le compteur cash</div><div class="task-sub">Mes sources → progression réelle vers l'objectif</div></div>
-        <div class="expand-btn" id="e-t8" onclick="expandHow(event,'h-t8','e-t8')">▼</div></div>
-      <div class="how-to" id="h-t8"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Objectif et mets à jour chacune de tes sources d'argent. C'est ton score du jour — chaque euro compte. Clarté des chiffres = clarté de la trajectoire.</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><span class="section-icon">🌙</span><span class="section-title">Soir</span><span class="section-time">19:00 – 21:30</span></div>
-    <div class="task" id="t9" onclick="toggleTask('t9')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">📌 Écrire mes 3 priorités du lendemain</div><div class="task-sub">Clarifier la journée suivante avant de dormir</div></div>
-        <div class="expand-btn" id="e-t9" onclick="expandHow(event,'h-t9','e-t9')">▼</div></div>
-      <div class="how-to" id="h-t9"><div class="how-to-inner"><strong>Comment faire :</strong> 5 min. Ouvre ton Carnet de bord. Écris 3 actions concrètes pour demain — pas des envies, des engagements. Classe-les par ordre d'impact. Demain matin, tu sauras exactement quoi faire en premier.</div></div>
-    </div>
-    <div class="task" id="t10" onclick="toggleTask('t10')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">Déclaration Hill + Visualisation — Soir</div><div class="task-sub">Planter la graine dans le subconscient avant le sommeil</div></div>
-        <div class="expand-btn" id="e-t10" onclick="expandHow(event,'h-t10','e-t10')">▼</div></div>
-      <div class="how-to" id="h-t10"><div class="how-to-inner"><strong>Comment faire :</strong> Juste avant de te coucher, relis la même déclaration à voix basse. Visualise 2 min : <span class="t-visu-date"></span>, ressens la gratitude. Ton subconscient travaille pendant que tu dors — ne la saute jamais.</div></div>
-    </div>
-  </div>
+  <div id="tasks-list"></div>
 
   <div class="card" style="background:var(--sunken);">
     <div class="card-title">⚡ Hebdomadaire <div class="line"></div></div>
@@ -2959,16 +2909,139 @@ function showSubtab(group, tab){
 }
 
 /* ============ TASKS ============ */
-/* Liste des tâches du jour, dans l'ordre d'affichage. Les identifiants ne sont
-   volontairement pas contigus : t4 (resell chaussures), t5 (KFC) et t6 (vidéo
-   du plan 30 jours) ont été retirés, et on garde les identifiants d'origine
-   des autres pour ne pas invalider l'historique déjà enregistré par id.
-   C'est cette liste qui fait foi — jamais une plage t1..tN. */
-const TASK_IDS = ['t11','t1','t2','t3','t7','t8','t9','t10'];
-const T_TOTAL = TASK_IDS.length;
-/* On ne compte que les tâches encore existantes : un ancien t4 coché dans un
-   état sauvegardé ne doit pas faire dépasser le total. */
+/* ============ TÂCHES DU JOUR — liste modifiable ============
+   Les tâches sont des données, plus du HTML figé : on peut en ajouter,
+   en modifier et en supprimer. Le total (« 6/8 ») en découle toujours,
+   il n'y a aucun nombre écrit en dur nulle part.
+   Les identifiants ne sont jamais renumérotés : l'historique coché est
+   enregistré par identifiant, les recycler fausserait les jours passés. */
+const TASK_SECTIONS = [
+  { key:'matin',   icon:'🌅', label:'Matin',   time:'06:30 – 07:30' },
+  { key:'journee', icon:'⚡', label:'Journée', time:'07:15 – 18:00' },
+  { key:'soir',    icon:'🌙', label:'Soir',    time:'19:00 – 21:30' }
+];
+let tasks = [];
+let TASK_IDS = [];
+let T_TOTAL = 0;
+let tkEditing = null;   /* identifiant en cours d'édition, ou 'new:<section>' */
+
+function tasksSync(){ TASK_IDS = tasks.map(t => t.id); T_TOTAL = tasks.length; }
+function tasksSave(){ tasksSync(); saveKey('tasks_def', JSON.stringify(tasks)); }
+function newTaskId(){ return 't' + Date.now().toString(36); }
+
+/* On ne compte que les tâches existantes : une tâche supprimée mais restée
+   cochée dans un état sauvegardé ne doit pas faire dépasser le total. */
 function taskDoneCount(st){ return st ? TASK_IDS.filter(id => st[id]).length : 0; }
+
+/* Jeu de départ, repris tel quel de l'ancienne version figée. */
+function tasksDefaults(){
+  return [
+    { id:'t11', section:'matin', name:'🙏 Prière avant de travailler', sub:'Super important — se recentrer et confier sa journée avant tout',
+      how:"Avant d'ouvrir quoi que ce soit, prends un moment au calme. Confie ta journée, remercie, demande la clarté et la force. C'est le socle de tout le reste." },
+    { id:'t1', section:'matin', name:'Déclaration Hill à voix haute + Visualisation', sub:'Ancrer le désir, la foi et l\'objectif en cours',
+      how:'Debout, voix claire et confiante. Lis ta déclaration à voix haute :', decl:'matin' },
+    { id:'t2', section:'matin', name:'💪 Faire 45 pompes', sub:'Corps actif = esprit actif dès le réveil',
+      how:'En séries si besoin. Le but est de finir les 45, pas de les faire d\'un coup. Le corps donne le ton de la journée.' },
+    { id:'t3', section:'matin', name:'📖 Lire 10 pages de mon livre', sub:'Nourrir l\'esprit avant le bruit du monde',
+      how:'Téléphone loin. 10 pages minimum, stylo en main pour noter une idée. Avant les réseaux, avant les messages.' },
+    { id:'t7', section:'journee', name:'💎 Session bijoux — Apprentissage & vision marque', sub:'Pinterest · Instagram · branding · lexique',
+      how:"20-30 min. Étudie avec ton contact bijoux ou en solo : comment identifier un bijou, marges, fournisseurs. Analyse 2-3 bijoux en vente. Note du nouveau vocabulaire (argent 925, plaqué or, poinçons...) dans ton Carnet de bord. Explore Pinterest/Instagram pour ton branding." },
+    { id:'t8', section:'journee', name:'💰 Mettre à jour le compteur cash', sub:'Mes sources → progression réelle vers l\'objectif',
+      how:"Ouvre l'onglet Objectif et mets à jour chacune de tes sources d'argent. C'est ton score du jour — chaque euro compte." },
+    { id:'t9', section:'soir', name:'📌 Écrire mes 3 priorités du lendemain', sub:'Clarifier la journée suivante avant de dormir',
+      how:"5 min. Écris 3 actions concrètes pour demain — pas des envies, des engagements. Classe-les par ordre d'impact." },
+    { id:'t10', section:'soir', name:'Déclaration Hill + Visualisation — Soir', sub:'Planter la graine dans le subconscient avant le sommeil',
+      how:'Juste avant de te coucher, relis la même déclaration à voix basse.', decl:'soir' }
+  ];
+}
+function tasksLoad(){
+  let raw = null;
+  try { raw = JSON.parse(loadKey('tasks_def') || 'null'); } catch(e){ raw = null; }
+  tasks = (Array.isArray(raw) && raw.length) ? raw : tasksDefaults();
+  tasksSync();
+}
+/* ---- rendu et édition ---- */
+function taskCard(t){
+  const hasHow = !!(t.how || t.decl);
+  return `<div class="task${taskState[t.id]?' done':''}" id="${t.id}" onclick="toggleTask('${t.id}')">
+    <div class="task-top">
+      <div class="checkbox"><span class="checkmark">✓</span></div>
+      <div class="task-body">
+        <div class="task-name">${glEsc(t.name)}</div>
+        ${t.sub?`<div class="task-sub">${glEsc(t.sub)}</div>`:''}
+      </div>
+      <button class="tk-edit" onclick="event.stopPropagation();tkOpen('${t.id}')" title="Modifier cette tâche">✏️</button>
+      ${hasHow?`<div class="expand-btn" id="e-${t.id}" onclick="expandHow(event,'h-${t.id}','e-${t.id}')">▼</div>`:''}
+    </div>
+    ${hasHow?`<div class="how-to" id="h-${t.id}"><div class="how-to-inner">
+      ${t.how?`<strong>Comment faire :</strong> ${glEsc(t.how)}`:''}
+      ${t.decl==='matin'?`<span class="quote-block" id="t1-decl">—</span>Puis ferme les yeux 2 min : vois-toi <span class="t-visu-date"></span>. Ressens la fierté, puis commence ta journée.`:''}
+      ${t.decl==='soir'?` Visualise 2 min : <span class="t-visu-date"></span>, ressens la gratitude. Ton subconscient travaille pendant que tu dors.`:''}
+    </div></div>`:''}
+  </div>`;
+}
+function taskForm(t, section){
+  const isNew = !t;
+  const v = t || { name:'', sub:'', how:'', section:section };
+  return `<div class="tk-form">
+    <div class="gl-field"><label>Nom de la tâche</label>
+      <input id="tk-name" value="${glEsc(v.name)}" placeholder="Ex : 💪 Faire 45 pompes"></div>
+    <div class="gl-field"><label>Sous-titre</label>
+      <input id="tk-sub" value="${glEsc(v.sub||'')}" placeholder="En une ligne, pourquoi elle compte"></div>
+    <div class="gl-field"><label>Comment faire</label>
+      <textarea id="tk-how" placeholder="Le détail, affiché quand tu déplies la tâche" oninput="glAutoGrow(this)">${glEsc(v.how||'')}</textarea></div>
+    <div class="gl-field"><label>Moment de la journée</label>
+      <select id="tk-section">${TASK_SECTIONS.map(s=>`<option value="${s.key}"${s.key===v.section?' selected':''}>${s.icon} ${s.label}</option>`).join('')}</select></div>
+    <div class="gl-actions">
+      <button class="gl-btn primary" onclick="tkSave()">${isNew?'✓ Ajouter la tâche':'✓ Enregistrer'}</button>
+      ${isNew?'':'<button class="gl-btn" onclick="tkDelete()">🗑 Supprimer</button>'}
+      <button class="gl-btn" onclick="tkCancel()">Annuler</button>
+    </div>
+  </div>`;
+}
+function renderTasks(){
+  const wrap = document.getElementById('tasks-list'); if(!wrap) return;
+  wrap.innerHTML = TASK_SECTIONS.map(sec=>{
+    const list = tasks.filter(t=>t.section===sec.key);
+    const adding = tkEditing === 'new:'+sec.key;
+    const cards = list.map(t => tkEditing===t.id ? taskForm(t) : taskCard(t)).join('');
+    return `<div class="section">
+      <div class="section-header"><span class="section-icon">${sec.icon}</span><span class="section-title">${glEsc(sec.label)}</span><span class="section-time">${glEsc(sec.time)}</span></div>
+      ${cards || (adding?'':'<div class="tk-empty">Aucune tâche à ce moment de la journée</div>')}
+      ${adding ? taskForm(null, sec.key) : `<button class="tk-add" onclick="tkOpen('new:${sec.key}')">+ Ajouter une tâche</button>`}
+    </div>`;
+  }).join('');
+  const ta = document.getElementById('tk-how'); if(ta) glAutoGrow(ta);
+  if(typeof glRenderTaskEchoes === 'function') glRenderTaskEchoes();
+  updateTaskProgress();
+  if(typeof wrapEmojis === 'function') wrapEmojis(wrap);
+}
+function tkOpen(id){ tkEditing = id; renderTasks(); }
+function tkCancel(){ tkEditing = null; renderTasks(); }
+function tkSave(){
+  const name = document.getElementById('tk-name').value.trim();
+  if(!name){ showToast('Donne un nom à la tâche'); return; }
+  const sub = document.getElementById('tk-sub').value.trim();
+  const how = document.getElementById('tk-how').value.trim();
+  const section = document.getElementById('tk-section').value;
+  if(String(tkEditing).startsWith('new:')){
+    tasks.push({ id:newTaskId(), section, name, sub, how });
+    showToast('✅ Tâche ajoutée');
+  } else {
+    const t = tasks.find(x=>x.id===tkEditing);
+    if(t){ t.name=name; t.sub=sub; t.how=how; t.section=section; }
+    showToast('✅ Tâche modifiée');
+  }
+  tkEditing = null; tasksSave(); renderTasks();
+}
+function tkDelete(){
+  const t = tasks.find(x=>x.id===tkEditing); if(!t) return;
+  if(!confirm(`Supprimer « ${t.name} » ?\n\nLes journées déjà enregistrées ne sont pas modifiées.`)) return;
+  tasks = tasks.filter(x=>x.id!==tkEditing);
+  tkEditing = null; tasksSave(); renderTasks();
+  showToast('🗑 Tâche supprimée');
+}
+
 const TK_STATE='tasks_state', TK_DATE='tasks_date', TK_STREAK='tasks_streak', TK_LASTOK='tasks_lastok';
 const TK_STATE_PREFIX='tasks_state_';
 function yesterdayISO(){ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
@@ -3042,7 +3115,7 @@ function resetTasksDay(){
   taskRefDate = todayISO();
   taskState = {};
   saveKey(TK_STATE_PREFIX + taskRefDate, '{}');
-  TASK_IDS.forEach(id => renderTask(id));
+  renderTasks();
   updateTaskProgress();
   initTaskNightBanner();
 }
@@ -4036,7 +4109,7 @@ function initTaskNightBanner(){
 function setTaskRefDate(date){
   taskRefDate = date;
   taskState = JSON.parse(loadKey(TK_STATE_PREFIX + date) || '{}');
-  TASK_IDS.forEach(id => renderTask(id));
+  renderTasks();
   updateTaskProgress();
   initTaskNightBanner();
 }
@@ -5752,8 +5825,9 @@ function initApp(){
   ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
   ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
   // tasks
+  tasksLoad();
   taskState = loadTaskState();
-  TASK_IDS.forEach(id => renderTask(id));
+  renderTasks();
   updateTaskProgress();
   initTaskNightBanner();
   // nav tree
