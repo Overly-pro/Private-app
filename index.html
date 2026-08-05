@@ -1153,7 +1153,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <div class="stat-grid">
     <div class="stat" onclick="goTo('tasks')">
-      <div class="stat-val" id="home-tasks-done">0/10</div>
+      <div class="stat-val" id="home-tasks-done">—</div>
       <div class="stat-lbl">tâches aujourd'hui</div>
     </div>
     <div class="stat" onclick="goTo('goal')">
@@ -1251,7 +1251,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
         <div class="ring-text"><div class="ring-pct" id="t-ringPct" style="font-size:19px;">0%</div><div class="ring-lbl">FAIT</div></div>
       </div>
       <div style="flex:1;">
-        <div style="font-size:26px;font-weight:900;color:var(--accent-ink);line-height:1;"><span id="t-doneCnt">0</span><span style="font-size:15px;color:var(--muted3);"> / 10</span></div>
+        <div style="font-size:26px;font-weight:900;color:var(--accent-ink);line-height:1;"><span id="t-doneCnt">0</span><span style="font-size:15px;color:var(--muted3);"> / <span id="t-totalCnt">0</span></span></div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px;">tâches non négociables aujourd'hui</div>
         <div class="streak-row"><div class="streak-badge"><span>🔥</span><span id="t-streakVal">0</span> jour<span id="t-streakPl"></span> de suite</div></div>
       </div>
@@ -3094,10 +3094,13 @@ function renderTask(id){
 function updateTaskProgress(){
   const done = taskDoneCount(taskState);
   document.getElementById('t-doneCnt').textContent = done;
-  const pct = Math.round((done / T_TOTAL) * 100);
+  /* le total suit la liste des tâches, il n'est écrit en dur nulle part */
+  const totalEl = document.getElementById('t-totalCnt');
+  if(totalEl) totalEl.textContent = T_TOTAL;
+  const pct = T_TOTAL ? Math.round((done / T_TOTAL) * 100) : 0;
   document.getElementById('t-ringPct').textContent = pct + '%';
   const circ = 220;
-  document.getElementById('t-ringFill').style.strokeDashoffset = circ - (circ * done / T_TOTAL);
+  document.getElementById('t-ringFill').style.strokeDashoffset = T_TOTAL ? circ - (circ * done / T_TOTAL) : circ;
   const streak = parseInt(loadKey(TK_STREAK) || '0');
   document.getElementById('t-streakVal').textContent = streak;
   document.getElementById('t-streakPl').textContent = streak > 1 ? 's' : '';
