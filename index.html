@@ -1280,31 +1280,9 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <div class="section">
     <div class="section-header"><span class="section-icon">⚡</span><span class="section-title">Journée</span><span class="section-time">07:15 – 18:00</span></div>
-    <div class="task" id="t4" onclick="toggleTask('t4')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">👟 Resell chaussures — Photos, annonces, messages</div><div class="task-sub">Revente active, chaque message compte</div></div>
-        <div class="expand-btn" id="e-t4" onclick="expandHow(event,'h-t4','e-t4')">▼</div></div>
-      <div class="how-to" id="h-t4"><div class="how-to-inner"><strong>Comment faire :</strong> Actualise les photos si besoin (fond clair, lumière naturelle, dessus + côté + semelle + boîte). Réponds à tous les messages en moins de 2h. Relance toute annonce inactive depuis 3+ jours, ajuste le prix si ça stagne. Mets à jour ton tableau de vente (prix, marge, cash cumulé).</div></div>
-    </div>
-    <div class="task" id="t5" onclick="toggleTask('t5')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💼 KFC — Ponctuel, fiable, irréprochable</div><div class="task-sub">Poser les bases du CDI par ton attitude quotidienne</div></div>
-        <div class="expand-btn" id="e-t5" onclick="expandHow(event,'h-t5','e-t5')">▼</div></div>
-      <div class="how-to" id="h-t5"><div class="how-to-inner"><strong>Comment faire :</strong> Arrive en avance, uniforme impeccable, attitude pro. Aucune excuse, aucun retard. Rends service sans qu'on te le demande. Chaque shift est une audition pour ton CDI — le socle financier de tout le plan.</div></div>
-    </div>
-    <div class="task" id="t6" onclick="toggleTask('t6')">
-      <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">🎥 1 vidéo du plan 30 jours</div><div class="task-sub">Mindset & productivité — alimenter la vision</div></div>
-        <div class="expand-btn" id="e-t6" onclick="expandHow(event,'h-t6','e-t6')">▼</div></div>
-      <div class="how-to" id="h-t6"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Plan 30j, regarde la vidéo du jour en entier, stylo en main. Note une idée qui t'a marqué. Ne mets pas en accéléré — c'est ton entraînement mental du jour.</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><span class="section-icon">🌙</span><span class="section-title">Soir</span><span class="section-time">19:00 – 21:30</span></div>
     <div class="task" id="t7" onclick="toggleTask('t7')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
-        <div class="task-body"><div class="task-name">💎 Session bijoux — Apprentissage & vision marque</div><div class="task-sub">Pinterest · Instagram · branding · lexique</div></div>
+        <div class="task-body"><div class="task-name">💎 Session bijoux — Apprentissage &amp; vision marque</div><div class="task-sub">Pinterest · Instagram · branding · lexique</div></div>
         <div class="expand-btn" id="e-t7" onclick="expandHow(event,'h-t7','e-t7')">▼</div></div>
       <div class="how-to" id="h-t7"><div class="how-to-inner"><strong>Comment faire :</strong> 20-30 min. Étudie avec ton contact bijoux ou en solo : comment identifier un bijou, marges, fournisseurs. Analyse 2-3 bijoux en vente (prix, état, vitesse de vente). Note du nouveau vocabulaire (argent 925, plaqué or, poinçons...) dans ton Carnet de bord. Explore Pinterest/Instagram pour ton branding, pose-toi 1 question (nom de marque ? client idéal ?).</div></div>
     </div>
@@ -1312,8 +1290,12 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
         <div class="task-body"><div class="task-name">💰 Mettre à jour le compteur cash</div><div class="task-sub">Mes sources → progression réelle vers l'objectif</div></div>
         <div class="expand-btn" id="e-t8" onclick="expandHow(event,'h-t8','e-t8')">▼</div></div>
-      <div class="how-to" id="h-t8"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Objectif, regarde le solde exact de ta pocket Revolut dédiée et mets-le à jour. C'est ton score du jour — chaque euro compte. Clarté des chiffres = clarté de la trajectoire.</div></div>
+      <div class="how-to" id="h-t8"><div class="how-to-inner"><strong>Comment faire :</strong> Ouvre l'onglet Objectif et mets à jour chacune de tes sources d'argent. C'est ton score du jour — chaque euro compte. Clarté des chiffres = clarté de la trajectoire.</div></div>
     </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><span class="section-icon">🌙</span><span class="section-title">Soir</span><span class="section-time">19:00 – 21:30</span></div>
     <div class="task" id="t9" onclick="toggleTask('t9')">
       <div class="task-top"><div class="checkbox"><span class="checkmark">✓</span></div>
         <div class="task-body"><div class="task-name">📌 Écrire mes 3 priorités du lendemain</div><div class="task-sub">Clarifier la journée suivante avant de dormir</div></div>
@@ -2683,7 +2665,7 @@ const VIEW_LABELS = {
   sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
 };
 const NAV_PEEKS = {
-  tasks:     ['Déclaration Hill','💪 45 pompes','📖 Lire 10 pages','🛵 Uber Eats','💰 Compteur cash'],
+  tasks:     ['Déclaration Hill','💪 45 pompes','📖 Lire 10 pages','💎 Session bijoux','💰 Compteur cash'],
   habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
   capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
   tracker:   ['📊 Monthly grid','🔥 Streaks per habit','📈 Momentum'],
@@ -2977,7 +2959,16 @@ function showSubtab(group, tab){
 }
 
 /* ============ TASKS ============ */
-const T_TOTAL = 11;
+/* Liste des tâches du jour, dans l'ordre d'affichage. Les identifiants ne sont
+   volontairement pas contigus : t4 (resell chaussures), t5 (KFC) et t6 (vidéo
+   du plan 30 jours) ont été retirés, et on garde les identifiants d'origine
+   des autres pour ne pas invalider l'historique déjà enregistré par id.
+   C'est cette liste qui fait foi — jamais une plage t1..tN. */
+const TASK_IDS = ['t11','t1','t2','t3','t7','t8','t9','t10'];
+const T_TOTAL = TASK_IDS.length;
+/* On ne compte que les tâches encore existantes : un ancien t4 coché dans un
+   état sauvegardé ne doit pas faire dépasser le total. */
+function taskDoneCount(st){ return st ? TASK_IDS.filter(id => st[id]).length : 0; }
 const TK_STATE='tasks_state', TK_DATE='tasks_date', TK_STREAK='tasks_streak', TK_LASTOK='tasks_lastok';
 const TK_STATE_PREFIX='tasks_state_';
 function yesterdayISO(){ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0'); }
@@ -2991,7 +2982,7 @@ function loadTaskState(){
     const existing = loadKey(TK_STATE_PREFIX + oldDate);
     if((!existing || existing === '{}') && oldState !== '{}') saveKey(TK_STATE_PREFIX + oldDate, oldState);
     const oldObj = JSON.parse(oldState);
-    const oldDone = Object.keys(oldObj).filter(k=>oldObj[k]).length === T_TOTAL;
+    const oldDone = taskDoneCount(oldObj) === T_TOTAL;
     let streak = parseInt(loadKey(TK_STREAK) || '0');
     if(oldDate === yesterdayISO() && oldDone){ saveKey(TK_LASTOK, yesterdayISO()); }
     else if(oldDate < yesterdayISO()){ streak = 0; saveKey(TK_STREAK, String(streak)); }
@@ -3002,7 +2993,7 @@ function loadTaskState(){
 }
 function saveTaskState(s){
   saveKey(TK_STATE_PREFIX + taskRefDate, JSON.stringify(s));
-  const done = Object.keys(s).filter(k=>s[k]).length;
+  const done = taskDoneCount(s);
   if(done === T_TOTAL){
     const lastOk = loadKey(TK_LASTOK);
     if(lastOk !== taskRefDate){
@@ -3017,7 +3008,7 @@ function toggleTask(id){
   renderTask(id);
   updateTaskProgress();
   saveTaskState(taskState);
-  const done = Object.keys(taskState).filter(k=>taskState[k]).length;
+  const done = taskDoneCount(taskState);
   if(done === T_TOTAL) showToast('🔥 Journée parfaite — '+T_TOTAL+'/'+T_TOTAL+' accompli !');
   if(taskState[id]) addXp('task-'+id, 10); else removeXp('task-'+id);
   checkQuests();
@@ -3028,7 +3019,7 @@ function renderTask(id){
   el.classList.toggle('done', !!taskState[id]);
 }
 function updateTaskProgress(){
-  const done = Object.keys(taskState).filter(k=>taskState[k]).length;
+  const done = taskDoneCount(taskState);
   document.getElementById('t-doneCnt').textContent = done;
   const pct = Math.round((done / T_TOTAL) * 100);
   document.getElementById('t-ringPct').textContent = pct + '%';
@@ -3051,7 +3042,7 @@ function resetTasksDay(){
   taskRefDate = todayISO();
   taskState = {};
   saveKey(TK_STATE_PREFIX + taskRefDate, '{}');
-  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  TASK_IDS.forEach(id => renderTask(id));
   updateTaskProgress();
   initTaskNightBanner();
 }
@@ -4045,7 +4036,7 @@ function initTaskNightBanner(){
 function setTaskRefDate(date){
   taskRefDate = date;
   taskState = JSON.parse(loadKey(TK_STATE_PREFIX + date) || '{}');
-  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  TASK_IDS.forEach(id => renderTask(id));
   updateTaskProgress();
   initTaskNightBanner();
 }
@@ -5762,7 +5753,7 @@ function initApp(){
   ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
   // tasks
   taskState = loadTaskState();
-  for(let i=1;i<=T_TOTAL;i++) renderTask('t'+i);
+  TASK_IDS.forEach(id => renderTask(id));
   updateTaskProgress();
   initTaskNightBanner();
   // nav tree
