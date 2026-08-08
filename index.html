@@ -1385,18 +1385,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   <!-- HILL -->
   <div class="subpanel" id="goal-panel-hill">
     <div id="goal-decl-wrap"></div>
-    <div class="card-title">📋 Les 7 règles Hill adaptées à ta situation <div class="line"></div></div>
-    <div class="card rule-card">
-      <ul class="c-tasks">
-        <li><span class="t-ico">1️⃣</span><div class="t-txt"><strong>Désir brûlant</strong><span class="detail">Tes 2 000 € ne sont pas un vœu — c'est une date, un montant, un plan. Ressens-le comme si c'était déjà fait.</span></div></li>
-        <li><span class="t-ico">2️⃣</span><div class="t-txt"><strong>Foi totale</strong><span class="detail">Tu ne « testes » pas — tu construis. La marque existe déjà dans ta tête. Agis en conséquence chaque jour.</span></div></li>
-        <li><span class="t-ico">3️⃣</span><div class="t-txt"><strong>Autosuggestion quotidienne</strong><span class="detail">Déclaration matin + soir, à voix haute, avec émotion forte.</span></div></li>
-        <li><span class="t-ico">4️⃣</span><div class="t-txt"><strong>Connaissances spécialisées</strong><span class="detail">Ton contact bijoux est ton Maître-Cerveau du domaine. Chaque session = un actif pour ton futur business.</span></div></li>
-        <li><span class="t-ico">5️⃣</span><div class="t-txt"><strong>Plan organisé et exécuté</strong><span class="detail">3 priorités écrites chaque soir. Le lendemain tu sais exactement quoi faire. Fini le flou du matin.</span></div></li>
-        <li><span class="t-ico">6️⃣</span><div class="t-txt"><strong>Décision rapide</strong><span class="detail">Prix de vente, réponse acheteur, action du jour : décide vite, ajuste ensuite.</span></div></li>
-        <li><span class="t-ico">7️⃣</span><div class="t-txt"><strong>Persistance absolue</strong><span class="detail">Un jour sans vente n'est pas un échec — c'est un jour de plus dans le processus. Agir quand même.</span></div></li>
-      </ul>
-    </div>
+    <div id="goal-rules-wrap"></div>
   </div>
 
 </div>
@@ -3464,6 +3453,38 @@ function glRenderDecl(){
   const ta = document.getElementById('gl-decl-ta'); if(ta) glAutoGrow(ta);
 }
 
+/* Les 7 principes de Hill sont fixes, mais leur formulation est réécrite à
+   partir de l'objectif en cours : montant, échéance, projet et sources.
+   Elles suivent donc la déclaration au lieu de rester sur l'ancien objectif. */
+function glRules(){
+  const g = glCurrent || {};
+  const amt  = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : 'ton montant';
+  const date = g.deadline ? glDateFR(g.deadline) : 'ta date limite';
+  const but  = g.why || g.title || 'ton projet';
+  const srcs = (g.sources||[]).map(s=>s.label).filter(Boolean);
+  const via  = srcs.length ? srcs.join(', ') : 'tes sources de revenus';
+  return [
+    ['Désir brûlant',              `${amt} n'est pas un vœu : c'est un montant, une date (${date}) et un plan. Ressens-le comme si c'était déjà fait.`],
+    ['Foi totale',                 `Tu ne « testes » pas, tu construis. Ton but — ${but} — existe déjà dans ta tête. Agis en conséquence chaque jour.`],
+    ['Autosuggestion quotidienne', `Ta déclaration à voix haute, matin et soir, avec émotion forte. C'est elle qui grave ${amt} dans ton subconscient.`],
+    ['Connaissances spécialisées', `Progresse chaque jour sur ton sujet : ${but}. Chaque session est un actif, jamais du temps perdu.`],
+    ['Plan organisé et exécuté',   `Écris tes 3 priorités chaque soir. Le lendemain tu sais exactement quoi faire — fini le flou du matin.`],
+    ['Décision rapide',            `Prix, réponse, action du jour : décide vite et ajuste ensuite. L'indécision coûte plus cher que l'erreur.`],
+    ['Persistance absolue',        `Un jour sans rentrée sur ${via} n'est pas un échec, c'est un jour de plus dans le processus. Agir quand même.`]
+  ];
+}
+function glRenderRules(){
+  if(!glCurrent) return;
+  const w = document.getElementById('goal-rules-wrap'); if(!w) return;
+  const num = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣'];
+  w.innerHTML = `<div class="card-title">📋 Les 7 règles Hill adaptées à ton objectif <div class="line"></div></div>
+  <div class="card rule-card"><ul class="c-tasks">${
+    glRules().map(([titre, detail], i) =>
+      `<li><span class="t-ico">${num[i]}</span><div class="t-txt"><strong>${glEsc(titre)}</strong><span class="detail">${glEsc(detail)}</span></div></li>`
+    ).join('')
+  }</ul></div>`;
+}
+
 function glRenderHistory(){
   const w = document.getElementById('goal-history-wrap'); if(!w) return;
   if(!glHistory.length){
@@ -3518,7 +3539,7 @@ function glRenderTaskEchoes(){
 }
 
 function glRenderAll(){
-  glRenderHero(); glRenderActive(); glRenderDecl(); glRenderHistory(); glRenderTaskEchoes();
+  glRenderHero(); glRenderActive(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
   if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
 
