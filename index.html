@@ -632,6 +632,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-hist-toggle{font-size:10px;font-weight:600;color:var(--muted2);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-top:7px;letter-spacing:.3px;}
 .gl-hist-toggle:hover{color:var(--text);}
 .gl-empty{font-size:11.5px;color:var(--muted2);font-style:italic;text-align:center;padding:22px 10px;line-height:1.6;}
+.gl-warn{background:rgba(var(--warn-rgb),0.1);border:1px solid rgba(var(--warn-rgb),0.35);border-radius:11px;padding:11px 14px;margin-bottom:8px;font-size:11.5px;color:var(--warn2);line-height:1.6;}
 
 /* Tâches modifiables */
 .tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
@@ -3440,6 +3441,10 @@ function glRenderDecl(){
          <div class="hf-note">Lire à voix haute, avec émotion intense. L'émotion est le catalyseur qui grave ça dans le subconscient.</div>`
       : `<div class="gl-empty">Pas encore de déclaration pour cet objectif.<br>Écris-la ci-dessous, ou génère un brouillon à partir de tes paramètres.</div>`}
   </div>
+  ${(()=>{ const e = glDeclMismatch(); return e ? `<div class="gl-warn">
+      ⚠️ Ta déclaration ne dit pas la même chose que ton objectif : ${e.map(x=>glEsc(x)).join(' · ')}.<br>
+      Les règles, la progression et le compte à rebours suivent l'objectif. Corrige le montant ou la date dans l'onglet Cash, ou régénère le brouillon ci-dessous.
+    </div>` : ''; })()}
   <div class="card">
     <div class="card-title">✍️ Écrire ma déclaration <div class="line"></div></div>
     <div class="gl-field">
@@ -3473,6 +3478,34 @@ function glRules(){
     ['Persistance absolue',        `Un jour sans rentrée sur ${via} n'est pas un échec, c'est un jour de plus dans le processus. Agir quand même.`]
   ];
 }
+/* Les règles, la progression et le compte à rebours lisent les CHAMPS de
+   l'objectif, jamais le texte libre de la déclaration. Si tu écris un autre
+   montant ou une autre année dans ta prose, rien ne peut le deviner — on te
+   le signale plutôt que de laisser les deux diverger en silence. */
+function glDeclMismatch(){
+  const g = glCurrent;
+  if(!g || !g.declaration) return null;
+  const txt = g.declaration, ecarts = [];
+  const amt = parseFloat(g.amount) || 0;
+  if(amt > 0){
+    const m = txt.match(/(\d[\d\s  .]*)\s*€/);
+    if(m){
+      const n = parseFloat(m[1].replace(/[\s  .]/g, ''));
+      if(n && Math.round(n) !== Math.round(amt)){
+        ecarts.push(`le montant — ${glFmt(n)} € dans le texte, ${glFmt(amt)} € dans l'objectif`);
+      }
+    }
+  }
+  if(g.deadline){
+    const an = parseInt(g.deadline.slice(0,4), 10);
+    const annees = (txt.match(/\b(20\d{2})\b/g) || []).map(Number);
+    if(annees.length && annees.indexOf(an) === -1){
+      ecarts.push(`l'année — ${annees[0]} dans le texte, ${an} dans l'objectif`);
+    }
+  }
+  return ecarts.length ? ecarts : null;
+}
+
 function glRenderRules(){
   if(!glCurrent) return;
   const w = document.getElementById('goal-rules-wrap'); if(!w) return;
