@@ -639,6 +639,44 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-tag-perso{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);vertical-align:middle;}
 @media (max-width:899px){ .gl-rule-edit{opacity:1;} }
 
+/* ===== NOTE À MOI-MÊME ===== */
+.nm-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap;}
+.nm-back{background:none;border:1px solid var(--border2);color:var(--muted2);border-radius:9px;padding:7px 13px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.nm-back:hover{color:var(--text);border-color:var(--accent);}
+.nm-badge{font-size:11px;font-weight:800;letter-spacing:1px;padding:5px 11px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);font-family:'Space Mono',monospace;}
+.nm-status{margin-left:auto;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:11px;padding:6px 9px;font-family:inherit;cursor:pointer;}
+.nm-field{margin-bottom:11px;}
+.nm-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.nm-field textarea,.nm-field input{width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:13px;padding:10px 12px;font-family:inherit;line-height:1.6;resize:none;overflow:hidden;overflow-wrap:break-word;}
+.nm-fixe{font-size:13px;color:var(--muted2);font-style:italic;line-height:1.6;padding:9px 12px;margin-bottom:10px;border-left:2px solid var(--border2);background:rgba(var(--ink),0.03);border-radius:0 8px 8px 0;overflow-wrap:break-word;}
+.nm-hint{font-size:10.5px;color:var(--muted3);line-height:1.55;margin-top:4px;}
+.nm-duree{font-size:8.5px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;background:rgba(var(--ink),0.07);color:var(--muted2);margin-left:7px;white-space:nowrap;}
+.nm-bloc{border-left:2px solid rgba(var(--accent-rgb),0.35);}
+.nm-switch{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);cursor:pointer;margin-bottom:9px;}
+.nm-switch input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+.nm-reserve-btn{background:none;border:1px dashed var(--border2);color:var(--muted2);border-radius:9px;padding:8px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;margin-bottom:10px;}
+.nm-reserve-btn:hover{color:var(--text);border-color:var(--accent);}
+.nm-reserve{display:flex;flex-direction:column;gap:6px;margin-bottom:11px;}
+.nm-reserve-item{text-align:left;background:rgba(var(--ink),0.04);border:0.5px solid rgba(var(--ink),0.1);border-radius:9px;padding:9px 11px;font-size:11.5px;color:var(--text-dim);line-height:1.5;cursor:pointer;font-family:inherit;}
+.nm-reserve-item:hover{color:var(--text);border-color:var(--accent);}
+.nm-row{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:11px 13px;margin-bottom:7px;cursor:pointer;}
+.nm-row:hover{border-color:var(--accent);}
+.nm-row-num{font-family:'Space Mono',monospace;font-size:17px;font-weight:700;color:var(--accent-ink);min-width:34px;text-align:center;flex-shrink:0;}
+.nm-row-body{flex:1;min-width:0;}
+.nm-row-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;overflow-wrap:break-word;}
+.nm-row-meta{font-size:10px;color:var(--muted2);margin-top:3px;}
+.nm-row-del{background:none;border:none;color:var(--muted3);font-size:13px;cursor:pointer;padding:0 3px;flex-shrink:0;}
+.nm-row-del:hover{color:var(--accent);}
+/* Vue tournage */
+#nm-tele{position:fixed;inset:0;z-index:2500;background:var(--bg);overflow-y:auto;padding:64px 24px 80px;display:none;}
+#nm-tele.open{display:block;}
+.nm-tele-close{position:fixed;top:16px;right:18px;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;z-index:2;}
+#nm-tele-body{max-width:820px;margin:0 auto;}
+.nm-tele-num{font-family:'Space Mono',monospace;font-size:14px;letter-spacing:2px;color:var(--accent-ink);margin-bottom:22px;text-align:center;}
+.nm-tele-line{font-size:29px;line-height:1.55;color:var(--text);margin-bottom:26px;overflow-wrap:break-word;}
+.nm-tele-line.fixe{color:var(--muted2);font-style:italic;}
+@media (max-width:899px){ .nm-tele-line{font-size:23px;} #nm-tele{padding:60px 18px 70px;} }
+
 /* Tâches modifiables */
 .tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
 .task:hover .tk-edit{opacity:1;}
@@ -1072,6 +1110,12 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- LOGIN FLASH -->
 <div id="login-flash"></div>
+
+<!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
+<div id="nm-tele">
+  <button class="nm-tele-close" onclick="nmTelepromptClose()">✕ Fermer</button>
+  <div id="nm-tele-body"></div>
+</div>
 
 <!-- ============ AUTH OVERLAY ============ -->
 <div class="auth-overlay" id="auth-overlay">
@@ -1841,6 +1885,12 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   <div class="bij-tabs">
     <button class="bij-tab active" id="captab-daily" onclick="switchCapTab('daily')">🎥 Quotidien</button>
     <button class="bij-tab" id="captab-scripts" onclick="switchCapTab('scripts')">🎬 Scripts</button>
+    <button class="bij-tab" id="captab-notes" onclick="switchCapTab('notes')">📓 Note à moi-même</button>
+  </div>
+
+  <!-- NOTE À MOI-MÊME : 3 questions puis le script du jour -->
+  <div class="pane" id="cap-notes-section" style="display:none;">
+    <div id="nm-wrap"></div>
   </div>
 
   <!-- QUOTIDIEN -->
@@ -5827,11 +5877,240 @@ function initCapture(){
   initScripts();
 }
 function switchCapTab(tab){
-  document.getElementById('cap-daily-section').style.display = tab==='daily' ? '' : 'none';
-  document.getElementById('cap-scripts-section').style.display = tab==='scripts' ? '' : 'none';
-  document.getElementById('captab-daily').classList.toggle('active', tab==='daily');
-  document.getElementById('captab-scripts').classList.toggle('active', tab==='scripts');
+  ['daily','scripts','notes'].forEach(k=>{
+    const pane = document.getElementById(k==='daily'?'cap-daily-section':k==='scripts'?'cap-scripts-section':'cap-notes-section');
+    if(pane) pane.style.display = tab===k ? '' : 'none';
+    const btn = document.getElementById('captab-'+k);
+    if(btn) btn.classList.toggle('active', tab===k);
+  });
   if(tab==='scripts'){ scrCloseEditor(); renderScrList(); }
+  if(tab==='notes'){ nmRender(); }
+}
+
+/* ===== NOTE À MOI-MÊME — script vidéo quotidien =====
+   Le principe : on ne remplit pas le script en premier. On vide sa journée en
+   trois questions, puis le script se pré-remplit à partir des réponses.
+   Les phrases entre guillemets sont fixes : elles ne sont ni modifiables ni
+   stockées, elles servent de repères à lire pendant le tournage. */
+const NM_STATUS = [
+  { k:'brouillon', l:'Brouillon', e:'📝' },
+  { k:'tournee',   l:'Tournée',   e:'🎬' },
+  { k:'publiee',   l:'Publiée',   e:'🚀' }
+];
+/* Notes de réserve, pour les jours où la question 3 ne donne rien. */
+const NM_RESERVE = [
+  "Ce que j'ai cru faire gagner du temps aujourd'hui, et qui m'en a coûté.",
+  "La tâche que je repousse depuis plusieurs jours — et ce que ça dit.",
+  "Une chose que je croyais compliquée et qui a pris dix minutes.",
+  "Le moment où j'ai voulu abandonner aujourd'hui, et ce qui m'a fait continuer.",
+  "Ce que j'aurais dit à quelqu'un qui débute, en une phrase.",
+  "La différence entre ce que j'avais prévu ce matin et ce que j'ai vraiment fait.",
+  "Un détail que personne ne verra dans la vidéo mais qui a tout changé."
+];
+let nmNotes = [];
+let nmView = 'list';     /* 'list' | 'capture' | 'script' */
+let nmCurrent = null;
+let nmReserveOpen = false;
+
+function nmLoad(){
+  try { nmNotes = JSON.parse(loadKey('notes_mm') || '[]') || []; } catch(e){ nmNotes = []; }
+}
+function nmSave(){ saveKey('notes_mm', JSON.stringify(nmNotes)); }
+function nmGet(id){ return nmNotes.find(n => n.id === id); }
+function nmCur(){ return nmGet(nmCurrent); }
+function nmNextNum(){ return nmNotes.reduce((m,n)=>Math.max(m, n.num||0), 0) + 1; }
+function nmPrefix(num){ return 'Note à moi-même #' + num + ' — '; }
+function nmLaunchUsed(){ return nmNotes.some(n => n.launch); }
+function nmStatus(k){ return NM_STATUS.find(s=>s.k===k) || NM_STATUS[0]; }
+
+function nmNew(){
+  const num = nmNextNum();
+  nmNotes.unshift({
+    id: 'nm' + Date.now().toString(36), num, date: todayISO(), status: 'brouillon',
+    title: nmPrefix(num), q1:'', q2:'', q3:'',
+    hook:'', thing1:'', thing2:'', thing3:'', block:'',
+    note:'', source:'', application:'', broll:"j'écris la note dans le carnet",
+    launch:false, launchText:'', generated:false
+  });
+  nmCurrent = nmNotes[0].id; nmView = 'capture';
+  nmSave(); nmRender();
+}
+function nmOpen(id){
+  const n = nmGet(id); if(!n) return;
+  nmCurrent = id; nmView = n.generated ? 'script' : 'capture';
+  nmRender();
+}
+function nmBack(){ nmView = 'list'; nmCurrent = null; nmReserveOpen = false; nmRender(); }
+function nmSet(field, val){
+  const n = nmCur(); if(!n) return;
+  n[field] = val; nmSave();
+  /* on ne redessine pas : cela ferait perdre le curseur pendant la saisie */
+}
+function nmSetAndRender(field, val){ nmSet(field, val); nmRender(); }
+function nmDelete(id){
+  const n = nmGet(id); if(!n) return;
+  if(!confirm('Supprimer la note n°' + n.num + ' ?\n\nLes numéros des autres notes ne changent pas.')) return;
+  nmNotes = nmNotes.filter(x => x.id !== id);
+  if(nmCurrent === id) nmBack(); else nmRender();
+  nmSave(); showToast('🗑 Note supprimée');
+}
+/* Cœur de l'outil : les réponses aux questions 2 et 3 alimentent le script. */
+function nmGenerate(){
+  const n = nmCur(); if(!n) return;
+  if(!String(n.block||'').trim() && n.q2) n.block = n.q2;
+  if(!String(n.note||'').trim()  && n.q3) n.note  = n.q3;
+  n.generated = true; nmView = 'script';
+  nmSave(); nmRender();
+  showToast('📓 Script pré-rempli depuis tes réponses');
+}
+function nmToggleReserve(){ nmReserveOpen = !nmReserveOpen; nmRender(); }
+function nmUseReserve(i){
+  const n = nmCur(); if(!n) return;
+  n.note = NM_RESERVE[i]; nmReserveOpen = false;
+  nmSave(); nmRender();
+}
+
+/* Texte complet, phrases fixes et champs enchaînés, pour la vue tournage. */
+function nmFullScript(n){
+  const l = [];
+  l.push(['fixe', 'Note à moi-même, numéro ' + n.num + '.']);
+  if(n.hook) l.push(['champ', n.hook]);
+  l.push(['fixe', 'Restez jusqu’à la fin, c’est là que j’écris la note.']);
+  [n.thing1, n.thing2, n.thing3].forEach(t => { if(t) l.push(['champ', t]); });
+  if(n.block) l.push(['champ', n.block]);
+  if(n.launch && n.launchText) l.push(['champ', n.launchText]);
+  l.push(['fixe', 'Avant de vous laisser — note à moi-même, numéro ' + n.num + '.']);
+  if(n.note) l.push(['champ', n.note]);
+  if(n.source) l.push(['champ', n.source]);
+  if(n.application) l.push(['champ', n.application]);
+  l.push(['fixe', 'Voilà. Si ça vous sert à vous aussi, tant mieux. À demain.']);
+  return l;
+}
+function nmTeleprompt(id){
+  const n = nmGet(id) || nmCur(); if(!n) return;
+  const ov = document.getElementById('nm-tele');
+  document.getElementById('nm-tele-body').innerHTML =
+    `<div class="nm-tele-num">n°${n.num}</div>` +
+    nmFullScript(n).map(([t,txt]) =>
+      `<p class="nm-tele-line ${t==='fixe'?'fixe':''}">${glEsc(txt)}</p>`).join('');
+  ov.classList.add('open');
+}
+function nmTelepromptClose(){ document.getElementById('nm-tele').classList.remove('open'); }
+
+/* ---- rendu ---- */
+function nmChamp(label, field, val, ph, rows){
+  return `<div class="nm-field">
+    <label>${glEsc(label)}</label>
+    <textarea rows="${rows||2}" placeholder="${glEsc(ph||'')}" oninput="glAutoGrow(this);nmSet('${field}',this.value)">${glEsc(val||'')}</textarea>
+  </div>`;
+}
+function nmFixe(txt){ return `<p class="nm-fixe">« ${glEsc(txt)} »</p>`; }
+function nmHint(txt){ return `<p class="nm-hint">${glEsc(txt)}</p>`; }
+
+function nmRenderList(){
+  const parNum = [...nmNotes].sort((a,b)=>b.num-a.num);
+  return `<button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="nmNew()">+ Nouvelle note à moi-même</button>
+  ${parNum.length ? parNum.map(n=>{
+    const s = nmStatus(n.status);
+    const titre = String(n.title||'').replace(nmPrefix(n.num),'').trim();
+    return `<div class="nm-row" onclick="nmOpen('${n.id}')">
+      <div class="nm-row-num">${n.num}</div>
+      <div class="nm-row-body">
+        <div class="nm-row-title">${glEsc(titre || n.hook || 'Sans titre')}</div>
+        <div class="nm-row-meta">${glDateFR(n.date)} · ${s.e} ${s.l}</div>
+      </div>
+      <button class="nm-row-del" onclick="event.stopPropagation();nmDelete('${n.id}')" title="Supprimer">🗑</button>
+    </div>`;
+  }).join('') : '<div class="gl-empty">Aucune note pour le moment.<br>La première portera le n°1.</div>'}`;
+}
+
+function nmRenderCapture(n){
+  return `<div class="nm-head">
+      <button class="nm-back" onclick="nmBack()">← Historique</button>
+      <span class="nm-badge">n°${n.num}</span>
+    </div>
+    <div class="card">
+      <div class="card-title">📓 Vider ma journée <div class="line"></div></div>
+      <p class="nm-hint">Trois questions, en vrac. Le script se remplira ensuite tout seul à partir de tes réponses.</p>
+      ${nmChamp("Qu'est-ce que j'ai fait aujourd'hui ?", 'q1', n.q1, 'en vrac, sans trier, sans faire de phrases.', 4)}
+      ${nmChamp("Qu'est-ce qui n'a pas marché, ou qu'est-ce que je ne sais pas encore ?", 'q2', n.q2, 'le truc, c’est que… / ce que je ne sais pas encore, c’est…', 3)}
+      ${nmChamp("Qu'est-ce que j'ai compris que je ne savais pas hier ?", 'q3', n.q3, 'ça n’a pas besoin d’être une grande leçon.', 3)}
+      <button class="btn-primary" style="width:100%;margin-top:6px;" onclick="nmGenerate()">Générer le script →</button>
+    </div>`;
+}
+
+function nmRenderScript(n){
+  const s = nmStatus(n.status);
+  const lancement = n.launch || !nmLaunchUsed();
+  return `<div class="nm-head">
+      <button class="nm-back" onclick="nmBack()">← Historique</button>
+      <span class="nm-badge">n°${n.num}</span>
+      <select class="nm-status" onchange="nmSetAndRender('status',this.value)">
+        ${NM_STATUS.map(x=>`<option value="${x.k}"${x.k===n.status?' selected':''}>${x.e} ${x.l}</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="nm-field"><label>Titre de la vidéo</label>
+        <input id="nm-title" value="${glEsc(n.title)}" oninput="nmSet('title',this.value)"></div>
+      <div class="gl-actions">
+        <button class="gl-btn primary" onclick="nmTeleprompt('${n.id}')">🎬 Vue tournage</button>
+        <button class="gl-btn" onclick="nmView='capture';nmRender()">← Revoir mes 3 réponses</button>
+      </div>
+    </div>
+
+    <div class="card nm-bloc">
+      <div class="card-title">🎯 Accroche <span class="nm-duree">15 sec</span><div class="line"></div></div>
+      ${nmFixe('Note à moi-même, numéro ' + n.num + '.')}
+      ${nmChamp('Le truc le plus fort de la journée, en une phrase', 'hook', n.hook, '', 2)}
+      ${nmFixe('Restez jusqu’à la fin, c’est là que j’écris la note.')}
+      ${nmHint('Pas de « salut à tous, bienvenue sur ma chaîne » — on rentre direct.')}
+    </div>
+
+    <div class="card nm-bloc">
+      <div class="card-title">📅 La journée <span class="nm-duree">3 à 5 min</span><div class="line"></div></div>
+      ${nmChamp('Chose 1', 'thing1', n.thing1, '', 2)}
+      ${nmChamp('Chose 2', 'thing2', n.thing2, '', 2)}
+      ${nmChamp('Chose 3 (facultatif)', 'thing3', n.thing3, '', 2)}
+      ${nmChamp('Le blocage du jour', 'block', n.block, 'repris de ta réponse à la question 2', 3)}
+      ${nmHint('Pour chaque chose : ce que j’ai fait → ce qui s’est passé. Le blocage est obligatoire.')}
+    </div>
+
+    ${lancement ? `<div class="card nm-bloc">
+      <div class="card-title">🚀 Vidéo de lancement <div class="line"></div></div>
+      <label class="nm-switch"><input type="checkbox" ${n.launch?'checked':''} onchange="nmSetAndRender('launch',this.checked)"> Insérer le bloc « j'explique le concept »</label>
+      ${n.launch ? nmChamp('Le concept, expliqué une bonne fois', 'launchText', n.launchText, 'pourquoi je documente, une vidéo par jour, et ce que ça donnera', 4) : ''}
+      ${nmHint(nmLaunchUsed() && !n.launch ? 'Déjà utilisé sur une autre note.' : 'À n’utiliser que pour la toute première vidéo. Ensuite l’option disparaît.')}
+    </div>` : ''}
+
+    <div class="card nm-bloc">
+      <div class="card-title">📓 La note <span class="nm-duree">60 à 90 sec</span><div class="line"></div></div>
+      ${nmFixe('Avant de vous laisser — note à moi-même, numéro ' + n.num + '.')}
+      ${nmChamp('La note, en une phrase', 'note', n.note, 'reprise de ta réponse à la question 3', 2)}
+      <button class="nm-reserve-btn" onclick="nmToggleReserve()">💡 Je sèche — voir les notes de réserve</button>
+      ${nmReserveOpen ? `<div class="nm-reserve">${NM_RESERVE.map((r,i)=>
+        `<button class="nm-reserve-item" onclick="nmUseReserve(${i})">${glEsc(r)}</button>`).join('')}</div>` : ''}
+      ${nmChamp("D'où ça sort (le fait concret d'aujourd'hui)", 'source', n.source, '', 2)}
+      ${nmChamp('Pour toi qui regardes — une seule application', 'application', n.application, '', 2)}
+      ${nmChamp('B-roll / notes de tournage', 'broll', n.broll, '', 2)}
+    </div>
+
+    <div class="card nm-bloc">
+      <div class="card-title">🏁 Fermeture <span class="nm-duree">5 sec</span><div class="line"></div></div>
+      ${nmFixe('Voilà. Si ça vous sert à vous aussi, tant mieux. À demain.')}
+      ${nmHint('Rien après. Pas d’outro.')}
+    </div>`;
+}
+
+function nmRender(){
+  const w = document.getElementById('nm-wrap'); if(!w) return;
+  if(!nmNotes.length && nmView !== 'list' ) nmView = 'list';
+  const n = nmCur();
+  if(nmView === 'list' || !n) w.innerHTML = nmRenderList();
+  else if(nmView === 'capture') w.innerHTML = nmRenderCapture(n);
+  else w.innerHTML = nmRenderScript(n);
+  w.querySelectorAll('textarea').forEach(glAutoGrow);
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
 
 /* ===== CONSTRUCTEUR DE SCRIPTS ===== */
@@ -5960,6 +6239,7 @@ function initApp(){
   ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
   // tasks
   tasksLoad();
+  nmLoad();
   taskState = loadTaskState();
   renderTasks();
   updateTaskProgress();
