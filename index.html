@@ -633,6 +633,11 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-hist-toggle:hover{color:var(--text);}
 .gl-empty{font-size:11.5px;color:var(--muted2);font-style:italic;text-align:center;padding:22px 10px;line-height:1.6;}
 .gl-warn{background:rgba(var(--warn-rgb),0.1);border:1px solid rgba(var(--warn-rgb),0.35);border-radius:11px;padding:11px 14px;margin-bottom:8px;font-size:11.5px;color:var(--warn2);line-height:1.6;}
+.gl-rule-edit{background:none;border:none;color:var(--muted3);font-size:11px;cursor:pointer;padding:0 3px;line-height:1;flex-shrink:0;align-self:flex-start;opacity:0;transition:opacity .15s,color .15s;}
+.rule-card li:hover .gl-rule-edit{opacity:1;}
+.gl-rule-edit:hover{color:var(--accent-ink);}
+.gl-tag-perso{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);vertical-align:middle;}
+@media (max-width:899px){ .gl-rule-edit{opacity:1;} }
 
 /* Tâches modifiables */
 .tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
@@ -3256,15 +3261,34 @@ function glReopen(id){
 }
 
 /* ---- déclaration ---- */
-function glSuggestDecl(){
+/* Aligne les champs de l'objectif sur ce qui est écrit dans la déclaration.
+   L'inverse de « régénérer » : ici c'est le texte qui a raison. */
+function glAlignFromDecl(){
+  const g = glCurrent;
+  if(!g || !g.declaration) return;
+  const m = g.declaration.match(/(\d[\d\s  .]*)\s*€/);
+  if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,'')); if(n) g.amount = n; }
+  const annees = (g.declaration.match(/\b(20\d{2})\b/g) || []).map(Number);
+  if(annees.length){
+    g.deadline = g.deadline ? String(annees[0]) + g.deadline.slice(4) : annees[0] + '-12-31';
+  }
+  glSave(); glRenderAll();
+  showToast('✅ Objectif aligné sur ta déclaration');
+}
+/* Réécrit la déclaration à partir des champs et l'enregistre directement. */
+function glRegenDecl(){
+  glCurrent.declaration = glDraftDecl();
+  glSave(); glRenderAll();
+  showToast('✨ Déclaration régénérée depuis ton objectif');
+}
+function glDraftDecl(){
   const g = glCurrent;
   const amt = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : '[montant]';
   const date = g.deadline ? glDateFR(g.deadline) : '[date]';
   const srcs = (g.sources||[]).map(s=>s.label).filter(Boolean);
   const via = srcs.length ? srcs.join(', ') : '[mes sources de revenus]';
   const but = g.why || g.title || '[mon projet]';
-  const txt =
-`« Je réunis ${amt} d'ici le ${date}.
+  return `« Je réunis ${amt} d'ici le ${date}.
 
 En échange, je m'engage à donner le meilleur de moi-même sur ${via}, chaque jour, sans exception.
 
@@ -3272,8 +3296,11 @@ Cet argent est le carburant de ${but}.
 
 La date est fixée, le montant est réel, je crois profondément en ma capacité à l'atteindre.
 Je le vois, je le ressens — c'est déjà en route. »`;
+}
+/* Remplit le champ sans enregistrer : le brouillon reste à personnaliser. */
+function glSuggestDecl(){
   const ta = document.getElementById('gl-decl-ta');
-  if(ta){ ta.value = txt; glAutoGrow(ta); }
+  if(ta){ ta.value = glDraftDecl(); glAutoGrow(ta); }
   showToast('✨ Brouillon généré — à toi de le personnaliser');
 }
 function glSaveDecl(){
@@ -3443,7 +3470,11 @@ function glRenderDecl(){
   </div>
   ${(()=>{ const e = glDeclMismatch(); return e ? `<div class="gl-warn">
       ⚠️ Ta déclaration ne dit pas la même chose que ton objectif : ${e.map(x=>glEsc(x)).join(' · ')}.<br>
-      Les règles, la progression et le compte à rebours suivent l'objectif. Corrige le montant ou la date dans l'onglet Cash, ou régénère le brouillon ci-dessous.
+      Les règles, la progression et le compte à rebours suivent l'objectif. Choisis lequel des deux a raison :
+      <div class="gl-actions">
+        <button class="gl-btn primary" onclick="glAlignFromDecl()">📥 Mon texte a raison — aligner l'objectif</button>
+        <button class="gl-btn" onclick="glRegenDecl()">♻️ Mon objectif a raison — réécrire la déclaration</button>
+      </div>
     </div>` : ''; })()}
   <div class="card">
     <div class="card-title">✍️ Écrire ma déclaration <div class="line"></div></div>
@@ -3461,7 +3492,34 @@ function glRenderDecl(){
 /* Les 7 principes de Hill sont fixes, mais leur formulation est réécrite à
    partir de l'objectif en cours : montant, échéance, projet et sources.
    Elles suivent donc la déclaration au lieu de rester sur l'ancien objectif. */
+let glRuleEditing = null;   /* index de la règle en cours de modification */
+
+/* Une règle réécrite à la main cesse de se régénérer — sinon la prochaine
+   modification de l'objectif effacerait ton texte. Le bouton ↺ la remet en
+   automatique. */
 function glRules(){
+  const ov = (glCurrent && glCurrent.rulesOverride) || {};
+  return glRulesAuto().map((r,i) => ov[i] ? [r[0], ov[i], true] : [r[0], r[1], false]);
+}
+function glRuleEdit(i){ glRuleEditing = i; glRenderRules(); }
+function glRuleCancel(){ glRuleEditing = null; glRenderRules(); }
+function glRuleSave(){
+  const ta = document.getElementById('gl-rule-ta'); if(!ta) return;
+  const txt = ta.value.trim();
+  glCurrent.rulesOverride = glCurrent.rulesOverride || {};
+  if(txt) glCurrent.rulesOverride[glRuleEditing] = txt;
+  else delete glCurrent.rulesOverride[glRuleEditing];
+  glRuleEditing = null;
+  glSave(); glRenderRules();
+  showToast('✅ Règle modifiée');
+}
+function glRuleReset(i){
+  if(glCurrent.rulesOverride) delete glCurrent.rulesOverride[i];
+  glRuleEditing = null;
+  glSave(); glRenderRules();
+  showToast('↺ Règle remise en automatique');
+}
+function glRulesAuto(){
   const g = glCurrent || {};
   const amt  = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : 'ton montant';
   const date = g.deadline ? glDateFR(g.deadline) : 'ta date limite';
@@ -3512,10 +3570,29 @@ function glRenderRules(){
   const num = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣'];
   w.innerHTML = `<div class="card-title">📋 Les 7 règles Hill adaptées à ton objectif <div class="line"></div></div>
   <div class="card rule-card"><ul class="c-tasks">${
-    glRules().map(([titre, detail], i) =>
-      `<li><span class="t-ico">${num[i]}</span><div class="t-txt"><strong>${glEsc(titre)}</strong><span class="detail">${glEsc(detail)}</span></div></li>`
-    ).join('')
-  }</ul></div>`;
+    glRules().map(([titre, detail, perso], i) => {
+      if(glRuleEditing === i){
+        return `<li><span class="t-ico">${num[i]}</span><div class="t-txt" style="flex:1;">
+          <strong>${glEsc(titre)}</strong>
+          <div class="gl-field" style="margin-top:6px;">
+            <textarea id="gl-rule-ta" oninput="glAutoGrow(this)" placeholder="Laisse vide pour revenir au texte automatique">${glEsc(detail)}</textarea>
+          </div>
+          <div class="gl-actions">
+            <button class="gl-btn primary" onclick="glRuleSave()">✓ Enregistrer</button>
+            ${perso?`<button class="gl-btn" onclick="glRuleReset(${i})">↺ Texte automatique</button>`:''}
+            <button class="gl-btn" onclick="glRuleCancel()">Annuler</button>
+          </div></div></li>`;
+      }
+      return `<li><span class="t-ico">${num[i]}</span><div class="t-txt" style="flex:1;">
+        <strong>${glEsc(titre)}${perso?' <span class="gl-tag-perso">modifiée</span>':''}</strong>
+        <span class="detail">${glEsc(detail)}</span></div>
+        <button class="gl-rule-edit" onclick="glRuleEdit(${i})" title="Modifier cette règle">✏️</button></li>`;
+    }).join('')
+  }</ul>
+  <div style="font-size:10px;color:var(--muted2);line-height:1.5;margin-top:9px;">
+    Les règles se réécrivent seules quand tu changes ton objectif. Celles que tu modifies à la main gardent ton texte — le bouton ↺ les remet en automatique.
+  </div></div>`;
+  const ta = document.getElementById('gl-rule-ta'); if(ta) glAutoGrow(ta);
 }
 
 function glRenderHistory(){
