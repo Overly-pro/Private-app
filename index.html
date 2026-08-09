@@ -5925,18 +5925,26 @@ function switchCapTab(tab){
 }
 
 /* ===== INTENDANCE — répartition de ce que je génère =====
-   Le net entré est découpé en cinq parts égales d'un cinquième :
-   trois cinquièmes mis à part (charité, personnes dans le besoin,
-   réinvestissement dans le business), un cinquième épargné, un cinquième
-   pour les dépenses personnelles. Les trois premières sont des versements
-   à effectuer, on suit donc ce qui reste à verser. */
+   80 % du net sortent intégralement, en trois tiers égaux : charité,
+   personnes dans le besoin, réinvestissement dans le business. Les 20 %
+   restants sont gardés, moitié épargne pour les imprévus, moitié dépenses
+   personnelles. Les trois premiers postes sont des versements à effectuer :
+   on suit donc ce qui reste à verser sur chacun.
+   Un tiers de 80 tombe en décimales infinies, d'où la tolérance sur le
+   total plutôt qu'une égalité stricte à 100. */
+const INT_TIERS = 80 / 3;
 const INT_DEFAULTS = [
-  { key:'charite',  emoji:'🤲', label:'Charité',                pct:20, verse:true  },
-  { key:'besoin',   emoji:'🫶', label:'Personnes dans le besoin', pct:20, verse:true  },
-  { key:'business', emoji:'🏗️', label:'Business',               pct:20, verse:true  },
-  { key:'epargne',  emoji:'🏦', label:'Épargne',                 pct:20, verse:false },
-  { key:'perso',    emoji:'🧾', label:'Dépenses personnelles',   pct:20, verse:false }
+  { key:'charite',  emoji:'🤲', label:'Charité',                  pct:INT_TIERS, verse:true  },
+  { key:'besoin',   emoji:'🫶', label:'Personnes dans le besoin', pct:INT_TIERS, verse:true  },
+  { key:'business', emoji:'🏗️', label:'Business',                 pct:INT_TIERS, verse:true  },
+  { key:'epargne',  emoji:'🏦', label:'Épargne',                  pct:10, verse:false },
+  { key:'perso',    emoji:'🧾', label:'Dépenses personnelles',    pct:10, verse:false }
 ];
+/* 26.666666… ne doit pas s'afficher tel quel */
+function intPctLabel(p){
+  const n = Math.round((parseFloat(p)||0) * 100) / 100;
+  return n.toLocaleString('fr-FR', { maximumFractionDigits:2 }) + '%';
+}
 let intRules = [];
 let intEntries = [];
 let intFoldOpen = false;
@@ -6010,7 +6018,7 @@ function intPreview(){
   box.innerHTML = intRules.map(r=>
     `<div class="int-line"><span class="int-ic">${r.emoji}</span>
       <span class="int-lbl">${glEsc(r.label)}</span>
-      <span class="int-pct">${r.pct}%</span>
+      <span class="int-pct">${intPctLabel(r.pct)}</span>
       <span class="int-val">${intEur(intPart(net, r))}</span></div>`).join('');
 }
 
@@ -6036,7 +6044,7 @@ function intRender(){
     <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="intAdd()">Enregistrer cette répartition</button>
   </div>
 
-  ${somme !== 100 ? `<div class="gl-warn">⚠️ Tes parts totalisent ${somme}% au lieu de 100%. Le calcul reste proportionnel, mais ${somme>100?'tu attribues plus que ce que tu génères':'une partie de ton net n\'est attribuée à rien'}.</div>` : ''}
+  ${Math.abs(somme - 100) > 0.05 ? `<div class="gl-warn">⚠️ Tes parts totalisent ${intPctLabel(somme)} au lieu de 100%. Le calcul reste proportionnel, mais ${somme>100?'tu attribues plus que ce que tu génères':'une partie de ton net n\'est attribuée à rien'}.</div>` : ''}
 
   <div class="card">
     <div class="card-title">📊 Depuis le début <div class="line"></div><span class="mono" style="color:var(--accent-ink);font-weight:700;">${intEur(t.net)}</span></div>
@@ -6044,12 +6052,12 @@ function intRender(){
       <div class="int-total">
         <div class="int-total-top">
           <span class="int-ic">${r.emoji}</span>
-          <span class="int-lbl">${glEsc(r.label)} <span class="int-pct">${r.pct}%</span></span>
+          <span class="int-lbl">${glEsc(r.label)} <span class="int-pct">${intPctLabel(r.pct)}</span></span>
           <span class="int-val">${intEur(t.parts[r.key])}</span>
         </div>
         ${r.verse ? `<div class="int-sub">Versé ${intEur(t.verse[r.key])} · <b class="${t.reste[r.key] > 0.005 ? 'int-du' : 'int-ok'}">${t.reste[r.key] > 0.005 ? 'reste à verser ' + intEur(t.reste[r.key]) : 'tout est versé'}</b></div>` : ''}
       </div>`).join('')}
-    <p class="nm-hint" style="margin-top:8px;">Mis à part : ${misDePart}% de chaque entrée. Gardé : ${100-misDePart}%.</p>
+    <p class="nm-hint" style="margin-top:8px;">Versé dehors : ${intPctLabel(misDePart)} de chaque entrée. Gardé : ${intPctLabel(100-misDePart)}.</p>
   </div>
 
   <div class="gl-fold${intFoldOpen?' open':''}">
@@ -6058,9 +6066,9 @@ function intRender(){
       ${intRules.map(r=>`<div class="int-rule">
         <span class="int-ic">${r.emoji}</span>
         <span class="int-lbl">${glEsc(r.label)}</span>
-        <input type="number" step="any" value="${r.pct}" onchange="intSetPct('${r.key}',this.value)"><span class="int-pcts">%</span>
+        <input type="number" step="any" value="${Math.round(r.pct*100)/100}" onchange="intSetPct('${r.key}',this.value)"><span class="int-pcts">%</span>
       </div>`).join('')}
-      <div class="int-somme ${somme===100?'ok':'ko'}">Total : ${somme}%</div>
+      <div class="int-somme ${Math.abs(somme-100)<=0.05?'ok':'ko'}">Total : ${intPctLabel(somme)}</div>
       <div class="gl-actions"><button class="gl-btn" onclick="intResetRules()">↺ Répartition par défaut</button></div>
     </div>
   </div>
