@@ -639,6 +639,36 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-tag-perso{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);vertical-align:middle;}
 @media (max-width:899px){ .gl-rule-edit{opacity:1;} }
 
+/* ===== INTENDANCE ===== */
+.int-preview{margin-top:6px;border-top:1px solid var(--border);padding-top:8px;}
+.int-line{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--border);}
+.int-line:last-child{border-bottom:none;}
+.int-line.clic{cursor:pointer;}
+.int-line.clic:hover .int-lbl{color:var(--text);}
+.int-ic{font-size:14px;flex-shrink:0;width:20px;text-align:center;}
+.int-lbl{flex:1;min-width:0;color:var(--text-dim);overflow-wrap:break-word;}
+.int-pct{font-size:9.5px;color:var(--muted2);font-family:'Space Mono',monospace;}
+.int-val{font-family:'Space Mono',monospace;font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;flex-shrink:0;}
+.int-check{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--field-border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--on-accent);}
+.int-check.on{background:var(--ok);border-color:var(--ok);}
+.int-check.ghost{border-color:transparent;}
+.int-total{padding:9px 0;border-bottom:1px solid var(--border);}
+.int-total:last-of-type{border-bottom:none;}
+.int-total-top{display:flex;align-items:center;gap:9px;}
+.int-sub{font-size:10px;color:var(--muted2);margin-top:3px;margin-left:29px;}
+.int-du{color:var(--accent-ink);}
+.int-ok{color:var(--ok);}
+.int-rule{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.int-rule input{width:78px;flex-shrink:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:7px 9px;font-family:inherit;text-align:right;}
+.int-pcts{font-size:11px;color:var(--muted2);}
+.int-somme{font-size:11.5px;font-weight:700;text-align:right;padding:8px 0;font-family:'Space Mono',monospace;}
+.int-somme.ok{color:var(--ok);}
+.int-somme.ko{color:var(--accent-ink);}
+.int-entry{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+.int-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:5px;}
+.int-entry-net{font-size:17px;font-weight:900;color:var(--accent-ink);font-family:'Space Mono',monospace;}
+.int-entry-meta{font-size:10px;color:var(--muted2);margin-top:2px;overflow-wrap:break-word;}
+
 /* ===== NOTE À MOI-MÊME ===== */
 .nm-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap;}
 .nm-back{background:none;border:1px solid var(--border2);color:var(--muted2);border-radius:9px;padding:7px 13px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;}
@@ -1438,6 +1468,12 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="goal-rules-wrap"></div>
   </div>
 
+</div>
+
+<!-- ============ VIEW: INTENDANCE ============ -->
+<div class="view" id="view-intendance">
+  <img class="view-banner" id="banner-intendance" alt="">
+  <div id="int-wrap"></div>
 </div>
 
 <!-- ============ VIEW: SALAIRES ============ -->
@@ -2614,6 +2650,7 @@ function showSV(groupId, svId){
   content.querySelectorAll('.subview').forEach(sv=>sv.classList.remove('active'));
   const target = document.getElementById('sv-'+svId);
   if(target) target.classList.add('active');
+  if(svId === 'intendance' && typeof intRender === 'function') intRender();
   document.querySelectorAll('#'+groupId+'-tabs .group-tab').forEach(btn=>{
     btn.classList.toggle('active', btn.dataset.sv===svId);
   });
@@ -2621,7 +2658,7 @@ function showSV(groupId, svId){
 
 /* ============ VUES GROUPÉES ============ */
 const GROUPS = {
-  finance: { tabs:[{id:'salaires',label:'💶 Salaires'},{id:'ventes',label:'🛍️ Ventes'}] },
+  finance: { tabs:[{id:'intendance',label:'🙏 Intendance'},{id:'salaires',label:'💶 Salaires'},{id:'ventes',label:'🛍️ Ventes'}] },
   objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] }
   // routine retiré — habitudes et planning sont des vues autonomes
 };
@@ -5887,6 +5924,170 @@ function switchCapTab(tab){
   if(tab==='notes'){ nmRender(); }
 }
 
+/* ===== INTENDANCE — répartition de ce que je génère =====
+   Le net entré est découpé en cinq parts égales d'un cinquième :
+   trois cinquièmes mis à part (charité, personnes dans le besoin,
+   réinvestissement dans le business), un cinquième épargné, un cinquième
+   pour les dépenses personnelles. Les trois premières sont des versements
+   à effectuer, on suit donc ce qui reste à verser. */
+const INT_DEFAULTS = [
+  { key:'charite',  emoji:'🤲', label:'Charité',                pct:20, verse:true  },
+  { key:'besoin',   emoji:'🫶', label:'Personnes dans le besoin', pct:20, verse:true  },
+  { key:'business', emoji:'🏗️', label:'Business',               pct:20, verse:true  },
+  { key:'epargne',  emoji:'🏦', label:'Épargne',                 pct:20, verse:false },
+  { key:'perso',    emoji:'🧾', label:'Dépenses personnelles',   pct:20, verse:false }
+];
+let intRules = [];
+let intEntries = [];
+let intFoldOpen = false;
+
+function intLoad(){
+  try {
+    const d = JSON.parse(loadKey('intendance') || 'null');
+    intRules   = (d && Array.isArray(d.rules)   && d.rules.length) ? d.rules   : INT_DEFAULTS.map(r=>({...r}));
+    intEntries = (d && Array.isArray(d.entries)) ? d.entries : [];
+  } catch(e){ intRules = INT_DEFAULTS.map(r=>({...r})); intEntries = []; }
+}
+function intSave(){ saveKey('intendance', JSON.stringify({ rules:intRules, entries:intEntries })); }
+function intPctTotal(){ return intRules.reduce((s,r)=>s+(parseFloat(r.pct)||0), 0); }
+function intPart(net, r){ return (parseFloat(net)||0) * (parseFloat(r.pct)||0) / 100; }
+function intEur(n){ return (Math.round((parseFloat(n)||0)*100)/100).toLocaleString('fr-FR',{minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
+
+/* Cumuls sur toutes les entrées : ce qui a été attribué, versé, et ce qui reste dû. */
+function intTotals(){
+  const t = { net:0, parts:{}, verse:{}, reste:{} };
+  intRules.forEach(r=>{ t.parts[r.key]=0; t.verse[r.key]=0; t.reste[r.key]=0; });
+  intEntries.forEach(e=>{
+    t.net += parseFloat(e.net)||0;
+    intRules.forEach(r=>{
+      const p = intPart(e.net, r);
+      t.parts[r.key] += p;
+      if(r.verse && e.done && e.done[r.key]) t.verse[r.key] += p;
+    });
+  });
+  intRules.forEach(r=>{ t.reste[r.key] = t.parts[r.key] - t.verse[r.key]; });
+  return t;
+}
+function intAdd(){
+  const net = parseFloat(document.getElementById('int-net').value) || 0;
+  if(net <= 0){ showToast('Indique le montant net généré'); return; }
+  const label = document.getElementById('int-label').value.trim();
+  const date  = document.getElementById('int-date').value || todayISO();
+  intEntries.unshift({ id:'i'+Date.now().toString(36), date, label, net, done:{} });
+  document.getElementById('int-net').value = '';
+  document.getElementById('int-label').value = '';
+  intSave(); intRender();
+  showToast('✅ ' + intEur(net) + ' réparti');
+}
+function intDel(id){
+  const e = intEntries.find(x=>x.id===id); if(!e) return;
+  if(!confirm('Supprimer cette entrée de ' + intEur(e.net) + ' ?')) return;
+  intEntries = intEntries.filter(x=>x.id!==id);
+  intSave(); intRender();
+}
+function intToggleDone(id, key){
+  const e = intEntries.find(x=>x.id===id); if(!e) return;
+  e.done = e.done || {};
+  e.done[key] = !e.done[key];
+  intSave(); intRender();
+}
+function intSetPct(key, val){
+  const r = intRules.find(x=>x.key===key); if(!r) return;
+  r.pct = parseFloat(val)||0;
+  intSave(); intRender();
+}
+function intResetRules(){
+  if(!confirm('Revenir à la répartition par défaut ?\n\nTrois cinquièmes mis à part, un cinquième épargné, un cinquième personnel.')) return;
+  intRules = INT_DEFAULTS.map(r=>({...r}));
+  intSave(); intRender();
+  showToast('↺ Répartition par défaut');
+}
+function intToggleFold(){ intFoldOpen = !intFoldOpen; intRender(); }
+function intPreview(){
+  const net = parseFloat(document.getElementById('int-net').value) || 0;
+  const box = document.getElementById('int-preview');
+  if(!box) return;
+  box.innerHTML = intRules.map(r=>
+    `<div class="int-line"><span class="int-ic">${r.emoji}</span>
+      <span class="int-lbl">${glEsc(r.label)}</span>
+      <span class="int-pct">${r.pct}%</span>
+      <span class="int-val">${intEur(intPart(net, r))}</span></div>`).join('');
+}
+
+function intRender(){
+  const w = document.getElementById('int-wrap'); if(!w) return;
+  const t = intTotals();
+  const somme = intPctTotal();
+  const misDePart = intRules.filter(r=>r.verse).reduce((s,r)=>s+(parseFloat(r.pct)||0),0);
+
+  w.innerHTML = `
+  <div class="card">
+    <div class="card-title">🙏 Répartir ce que j'ai généré <div class="line"></div></div>
+    <p class="nm-hint">Entre le montant <b>net</b>. La répartition se calcule aussitôt.</p>
+    <div class="gl-grid2">
+      <div class="nm-field"><label>Net généré (€)</label>
+        <input id="int-net" type="number" step="any" placeholder="0" oninput="intPreview()"></div>
+      <div class="nm-field"><label>Date</label>
+        <input id="int-date" type="date" value="${todayISO()}"></div>
+    </div>
+    <div class="nm-field"><label>D'où ça vient (facultatif)</label>
+      <input id="int-label" placeholder="Ex : livraisons de la semaine"></div>
+    <div id="int-preview" class="int-preview"></div>
+    <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="intAdd()">Enregistrer cette répartition</button>
+  </div>
+
+  ${somme !== 100 ? `<div class="gl-warn">⚠️ Tes parts totalisent ${somme}% au lieu de 100%. Le calcul reste proportionnel, mais ${somme>100?'tu attribues plus que ce que tu génères':'une partie de ton net n\'est attribuée à rien'}.</div>` : ''}
+
+  <div class="card">
+    <div class="card-title">📊 Depuis le début <div class="line"></div><span class="mono" style="color:var(--accent-ink);font-weight:700;">${intEur(t.net)}</span></div>
+    ${intRules.map(r=>`
+      <div class="int-total">
+        <div class="int-total-top">
+          <span class="int-ic">${r.emoji}</span>
+          <span class="int-lbl">${glEsc(r.label)} <span class="int-pct">${r.pct}%</span></span>
+          <span class="int-val">${intEur(t.parts[r.key])}</span>
+        </div>
+        ${r.verse ? `<div class="int-sub">Versé ${intEur(t.verse[r.key])} · <b class="${t.reste[r.key] > 0.005 ? 'int-du' : 'int-ok'}">${t.reste[r.key] > 0.005 ? 'reste à verser ' + intEur(t.reste[r.key]) : 'tout est versé'}</b></div>` : ''}
+      </div>`).join('')}
+    <p class="nm-hint" style="margin-top:8px;">Mis à part : ${misDePart}% de chaque entrée. Gardé : ${100-misDePart}%.</p>
+  </div>
+
+  <div class="gl-fold${intFoldOpen?' open':''}">
+    <button class="gl-fold-head" onclick="intToggleFold()">⚙️ Régler les parts<span class="gl-fold-chev">▼</span></button>
+    <div class="gl-fold-body">
+      ${intRules.map(r=>`<div class="int-rule">
+        <span class="int-ic">${r.emoji}</span>
+        <span class="int-lbl">${glEsc(r.label)}</span>
+        <input type="number" step="any" value="${r.pct}" onchange="intSetPct('${r.key}',this.value)"><span class="int-pcts">%</span>
+      </div>`).join('')}
+      <div class="int-somme ${somme===100?'ok':'ko'}">Total : ${somme}%</div>
+      <div class="gl-actions"><button class="gl-btn" onclick="intResetRules()">↺ Répartition par défaut</button></div>
+    </div>
+  </div>
+
+  <div class="card-title">🧾 Historique <div class="line"></div></div>
+  ${intEntries.length ? intEntries.map(e=>`
+    <div class="int-entry">
+      <div class="int-entry-top">
+        <div>
+          <div class="int-entry-net">${intEur(e.net)}</div>
+          <div class="int-entry-meta">${glDateFR(e.date)}${e.label?' · '+glEsc(e.label):''}</div>
+        </div>
+        <button class="nm-row-del" onclick="intDel('${e.id}')" title="Supprimer">🗑</button>
+      </div>
+      ${intRules.map(r=>`<div class="int-line${r.verse?' clic':''}"${r.verse?` onclick="intToggleDone('${e.id}','${r.key}')"`:''}>
+        ${r.verse?`<span class="int-check${(e.done&&e.done[r.key])?' on':''}">${(e.done&&e.done[r.key])?'✓':''}</span>`:'<span class="int-check ghost"></span>'}
+        <span class="int-ic">${r.emoji}</span>
+        <span class="int-lbl">${glEsc(r.label)}</span>
+        <span class="int-val">${intEur(intPart(e.net, r))}</span>
+      </div>`).join('')}
+    </div>`).join('')
+  : '<div class="gl-empty">Aucune entrée pour le moment.<br>Ajoute ton premier net généré ci-dessus.</div>'}`;
+
+  intPreview();
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
+
 /* ===== NOTE À MOI-MÊME — script vidéo quotidien =====
    Le principe : on ne remplit pas le script en premier. On vide sa journée en
    trois questions, puis le script se pré-remplit à partir des réponses.
@@ -6240,6 +6441,7 @@ function initApp(){
   // tasks
   tasksLoad();
   nmLoad();
+  intLoad(); intRender();
   taskState = loadTaskState();
   renderTasks();
   updateTaskProgress();
