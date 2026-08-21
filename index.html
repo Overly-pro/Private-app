@@ -118,7 +118,7 @@ html.theme-light{
 *{box-sizing:border-box;margin:0;padding:0;}
 /* Largeurs de la navigation de gauche. Sur mobile la colonne des sous-vues
    se pose par-dessus le contenu, donc seul le rail décale la page. */
-:root{ --rail-w:68px; --subs-w:206px; }
+:root{ --rail-w:68px; --subs-w:238px; --thread-w:46px; }
 body{
   font-family:'Cinzel Decorative','Georgia',serif;
   background:var(--bg); color:var(--text);
@@ -475,8 +475,10 @@ body{ background:var(--bg); }
 .nav-cat.st-active-cat::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);
   width:3px;height:24px;border-radius:0 3px 3px 0;background:var(--accent);
   box-shadow:0 0 8px rgba(var(--accent-rgb),0.7);}
+/* La marge à gauche n'est pas décorative : c'est le couloir dans lequel le
+   fil rouge se déploie. Trop étroit, la courbe s'écrase contre le rail. */
 .nav-subs{width:var(--subs-w);flex-shrink:0;display:flex;flex-direction:column;gap:9px;
-  padding:16px 13px 20px;overflow-y:auto;border-left:0.5px solid rgba(var(--ink),0.05);}
+  padding:16px 13px 20px var(--thread-w);overflow-y:auto;border-left:0.5px solid rgba(var(--ink),0.05);}
 .nav-subs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
   font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   padding-bottom:10px;border-bottom:0.5px solid rgba(var(--ink),0.06);}
@@ -874,7 +876,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
    et un peu plus large. Une seule valeur à régler : max-width ci-dessous. */
 @media (min-width:900px){
   /* Les deux colonnes de navigation restent dépliées en permanence */
-  :root{ --rail-w:80px; --subs-w:212px; }
+  :root{ --rail-w:80px; --subs-w:252px; --thread-w:52px; }
   body{align-items:flex-start;padding-left:calc(var(--rail-w) + var(--subs-w));}
   .app-shell{max-width:900px;width:100%;margin:0 auto;padding:14px 20px 40px;}
   .nav-cat{font-size:8.5px;}
@@ -2839,6 +2841,12 @@ function stRenderSubs(){
 
 function stDrawLines(){
   const svg = document.getElementById('st-svg');
+  /* Tant que le panneau mobile est replié, les sous-vues sont hors écran :
+     inutile de tracer, ce sera fait à l'ouverture. */
+  const navEl = document.getElementById('app-nav');
+  if(svg && navEl && window.innerWidth < 900 && !navEl.classList.contains('subs-open')){
+    svg.innerHTML = ''; return;
+  }
   /* le repère du tracé est la navigation entière : le fil part du rail
      et rejoint la colonne des sous-vues */
   const wrap = document.getElementById('app-nav');
@@ -2871,10 +2879,22 @@ function stDrawLines(){
 }
 
 /* Sur mobile uniquement : déplie la colonne des sous-vues par-dessus le contenu. */
+/* Rotation ou redimensionnement : les positions changent, on retrace. */
+window.addEventListener('resize', () => requestAnimationFrame(stDrawLines));
+
 function openNavTree(){
   document.getElementById('app-nav')?.classList.add('subs-open');
   document.getElementById('nav-tree-overlay')?.classList.add('open');
-  requestAnimationFrame(stDrawLines);
+  /* Le fil ne peut être tracé qu'une fois le panneau arrivé : dessiné pendant
+     le glissement, les sous-vues sont encore hors écran et la courbe part de
+     coordonnées négatives, d'où un fil écrasé contre le rail. */
+  const subs = document.getElementById('nav-subs');
+  if(subs){
+    const fini = e => { if(e.target !== subs) return;
+      subs.removeEventListener('transitionend', fini); stDrawLines(); };
+    subs.addEventListener('transitionend', fini);
+  }
+  setTimeout(stDrawLines, 340);   /* filet si la transition ne se déclenche pas */
 }
 function closeNavTree(){
   document.getElementById('app-nav')?.classList.remove('subs-open');
