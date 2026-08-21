@@ -116,15 +116,20 @@ html.theme-light{
   --brand-blend:multiply; --brandw-invert:1; --brandd-invert:0;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
+/* Largeurs de la navigation de gauche. Sur mobile la colonne des sous-vues
+   se pose par-dessus le contenu, donc seul le rail décale la page. */
+:root{ --rail-w:68px; --subs-w:206px; }
 body{
   font-family:'Cinzel Decorative','Georgia',serif;
   background:var(--bg); color:var(--text);
   min-height:100vh; margin:0; position:relative;
   display:flex; align-items:stretch;
+  padding-left:var(--rail-w);
 }
 .app-shell{
   flex:1; min-width:0; padding:8px 5px 22px; max-width:760px; margin:0 auto;
 }
+
 .mono{font-family:'Space Mono',monospace;}
 
 /* BRAND WATERMARK — multi-couches */
@@ -445,16 +450,62 @@ body{ background:var(--bg); }
 .snav-btn.active{background:rgba(var(--accent-rgb),0.12); border-color:var(--accent-ink); color:var(--accent-ink);}
 
 /* === NAV TREE === */
-.nav-pill{display:flex;align-items:center;gap:5px;background:rgba(var(--ink),0.07);border:0.5px solid rgba(var(--ink),0.16);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:500;letter-spacing:.3px;color:rgba(var(--ink),0.8);cursor:pointer;font-family:inherit;transition:background .15s;white-space:nowrap;}
-.nav-pill:active{background:rgba(var(--ink),0.13);}
-.nav-pill-led{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px rgba(var(--accent-rgb),0.9),0 0 10px rgba(var(--accent-rgb),0.4);flex-shrink:0;transition:box-shadow .3s;}
-.nav-pill-led.active{box-shadow:0 0 8px rgba(var(--accent-rgb),1),0 0 16px rgba(var(--accent-rgb),0.6);}
 
-.nav-tree-overlay{position:fixed;inset:0;z-index:300;background:var(--scrim);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .22s;}
+/* ===== NAVIGATION PERMANENTE (rail + sous-vues) =====
+   Le rail des catégories reste toujours visible, à gauche. Choisir une
+   catégorie déplie ses sous-vues dans la colonne voisine, reliées par le
+   fil rouge. Sur mobile cette colonne se pose par-dessus le contenu. */
+.app-nav{position:fixed;left:0;top:0;bottom:0;z-index:120;display:flex;
+  background:var(--panel-solid);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-right:0.5px solid rgba(var(--ink),0.08);}
+.nav-rail{width:var(--rail-w);flex-shrink:0;display:flex;flex-direction:column;gap:3px;
+  padding:12px 6px 18px;overflow-y:auto;scrollbar-width:none;}
+.nav-rail::-webkit-scrollbar{display:none;}
+.nav-logo{width:30px;height:auto;margin:0 auto 12px;display:block;cursor:pointer;
+  filter:invert(var(--brandw-invert));mix-blend-mode:var(--brand-blend);opacity:.95;}
+.nav-cat{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:9px 2px;border-radius:14px;border:0.5px solid transparent;background:none;
+  color:var(--muted2);font-family:inherit;font-size:8px;font-weight:700;letter-spacing:.2px;
+  cursor:pointer;transition:background .18s,color .18s,border-color .18s;text-align:center;}
+.nav-cat-ic{font-size:20px;line-height:1;}
+.nav-cat-lb{line-height:1.15;}
+.nav-cat:hover{background:rgba(var(--ink),0.06);color:var(--text);}
+.nav-cat.st-active-cat{background:rgba(var(--accent-rgb),0.12);border-color:rgba(var(--accent-rgb),0.32);color:var(--accent-ink);}
+/* la barre rouge de la catégorie active, comme un onglet sélectionné */
+.nav-cat.st-active-cat::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);
+  width:3px;height:24px;border-radius:0 3px 3px 0;background:var(--accent);
+  box-shadow:0 0 8px rgba(var(--accent-rgb),0.7);}
+.nav-subs{width:var(--subs-w);flex-shrink:0;display:flex;flex-direction:column;gap:9px;
+  padding:16px 13px 20px;overflow-y:auto;border-left:0.5px solid rgba(var(--ink),0.05);}
+.nav-subs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  padding-bottom:10px;border-bottom:0.5px solid rgba(var(--ink),0.06);}
+.nav-subs-close{display:none;}
+/* le fil rouge est tracé par-dessus les deux colonnes */
+.app-nav .st-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+
+/* Mobile : la colonne des sous-vues se pose par-dessus le contenu.
+   Ce bloc doit rester APRÈS les règles ci-dessus : à spécificité égale,
+   c'est la dernière déclaration qui gagne. */
+@media (max-width:899px){
+  /* Replié, le panneau doit sortir COMPLÈTEMENT de l'écran : sa largeur plus
+     celle du rail. Sinon, avec son z-index supérieur, il recouvre les boutons
+     du rail au lieu de disparaître derrière. */
+  .nav-subs{position:fixed;left:var(--rail-w);top:0;bottom:0;z-index:121;
+    transform:translateX(calc(-100% - var(--rail-w) - 6px));
+    transition:transform .26s cubic-bezier(0.32,0.72,0,1);
+    background:var(--panel-solid);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+    border-right:0.5px solid rgba(var(--ink),0.08);}
+  .app-nav.subs-open .nav-subs{transform:translateX(0);}
+  .nav-subs-close{display:block;}
+  /* le fil rouge n'a pas de sens tant que la colonne est repliée */
+  .app-nav .st-svg{display:none;}
+  .app-nav.subs-open .st-svg{display:block;width:calc(var(--rail-w) + var(--subs-w));}
+}
+
+.nav-tree-overlay{position:fixed;inset:0;z-index:110;background:var(--scrim);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .22s;}
 .nav-tree-overlay.open{display:block;opacity:1;}
 
-.nav-tree-panel{position:fixed;top:0;left:0;bottom:0;z-index:301;width:360px;max-width:92vw;background:var(--panel-solid);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-right:0.5px solid rgba(var(--ink),0.08);transform:translateX(-105%);transition:transform .28s cubic-bezier(0.32,0.72,0,1);}
-.nav-tree-panel.open{transform:translateX(0);}
 /* BIJOUX */
 .bij-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
 .bij-tab{padding:7px 11px;font-size:10px;font-weight:700;letter-spacing:.4px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
@@ -549,19 +600,11 @@ html.theme-light .man-stage{
 }
 
 /* ===== SKILL TREE NAV ===== */
-.st-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:0.5px solid rgba(var(--ink),0.06);}
-.st-body{display:flex;height:calc(100% - 65px);position:relative;overflow:hidden;}
-.st-col-l{width:140px;flex-shrink:0;padding:20px 0 20px 12px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
-.st-svg-wrap{width:72px;flex-shrink:0;position:relative;}
-.st-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-.st-col-r{flex:1;padding:20px 14px 20px 0;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+.st-col-r{display:flex;flex-direction:column;gap:9px;}
 /* Base node — bulle de verre, style glassmorphism */
 .st-node{display:block;width:100%;padding:12px 16px;border-radius:16px;border:0.5px solid rgba(var(--ink),0.18);background:rgba(var(--ink),0.06);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);box-shadow:inset 0 1px 0 rgba(var(--ink),0.12),var(--sh-soft);color:rgba(var(--ink),0.85);font-size:12px;font-weight:400;letter-spacing:.8px;cursor:pointer;transition:opacity .25s,border-color .2s,background .2s,color .2s,box-shadow .2s,transform .2s;text-align:left;font-family:'New Rocker',cursive;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .st-node:hover{border-color:rgba(var(--ink),0.32);background:rgba(var(--ink),0.1);color:var(--text-strong);transform:scale(1.02);}
 /* Quand une catégorie est active → toutes les autres s'estompent */
-.st-body.cat-active .st-col-l .st-node{opacity:.22;}
-.st-body.cat-active .st-col-l .st-node:hover{opacity:.65;}
-.st-body.cat-active .st-col-l .st-node.st-active-cat{opacity:1;border-color:rgba(var(--ink),0.4);background:rgba(var(--ink),0.12);color:var(--text-strong);box-shadow:inset 0 1px 0 rgba(var(--ink),0.2),var(--sh-mid);}
 /* Sous-nœuds droite */
 .st-col-r .st-node{border-color:rgba(var(--ink),0.16);color:rgba(var(--ink),0.8);}
 .st-col-r .st-node.st-active-sub{border-color:rgba(var(--accent-rgb),0.7);color:var(--on-tint);background:rgba(var(--accent-rgb),0.13);box-shadow:inset 0 1px 0 rgba(var(--ink),0.12),0 4px 18px rgba(var(--accent-rgb),0.2);}
@@ -830,8 +873,16 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
    la disposition du mobile — tout empilé, de haut en bas — simplement centrée
    et un peu plus large. Une seule valeur à régler : max-width ci-dessous. */
 @media (min-width:900px){
-  body{align-items:flex-start;}
+  /* Les deux colonnes de navigation restent dépliées en permanence */
+  :root{ --rail-w:80px; --subs-w:212px; }
+  body{align-items:flex-start;padding-left:calc(var(--rail-w) + var(--subs-w));}
   .app-shell{max-width:900px;width:100%;margin:0 auto;padding:14px 20px 40px;}
+  .nav-cat{font-size:8.5px;}
+}
+/* Très grand écran : on élargit un peu la colonne de lecture pour que la
+   page reste remplie une fois la navigation posée à gauche. */
+@media (min-width:1500px){
+  .app-shell{max-width:1100px;}
 
   /* Plus aucun multi-colonnes ni grille : tout reste en flux normal. */
   .view,.view-tabbed,.pane,.subpanel,.subview{column-width:auto;column-count:1;}
@@ -1185,10 +1236,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="lv-chip" id="lv-chip" onclick="goTo('home')">⚡ LV 1</button>
-    <button class="nav-pill" onclick="openNavTree()" aria-label="Navigation">
-      <div class="nav-pill-led" id="nav-pill-led"></div>
-      <span id="nav-pill-text">Nav</span>
-    </button>
     <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Changer de thème">🌙</button>
     <button class="logout-btn" onclick="authLogout()">↪</button>
   </div>
@@ -2457,34 +2504,33 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <div class="toast" id="toast"></div>
 
-<!-- NAV TREE OVERLAY -->
+<!-- Voile mobile : la colonne des sous-vues se referme en tapant à côté -->
 <div id="nav-tree-overlay" class="nav-tree-overlay" onclick="closeNavTree()"></div>
 
-<!-- NAV TREE PANEL -->
-<div id="nav-tree-panel" class="nav-tree-panel">
-  <div class="st-header">
-    <img src="brand/logo-mark-white.png" style="height:22px;width:auto;mix-blend-mode:screen;" alt="Overly">
-    <button class="st-close" onclick="closeNavTree()">✕</button>
+<!-- NAVIGATION PERMANENTE — rail des catégories + colonne des sous-vues -->
+<aside class="app-nav" id="app-nav">
+  <div class="nav-rail">
+    <img class="nav-logo" src="brand/logo-mark-white.png" alt="Overly" onclick="stSelectCat('home')">
+    <button class="nav-cat" id="stcat-home"   onclick="stSelectCat('home')"><span class="nav-cat-ic">🏠</span><span class="nav-cat-lb">Accueil</span></button>
+    <button class="nav-cat" id="stcat-today"  onclick="stSelectCat('today')"><span class="nav-cat-ic">⚡</span><span class="nav-cat-lb">Aujourd'hui</span></button>
+    <button class="nav-cat" id="stcat-argent" onclick="stSelectCat('argent')"><span class="nav-cat-ic">💰</span><span class="nav-cat-lb">Argent</span></button>
+    <button class="nav-cat" id="stcat-perso"  onclick="stSelectCat('perso')"><span class="nav-cat-ic">✨</span><span class="nav-cat-lb">Perso</span></button>
+    <button class="nav-cat" id="stcat-marque" onclick="stSelectCat('marque')"><span class="nav-cat-ic">💎</span><span class="nav-cat-lb">Marque</span></button>
+    <button class="nav-cat" id="stcat-style"  onclick="stSelectCat('style')"><span class="nav-cat-ic">🛍️</span><span class="nav-cat-lb">Style</span></button>
+    <button class="nav-cat" id="stcat-vie"    onclick="stSelectCat('vie')"><span class="nav-cat-ic">🌙</span><span class="nav-cat-lb">Vie</span></button>
   </div>
-  <div class="st-body">
-    <div class="st-col-l" id="st-col-l">
-      <button class="st-node st-home" id="stcat-home" onclick="stSelectCat('home')">🏠 Accueil</button>
-      <button class="st-node" id="stcat-today" onclick="stSelectCat('today')">⚡ Aujourd'hui</button>
-      <button class="st-node" id="stcat-argent" onclick="stSelectCat('argent')">💰 Argent</button>
-      <button class="st-node" id="stcat-perso" onclick="stSelectCat('perso')">✨ Perso</button>
-      <button class="st-node" id="stcat-marque" onclick="stSelectCat('marque')">💎 Marque</button>
-      <button class="st-node" id="stcat-style" onclick="stSelectCat('style')">🛍️ Style</button>
-      <button class="st-node" id="stcat-vie" onclick="stSelectCat('vie')">🌙 Vie</button>
-    </div>
-    <div class="st-svg-wrap" id="st-svg-wrap">
-      <svg class="st-svg" id="st-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="nav-subs" id="nav-subs">
+    <div class="nav-subs-head">
+      <span id="nav-subs-title">Navigation</span>
+      <button class="st-close nav-subs-close" onclick="closeNavTree()">✕</button>
     </div>
     <div class="st-col-r" id="st-col-r">
-      <span class="st-empty">← Choisis une catégorie</span>
+      <span class="st-empty">Choisis une catégorie à gauche</span>
     </div>
   </div>
-
-</div>
+  <!-- le fil rouge relie la catégorie active à ses sous-vues -->
+  <svg class="st-svg" id="st-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+</aside>
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
@@ -2748,26 +2794,43 @@ const ST_CATS = {
 };
 let stActiveCat = null;
 
-function stSelectCat(cat){
-  const def = ST_CATS[cat];
-  if(def && def.direct){ navSelectView(def.direct); return; }
-  stActiveCat = cat;
+/* Retrouve la catégorie qui contient une vue, sans dépendre des sections. */
+function stCatOfView(view){
+  if(view === 'home') return 'home';
+  return Object.keys(ST_CATS).find(k =>
+    (ST_CATS[k].views||[]).some(v => v.id === view)) || null;
+}
+function stHighlightCat(cat){
   Object.keys(ST_CATS).forEach(k=>{
     const btn = document.getElementById('stcat-'+k);
     if(btn) btn.classList.toggle('st-active-cat', k===cat);
   });
-  const body = document.getElementById('nav-tree-panel')?.querySelector('.st-body');
-  if(body) body.classList.add('cat-active');
+}
+function stSelectCat(cat){
+  const def = ST_CATS[cat];
+  stActiveCat = cat;
+  stHighlightCat(cat);
   stRenderSubs();
+  /* Une catégorie sans sous-vue mène directement à son écran. */
+  if(def && def.direct){ navSelectView(def.direct); return; }
+  /* Sur mobile la colonne se déplie par-dessus le contenu. */
+  if(window.innerWidth < 900) openNavTree();
 }
 
 function stRenderSubs(){
   const colR = document.getElementById('st-col-r');
   if(!colR) return;
-  const views = stActiveCat ? (ST_CATS[stActiveCat]||{}).views||[] : [];
+  const def = stActiveCat ? (ST_CATS[stActiveCat]||{}) : {};
+  const views = def.views || [];
+  const titre = document.getElementById('nav-subs-title');
+  if(titre) titre.textContent = stActiveCat ? def.label : 'Navigation';
   const curActive = document.querySelector('.view.active');
   const activeId = curActive ? curActive.id.replace('view-','') : '';
-  if(!views.length){ colR.innerHTML='<span class="st-empty">← Choisis une catégorie</span>'; stDrawLines(); return; }
+  if(!views.length){
+    colR.innerHTML = '<span class="st-empty">' +
+      (stActiveCat ? 'Cette catégorie mène droit à son écran.' : 'Choisis une catégorie à gauche') + '</span>';
+    stDrawLines(); return;
+  }
   colR.innerHTML = views.map(v=>
     `<button class="st-node${activeId===v.id?' st-active-sub':''}" id="stsub-${v.id}" onclick="navSelectView('${v.id}')">${v.icon} ${v.label}</button>`
   ).join('');
@@ -2776,7 +2839,9 @@ function stRenderSubs(){
 
 function stDrawLines(){
   const svg = document.getElementById('st-svg');
-  const wrap = document.getElementById('st-svg-wrap');
+  /* le repère du tracé est la navigation entière : le fil part du rail
+     et rejoint la colonne des sous-vues */
+  const wrap = document.getElementById('app-nav');
   if(!svg||!wrap){ if(svg) svg.innerHTML=''; return; }
   if(!stActiveCat){ svg.innerHTML=''; return; }
   const catBtn = document.getElementById('stcat-'+stActiveCat);
@@ -2805,43 +2870,28 @@ function stDrawLines(){
   svg.innerHTML = inner;
 }
 
+/* Sur mobile uniquement : déplie la colonne des sous-vues par-dessus le contenu. */
 function openNavTree(){
-  const curView = document.querySelector('.view.active');
-  if(curView){
-    const v = curView.id.replace('view-','');
-    Object.keys(ST_CATS).forEach(k=>{
-      if((ST_CATS[k].views||[]).find(s=>s.id===v)){
-        stActiveCat = k;
-        document.getElementById('stcat-'+k)?.classList.add('st-active-cat');
-      }
-    });
-  }
-  stRenderSubs();
-  const body = document.getElementById('nav-tree-panel')?.querySelector('.st-body');
-  if(body) body.classList.toggle('cat-active', !!stActiveCat);
-  document.getElementById('nav-tree-panel').classList.add('open');
-  document.getElementById('nav-tree-overlay').classList.add('open');
+  document.getElementById('app-nav')?.classList.add('subs-open');
+  document.getElementById('nav-tree-overlay')?.classList.add('open');
+  requestAnimationFrame(stDrawLines);
 }
 function closeNavTree(){
-  document.getElementById('nav-tree-panel').classList.remove('open');
-  document.getElementById('nav-tree-overlay').classList.remove('open');
+  document.getElementById('app-nav')?.classList.remove('subs-open');
+  document.getElementById('nav-tree-overlay')?.classList.remove('open');
 }
 function navSelectView(view){
+  const mobile = window.innerWidth < 900;
   closeNavTree();
-  setTimeout(()=>goTo(view), 160);
+  if(mobile) setTimeout(()=>goTo(view), 160); else goTo(view);
 }
+/* Appelé à chaque changement de vue : la navigation reflète toujours l'écran
+   affiché, quelle que soit la façon dont on y est arrivé. */
 function updateNavTreeActive(section, view){
-  Object.keys(ST_CATS).forEach(k=>{
-    const btn = document.getElementById('stcat-'+k);
-    if(btn) btn.classList.toggle('st-active-cat', k===section);
-  });
-  document.querySelectorAll('[id^="stsub-"]').forEach(b=>{
-    b.classList.toggle('st-active-sub', b.id==='stsub-'+view);
-  });
-  const pill = document.getElementById('nav-pill-text');
-  const led  = document.getElementById('nav-pill-led');
-  if(pill) pill.textContent = VIEW_LABELS[view]||'Nav';
-  if(led)  led.classList.toggle('active', view!=='home');
+  const cat = stCatOfView(view) || section;
+  stActiveCat = cat;
+  stHighlightCat(cat);
+  stRenderSubs();
 }
 function initNavTreePeeks(){ /* replaced by skill tree — no-op */ }
 function buildGroupedViews(){
