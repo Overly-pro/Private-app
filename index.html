@@ -688,6 +688,21 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-tag-perso{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);vertical-align:middle;}
 @media (max-width:899px){ .gl-rule-edit{opacity:1;} }
 
+/* Observations automatiques */
+.ins-count{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(var(--accent-rgb),0.12);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.3);font-family:'Space Mono',monospace;}
+.ins-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);}
+.ins-row:last-child{border-bottom:none;}
+.ins-e{font-size:17px;flex-shrink:0;line-height:1.3;}
+.ins-t{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ins-d{font-size:11.5px;color:var(--text-dim);line-height:1.6;overflow-wrap:break-word;}
+
+/* Pastille d'état de synchronisation */
+.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;
+  background:var(--ok);transition:background .2s,box-shadow .2s;cursor:default;}
+.sync-dot.pending{background:var(--warn2);box-shadow:0 0 7px rgba(var(--warn-rgb),0.7);}
+.sync-dot.error{background:var(--accent);box-shadow:0 0 8px rgba(var(--accent-rgb),0.8);}
+.sync-dot.offline{background:var(--muted3);}
+
 /* ===== INTENDANCE ===== */
 .int-preview{margin-top:6px;border-top:1px solid var(--border);padding-top:8px;}
 .int-line{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--border);}
@@ -1242,6 +1257,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="lv-chip" id="lv-chip" onclick="goTo('home')">⚡ LV 1</button>
+    <span class="sync-dot idle" id="sync-dot" title="Tout est synchronisé"></span>
     <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Changer de thème">🌙</button>
     <button class="logout-btn" onclick="authLogout()">↪</button>
   </div>
@@ -1340,8 +1356,11 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="task-decl-reminder" style="font-size:12px;color:var(--text-dim);line-height:1.6;font-style:italic;">—</div>
   </div>
 
+
+  <div id="insights-wrap"></div>
   <div class="card">
     <div class="card-title">📊 Bilan de la semaine <div class="line"></div></div>
+    <!-- (les observations sont rendues juste au-dessus, voir #insights-wrap) -->
     <div class="hebdo-grid">
       <div class="hebdo-kpi"><div class="hebdo-kpi-val" id="hebdo-taches">—</div><div class="hebdo-kpi-lbl">tâches aujourd'hui</div></div>
       <div class="hebdo-kpi"><div class="hebdo-kpi-val" id="hebdo-sommeil">—</div><div class="hebdo-kpi-lbl">sommeil moy. 7j</div></div>
@@ -1358,6 +1377,17 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   <div class="card">
     <div class="card-title">🔔 Notifications <div class="line"></div></div>
     <div id="notif-settings-wrap"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💾 Mes données <div class="line"></div></div>
+    <p class="nm-hint">Une sauvegarde complète, lisible, que tu gardes chez toi. À faire de temps en temps — c'est ton filet si quoi que ce soit tourne mal.</p>
+    <div class="gl-actions">
+      <button class="gl-btn primary" onclick="dataExport()">⬇️ Exporter tout</button>
+      <button class="gl-btn" onclick="document.getElementById('data-import-file').click()">⬆️ Restaurer</button>
+    </div>
+    <input type="file" id="data-import-file" accept="application/json" style="display:none" onchange="dataImport(this)">
+    <div id="data-stats" class="nm-hint" style="margin-top:8px;"></div>
   </div>
 
 </div>
@@ -2583,14 +2613,65 @@ function loadKey(key){
   if(Object.prototype.hasOwnProperty.call(cloudData, key)) return cloudData[key];
   return localStorage.getItem(key);
 }
+/* ===== SYNCHRONISATION =====
+   Avant : une écriture Firestore par appel, donc une par frappe clavier dans
+   les champs de saisie, et les échecs finissaient dans la console où personne
+   ne les lit. Désormais les changements sont regroupés puis envoyés une fois
+   la frappe terminée, et l'état est affiché dans l'en-tête. */
+const SYNC_DELAY = 900;
+let syncQueue = {};
+let syncTimer = null;
+let syncFails = 0;
+
+function setSyncState(state, detail){
+  const el = document.getElementById('sync-dot');
+  if(!el) return;
+  el.className = 'sync-dot ' + state;
+  el.title = state === 'error'   ? ('Synchronisation impossible' + (detail ? ' — ' + detail : ''))
+           : state === 'pending' ? 'Enregistrement…'
+           : state === 'offline' ? 'Hors ligne — tes données sont gardées sur cet appareil'
+                                 : 'Tout est synchronisé';
+}
+function flushSync(){
+  clearTimeout(syncTimer); syncTimer = null;
+  if(!currentUid) return;
+  const lot = syncQueue;
+  if(!Object.keys(lot).length){ setSyncState('idle'); return; }
+  syncQueue = {};
+  db.collection('users').doc(currentUid).set(lot, { merge:true })
+    .then(()=>{ syncFails = 0; setSyncState(navigator.onLine ? 'idle' : 'offline'); })
+    .catch(e=>{
+      /* on remet le lot dans la file : rien n'est perdu, on réessaiera */
+      Object.assign(syncQueue, lot);
+      setSyncState('error', e && e.message);
+      /* un seul avertissement, pas un toast à chaque tentative */
+      if(syncFails++ === 0){
+        showToast('⚠️ Synchronisation impossible — tes données restent sur cet appareil');
+      }
+      syncTimer = setTimeout(flushSync, 15000);   /* nouvelle tentative */
+    });
+}
 function saveKey(key, value){
   cloudData[key] = value;
-  localStorage.setItem(key, value);
-  if(currentUid){
-    db.collection('users').doc(currentUid).set({ [key]: value }, { merge:true })
-      .catch(e=>console.error('Sync cloud échouée:', e));
+  try { localStorage.setItem(key, value); }
+  catch(e){
+    /* on n'alerte que si c'est vraiment le quota : en navigation privée
+       l'accès peut échouer sans que ce soit un problème de place */
+    if(e && (e.name === 'QuotaExceededError' || e.code === 22)){
+      showToast('⚠️ Stockage local plein — libère de la place');
+    }
   }
+  if(!currentUid) return;
+  syncQueue[key] = value;
+  setSyncState('pending');
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(flushSync, SYNC_DELAY);
 }
+/* On n'attend pas le délai si l'app se ferme ou passe en arrière-plan. */
+window.addEventListener('beforeunload', flushSync);
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flushSync(); });
+window.addEventListener('online',  ()=>{ setSyncState('pending'); flushSync(); });
+window.addEventListener('offline', ()=>setSyncState('offline'));
 
 function authToggleMode(){
   authMode = authMode === 'login' ? 'signup' : 'login';
@@ -5998,6 +6079,214 @@ function switchCapTab(tab){
   if(tab==='notes'){ nmRender(); }
 }
 
+/* ===== CE QUE JE REMARQUE — analyse des données réelles =====
+   Aucune formule creuse : chaque observation est calculée à partir de ce qui
+   est enregistré, et ne s'affiche que si la donnée existe vraiment. Mieux vaut
+   trois remarques vraies qu'une page de généralités. */
+function insDaysAgo(n){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function insTasksOn(date){
+  try { const s = JSON.parse(loadKey('tasks_state_'+date) || '{}');
+        return TASK_IDS.filter(id=>s[id]).length; } catch(e){ return 0; }
+}
+/* Moyenne de tâches faites sur une fenêtre, en ignorant les jours sans trace */
+function insTaskWindow(debut, fin){
+  let total=0, jours=0;
+  for(let i=debut;i<fin;i++){
+    const d = insDaysAgo(i);
+    if(loadKey('tasks_state_'+d) == null) continue;
+    total += insTasksOn(d); jours++;
+  }
+  return jours ? { moy: total/jours, jours } : null;
+}
+function insSleepDur(e){
+  if(!e || !e.bed || !e.wake) return null;
+  try { return computeSleepDuration(e.bed, e.wake); } catch(err){ return null; }
+}
+
+function insights(){
+  const out = [];
+
+  /* 1. Tendance sur les tâches : 7 derniers jours contre les 7 précédents */
+  const s1 = insTaskWindow(0,7), s2 = insTaskWindow(7,14);
+  if(s1 && s1.jours >= 3){
+    const pct = T_TOTAL ? Math.round(s1.moy / T_TOTAL * 100) : 0;
+    if(s2 && s2.jours >= 3){
+      const delta = s1.moy - s2.moy;
+      if(delta >= 0.7) out.push({e:'📈', t:'Tu accélères',
+        d:`${s1.moy.toFixed(1)} tâches par jour cette semaine, contre ${s2.moy.toFixed(1)} la précédente. C'est ${pct}% de ta journée type.`});
+      else if(delta <= -0.7) out.push({e:'📉', t:'Ça redescend',
+        d:`${s1.moy.toFixed(1)} tâches par jour cette semaine, contre ${s2.moy.toFixed(1)} avant. Pas un drame — mais vaut le coup de regarder ce qui a changé.`});
+      else out.push({e:'⚖️', t:'Rythme stable',
+        d:`${s1.moy.toFixed(1)} tâches par jour, soit ${pct}% de ta journée type. Tu tiens la même ligne depuis deux semaines.`});
+    } else {
+      out.push({e:'📊', t:'Ton rythme',
+        d:`${s1.moy.toFixed(1)} tâches par jour sur ${s1.jours} jours suivis, soit ${pct}% de ta journée type.`});
+    }
+  }
+
+  /* 2. Sommeil et tâches : les nuits longues changent-elles quelque chose ? */
+  try {
+    const longues=[], courtes=[];
+    Object.keys(sleepEntries||{}).forEach(d=>{
+      const h = insSleepDur(sleepEntries[d]);
+      if(h==null || loadKey('tasks_state_'+d)==null) return;
+      (h >= 8 ? longues : courtes).push(insTasksOn(d));
+    });
+    if(longues.length>=3 && courtes.length>=3){
+      const moy = a => a.reduce((x,y)=>x+y,0)/a.length;
+      const ml=moy(longues), mc=moy(courtes), ecart=ml-mc;
+      if(Math.abs(ecart) >= 0.6){
+        out.push({e:'😴', t: ecart>0 ? 'Le sommeil te porte' : 'Résultat inattendu',
+          d: ecart>0
+            ? `Après 8 h et plus, tu fais ${ml.toFixed(1)} tâches. Après des nuits plus courtes, ${mc.toFixed(1)}. L'écart est là, sur ${longues.length+courtes.length} nuits.`
+            : `Tes nuits courtes donnent ${mc.toFixed(1)} tâches contre ${ml.toFixed(1)} après 8 h. Contre-intuitif — peut-être que tu dors plus les jours creux.`});
+      }
+    }
+  } catch(e){}
+
+  /* 3. L'habitude qui décroche, sur 14 jours */
+  try {
+    if(Array.isArray(htHabits) && htHabits.length){
+      const scores = htHabits.map((nom,idx)=>{
+        let fait=0;
+        for(let i=0;i<14;i++){
+          const d=new Date(); d.setDate(d.getDate()-i);
+          const cle = d.getFullYear()+'-'+(d.getMonth()+1);
+          if(htData?.[cle]?.[idx]?.[d.getDate()]) fait++;
+        }
+        return { nom, fait };
+      }).sort((a,b)=>a.fait-b.fait);
+      const faible = scores[0], forte = scores[scores.length-1];
+      if(forte.fait >= 10) out.push({e:'🔒', t:'Celle-là est acquise',
+        d:`« ${forte.nom} » : ${forte.fait} jours sur 14. Tu n'as plus à y penser, elle tient toute seule.`});
+      if(faible.fait <= 4 && scores.length > 1) out.push({e:'🎯', t:'Celle-là décroche',
+        d:`« ${faible.nom} » : ${faible.fait} jours sur 14. Si tu ne devais en récupérer qu'une cette semaine, ce serait celle-ci.`});
+    }
+  } catch(e){}
+
+  /* 4. Objectif : le rythme actuel mène-t-il à la date visée ? */
+  try {
+    if(typeof glCurrent!=='undefined' && glCurrent && glHasGoal() && glCurrent.deadline){
+      const total = glTotal(glCurrent), cible = parseFloat(glCurrent.amount)||0;
+      const reste = cible - total, jours = glDaysLeft(glCurrent);
+      if(reste > 0 && jours > 0){
+        const parJour = reste/jours;
+        out.push({e:'💰', t:'Le rythme à tenir',
+          d:`Il te reste ${glFmt(reste)} € en ${jours} jours, soit ${glFmt(Math.ceil(parJour))} € par jour. ${
+            parJour <= 20 ? "C'est tout à fait jouable." : parJour <= 60 ? "Ça demande de la régularité." : "C'est ambitieux — soit tu accélères, soit tu décales la date."}`});
+      } else if(reste <= 0){
+        out.push({e:'🏆', t:'Objectif atteint', d:`${glFmt(total)} € sur ${glFmt(cible)} €. Tu peux le clôturer et en ouvrir un nouveau.`});
+      }
+    }
+  } catch(e){}
+
+  /* 5. Ce qu'il reste à verser */
+  try {
+    if(typeof intEntries!=='undefined' && intEntries.length){
+      const t = intTotals();
+      const du = intRules.filter(r=>r.verse).reduce((s,r)=>s+t.reste[r.key],0);
+      if(du > 0.5) out.push({e:'🤲', t:'À verser',
+        d:`${intEur(du)} attendent d'être versés sur tes postes mis à part. Rien ne presse, mais ça s'accumule vite.`});
+    }
+  } catch(e){}
+
+  /* 6. Régularité des vidéos */
+  try {
+    if(typeof nmNotes!=='undefined'){
+      if(!nmNotes.length){
+        out.push({e:'📓', t:'Ta première note', d:"Tu documentes ton lancement une vidéo par jour. La n°1 t'attend dans Capture."});
+      } else {
+        const derniere = nmNotes.map(n=>n.date).sort().reverse()[0];
+        const ecart = Math.round((new Date(todayISO()) - new Date(derniere)) / 86400000);
+        if(ecart === 0) out.push({e:'🎬', t:'Note du jour prête', d:`Ta note n°${nmNextNum()-1} est écrite. Reste à la tourner.`});
+        else if(ecart >= 2) out.push({e:'📓', t:'La série s\'interrompt',
+          d:`Dernière note il y a ${ecart} jours. Une vidéo par jour, c'est la promesse — la n°${nmNextNum()} attend.`});
+      }
+    }
+  } catch(e){}
+
+  /* 7. Série de journées parfaites */
+  const serie = parseInt(loadKey(TK_STREAK)||'0');
+  if(serie >= 3) out.push({e:'🔥', t:`${serie} jours d'affilée`,
+    d: serie >= 30 ? "Un mois complet. Ce n'est plus de la motivation, c'est devenu ta façon de fonctionner."
+     : serie >= 7  ? "Plus d'une semaine sans rupture. C'est là que l'habitude prend."
+     : "Le plus dur est passé. Ne casse pas la chaîne maintenant."});
+
+  return out;
+}
+
+function renderInsights(){
+  const w = document.getElementById('insights-wrap'); if(!w) return;
+  const list = insights();
+  if(!list.length){
+    w.innerHTML = `<div class="card"><div class="card-title">🧠 Ce que je remarque <div class="line"></div></div>
+      <div class="gl-empty">Pas encore assez d'historique.<br>Quelques jours de suivi et les premières tendances apparaîtront ici.</div></div>`;
+    return;
+  }
+  w.innerHTML = `<div class="card">
+    <div class="card-title">🧠 Ce que je remarque <div class="line"></div><span class="ins-count">${list.length}</span></div>
+    ${list.map(i=>`<div class="ins-row">
+      <span class="ins-e">${i.e}</span>
+      <div><div class="ins-t">${glEsc(i.t)}</div><div class="ins-d">${glEsc(i.d)}</div></div>
+    </div>`).join('')}
+  </div>`;
+  if(typeof wrapEmojis==='function') wrapEmojis(w);
+}
+
+/* ===== EXPORT / RESTAURATION =====
+   Tout est enregistré dans un seul document Firestore. Un fichier local est
+   la seule garantie de pouvoir repartir si ce document devient inaccessible. */
+function dataSnapshot(){
+  const out = {};
+  /* on part de localStorage : c'est le miroir complet, y compris hors ligne */
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    out[k] = localStorage.getItem(k);
+  }
+  Object.keys(cloudData).forEach(k=>{ out[k] = cloudData[k]; });
+  return out;
+}
+function dataStats(){
+  const snap = dataSnapshot();
+  const cles = Object.keys(snap).length;
+  const poids = new Blob([JSON.stringify(snap)]).size;
+  const el = document.getElementById('data-stats');
+  if(el) el.textContent = `${cles} entrées · ${(poids/1024).toFixed(1)} Ko · limite Firestore 1 024 Ko (${Math.round(poids/10485.76)}% utilisés)`;
+}
+function dataExport(){
+  const paquet = { app:'overly', version:1, date:new Date().toISOString(), data:dataSnapshot() };
+  const blob = new Blob([JSON.stringify(paquet, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'overly-sauvegarde-' + todayISO() + '.json';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  showToast('⬇️ Sauvegarde téléchargée');
+}
+function dataImport(input){
+  const f = input.files && input.files[0];
+  input.value = '';
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    let paquet;
+    try { paquet = JSON.parse(r.result); }
+    catch(e){ showToast('❌ Fichier illisible'); return; }
+    const d = paquet && paquet.data;
+    if(!d || typeof d !== 'object' || paquet.app !== 'overly'){
+      showToast("❌ Ce n'est pas une sauvegarde Overly"); return;
+    }
+    const n = Object.keys(d).length;
+    if(!confirm(`Restaurer ${n} entrées du ${(paquet.date||'').slice(0,10)} ?\n\nTes données actuelles seront remplacées par celles du fichier. L'app se rechargera ensuite.`)) return;
+    Object.keys(d).forEach(k => saveKey(k, d[k]));
+    flushSync();
+    showToast('⬆️ Restauration effectuée — rechargement…');
+    setTimeout(()=>location.reload(), 1200);
+  };
+  r.readAsText(f);
+}
+
 /* ===== INTENDANCE — répartition de ce que je génère =====
    80 % du net sortent intégralement, en trois tiers égaux : charité,
    personnes dans le besoin, réinvestissement dans le business. Les 20 %
@@ -6524,6 +6813,8 @@ function initApp(){
   tasksLoad();
   nmLoad();
   intLoad(); intRender();
+  renderInsights();
+  dataStats();
   taskState = loadTaskState();
   renderTasks();
   updateTaskProgress();
