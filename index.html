@@ -483,8 +483,12 @@ body{ background:var(--bg); }
   font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   padding-bottom:10px;border-bottom:0.5px solid rgba(var(--ink),0.06);}
 .nav-subs-close{display:none;}
-/* le fil rouge est tracé par-dessus les deux colonnes */
-.app-nav .st-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+/* Le fil rouge doit se peindre AU-DESSUS de la colonne des sous-vues.
+   Le couloir qu'il traverse est la marge intérieure de cette colonne : sans
+   z-index superieur, le fond opaque du panneau recouvre le fil et il ne
+   reste que le bout visible entre le rail et le bord du panneau.
+   pointer-events:none, donc il n'intercepte aucun clic. */
+.app-nav .st-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:140;}
 
 /* Mobile : la colonne des sous-vues se pose par-dessus le contenu.
    Ce bloc doit rester APRÈS les règles ci-dessus : à spécificité égale,
