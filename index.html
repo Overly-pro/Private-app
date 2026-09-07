@@ -771,6 +771,65 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .nm-tele-line.fixe{color:var(--muted2);font-style:italic;}
 @media (max-width:899px){ .nm-tele-line{font-size:23px;} #nm-tele{padding:60px 18px 70px;} }
 
+/* ===== STUDIO DE BANNIÈRES =====
+   Cliquer sur le GIF d'une catégorie ouvre ce panneau : choisir le visuel,
+   en ajouter par lien, régler la hauteur et le cadrage. */
+.view-banner{cursor:pointer;}
+#gif-studio{position:fixed;inset:0;z-index:2600;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow-y:auto;padding:22px 16px 40px;display:none;}
+#gif-studio.open{display:block;}
+.gs-panel{max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:18px 18px 22px;}
+.gs-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.gs-title{font-size:14px;font-weight:700;color:var(--text-strong);flex:1;}
+.gs-sub{font-size:10px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.gs-close{background:var(--raised);border:1px solid var(--border2);color:var(--text);border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.gs-close:hover{border-color:var(--accent);color:var(--accent-ink);}
+.gs-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.gs-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.gs-tab.active{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
+.gs-pane{display:none;} .gs-pane.active{display:block;}
+
+/* --- aperçu, commun aux deux onglets --- */
+.gs-preview-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border2);margin-bottom:12px;background:var(--sunken);}
+#gs-preview{width:100%;height:170px;object-fit:cover;object-position:center 30%;display:block;user-select:none;-webkit-user-drag:none;touch-action:none;cursor:grab;}
+#gs-preview.dragging{cursor:grabbing;}
+.gs-preview-hint{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:10px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,0.75));pointer-events:none;text-align:center;letter-spacing:.5px;}
+
+/* --- grille de choix --- */
+.gs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;}
+.gs-cell{position:relative;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--sunken);cursor:pointer;padding:0;font-family:inherit;}
+.gs-cell img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;}
+.gs-cell:hover{border-color:var(--muted3);}
+.gs-cell.sel{border-color:var(--accent);}
+.gs-cell.sel::after{content:'✓';position:absolute;top:4px;right:5px;width:19px;height:19px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.gs-cell.rnd{aspect-ratio:16/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted2);font-size:10.5px;font-weight:600;border:1px dashed var(--border2);}
+.gs-cell.rnd span{font-size:19px;}
+.gs-cell.sel.rnd{border-style:solid;color:var(--accent-ink);}
+.gs-del{position:absolute;top:4px;left:5px;width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,0.7);border:none;color:#fff;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}
+.gs-cell:hover .gs-del{display:flex;}
+.gs-broken{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;font-size:9px;color:var(--muted3);text-align:center;padding:6px;line-height:1.4;}
+
+/* --- ajout par lien --- */
+.gs-add{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.gs-add-row{display:flex;gap:7px;}
+.gs-add-row input{flex:1;min-width:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;}
+.gs-note{font-size:10px;color:var(--muted3);line-height:1.55;margin-top:8px;}
+
+/* --- réglages --- */
+.gs-ctrl{margin-bottom:13px;}
+.gs-ctrl-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+.gs-ctrl-label{font-size:11px;font-weight:600;color:var(--muted2);flex:1;}
+.gs-ctrl-val{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent-ink);font-weight:700;}
+.gs-row{display:flex;align-items:center;gap:8px;}
+.gs-row input[type=range]{flex:1;accent-color:var(--accent);height:4px;}
+.gs-step{width:31px;height:31px;flex-shrink:0;border-radius:8px;border:1px solid var(--border2);background:var(--raised);color:var(--text);font-size:14px;cursor:pointer;font-family:inherit;line-height:1;padding:0;}
+.gs-step:hover{border-color:var(--accent);color:var(--accent-ink);}
+.gs-pad{display:grid;grid-template-columns:repeat(3,31px);grid-template-rows:repeat(3,31px);gap:4px;justify-content:center;margin:2px auto 0;}
+.gs-pad .gs-step:nth-child(1){grid-area:1/2;} .gs-pad .gs-step:nth-child(2){grid-area:2/1;}
+.gs-pad .gs-step:nth-child(3){grid-area:2/3;} .gs-pad .gs-step:nth-child(4){grid-area:3/2;}
+.gs-pad .gs-step:nth-child(5){grid-area:2/2;font-size:11px;}
+.gs-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px;}
+@media (max-width:899px){ .gs-panel{padding:15px 14px 20px;} .gs-cell:hover .gs-del{display:none;} .gs-cell .gs-del{display:flex;} }
+
 /* Tâches modifiables */
 .tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
 .task:hover .tk-edit{opacity:1;}
@@ -1223,6 +1282,8 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <div id="login-flash"></div>
 
 <!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
+<div id="gif-studio" onclick="if(event.target===this)gsClose()"></div>
+
 <div id="nm-tele">
   <button class="nm-tele-close" onclick="nmTelepromptClose()">✕ Fermer</button>
   <div id="nm-tele-body"></div>
@@ -2997,35 +3058,303 @@ function buildGroupedViews(){
 }
 
 /* ============ BANNIÈRES GIF ============
-   Toutes les catégories piochent dans la TOTALITÉ des GIFs : aucune n'a de liste
-   réservée, chaque affichage a 1 chance sur GIF_COUNT de tomber sur n'importe lequel.
-   Seule contrainte : ne jamais rejouer le même GIF deux fois de suite sur un même
-   onglet, pour qu'un aller-retour donne toujours un visuel différent.
+   Par défaut chaque catégorie tire au hasard dans TOUTE la bibliothèque, sans
+   jamais rejouer le même visuel deux fois de suite. Cliquer sur une bannière
+   ouvre le studio : y choisir un GIF fixe, en ajouter par lien, régler la
+   hauteur et le cadrage. Tout est enregistré par catégorie.
 
    /!\ GIF_COUNT doit correspondre au nombre de fichiers gifs/vibe-N.gif
-   (numérotés de 1 à GIF_COUNT sans trou). À mettre à jour si tu en ajoutes. */
+   (numérotés de 1 à GIF_COUNT sans trou). */
 const GIF_COUNT = 22;
-const ALL_GIFS = Array.from({length: GIF_COUNT}, (_, i) => 'vibe-' + (i + 1));
+const BUILTIN_GIFS = Array.from({length: GIF_COUNT}, (_, i) => ({
+  id: 'vibe-' + (i + 1), src: 'gifs/vibe-' + (i + 1) + '.gif', builtin: true
+}));
+let gifCustom = [];      /* {id, src, name} ajoutés par lien */
+let bannerPrefs = {};    /* { home:{gif, h, px, py}, ... } */
+
+const BANNER_DEF = { gif:null, h:0, px:50, py:30 };   /* h:0 = hauteur du thème */
+
+function gifAll(){ return BUILTIN_GIFS.concat(gifCustom); }
+function gifById(id){ return gifAll().find(g => g.id === id) || null; }
+function bannerPref(view){ return Object.assign({}, BANNER_DEF, bannerPrefs[view] || {}); }
+function gifLoad(){
+  try { const c = JSON.parse(loadKey('gifs_custom') || 'null'); if(Array.isArray(c)) gifCustom = c; } catch(e){}
+  try { const p = JSON.parse(loadKey('banner_prefs') || 'null'); if(p && typeof p === 'object') bannerPrefs = p; } catch(e){}
+}
+function gifSaveLib(){ saveKey('gifs_custom', JSON.stringify(gifCustom)); }
+function gifSavePrefs(){ saveKey('banner_prefs', JSON.stringify(bannerPrefs)); }
+function bannerSet(view, patch){
+  bannerPrefs[view] = Object.assign(bannerPref(view), patch);
+  gifSavePrefs();
+}
+
+/* ---- affichage ---- */
 const bannerRotation = {};
+function applyBannerStyle(view){
+  const el = document.getElementById('banner-' + view); if(!el) return;
+  const p = bannerPref(view);
+  el.style.height = p.h ? p.h + 'px' : '';
+  el.style.objectPosition = p.px + '% ' + p.py + '%';
+}
 function rotateViewBanner(view){
-  const el = document.getElementById('banner-'+view);
-  if(!el || !ALL_GIFS.length) return;
-  let next = Math.floor(Math.random() * ALL_GIFS.length);
+  const el = document.getElementById('banner-' + view); if(!el) return;
+  const p = bannerPref(view);
+  if(p.gif){
+    const g = gifById(p.gif);
+    /* le GIF épinglé a pu être supprimé de la bibliothèque : on retombe
+       silencieusement sur l'aléatoire plutôt que d'afficher une image morte */
+    if(g){ el.src = g.src; applyBannerStyle(view); return; }
+  }
+  const list = gifAll();
+  if(!list.length){ applyBannerStyle(view); return; }
+  let next = Math.floor(Math.random() * list.length);
   const prev = bannerRotation[view];
-  if(prev !== undefined && next === prev && ALL_GIFS.length > 1){
-    /* re-tirage uniforme parmi tous les autres : ça garantit un changement visible
-       sans privilégier le GIF suivant dans la liste */
-    next = (prev + 1 + Math.floor(Math.random() * (ALL_GIFS.length - 1))) % ALL_GIFS.length;
+  if(prev !== undefined && next === prev && list.length > 1){
+    next = (prev + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
   }
   bannerRotation[view] = next;
-  el.src = 'gifs/' + ALL_GIFS[next] + '.gif';
+  el.src = list[next].src;
+  applyBannerStyle(view);
 }
 function initViewBanners(){
   /* piloté par le DOM : toute vue portant une .view-banner est servie,
      plus de table à tenir à jour quand une catégorie apparaît */
-  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el =>
-    rotateViewBanner(el.id.slice('banner-'.length))
-  );
+  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => {
+    const view = el.id.slice('banner-'.length);
+    if(!el.dataset.gsBound){
+      el.dataset.gsBound = '1';
+      el.title = 'Cliquer pour changer ou ajuster ce visuel';
+      el.addEventListener('click', () => gsOpen(view));
+    }
+    rotateViewBanner(view);
+  });
+}
+
+/* ============ STUDIO DE BANNIÈRES ============ */
+let gsView = null;      /* catégorie en cours d'édition */
+let gsTabId = 'choix';
+
+function gsLabel(view){
+  if(typeof VIEW_LABELS !== 'undefined' && VIEW_LABELS[view]) return VIEW_LABELS[view];
+  return view.charAt(0).toUpperCase() + view.slice(1);
+}
+function gsOpen(view){
+  gsView = view; gsTabId = 'choix';
+  document.getElementById('gif-studio').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  gsRender();
+}
+function gsClose(){
+  document.getElementById('gif-studio').classList.remove('open');
+  document.body.style.overflow = '';
+  gsView = null;
+}
+function gsTab(t){ gsTabId = t; gsRender(); }
+
+/* ---- choix du visuel ---- */
+function gsPick(id){
+  bannerSet(gsView, { gif:id });
+  rotateViewBanner(gsView); gsRender();
+  showToast('🖼 Visuel épinglé sur ' + gsLabel(gsView));
+}
+function gsRandom(){
+  bannerSet(gsView, { gif:null });
+  rotateViewBanner(gsView); gsRender();
+  showToast('🎲 ' + gsLabel(gsView) + ' repasse en aléatoire');
+}
+/* Un lien, pas un fichier : un GIF importé en base64 pèserait plusieurs Mo et
+   ferait exploser la limite de 1 Mo du document Firestore. */
+function gsAddUrl(){
+  const inp = document.getElementById('gs-url'); if(!inp) return;
+  const url = inp.value.trim();
+  if(!url){ showToast('Colle le lien du GIF'); return; }
+  if(!/^https:\/\//i.test(url)){ showToast('⚠️ Le lien doit commencer par https://'); return; }
+  if(gifAll().some(g => g.src === url)){ showToast('Ce visuel est déjà dans ta bibliothèque'); return; }
+  const btn = document.getElementById('gs-add-btn');
+  if(btn){ btn.disabled = true; btn.textContent = '…'; }
+  /* on vérifie que le lien affiche vraiment une image avant de l'enregistrer */
+  const test = new Image();
+  let fini = false;
+  const done = ok => {
+    if(fini) return; fini = true;
+    if(btn){ btn.disabled = false; btn.textContent = '+ Ajouter'; }
+    if(!ok){ showToast("⚠️ Ce lien n'affiche pas d'image — vérifie qu'il finit par .gif"); return; }
+    gifCustom.push({ id:'g' + Date.now().toString(36), src:url, name:'' });
+    gifSaveLib();
+    const i = document.getElementById('gs-url'); if(i) i.value = '';
+    gsRender();
+    showToast('✅ Visuel ajouté à ta bibliothèque');
+  };
+  test.onload = () => done(true);
+  test.onerror = () => done(false);
+  setTimeout(() => done(false), 12000);
+  test.src = url;
+}
+function gsDelCustom(id, ev){
+  if(ev) ev.stopPropagation();
+  const g = gifById(id); if(!g || g.builtin) return;
+  if(!confirm('Retirer ce visuel de ta bibliothèque ?\n\nLes catégories qui l’affichaient repasseront en aléatoire.')) return;
+  gifCustom = gifCustom.filter(x => x.id !== id);
+  Object.keys(bannerPrefs).forEach(v => { if(bannerPrefs[v].gif === id) bannerPrefs[v].gif = null; });
+  gifSaveLib(); gifSavePrefs();
+  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => rotateViewBanner(el.id.slice(7)));
+  gsRender();
+  showToast('🗑 Visuel retiré');
+}
+
+/* ---- réglages taille et cadrage ---- */
+const GS_LIMITS = { h:[90, 520], px:[0, 100], py:[0, 100] };
+function gsSet(field, val){
+  const [min, max] = GS_LIMITS[field];
+  bannerSet(gsView, { [field]: Math.max(min, Math.min(max, Math.round(val))) });
+  gsSync();
+}
+function gsNudge(field, delta){ gsSet(field, (bannerPref(gsView)[field] || (field === 'h' ? gsCurrentH() : 0)) + delta); }
+function gsCurrentH(){
+  const el = document.getElementById('banner-' + gsView);
+  return el ? Math.round(el.getBoundingClientRect().height) || 170 : 170;
+}
+function gsResetSize(){
+  bannerSet(gsView, { h:0, px:BANNER_DEF.px, py:BANNER_DEF.py });
+  gsSync(); gsRender();
+  showToast('↺ Taille et cadrage remis par défaut');
+}
+function gsApplyAll(){
+  const p = bannerPref(gsView);
+  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => {
+    const v = el.id.slice('banner-'.length);
+    bannerPrefs[v] = Object.assign(bannerPref(v), { h:p.h, px:p.px, py:p.py });
+    applyBannerStyle(v);
+  });
+  gifSavePrefs();
+  showToast('📐 Taille appliquée à toutes les catégories');
+}
+/* Met à jour l'aperçu, les compteurs et la vraie bannière sans tout redessiner :
+   c'est ce qui rend le réglage fluide pendant qu'on glisse. */
+function gsSync(){
+  if(!gsView) return;
+  const p = bannerPref(gsView);
+  const prev = document.getElementById('gs-preview');
+  if(prev){
+    prev.style.height = (p.h || gsDefaultH()) + 'px';
+    prev.style.objectPosition = p.px + '% ' + p.py + '%';
+  }
+  const setTxt = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  setTxt('gs-h-val', (p.h || gsDefaultH()) + ' px');
+  setTxt('gs-px-val', p.px + ' %');
+  setTxt('gs-py-val', p.py + ' %');
+  const rh = document.getElementById('gs-h-range'); if(rh) rh.value = p.h || gsDefaultH();
+  applyBannerStyle(gsView);
+}
+function gsDefaultH(){ return window.matchMedia('(min-width:900px)').matches ? 210 : 170; }
+
+/* Glisser sur l'aperçu déplace le cadrage. On raisonne en pourcentage de la
+   taille affichée : le geste suit le doigt quelle que soit la taille d'écran. */
+function gsDragStart(ev){
+  if(!gsView) return;
+  const img = ev.currentTarget;
+  const r = img.getBoundingClientRect();
+  const p = bannerPref(gsView);
+  const start = { x:ev.clientX, y:ev.clientY, px:p.px, py:p.py };
+  img.classList.add('dragging');
+  try { img.setPointerCapture(ev.pointerId); } catch(e){}
+  const move = e => {
+    gsSet('px', start.px - (e.clientX - start.x) / r.width * 100);
+    gsSet('py', start.py - (e.clientY - start.y) / r.height * 100);
+  };
+  const up = () => {
+    img.classList.remove('dragging');
+    img.removeEventListener('pointermove', move);
+    img.removeEventListener('pointerup', up);
+    img.removeEventListener('pointercancel', up);
+  };
+  img.addEventListener('pointermove', move);
+  img.addEventListener('pointerup', up);
+  img.addEventListener('pointercancel', up);
+  ev.preventDefault();
+}
+
+/* ---- rendu ---- */
+function gsRender(){
+  const w = document.getElementById('gif-studio'); if(!w || !gsView) return;
+  const p = bannerPref(gsView);
+  const el = document.getElementById('banner-' + gsView);
+  const srcActuel = el ? el.getAttribute('src') : '';
+  const h = p.h || gsDefaultH();
+
+  const apercu =
+    '<div class="gs-preview-wrap">' +
+      '<img id="gs-preview" src="' + glEsc(srcActuel) + '" alt="" style="height:' + h + 'px;object-position:' + p.px + '% ' + p.py + '%" onpointerdown="gsDragStart(event)">' +
+      (gsTabId === 'taille' ? '<div class="gs-preview-hint">Glisse sur l’image pour déplacer le cadrage</div>' : '') +
+    '</div>';
+
+  const cellules = gifAll().map(g =>
+    '<button class="gs-cell' + (p.gif === g.id ? ' sel' : '') + '" onclick="gsPick(\'' + g.id + '\')" title="' + glEsc(g.src) + '">' +
+      '<img loading="lazy" src="' + glEsc(g.src) + '" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'gs-broken\',textContent:\'lien cassé\'}))">' +
+      (g.builtin ? '' : '<button class="gs-del" onclick="gsDelCustom(\'' + g.id + '\',event)" title="Retirer de la bibliothèque">✕</button>') +
+    '</button>').join('');
+
+  const paneChoix =
+    '<div class="gs-pane' + (gsTabId === 'choix' ? ' active' : '') + '">' +
+      '<div class="gs-grid">' +
+        '<button class="gs-cell rnd' + (p.gif ? '' : ' sel') + '" onclick="gsRandom()">' +
+          '<span>🎲</span>Aléatoire</button>' +
+        cellules +
+      '</div>' +
+      '<div class="gs-add">' +
+        '<div class="gs-ctrl-label" style="margin-bottom:6px;">Ajouter un visuel par lien</div>' +
+        '<div class="gs-add-row">' +
+          '<input id="gs-url" placeholder="https://…/mon-gif.gif" onkeydown="if(event.key===\'Enter\')gsAddUrl()">' +
+          '<button class="gl-btn primary" id="gs-add-btn" onclick="gsAddUrl()">+ Ajouter</button>' +
+        '</div>' +
+        '<div class="gs-note">Colle l’adresse directe d’une image (clic droit sur le GIF → « Copier l’adresse de l’image »). ' +
+        'Les visuels ajoutés par lien sont chargés depuis leur site : ils ne s’affichent pas hors ligne, et disparaissent si le site les retire.</div>' +
+      '</div>' +
+    '</div>';
+
+  const ctrl = (label, field, valId, min, max) =>
+    '<div class="gs-ctrl"><div class="gs-ctrl-head"><div class="gs-ctrl-label">' + label + '</div>' +
+      '<div class="gs-ctrl-val" id="' + valId + '"></div></div>' +
+      '<div class="gs-row">' +
+        '<button class="gs-step" onclick="gsNudge(\'' + field + '\',-10)">−</button>' +
+        '<input type="range" id="gs-' + field + '-range" min="' + min + '" max="' + max + '" oninput="gsSet(\'' + field + '\',this.value)">' +
+        '<button class="gs-step" onclick="gsNudge(\'' + field + '\',10)">+</button>' +
+      '</div></div>';
+
+  const paneTaille =
+    '<div class="gs-pane' + (gsTabId === 'taille' ? ' active' : '') + '">' +
+      ctrl('Hauteur de la bannière', 'h', 'gs-h-val', GS_LIMITS.h[0], GS_LIMITS.h[1]) +
+      '<div class="gs-ctrl"><div class="gs-ctrl-head">' +
+        '<div class="gs-ctrl-label">Cadrage — glisse l’image, ou règle au clic</div>' +
+        '<div class="gs-ctrl-val"><span id="gs-px-val"></span> · <span id="gs-py-val"></span></div></div>' +
+        '<div class="gs-pad">' +
+          '<button class="gs-step" onclick="gsNudge(\'py\',-5)" title="Monter le cadrage">↑</button>' +
+          '<button class="gs-step" onclick="gsNudge(\'px\',-5)" title="Vers la gauche">←</button>' +
+          '<button class="gs-step" onclick="gsNudge(\'px\',5)" title="Vers la droite">→</button>' +
+          '<button class="gs-step" onclick="gsNudge(\'py\',5)" title="Descendre le cadrage">↓</button>' +
+          '<button class="gs-step" onclick="gsSet(\'px\',50);gsSet(\'py\',30)" title="Recentrer">◎</button>' +
+        '</div></div>' +
+      '<div class="gs-actions">' +
+        '<button class="gl-btn" onclick="gsApplyAll()">📐 Appliquer cette taille partout</button>' +
+        '<button class="gl-btn" onclick="gsResetSize()">↺ Par défaut</button>' +
+      '</div>' +
+    '</div>';
+
+  w.innerHTML =
+    '<div class="gs-panel">' +
+      '<div class="gs-head">' +
+        '<div><div class="gs-sub">Bannière</div><div class="gs-title">' + glEsc(gsLabel(gsView)) + '</div></div>' +
+        '<button class="gs-close" onclick="gsClose()">✕ Fermer</button>' +
+      '</div>' +
+      apercu +
+      '<div class="gs-tabs">' +
+        '<button class="gs-tab' + (gsTabId === 'choix' ? ' active' : '') + '" onclick="gsTab(\'choix\')">🖼 Choisir le visuel</button>' +
+        '<button class="gs-tab' + (gsTabId === 'taille' ? ' active' : '') + '" onclick="gsTab(\'taille\')">📐 Taille et cadrage</button>' +
+      '</div>' +
+      paneChoix + paneTaille +
+    '</div>';
+  gsSync();
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -7024,7 +7353,8 @@ function initApp(){
   // notifications
   maybeShowNotifBanner();
   setupNotifications();
-  // bannières gif
+  // bannières gif : la bibliothèque et les réglages avant le premier tirage
+  gifLoad();
   initViewBanners();
   wrapEmojis(document.body);
 }
