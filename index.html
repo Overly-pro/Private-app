@@ -801,6 +801,10 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gs-cell:hover{border-color:var(--muted3);}
 .gs-cell.sel{border-color:var(--accent);}
 .gs-cell.sel::after{content:'✓';position:absolute;top:4px;right:5px;width:19px;height:19px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+/* Le doublon refusé se signale lui-même : on montre lequel, au lieu de
+   laisser un simple message disparaître au bout de deux secondes. */
+.gs-cell.dup{border-color:var(--warn);animation:gsdup .45s ease 4;}
+@keyframes gsdup{0%,100%{box-shadow:0 0 0 0 rgba(var(--warn-rgb),0);}50%{box-shadow:0 0 0 4px rgba(var(--warn-rgb),0.45);}}
 .gs-cell.rnd{aspect-ratio:16/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted2);font-size:10.5px;font-weight:600;border:1px dashed var(--border2);}
 .gs-cell.rnd span{font-size:19px;}
 .gs-cell.sel.rnd{border-style:solid;color:var(--accent-ink);}
@@ -3080,8 +3084,64 @@ function bannerPref(view){ return Object.assign({}, BANNER_DEF, bannerPrefs[view
 function gifLoad(){
   try { const c = JSON.parse(loadKey('gifs_custom') || 'null'); if(Array.isArray(c)) gifCustom = c; } catch(e){}
   try { const p = JSON.parse(loadKey('banner_prefs') || 'null'); if(p && typeof p === 'object') bannerPrefs = p; } catch(e){}
+  try { const f = JSON.parse(loadKey('gifs_fp') || 'null'); if(f && typeof f === 'object') gifFp = f; } catch(e){}
 }
 function gifSaveLib(){ saveKey('gifs_custom', JSON.stringify(gifCustom)); }
+
+/* ---- anti-doublon ----
+   Deux adresses différentes désignent très souvent le MÊME fichier : les
+   banques de GIF ajoutent des paramètres de suivi (?cid=…&ct=g) et servent
+   depuis des serveurs numérotés (media0, media3…). On compare donc une forme
+   normalisée du lien, pas la chaîne brute. */
+function gifKey(url){
+  const brut = String(url || '').trim();
+  try {
+    const u = new URL(brut);
+    const host = u.hostname.toLowerCase().replace(/^www\./, '').replace(/^media\d+\./, 'media.');
+    return host + u.pathname.replace(/\/+$/, '').toLowerCase();   /* requête et ancre ignorées */
+  } catch(e){ return brut.toLowerCase(); }
+}
+
+/* Empreinte visuelle : l'image réduite en 8×8 niveaux de gris. Le même fichier
+   récupéré sur deux sites donne la même empreinte — c'est ce qui permet de
+   reconnaître un GIF d'origine qu'on rajouterait par lien. Impossible à
+   calculer si le serveur n'autorise pas la lecture des pixels : dans ce cas on
+   renvoie null et on ne bloque rien à tort. */
+let gifFp = {};
+function gifSaveFp(){ saveKey('gifs_fp', JSON.stringify(gifFp)); }
+function gifFingerprint(img){
+  try {
+    if(!img.naturalWidth) return null;
+    const c = document.createElement('canvas'); c.width = 8; c.height = 8;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0, 8, 8);
+    const d = x.getImageData(0, 0, 8, 8).data;
+    let s = '';
+    for(let i = 0; i < d.length; i += 4){
+      s += (Math.round(d[i]*0.30 + d[i+1]*0.59 + d[i+2]*0.11) >> 4).toString(16);
+    }
+    return s;
+  } catch(e){ return null; }   /* canvas « teinté » : lecture interdite */
+}
+/* Calculé en tâche de fond à l'ouverture du studio : le temps de choisir un
+   visuel, les empreintes sont prêtes. Une seule fois par GIF, puis mémorisé. */
+function gifWarmFingerprints(){
+  gifAll().forEach(g => {
+    if(gifFp[g.id] !== undefined) return;
+    gifFp[g.id] = null;                    /* réservé : on ne relancera pas 10 fois */
+    const im = new Image();
+    if(!g.builtin) im.crossOrigin = 'anonymous';
+    im.onload  = () => { gifFp[g.id] = gifFingerprint(im); gifSaveFp(); };
+    im.onerror = () => { gifSaveFp(); };
+    im.src = g.src;
+  });
+}
+/* Renvoie le visuel déjà présent qui correspond, ou null. */
+function gifFindDuplicate(url, fp){
+  const cle = gifKey(url);
+  return gifAll().find(g => gifKey(g.src) === cle)
+      || (fp ? gifAll().find(g => gifFp[g.id] && gifFp[g.id] === fp) : null)
+      || null;
+}
 function gifSavePrefs(){ saveKey('banner_prefs', JSON.stringify(bannerPrefs)); }
 function bannerSet(view, patch){
   bannerPrefs[view] = Object.assign(bannerPref(view), patch);
@@ -3142,6 +3202,7 @@ function gsOpen(view){
   gsView = view; gsTabId = 'choix';
   document.getElementById('gif-studio').classList.add('open');
   document.body.style.overflow = 'hidden';
+  gifWarmFingerprints();
   gsRender();
 }
 function gsClose(){
@@ -3169,7 +3230,10 @@ function gsAddUrl(){
   const url = inp.value.trim();
   if(!url){ showToast('Colle le lien du GIF'); return; }
   if(!/^https:\/\//i.test(url)){ showToast('⚠️ Le lien doit commencer par https://'); return; }
-  if(gifAll().some(g => g.src === url)){ showToast('Ce visuel est déjà dans ta bibliothèque'); return; }
+  /* Premier filet : même adresse, à la normalisation près. Instantané. */
+  const dejaVu = gifFindDuplicate(url, null);
+  if(dejaVu){ gsRefuseDoublon(dejaVu); return; }
+
   const btn = document.getElementById('gs-add-btn');
   if(btn){ btn.disabled = true; btn.textContent = '…'; }
   /* on vérifie que le lien affiche vraiment une image avant de l'enregistrer */
@@ -3179,16 +3243,46 @@ function gsAddUrl(){
     if(fini) return; fini = true;
     if(btn){ btn.disabled = false; btn.textContent = '+ Ajouter'; }
     if(!ok){ showToast("⚠️ Ce lien n'affiche pas d'image — vérifie qu'il finit par .gif"); return; }
-    gifCustom.push({ id:'g' + Date.now().toString(36), src:url, name:'' });
-    gifSaveLib();
+    /* Second filet : le même fichier sous une autre adresse. On compare les
+       pixels, ce qui rattrape aussi un GIF d'origine récupéré sur le web. */
+    const fp = gifFingerprint(sonde) || gifFingerprint(test);
+    const jumeau = gifFindDuplicate(url, fp);
+    if(jumeau){ gsRefuseDoublon(jumeau); return; }
+
+    const id = 'g' + Date.now().toString(36);
+    gifCustom.push({ id:id, src:url, name:'' });
+    gifFp[id] = fp || null;
+    gifSaveLib(); gifSaveFp();
     const i = document.getElementById('gs-url'); if(i) i.value = '';
     gsRender();
     showToast('✅ Visuel ajouté à ta bibliothèque');
   };
+  /* Sonde en parallèle : seule une image chargée en CORS laisse lire ses
+     pixels. Si le site refuse, elle échoue sans bruit et on garde le test
+     principal, qui lui accepte tout. */
+  const sonde = new Image();
+  sonde.crossOrigin = 'anonymous';
+  sonde.src = url;
+
   test.onload = () => done(true);
   test.onerror = () => done(false);
   setTimeout(() => done(false), 12000);
   test.src = url;
+}
+/* Le message dit non, et la vignette concernée se signale dans la grille. */
+function gsRefuseDoublon(g){
+  showToast(g.builtin
+    ? '🔁 Déjà là — ce visuel fait partie des GIFs d’origine'
+    : '🔁 Déjà là — ce visuel est déjà dans ta bibliothèque');
+  gsTabId = 'choix'; gsRender();
+  gsFlash(g.id);
+}
+function gsFlash(id){
+  const cell = document.querySelector('#gif-studio .gs-cell[data-gif="' + id + '"]');
+  if(!cell) return;
+  cell.classList.add('dup');
+  cell.scrollIntoView({ block:'center', behavior:'smooth' });
+  setTimeout(() => cell.classList.remove('dup'), 2000);
 }
 function gsDelCustom(id, ev){
   if(ev) ev.stopPropagation();
@@ -3289,7 +3383,7 @@ function gsRender(){
     '</div>';
 
   const cellules = gifAll().map(g =>
-    '<button class="gs-cell' + (p.gif === g.id ? ' sel' : '') + '" onclick="gsPick(\'' + g.id + '\')" title="' + glEsc(g.src) + '">' +
+    '<button class="gs-cell' + (p.gif === g.id ? ' sel' : '') + '" data-gif="' + g.id + '" onclick="gsPick(\'' + g.id + '\')" title="' + glEsc(g.src) + '">' +
       '<img loading="lazy" src="' + glEsc(g.src) + '" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'gs-broken\',textContent:\'lien cassé\'}))">' +
       (g.builtin ? '' : '<button class="gs-del" onclick="gsDelCustom(\'' + g.id + '\',event)" title="Retirer de la bibliothèque">✕</button>') +
     '</button>').join('');
