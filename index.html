@@ -3073,17 +3073,47 @@ const GIF_COUNT = 22;
 const BUILTIN_GIFS = Array.from({length: GIF_COUNT}, (_, i) => ({
   id: 'vibe-' + (i + 1), src: 'gifs/vibe-' + (i + 1) + '.gif', builtin: true
 }));
-let gifCustom = [];      /* {id, src, name} ajoutés par lien */
-let bannerPrefs = {};    /* { home:{gif, h, px, py}, ... } */
+let gifCustom = [];      /* {id, src, name} ajoutés par lien — commun aux 2 écrans */
+
+/* Un cadrage se règle en pourcentage d'une zone dont la largeur change du tout
+   au tout entre un écran de PC et un téléphone : le même réglage ne peut pas
+   convenir aux deux. Les visuels et les cadrages sont donc rangés par profil
+   d'écran, et ne se marchent jamais dessus. La bibliothèque, elle, reste
+   commune : un GIF ajouté sur mobile est disponible sur PC. */
+let bannerPrefs = { desktop:{}, mobile:{} };
+const BANNER_MODES = {
+  desktop: { emoji:'💻', label:'PC',     autre:'mobile'  },
+  mobile:  { emoji:'📱', label:'mobile', autre:'desktop' }
+};
+/* Même seuil que la feuille de style : au-dessus, la bannière fait 210 px. */
+function bannerMode(){ return window.matchMedia('(min-width:900px)').matches ? 'desktop' : 'mobile'; }
+function bannerProfile(mode){
+  const m = mode || bannerMode();
+  if(!bannerPrefs[m]) bannerPrefs[m] = {};
+  return bannerPrefs[m];
+}
 
 const BANNER_DEF = { gif:null, h:0, px:50, py:30 };   /* h:0 = hauteur du thème */
 
 function gifAll(){ return BUILTIN_GIFS.concat(gifCustom); }
 function gifById(id){ return gifAll().find(g => g.id === id) || null; }
-function bannerPref(view){ return Object.assign({}, BANNER_DEF, bannerPrefs[view] || {}); }
+function bannerPref(view, mode){ return Object.assign({}, BANNER_DEF, bannerProfile(mode)[view] || {}); }
 function gifLoad(){
   try { const c = JSON.parse(loadKey('gifs_custom') || 'null'); if(Array.isArray(c)) gifCustom = c; } catch(e){}
-  try { const p = JSON.parse(loadKey('banner_prefs') || 'null'); if(p && typeof p === 'object') bannerPrefs = p; } catch(e){}
+  try {
+    const p = JSON.parse(loadKey('banner_prefs') || 'null');
+    if(p && typeof p === 'object' && !Array.isArray(p)){
+      if(p.desktop || p.mobile){
+        bannerPrefs = { desktop:p.desktop || {}, mobile:p.mobile || {} };
+      } else {
+        /* ancien format : une seule table pour tout le monde. On la recopie
+           dans les deux profils, personne ne perd son réglage, et ils
+           divergeront dès la première retouche. */
+        bannerPrefs = { desktop:p, mobile:JSON.parse(JSON.stringify(p)) };
+        gifSavePrefs();
+      }
+    }
+  } catch(e){}
   try { const f = JSON.parse(loadKey('gifs_fp') || 'null'); if(f && typeof f === 'object') gifFp = f; } catch(e){}
 }
 function gifSaveLib(){ saveKey('gifs_custom', JSON.stringify(gifCustom)); }
@@ -3144,8 +3174,17 @@ function gifFindDuplicate(url, fp){
 }
 function gifSavePrefs(){ saveKey('banner_prefs', JSON.stringify(bannerPrefs)); }
 function bannerSet(view, patch){
-  bannerPrefs[view] = Object.assign(bannerPref(view), patch);
+  bannerProfile()[view] = Object.assign(bannerPref(view), patch);
   gifSavePrefs();
+}
+/* Basculer entre fenêtre large et fenêtre étroite change de profil : on
+   réapplique tout, sinon l'écran garderait les réglages de l'autre. */
+function bannerWatchMode(){
+  const mq = window.matchMedia('(min-width:900px)');
+  const relire = () => document.querySelectorAll('.view-banner[id^="banner-"]')
+    .forEach(el => rotateViewBanner(el.id.slice('banner-'.length)));
+  if(mq.addEventListener) mq.addEventListener('change', relire);
+  else if(mq.addListener) mq.addListener(relire);
 }
 
 /* ---- affichage ---- */
@@ -3289,7 +3328,11 @@ function gsDelCustom(id, ev){
   const g = gifById(id); if(!g || g.builtin) return;
   if(!confirm('Retirer ce visuel de ta bibliothèque ?\n\nLes catégories qui l’affichaient repasseront en aléatoire.')) return;
   gifCustom = gifCustom.filter(x => x.id !== id);
-  Object.keys(bannerPrefs).forEach(v => { if(bannerPrefs[v].gif === id) bannerPrefs[v].gif = null; });
+  /* la bibliothèque est commune : on décroche ce visuel dans LES DEUX profils */
+  Object.keys(BANNER_MODES).forEach(m => {
+    const prof = bannerProfile(m);
+    Object.keys(prof).forEach(v => { if(prof[v].gif === id) prof[v].gif = null; });
+  });
   gifSaveLib(); gifSavePrefs();
   document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => rotateViewBanner(el.id.slice(7)));
   gsRender();
@@ -3314,14 +3357,22 @@ function gsResetSize(){
   showToast('↺ Taille et cadrage remis par défaut');
 }
 function gsApplyAll(){
-  const p = bannerPref(gsView);
+  const p = bannerPref(gsView), prof = bannerProfile();
   document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => {
     const v = el.id.slice('banner-'.length);
-    bannerPrefs[v] = Object.assign(bannerPref(v), { h:p.h, px:p.px, py:p.py });
+    prof[v] = Object.assign(bannerPref(v), { h:p.h, px:p.px, py:p.py });
     applyBannerStyle(v);
   });
   gifSavePrefs();
-  showToast('📐 Taille appliquée à toutes les catégories');
+  showToast('📐 Taille appliquée à toutes les catégories ' + BANNER_MODES[bannerMode()].label);
+}
+/* Le seul pont entre les deux profils, et il est volontaire : on recopie le
+   réglage de CETTE catégorie vers l'autre écran, sur demande. */
+function gsCopyToOther(){
+  const ici = bannerMode(), la = BANNER_MODES[ici].autre;
+  bannerProfile(la)[gsView] = Object.assign({}, bannerPref(gsView, ici));
+  gifSavePrefs(); gsRender();
+  showToast('📤 Copié vers ' + BANNER_MODES[la].label);
 }
 /* Met à jour l'aperçu, les compteurs et la vraie bannière sans tout redessiner :
    c'est ce qui rend le réglage fluide pendant qu'on glisse. */
@@ -3428,8 +3479,13 @@ function gsRender(){
           '<button class="gs-step" onclick="gsNudge(\'py\',5)" title="Descendre le cadrage">↓</button>' +
           '<button class="gs-step" onclick="gsSet(\'px\',50);gsSet(\'py\',30)" title="Recentrer">◎</button>' +
         '</div></div>' +
+      '<div class="gs-note" style="margin:0 0 10px;">Ces réglages ne valent que pour ' +
+        BANNER_MODES[bannerMode()].emoji + ' <b>' + BANNER_MODES[bannerMode()].label +
+        '</b> — le cadrage se calcule sur la largeur de l’écran, il ne peut pas être le même des deux côtés.</div>' +
       '<div class="gs-actions">' +
         '<button class="gl-btn" onclick="gsApplyAll()">📐 Appliquer cette taille partout</button>' +
+        '<button class="gl-btn" onclick="gsCopyToOther()">📤 Copier vers ' +
+          BANNER_MODES[BANNER_MODES[bannerMode()].autre].label + '</button>' +
         '<button class="gl-btn" onclick="gsResetSize()">↺ Par défaut</button>' +
       '</div>' +
     '</div>';
@@ -3437,7 +3493,8 @@ function gsRender(){
   w.innerHTML =
     '<div class="gs-panel">' +
       '<div class="gs-head">' +
-        '<div><div class="gs-sub">Bannière</div><div class="gs-title">' + glEsc(gsLabel(gsView)) + '</div></div>' +
+        '<div><div class="gs-sub">Bannière · réglages ' + BANNER_MODES[bannerMode()].emoji + ' ' +
+          BANNER_MODES[bannerMode()].label + '</div><div class="gs-title">' + glEsc(gsLabel(gsView)) + '</div></div>' +
         '<button class="gs-close" onclick="gsClose()">✕ Fermer</button>' +
       '</div>' +
       apercu +
@@ -7450,6 +7507,7 @@ function initApp(){
   // bannières gif : la bibliothèque et les réglages avant le premier tirage
   gifLoad();
   initViewBanners();
+  bannerWatchMode();
   wrapEmojis(document.body);
 }
 let scWidget = null;
