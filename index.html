@@ -856,6 +856,15 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .p1 .ph-goal{background:var(--raised);color:var(--orange);} .p2 .ph-goal{background:var(--raised);color:var(--gold);}
 .p3 .ph-goal{background:var(--raised);color:var(--accent-ink);} .p4 .ph-goal{background:var(--raised);color:var(--green);}
 .arrow{text-align:center;color:var(--muted3);font-size:18px;margin:4px 0;}
+/* Feuille de route modifiable : les outils restent discrets tant qu'on ne
+   survole pas la carte, et sont toujours visibles au doigt sur mobile. */
+.ph-tools{display:flex;gap:1px;margin-left:6px;flex-shrink:0;opacity:0;transition:opacity .15s;}
+.phase-card:hover .ph-tools{opacity:1;}
+.ph-tools button{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;font-family:inherit;}
+.ph-tools button:hover{color:var(--accent-ink);}
+.ph-tools button:disabled{opacity:.25;cursor:default;}
+.ph-tools button:disabled:hover{color:var(--muted3);}
+@media (max-width:899px){ .ph-tools{opacity:1;} }
 
 .hill-formula{background:var(--raised);border:1px solid rgba(var(--ink),0.2);border-radius:10px;padding:18px;margin-bottom:14px;}
 .hf-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
@@ -1510,45 +1519,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
          dans l'onglet du suivi. -->
     <div id="goal-params-wrap"></div>
 
-    <div class="phase-card p1">
-      <div class="ph-head"><div><div class="ph-label">Phase 1 · Court terme</div><div class="ph-title">🏦 Débloquer le levier</div></div><div class="ph-period">Maintenant → 7 déc. 2026</div></div>
-      <ul class="ph-tasks">
-        <li><span>💼</span>Démarrer la mission jeune (contrat 6 mois)</li><li><span>📄</span>Monter le dossier de prêt sur 36 mois</li>
-        <li><span>🏦</span>Débloquer les 4 500 €</li><li><span>🎓</span>Verrouiller ma place dans l'accompagnement Delta</li>
-        <li><span>🧠</span>Rituel Hill matin + soir sans exception</li><li><span>📊</span>Tracker chaque euro qui rentre</li>
-      </ul>
-      <div class="ph-goal">🎯 4 500 € débloqués et accompagnement payé d'ici le 7 décembre 2026</div>
-    </div>
-    <div class="arrow">↓</div>
-    <div class="phase-card p2">
-      <div class="ph-head"><div><div class="ph-label">Phase 2 · Démarrage</div><div class="ph-title">👕 Retail &amp; Resell</div></div><div class="ph-period">Déc. 2026 → printemps 2027</div></div>
-      <ul class="ph-tasks">
-        <li><span>📦</span>Premier stock via l'accompagnement</li><li><span>🎓</span>Appliquer la méthode Delta à la lettre</li>
-        <li><span>📲</span>Vendre : Vinted, Instagram, Vestiaire, LBC</li><li><span>💰</span>Mettre 5 000 € de côté, intouchables</li>
-        <li><span>🔁</span>Réinvestir chaque bénéfice en stock</li><li><span>⭐</span>Premiers avis + réputation en ligne</li>
-      </ul>
-      <div class="ph-goal">🎯 Le prêt est couvert d'avance — et le stock tourne tout seul</div>
-    </div>
-    <div class="arrow">↓</div>
-    <div class="phase-card p3">
-      <div class="ph-head"><div><div class="ph-label">Phase 3 · Moyen terme</div><div class="ph-title">🏷️ Ma marque de vêtements</div></div><div class="ph-period">2027</div></div>
-      <ul class="ph-tasks">
-        <li><span>🏷️</span>Créer le nom et l'identité de la marque</li><li><span>🧵</span>Trouver mes fournisseurs et ma production</li>
-        <li><span>📸</span>Shooter la première collection</li><li><span>📱</span>Instagram + TikTok dédiés à la marque</li>
-        <li><span>📦</span>Packaging premium, unboxing soigné</li><li><span>💬</span>Communauté de clients fidèles</li>
-      </ul>
-      <div class="ph-goal">🎯 Ma marque existe et vend — en plus du resell qui tourne</div>
-    </div>
-    <div class="arrow">↓</div>
-    <div class="phase-card p4">
-      <div class="ph-head"><div><div class="ph-label">Phase 4 · Long terme</div><div class="ph-title">👑 Full bénéf &amp; liberté</div></div><div class="ph-period">2028 → +</div></div>
-      <ul class="ph-tasks">
-        <li><span>🚗</span>Racheter l'Audi Q7 de ma mère</li><li><span>💎</span>Mes bijoux custom, des pièces uniques</li>
-        <li><span>📈</span>Équipe, automatisation, systèmes</li><li><span>🌍</span>Vendre à l'international</li>
-        <li><span>🤝</span>Collaborations et placements</li><li><span>🕊</span>Vivre bien, être libre</li>
-      </ul>
-      <div class="ph-goal">🎯 Full bénéfice — le début qui me permet d'aller extrêmement loin</div>
-    </div>
+    <div id="goal-roadmap-wrap"></div>
   </div>
 
   <!-- HILL -->
@@ -3095,9 +3066,16 @@ function wrapEmojis(root){
   root = root || document.body;
   const EMOJI_TEST = /\p{Extended_Pictographic}/u;
   const EMOJI_GLOBAL = /\p{Extended_Pictographic}/gu;
+  /* Le contenu d'un <textarea> est du TEXTE, pas du HTML : y glisser un span
+     fait disparaître l'emoji de .value, donc de ce qu'on enregistre. On ne
+     touche jamais aux champs de saisie ni au code de la page. */
+  const INTOUCHABLE = 'textarea, input, select, option, script, style, title';
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(node){
-      if(node.parentElement && node.parentElement.classList.contains('emoji-fix')) return NodeFilter.FILTER_REJECT;
+      const p = node.parentElement;
+      if(!p) return NodeFilter.FILTER_REJECT;
+      if(p.classList.contains('emoji-fix')) return NodeFilter.FILTER_REJECT;
+      if(p.closest(INTOUCHABLE)) return NodeFilter.FILTER_REJECT;
       return EMOJI_TEST.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
     }
   });
@@ -3907,14 +3885,171 @@ function glRenderTaskEchoes(){
   });
 }
 
+/* ============ FEUILLE DE ROUTE (modifiable) ============
+   Les phases étaient écrites en dur dans le HTML : impossible de les changer
+   sans toucher au code. Elles vivent maintenant dans les données, comme les
+   tâches et les sources. Le numéro « Phase N » est calculé à l'affichage —
+   supprimer ou déplacer une phase renumérote tout le reste automatiquement. */
+let rmPhases = [];
+let rmEditing = null;   /* id de la phase en cours de modification, ou 'new' */
+
+function newPhaseId(){ return 'ph' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function rmSave(){ saveKey('roadmap_def', JSON.stringify(rmPhases)); }
+
+/* Point de départ à la première ouverture. Chacun réécrit ensuite la sienne :
+   rien ici n'est figé. */
+const RM_SEED = [
+  { stage:'Court terme', title:'🏦 Débloquer le levier', period:'Maintenant → 7 déc. 2026',
+    tasks:[['💼','Démarrer la mission jeune (contrat 6 mois)'],['📄','Monter le dossier de prêt sur 36 mois'],
+           ['🏦','Débloquer les 4 500 €'],['🎓',"Verrouiller ma place dans l'accompagnement Delta"],
+           ['🧠','Rituel Hill matin + soir sans exception'],['📊','Tracker chaque euro qui rentre']],
+    goal:"🎯 4 500 € débloqués et accompagnement payé d'ici le 7 décembre 2026" },
+  { stage:'Démarrage', title:'👕 Retail & Resell', period:'Déc. 2026 → printemps 2027',
+    tasks:[['📦',"Premier stock via l'accompagnement"],['🎓','Appliquer la méthode Delta à la lettre'],
+           ['📲','Vendre : Vinted, Instagram, Vestiaire, LBC'],['💰','Mettre 5 000 € de côté, intouchables'],
+           ['🔁','Réinvestir chaque bénéfice en stock'],['⭐','Premiers avis + réputation en ligne']],
+    goal:"🎯 Le prêt est couvert d'avance — et le stock tourne tout seul" },
+  { stage:'Moyen terme', title:'🏷️ Ma marque de vêtements', period:'2027',
+    tasks:[['🏷️',"Créer le nom et l'identité de la marque"],['🧵','Trouver mes fournisseurs et ma production'],
+           ['📸','Shooter la première collection'],['📱','Instagram + TikTok dédiés à la marque'],
+           ['📦','Packaging premium, unboxing soigné'],['💬','Communauté de clients fidèles']],
+    goal:'🎯 Ma marque existe et vend — en plus du resell qui tourne' },
+  { stage:'Long terme', title:'👑 Full bénéf & liberté', period:'2028 → +',
+    tasks:[['🚗',"Racheter l'Audi Q7 de ma mère"],['💎','Mes bijoux custom, des pièces uniques'],
+           ['📈','Équipe, automatisation, systèmes'],['🌍',"Vendre à l'international"],
+           ['🤝','Collaborations et placements'],['🕊','Vivre bien, être libre']],
+    goal:"🎯 Full bénéfice — le début qui me permet d'aller extrêmement loin" }
+];
+
+function rmLoad(){
+  let raw = null;
+  try { raw = JSON.parse(loadKey('roadmap_def') || 'null'); } catch(e){ raw = null; }
+  if(Array.isArray(raw)){ rmPhases = raw; return; }
+  rmPhases = RM_SEED.map(p => ({
+    id: newPhaseId(),
+    stage: p.stage, title: p.title, period: p.period, goal: p.goal,
+    tasks: p.tasks.map(t => ({ emoji:t[0], text:t[1] }))
+  }));
+  rmSave();
+}
+
+/* Une ligne de texte → une étape. L'emoji de tête, s'il y en a un, devient
+   la puce ; sinon on met un point. Ça évite un mini-formulaire par ligne. */
+function rmParseTasks(txt){
+  return String(txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(line=>{
+    let m = null;
+    /* Couvre aussi les chiffres encadrés (1️⃣), les drapeaux (🇫🇷), les
+       teintes de peau (👍🏽) et les emojis composés (👨‍👩‍👧). */
+    try { m = line.match(/^((?:[0-9#*]️?⃣|\p{Regional_Indicator}{2}|\p{Extended_Pictographic}[️\u{1F3FB}-\u{1F3FF}]*)(?:‍(?:\p{Extended_Pictographic}[️\u{1F3FB}-\u{1F3FF}]*|[0-9#*]️?⃣))*)\s*(.*)$/u); }
+    catch(e){ m = line.match(/^([^\w\s.,;:!?'"()\[\]-]+)\s*(.*)$/); }
+    return (m && m[2]) ? { emoji:m[1], text:m[2] } : { emoji:'•', text:line };
+  });
+}
+function rmTasksToText(p){
+  return ((p && p.tasks) || []).map(t => (t.emoji && t.emoji !== '•' ? t.emoji + ' ' : '') + t.text).join('\n');
+}
+
+/* ---- mutations ---- */
+function rmOpen(id){ rmEditing = id; rmRender(); }
+function rmCancel(){ rmEditing = null; rmRender(); }
+function rmMove(id, dir){
+  const i = rmPhases.findIndex(p => p.id === id), j = i + dir;
+  if(i < 0 || j < 0 || j >= rmPhases.length) return;
+  const tmp = rmPhases[i]; rmPhases[i] = rmPhases[j]; rmPhases[j] = tmp;
+  rmSave(); rmRender();
+}
+function rmSaveForm(){
+  const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+  const title = val('rm-title');
+  if(!title){ showToast('Donne un titre à cette phase'); return; }
+  const data = { stage:val('rm-stage'), title:title, period:val('rm-period'),
+                 goal:val('rm-goal'), tasks:rmParseTasks(val('rm-tasks')) };
+  if(rmEditing === 'new'){
+    rmPhases.push(Object.assign({ id:newPhaseId() }, data));
+    showToast('✅ Phase ajoutée');
+  } else {
+    const p = rmPhases.find(x => x.id === rmEditing);
+    if(p) Object.assign(p, data);
+    showToast('✅ Phase modifiée');
+  }
+  rmEditing = null; rmSave(); rmRender();
+}
+function rmDelete(){
+  const p = rmPhases.find(x => x.id === rmEditing); if(!p) return;
+  if(!confirm('Supprimer la phase « ' + p.title + ' » ?')) return;
+  rmPhases = rmPhases.filter(x => x.id !== rmEditing);
+  rmEditing = null; rmSave(); rmRender();
+  showToast('🗑 Phase supprimée');
+}
+
+/* ---- rendu ---- */
+function rmCard(p, i, n){
+  const cls = 'p' + ((i % 4) + 1);
+  const etapes = (p.tasks || []).map(t =>
+    '<li><span>' + glEsc(t.emoji) + '</span>' + glEsc(t.text) + '</li>').join('');
+  return '<div class="phase-card ' + cls + '">' +
+    '<div class="ph-head">' +
+      '<div>' +
+        '<div class="ph-label">Phase ' + (i+1) + (p.stage ? ' · ' + glEsc(p.stage) : '') + '</div>' +
+        '<div class="ph-title">' + glEsc(p.title) + '</div>' +
+      '</div>' +
+      '<div class="ph-period">' + glEsc(p.period || '') + '</div>' +
+      '<div class="ph-tools">' +
+        '<button onclick="rmMove(\'' + p.id + '\',-1)" title="Monter cette phase"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button onclick="rmMove(\'' + p.id + '\',1)" title="Descendre cette phase"' + (i === n-1 ? ' disabled' : '') + '>↓</button>' +
+        '<button onclick="rmOpen(\'' + p.id + '\')" title="Modifier cette phase">✏️</button>' +
+      '</div>' +
+    '</div>' +
+    (etapes ? '<ul class="ph-tasks">' + etapes + '</ul>' : '') +
+    (p.goal ? '<div class="ph-goal">' + glEsc(p.goal) + '</div>' : '') +
+  '</div>';
+}
+function rmForm(p){
+  const isNew = !p;
+  const v = p || { stage:'', title:'', period:'', goal:'', tasks:[] };
+  return '<div class="tk-form">' +
+    '<div class="gl-field"><label>Titre de la phase</label>' +
+      '<input id="rm-title" value="' + glEsc(v.title) + '" placeholder="Ex : 🏦 Débloquer le levier"></div>' +
+    '<div class="gl-grid2">' +
+      '<div class="gl-field"><label>Horizon</label>' +
+        '<input id="rm-stage" value="' + glEsc(v.stage) + '" placeholder="Ex : Court terme"></div>' +
+      '<div class="gl-field"><label>Période</label>' +
+        '<input id="rm-period" value="' + glEsc(v.period) + '" placeholder="Ex : Maintenant → déc. 2026"></div>' +
+    '</div>' +
+    '<div class="gl-field"><label>Les étapes — une par ligne</label>' +
+      '<textarea id="rm-tasks" placeholder="📄 Monter le dossier de prêt&#10;🏦 Débloquer les fonds" oninput="glAutoGrow(this)">' + glEsc(rmTasksToText(v)) + '</textarea></div>' +
+    '<div class="gl-field"><label>Objectif de la phase</label>' +
+      '<input id="rm-goal" value="' + glEsc(v.goal) + '" placeholder="Ex : 🎯 Les fonds sont débloqués"></div>' +
+    '<div class="gl-actions">' +
+      '<button class="gl-btn primary" onclick="rmSaveForm()">' + (isNew ? '✓ Ajouter la phase' : '✓ Enregistrer') + '</button>' +
+      (isNew ? '' : '<button class="gl-btn" onclick="rmDelete()">🗑 Supprimer</button>') +
+      '<button class="gl-btn" onclick="rmCancel()">Annuler</button>' +
+    '</div>' +
+  '</div>';
+}
+function rmRender(){
+  const w = document.getElementById('goal-roadmap-wrap'); if(!w) return;
+  const n = rmPhases.length;
+  const corps = n
+    ? rmPhases.map((p, i) => rmEditing === p.id ? rmForm(p) : rmCard(p, i, n))
+              .join('<div class="arrow">↓</div>')
+    : '<div class="gl-empty">Ta feuille de route est vide. Ajoute ta première phase ci-dessous.</div>';
+  w.innerHTML = '<div class="card-title">🗺 Ma feuille de route <div class="line"></div></div>' +
+    corps +
+    (rmEditing === 'new' ? rmForm(null)
+                         : '<button class="tk-add" onclick="rmOpen(\'new\')">+ Ajouter une phase</button>');
+  const ta = document.getElementById('rm-tasks'); if(ta) glAutoGrow(ta);
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
+
 function glRenderAll(){
-  glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
+  glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes(); rmRender();
   if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
 
 /* compatibilité : anciens points d'appel */
 function updateCountdown(){ glRenderHero(); }
-function loadCashProgress(){ glBootstrap(); glRenderAll(); }
+function loadCashProgress(){ glBootstrap(); rmLoad(); glRenderAll(); }
 
 /* ============ PLAN 30 JOURS ============ */
 const P30_START = new Date(2026, 5, 26);
