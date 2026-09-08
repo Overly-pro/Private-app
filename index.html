@@ -3122,11 +3122,16 @@ function buildGroupedViews(){
    ouvre le studio : y choisir un GIF fixe, en ajouter par lien, régler la
    hauteur et le cadrage. Tout est enregistré par catégorie.
 
-   /!\ GIF_COUNT doit correspondre au nombre de fichiers gifs/vibe-N.gif
+   Les visuels d'origine sont des WebP animés, pas des GIF : même rendu à
+   l'œil, 7,6× moins lourds (39,3 Mo → 5,2 Mo pour les 22). Ils s'affichent
+   dans une <img> comme n'importe quelle image, donc rien d'autre ne change.
+   Les visuels ajoutés par lien, eux, restent des GIF venus du web.
+
+   /!\ GIF_COUNT doit correspondre au nombre de fichiers gifs/vibe-N.webp
    (numérotés de 1 à GIF_COUNT sans trou). */
 const GIF_COUNT = 22;
 const BUILTIN_GIFS = Array.from({length: GIF_COUNT}, (_, i) => ({
-  id: 'vibe-' + (i + 1), src: 'gifs/vibe-' + (i + 1) + '.gif', builtin: true
+  id: 'vibe-' + (i + 1), src: 'gifs/vibe-' + (i + 1) + '.webp', builtin: true
 }));
 let gifCustom = [];      /* {id, src, name} ajoutés par lien — commun aux 2 écrans */
 
@@ -3397,7 +3402,7 @@ function gsAddUrl(){
   const done = ok => {
     if(fini) return; fini = true;
     if(btn){ btn.disabled = false; btn.textContent = '+ Ajouter'; }
-    if(!ok){ showToast("⚠️ Ce lien n'affiche pas d'image — vérifie qu'il finit par .gif"); return; }
+    if(!ok){ showToast("⚠️ Ce lien n'affiche pas d'image — vérifie que c'est bien un lien direct vers l'image"); return; }
     /* Second filet : le même fichier sous une autre adresse. On compare les
        pixels, ce qui rattrape aussi un GIF d'origine récupéré sur le web. */
     const fp = gifFingerprint(sonde) || gifFingerprint(test);
