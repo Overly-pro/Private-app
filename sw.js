@@ -7,7 +7,7 @@
 
 let notifTimers = [];
 
-const CACHE = 'overly-shell-v1';
+const CACHE = 'overly-shell-v2';   /* v2 : purge les anciens GIF (39 Mo) restes en cache */
 const SHELL = [
   './',
   'index.html',
