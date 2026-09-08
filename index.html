@@ -652,6 +652,22 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .gl-src-del:hover{color:var(--accent);}
 .gl-counts{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);white-space:nowrap;cursor:pointer;user-select:none;flex-shrink:0;}
 .gl-counts input{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;}
+.gl-src-unit{font-size:11px;color:var(--muted);flex-shrink:0;margin-left:-3px;}
+/* Sur téléphone, les cinq champs sur une seule ligne laissaient trois lettres
+   visibles dans le nom : illisible. On passe sur deux lignes — le nom occupe
+   toute la largeur, le montant et la case « compte » descendent en dessous. */
+@media (max-width:620px){
+  .gl-src-row{flex-wrap:wrap;gap:8px 7px;padding:10px;}
+  /* le nom prend ce qui reste de la 1re ligne, le montant a une base assez
+     large pour ne pas y tenir : il passe donc en 2e ligne avec la case */
+  .gl-src-emoji{order:1;}
+  .gl-src-name{order:2;flex:1 1 120px;font-size:13px;}
+  .gl-src-del{order:3;font-size:16px;padding:0 4px;}
+  .gl-src-val{order:4;flex:1 1 55%;width:auto;min-width:0;text-align:left;font-size:13px;}
+  .gl-src-unit{order:5;}
+  .gl-counts{order:6;margin-left:auto;font-size:11px;gap:6px;}
+  .gl-counts input{width:16px;height:16px;}
+}
 .gl-add{width:100%;margin-top:2px;padding:9px;border-radius:9px;border:1px dashed var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;}
 .gl-add:hover{color:var(--text);border-color:var(--accent);}
 .gl-field{margin-bottom:9px;}
@@ -2665,6 +2681,42 @@ let syncQueue = {};
 let syncTimer = null;
 let syncFails = 0;
 
+/* Liste des clés modifiées mais pas encore parties au serveur. Elle survit à
+   la fermeture, elle : si l'onglet est tué avant l'envoi — ce que les
+   téléphones font sans prévenir — la valeur locale est plus récente que
+   celle du cloud, et c'est elle qui doit gagner au rechargement. Sans ça,
+   la dernière modification revenait silencieusement en arrière. */
+const SYNC_PENDING = 'sync_pending';
+function syncMarkPending(key){
+  try {
+    const l = JSON.parse(localStorage.getItem(SYNC_PENDING) || '[]');
+    if(l.indexOf(key) === -1){ l.push(key); localStorage.setItem(SYNC_PENDING, JSON.stringify(l)); }
+  } catch(e){}
+}
+function syncClearPending(keys){
+  try {
+    const l = JSON.parse(localStorage.getItem(SYNC_PENDING) || '[]');
+    localStorage.setItem(SYNC_PENDING, JSON.stringify(l.filter(k => keys.indexOf(k) === -1)));
+  } catch(e){}
+}
+/* Au chargement : ce que le cloud renvoie est écrasé par la valeur locale
+   pour les clés restées en attente, et celles-ci repartent à l'envoi. */
+function syncRecoverPending(){
+  let l = [];
+  try { l = JSON.parse(localStorage.getItem(SYNC_PENDING) || '[]'); } catch(e){}
+  if(!Array.isArray(l) || !l.length) return 0;
+  let repris = 0;
+  l.forEach(k => {
+    const v = localStorage.getItem(k);
+    if(v === null) return;
+    cloudData[k] = v;
+    syncQueue[k] = v;
+    repris++;
+  });
+  if(repris){ setSyncState('pending'); clearTimeout(syncTimer); syncTimer = setTimeout(flushSync, SYNC_DELAY); }
+  return repris;
+}
+
 function setSyncState(state, detail){
   const el = document.getElementById('sync-dot');
   if(!el) return;
@@ -2680,8 +2732,9 @@ function flushSync(){
   const lot = syncQueue;
   if(!Object.keys(lot).length){ setSyncState('idle'); return; }
   syncQueue = {};
+  const cles = Object.keys(lot);
   db.collection('users').doc(currentUid).set(lot, { merge:true })
-    .then(()=>{ syncFails = 0; setSyncState(navigator.onLine ? 'idle' : 'offline'); })
+    .then(()=>{ syncFails = 0; syncClearPending(cles); setSyncState(navigator.onLine ? 'idle' : 'offline'); })
     .catch(e=>{
       /* on remet le lot dans la file : rien n'est perdu, on réessaiera */
       Object.assign(syncQueue, lot);
@@ -2705,6 +2758,7 @@ function saveKey(key, value){
   }
   if(!currentUid) return;
   syncQueue[key] = value;
+  syncMarkPending(key);
   setSyncState('pending');
   clearTimeout(syncTimer);
   syncTimer = setTimeout(flushSync, SYNC_DELAY);
@@ -2785,6 +2839,7 @@ auth.onAuthStateChanged(user => {
     currentUid = user.uid;
     db.collection('users').doc(currentUid).get().then(doc => {
       cloudData = doc.exists ? doc.data() : {};
+      syncRecoverPending();   /* ce qui n'était pas parti est plus récent que le cloud */
       playLoginTransition(()=>{
         overlay.classList.add('hidden');
         initApp();
@@ -3152,18 +3207,33 @@ function gifFingerprint(img){
     return s;
   } catch(e){ return null; }   /* canvas « teinté » : lecture interdite */
 }
-/* Calculé en tâche de fond à l'ouverture du studio : le temps de choisir un
-   visuel, les empreintes sont prêtes. Une seule fois par GIF, puis mémorisé. */
+/* Calculé UNE SEULE image à la fois, et seulement quand on s'apprête à
+   coller un lien. Le lancer à l'ouverture du studio chargeait les 22 GIFs
+   d'un bloc — près de 40 Mo, bien plus une fois décodés — par-dessus les
+   vignettes : de quoi faire tomber l'onglet sur téléphone. En file d'attente,
+   le pic mémoire est celui d'une image. */
+let gifFpEnCours = false;
 function gifWarmFingerprints(){
-  gifAll().forEach(g => {
-    if(gifFp[g.id] !== undefined) return;
-    gifFp[g.id] = null;                    /* réservé : on ne relancera pas 10 fois */
+  if(gifFpEnCours) return;
+  const reste = gifAll().filter(g => gifFp[g.id] === undefined);
+  if(!reste.length) return;
+  gifFpEnCours = true;
+  const suivant = i => {
+    if(i >= reste.length){ gifFpEnCours = false; gifSaveFp(); return; }
+    const g = reste[i];
+    gifFp[g.id] = null;                  /* réservé : on ne le relancera pas */
     const im = new Image();
     if(!g.builtin) im.crossOrigin = 'anonymous';
-    im.onload  = () => { gifFp[g.id] = gifFingerprint(im); gifSaveFp(); };
-    im.onerror = () => { gifSaveFp(); };
+    const fini = () => {
+      im.onload = im.onerror = null;
+      im.src = GS_BLANK;                 /* on relâche avant de passer au suivant */
+      setTimeout(() => suivant(i + 1), 40);
+    };
+    im.onload  = () => { gifFp[g.id] = gifFingerprint(im); fini(); };
+    im.onerror = fini;
     im.src = g.src;
-  });
+  };
+  suivant(0);
 }
 /* Renvoie le visuel déjà présent qui correspond, ou null. */
 function gifFindDuplicate(url, fp){
@@ -3233,6 +3303,52 @@ function initViewBanners(){
 let gsView = null;      /* catégorie en cours d'édition */
 let gsTabId = 'choix';
 
+/* GIF 1×1 transparent : sert de place vide dans la grille, et surtout à
+   libérer un GIF lourd qu'on ne voit plus. Remettre un src léger relâche le
+   décodage, alors qu'enlever l'attribut déclencherait une erreur d'image. */
+const GS_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+let gsObserver = null;
+
+/* Une vignette n'est chargée que lorsqu'elle approche de l'écran, et rendue
+   à la mémoire dès qu'elle s'en éloigne. La mémoire occupée reste celle de
+   ce qu'on voit, pas celle de toute la bibliothèque. */
+function gsObserveThumbs(){
+  const boite = document.getElementById('gif-studio');
+  const vignettes = boite ? boite.querySelectorAll('img[data-src]') : [];
+  if(gsObserver){ gsObserver.disconnect(); gsObserver = null; }
+  if(!('IntersectionObserver' in window)){
+    vignettes.forEach(i => gsLoadThumb(i));
+    return;
+  }
+  gsObserver = new IntersectionObserver(entrees => {
+    entrees.forEach(e => {
+      if(e.isIntersecting) gsLoadThumb(e.target);
+      else gsReleaseThumb(e.target);
+    });
+  }, { root: boite, rootMargin: '300px 0px' });
+  vignettes.forEach(i => gsObserver.observe(i));
+}
+function gsLoadThumb(img){
+  const vrai = img.dataset.src;
+  if(!vrai || img.getAttribute('src') === vrai) return;
+  img.onerror = () => {
+    if(img.getAttribute('src') !== vrai) return;   /* pas une vraie panne : on relâchait */
+    img.replaceWith(Object.assign(document.createElement('div'),
+      { className:'gs-broken', textContent:'lien cassé' }));
+  };
+  img.src = vrai;
+}
+function gsReleaseThumb(img){
+  if(img.getAttribute('src') !== GS_BLANK) img.src = GS_BLANK;
+}
+/* En quittant le studio, on rend tout : sinon la trentaine de Mo décodés
+   reste sur le dos de l'onglet pendant qu'on utilise l'app. */
+function gsFreeThumbs(){
+  if(gsObserver){ gsObserver.disconnect(); gsObserver = null; }
+  const boite = document.getElementById('gif-studio');
+  if(boite) boite.querySelectorAll('img[data-src]').forEach(gsReleaseThumb);
+}
+
 function gsLabel(view){
   if(typeof VIEW_LABELS !== 'undefined' && VIEW_LABELS[view]) return VIEW_LABELS[view];
   return view.charAt(0).toUpperCase() + view.slice(1);
@@ -3241,11 +3357,11 @@ function gsOpen(view){
   gsView = view; gsTabId = 'choix';
   document.getElementById('gif-studio').classList.add('open');
   document.body.style.overflow = 'hidden';
-  gifWarmFingerprints();
   gsRender();
 }
 function gsClose(){
   document.getElementById('gif-studio').classList.remove('open');
+  gsFreeThumbs();
   document.body.style.overflow = '';
   gsView = null;
 }
@@ -3433,9 +3549,13 @@ function gsRender(){
       (gsTabId === 'taille' ? '<div class="gs-preview-hint">Glisse sur l’image pour déplacer le cadrage</div>' : '') +
     '</div>';
 
+  /* Pas de src ici : les vignettes sont chargées et RELÂCHÉES au défilement.
+     La bibliothèque pèse près de 40 Mo, et un GIF animé occupe en mémoire
+     bien plus que son poids de fichier — tout charger d'un coup tuait
+     l'onglet sur téléphone. */
   const cellules = gifAll().map(g =>
     '<button class="gs-cell' + (p.gif === g.id ? ' sel' : '') + '" data-gif="' + g.id + '" onclick="gsPick(\'' + g.id + '\')" title="' + glEsc(g.src) + '">' +
-      '<img loading="lazy" src="' + glEsc(g.src) + '" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'gs-broken\',textContent:\'lien cassé\'}))">' +
+      '<img decoding="async" src="' + GS_BLANK + '" data-src="' + glEsc(g.src) + '" alt="">' +
       (g.builtin ? '' : '<button class="gs-del" onclick="gsDelCustom(\'' + g.id + '\',event)" title="Retirer de la bibliothèque">✕</button>') +
     '</button>').join('');
 
@@ -3449,7 +3569,7 @@ function gsRender(){
       '<div class="gs-add">' +
         '<div class="gs-ctrl-label" style="margin-bottom:6px;">Ajouter un visuel par lien</div>' +
         '<div class="gs-add-row">' +
-          '<input id="gs-url" placeholder="https://…/mon-gif.gif" onkeydown="if(event.key===\'Enter\')gsAddUrl()">' +
+          '<input id="gs-url" placeholder="https://…/mon-gif.gif" onfocus="gifWarmFingerprints()" onkeydown="if(event.key===\'Enter\')gsAddUrl()">' +
           '<button class="gl-btn primary" id="gs-add-btn" onclick="gsAddUrl()">+ Ajouter</button>' +
         '</div>' +
         '<div class="gs-note">Colle l’adresse directe d’une image (clic droit sur le GIF → « Copier l’adresse de l’image »). ' +
@@ -3505,7 +3625,8 @@ function gsRender(){
       paneChoix + paneTaille +
     '</div>';
   gsSync();
-  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+  gsObserveThumbs();
+  if(typeof wrapEmojis === "function") wrapEmojis(w);
 }
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -4079,8 +4200,8 @@ function glRenderActive(){
   const row = s => `<div class="gl-src-row">
       <input class="gl-src-emoji" value="${glEsc(s.emoji)}" maxlength="4" onchange="glSrcSet(${s.id},'emoji',this.value)">
       <input class="gl-src-name" value="${glEsc(s.label)}" placeholder="Nom de la source" onchange="glSrcSet(${s.id},'label',this.value)">
-      <input class="gl-src-val" type="number" step="any" value="${s.value}" onchange="glSrcSet(${s.id},'value',this.value)">
-      <label class="gl-counts"><input type="checkbox" ${s.counts?'checked':''} onchange="glSrcSet(${s.id},'counts',this.checked)">compte</label>
+      <input class="gl-src-val" type="number" step="any" value="${s.value}" title="Montant déjà réuni sur cette source" onchange="glSrcSet(${s.id},'value',this.value)"><span class="gl-src-unit">€</span>
+      <label class="gl-counts" title="Décoche pour suivre cette source sans l'ajouter au total"><input type="checkbox" ${s.counts?'checked':''} onchange="glSrcSet(${s.id},'counts',this.checked)">compte</label>
       <button class="gl-src-del" onclick="glSrcDel(${s.id})" title="Supprimer cette source">✕</button>
     </div>`;
 
@@ -4118,7 +4239,7 @@ function glRenderActive(){
   </div>
 
   <div class="card">
-    <div class="card-title">💵 Mes sources d'argent <div class="line"></div></div>
+    <div class="card-title">💵 Mes sources de revenus <div class="line"></div></div>
     <div style="font-size:10px;color:var(--muted2);line-height:1.5;margin-bottom:9px;">
       Coche « compte » pour les sources qui alimentent réellement le total. Décoche pour celles que tu veux seulement suivre (ex : ce que tu as gagné au total).
     </div>
