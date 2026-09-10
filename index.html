@@ -512,50 +512,10 @@ body{ background:var(--bg); }
 .nav-tree-overlay{position:fixed;inset:0;z-index:110;background:var(--scrim);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .22s;}
 .nav-tree-overlay.open{display:block;opacity:1;}
 
-/* BIJOUX */
+/* Onglets de sous-vues (Capture, Achats) */
 .bij-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
 .bij-tab{padding:7px 11px;font-size:10px;font-weight:700;letter-spacing:.4px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
 .bij-tab.active{background:rgba(var(--accent-rgb),0.08);border-color:rgba(var(--accent-rgb),0.3);color:var(--accent-ink);}
-.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
-.mood-tile{border-radius:10px;overflow:hidden;aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);position:relative;}
-.mood-tile img{width:100%;height:100%;object-fit:cover;display:block;}
-.mood-tile-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.72);border:none;color:#fff;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
-.mood-broken{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px;text-align:center;font-size:9px;color:var(--muted2);line-height:1.4;}
-.mood-tile.err .mood-broken{display:flex;}
-.mood-tile.err img{display:none;}
-/* Banque d'idées bijoux */
-.idea-card{background:rgba(var(--panel),0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(var(--ink),0.12);border-radius:12px;padding:11px 13px;margin-bottom:8px;position:relative;}
-.idea-txt{font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;padding-right:20px;}
-.idea-date{font-size:8.5px;color:var(--muted2);font-family:'Space Mono',monospace;margin-top:7px;letter-spacing:.5px;}
-.idea-del{position:absolute;top:9px;right:10px;background:none;border:none;color:var(--muted2);font-size:13px;cursor:pointer;padding:0;line-height:1;}
-/* Bibliothèque coupes & sertissages */
-.cut-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.cut-card{background:rgba(var(--panel),0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(var(--ink),0.12);border-radius:12px;padding:13px 10px 11px;text-align:center;}
-.cut-card svg{width:62px;height:62px;color:rgba(var(--ink),0.88);margin-bottom:8px;}
-.cut-name{font-size:11px;font-weight:700;margin-bottom:3px;line-height:1.25;}
-.cut-desc{font-size:9px;color:var(--muted);line-height:1.45;}
-.cut-tag{display:inline-block;font-size:7.5px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:rgba(var(--accent-rgb),0.1);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.28);margin-bottom:5px;}
-@media (min-width:900px){.cut-grid{grid-template-columns:repeat(4,1fr);}}
-@media (min-width:1450px){.cut-grid{grid-template-columns:repeat(6,1fr);}}
-.prod-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(var(--panel),0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(var(--ink),0.12);border-radius:12px;margin-bottom:8px;}
-.prod-name{flex:1;font-size:12px;font-weight:600;}
-.prod-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;cursor:pointer;user-select:none;transition:all .15s;}
-.prod-tag.idee{background:rgba(var(--neutral-rgb),0.08);color:var(--muted);border:1px solid rgba(var(--neutral-rgb),0.18);}
-.prod-tag.test{background:rgba(var(--amber-rgb),0.09);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.22);}
-.prod-tag.flagship{background:rgba(var(--accent-rgb),0.09);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.25);}
-.prod-del{font-size:14px;color:var(--muted2);cursor:pointer;background:none;border:none;padding:0;line-height:1;}
-.trend-card{background:rgba(var(--panel),0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(var(--ink),0.12);border-radius:14px;padding:12px 14px;margin-bottom:9px;}
-.trend-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.trend-icon{font-size:20px;flex-shrink:0;}
-.trend-title{font-size:13px;font-weight:700;flex:1;}
-.trend-heat{font-size:8.5px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;flex-shrink:0;}
-.trend-heat.hot{background:rgba(var(--accent-rgb),0.09);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.2);}
-.trend-heat.rising{background:rgba(var(--amber-rgb),0.09);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.22);}
-.trend-heat.stable{background:rgba(var(--teal-rgb),0.08);color:var(--teal);border:1px solid rgba(var(--teal-rgb),0.2);}
-.trend-desc{font-size:12px;color:var(--muted);line-height:1.65;}
-.trend-sources{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
-.trend-src{font-size:9px;font-weight:600;padding:2px 7px;background:rgba(var(--ink),0.04);border:1px solid var(--border);border-radius:6px;color:var(--muted);}
-.trend-updated{font-size:9px;color:var(--muted2);text-align:right;margin-bottom:12px;}
 
 /* ===== ACHATS — mannequin + wishlist à seuils ===== */
 .man-stage{position:relative;height:400px;margin-bottom:10px;}
@@ -1145,26 +1105,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .task-nav-btn:disabled{opacity:.3;cursor:default;}
 @keyframes stat-pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .stat-val{animation:stat-pop .4s ease;}
-/* VENTES */
-.ventes-subtabs{display:flex;gap:6px;margin-bottom:14px;}
-.ventes-subtab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
-.ventes-subtab.active{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
-.vente-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);}
-.vente-row:last-child{border-bottom:none;}
-.vente-nom{flex:1;font-size:13px;color:var(--text);}
-.vente-prix{font-size:13px;font-weight:700;color:var(--accent-ink);min-width:60px;text-align:right;}
-.vente-del{background:none;border:none;color:var(--muted3);cursor:pointer;font-size:14px;padding:4px;}
-.vente-del:hover{color:var(--text-strong);}
-.ventes-bilan{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
-.ventes-kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
-.ventes-kpi-val{font-size:17px;font-weight:900;color:var(--accent-ink);}
-.ventes-kpi-lbl{font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
-.calc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.calc-row label{font-size:12px;color:var(--muted2);width:140px;flex-shrink:0;}
-.calc-input{flex:1;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit;}
-.calc-result{background:rgba(var(--accent-rgb),0.1);border:1px solid var(--accent);border-radius:10px;padding:12px;text-align:center;margin-top:10px;}
-.calc-result-val{font-size:22px;font-weight:900;color:var(--accent-ink);}
-.calc-result-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
 /* OBJECTIFS HEBDO */
 .obj-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
 .obj-row:last-child{border-bottom:none;}
@@ -1411,7 +1351,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <div class="launch-grid">
-    <button class="launch-tile" onclick="goTo('bijoux')"><span class="launch-ic">💍</span><span class="launch-lb">Bijoux</span></button>
     <button class="launch-tile" onclick="goTo('finance')"><span class="launch-ic">💸</span><span class="launch-lb">Finance</span></button>
     <button class="launch-tile" onclick="goTo('objectifs')"><span class="launch-ic">🎯</span><span class="launch-lb">Objectifs</span></button>
     <button class="launch-tile" onclick="goTo('tasks')"><span class="launch-ic">✅</span><span class="launch-lb">Tâches</span></button>
@@ -1888,83 +1827,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="btn-primary" style="width:100%;margin-top:14px;" onclick="savePlanningWeek()">💾 Enregistrer</button>
   </div>
 </div>
-
-<!-- ============ VIEW: VENTES ============ -->
-<div class="view view-tabbed" id="view-ventes">
-  <img class="view-banner" id="banner-ventes" alt="">
-
-  <div class="ventes-subtabs">
-    <button class="ventes-subtab active" data-vt="bijoux" onclick="showVentesTab('bijoux')">💍 Bijoux</button>
-    <button class="ventes-subtab" data-vt="chaussures" onclick="showVentesTab('chaussures')">👟 Chaussures</button>
-    <button class="ventes-subtab" data-vt="calc" onclick="showVentesTab('calc')">🧮 Prix</button>
-  </div>
-
-  <!-- Bijoux -->
-  <div class="pane" id="vt-bijoux">
-    <div class="card">
-      <div class="card-title">💍 Ventes bijoux <div class="line"></div></div>
-      <div id="ventes-bijoux-list"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        <input type="text" id="vb-nom" placeholder="Nom de l'article" style="flex:2;min-width:120px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
-        <input type="number" id="vb-prix" placeholder="Prix €" style="flex:1;min-width:70px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
-        <button class="btn-primary" style="padding:8px 14px;" onclick="addVente('bijoux')">+ Ajouter</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📊 Bilan bijoux <div class="line"></div></div>
-      <div class="ventes-bilan">
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-nb">0</div><div class="ventes-kpi-lbl">ventes</div></div>
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-total">0 €</div><div class="ventes-kpi-lbl">total encaissé</div></div>
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vb-moy">0 €</div><div class="ventes-kpi-lbl">panier moyen</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Chaussures -->
-  <div class="pane" id="vt-chaussures" style="display:none;">
-    <div class="card">
-      <div class="card-title">💰 Coût du lot <div class="line"></div></div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <label style="font-size:12px;color:var(--muted2);white-space:nowrap;">Prix payé pour le lot (€)</label>
-        <input type="number" id="vc-lot" placeholder="Ex. 80" style="flex:1;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit;" oninput="recalcVentes('chaussures')">
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">👟 Ventes chaussures <div class="line"></div></div>
-      <div id="ventes-chaussures-list"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        <input type="text" id="vc-nom" placeholder="Modèle / pointure" style="flex:2;min-width:120px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
-        <input type="number" id="vc-prix" placeholder="Prix €" style="flex:1;min-width:70px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;">
-        <button class="btn-primary" style="padding:8px 14px;" onclick="addVente('chaussures')">+ Ajouter</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📊 Bilan chaussures <div class="line"></div></div>
-      <div class="ventes-bilan">
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-nb">0</div><div class="ventes-kpi-lbl">paires vendues</div></div>
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-total">0 €</div><div class="ventes-kpi-lbl">total encaissé</div></div>
-        <div class="ventes-kpi"><div class="ventes-kpi-val" id="vc-profit">0 €</div><div class="ventes-kpi-lbl">bénéfice net</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Calculateur prix -->
-  <div class="pane" id="vt-calc" style="display:none;">
-    <div class="card">
-      <div class="card-title">🧮 Calculateur de prix de vente <div class="line"></div></div>
-      <div class="calc-row"><label>Coût des matériaux (€)</label><input type="number" class="calc-input" id="calc-cout" placeholder="Ex. 12" oninput="calcPrix()"></div>
-      <div class="calc-row"><label>Temps passé (heures)</label><input type="number" class="calc-input" id="calc-temps" placeholder="Ex. 2" oninput="calcPrix()"></div>
-      <div class="calc-row"><label>Valeur heure travail (€)</label><input type="number" class="calc-input" id="calc-taux" placeholder="Ex. 15" oninput="calcPrix()"></div>
-      <div class="calc-row"><label>Marge souhaitée (%)</label><input type="number" class="calc-input" id="calc-marge" placeholder="Ex. 50" oninput="calcPrix()"></div>
-      <div class="calc-result" id="calc-result" style="display:none;">
-        <div class="calc-result-val" id="calc-prix-final">—</div>
-        <div class="calc-result-lbl">prix de vente recommandé</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:4px;" id="calc-detail">—</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ============ VIEW: HABITUDES ============ -->
 <div class="view" id="view-habitudes">
   <img class="view-banner" id="banner-habitudes" alt="">
@@ -2253,70 +2115,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="shop-list"></div>
   </div>
 </div>
-
-<!-- ============ VIEW: BIJOUX ============ -->
-<div class="view view-tabbed" id="view-bijoux">
-  <img class="view-banner" id="banner-bijoux" alt="">
-  <div class="bij-tabs">
-    <button class="bij-tab active" id="btab-moodboard" onclick="switchBijTab('moodboard')">🎨 Moodboard</button>
-    <button class="bij-tab" id="btab-idees" onclick="switchBijTab('idees')">💡 Idées</button>
-    <button class="bij-tab" id="btab-produits" onclick="switchBijTab('produits')">💎 Produits</button>
-    <button class="bij-tab" id="btab-tendances" onclick="switchBijTab('tendances')">📈 Tendances</button>
-    <button class="bij-tab" id="btab-coupes" onclick="switchBijTab('coupes')">💠 Coupes & Sertis</button>
-  </div>
-  <!-- MOODBOARD -->
-  <div class="pane" id="bij-moodboard-section">
-    <div class="card">
-      <div class="card-title">🎨 Ajouter une inspiration <div class="line"></div></div>
-      <input type="url" id="mood-url-input" placeholder="Colle l'ADRESSE DE L'IMAGE (finit par .jpg / .png)" style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:8px;">
-      <button class="btn-primary" style="width:100%;" onclick="addMoodImage()">+ Ajouter au moodboard</button>
-      <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;"><div style="flex:1;height:1px;background:var(--border2);"></div><span style="font-size:9px;color:var(--muted2);">OU</span><div style="flex:1;height:1px;background:var(--border2);"></div></div>
-      <button class="btn-primary" style="width:100%;background:rgba(var(--ink),0.06);color:var(--text);" onclick="document.getElementById('mood-file').click()">📁 Importer depuis mon téléphone</button>
-      <input type="file" id="mood-file" accept="image/*" style="display:none;" onchange="addMoodFile(this)">
-      <div style="font-size:9.5px;color:var(--muted2);margin-top:9px;line-height:1.55;">💡 Sur Pinterest, un lien de type <b>pinterest.com/pin/...</b> ne marche pas — c'est une page, pas une image. Appuie longuement sur l'image → <b>« Copier l'adresse de l'image »</b>, ou utilise l'import ci-dessus (100% fiable).</div>
-    </div>
-    <div class="mood-grid" id="mood-grid"></div>
-  </div>
-  <!-- IDÉES -->
-  <div class="pane" id="bij-idees-section" style="display:none;">
-    <div class="card">
-      <div class="card-title">💡 Nouvelle idée <div class="line"></div></div>
-      <textarea id="bij-notes" placeholder="Une idée par enregistrement : concept, matière, forme, nom de pièce..." style="width:100%;min-height:110px;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12px;padding:12px;font-family:inherit;resize:vertical;line-height:1.65;margin-bottom:10px;"></textarea>
-      <button class="btn-primary" style="width:100%;" onclick="saveBijIdea()">💾 Enregistrer cette idée</button>
-    </div>
-    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">🏦 Banque d'idées — <span id="bij-idea-count">0</span></div>
-    <div id="bij-ideas-list"></div>
-  </div>
-  <!-- PRODUITS -->
-  <div class="pane" id="bij-produits-section" style="display:none;">
-    <div class="card">
-      <div class="card-title">💎 Ajouter un produit <div class="line"></div></div>
-      <input type="text" id="prod-input" placeholder="Ex: Tennis Chain 4mm Argent 925..." style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
-      <button class="btn-primary" style="width:100%;" onclick="addProduct()">+ Ajouter le produit</button>
-    </div>
-    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Tape sur le badge pour changer le statut</div>
-    <div id="prod-list"></div>
-  </div>
-  <!-- TENDANCES -->
-  <div class="pane" id="bij-tendances-section" style="display:none;">
-    <div class="trend-updated">Veille mise à jour · Juillet 2025</div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">⛓️</span><span class="trend-title">Tennis Chain & Tennis Bracelet</span><span class="trend-heat hot">🔥 Dominant</span></div><div class="trend-desc">Le produit phare du moment. Porté seul ou en couches, en argent comme en doré. Best-seller n°1 bijouterie streetwear/luxe accessible depuis 2022 et continue de dominer. C'est le bon produit pour démarrer Overly.</div><div class="trend-sources"><span class="trend-src">TikTok</span><span class="trend-src">Pinterest</span><span class="trend-src">Etsy</span></div></div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">🥇</span><span class="trend-title">Chaînes chunky or épaisses</span><span class="trend-heat hot">🔥 Dominant</span></div><div class="trend-desc">Chaînes larges façon hip-hop, très fortes en doré. Portées en statement piece ou superposées. Cible 18-35 ans streetwear & mode. Bonne marge possible car prix de vente élevé.</div><div class="trend-sources"><span class="trend-src">Instagram</span><span class="trend-src">TikTok Shop</span></div></div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">✍️</span><span class="trend-title">Bijoux personnalisés & prénom</span><span class="trend-heat rising">📈 En hausse</span></div><div class="trend-desc">Colliers prénom, initiales, dates gravées. Forte demande cadeaux. Marges excellentes, peu de stock. À envisager en 2e gamme une fois le produit phare lancé.</div><div class="trend-sources"><span class="trend-src">Etsy</span><span class="trend-src">Pinterest</span></div></div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">🪙</span><span class="trend-title">Retour de l'argent 925 (silver)</span><span class="trend-heat rising">📈 En hausse</span></div><div class="trend-desc">L'argent sterling reprend du terrain sur l'or chez la Gen Z. Perçu comme plus authentique, plus accessible. TikTok est moteur de ce retour. Bon angle différenciant pour Overly.</div><div class="trend-sources"><span class="trend-src">TikTok</span><span class="trend-src">Depop</span></div></div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">🖤</span><span class="trend-title">Esthétique gothique / dark luxury</span><span class="trend-heat rising">📈 En hausse</span></div><div class="trend-desc">Croix, piques, designs asymétriques, noir et argent oxydé. Correspond exactement à la direction artistique Overly. Niche peu saturée en bijouterie accessible — forte identité de marque possible.</div><div class="trend-sources"><span class="trend-src">Pinterest</span><span class="trend-src">Grailed</span><span class="trend-src">TikTok</span></div></div>
-    <div class="trend-card"><div class="trend-row"><span class="trend-icon">💠</span><span class="trend-title">Stacking minimaliste</span><span class="trend-heat stable">⚖️ Stable</span></div><div class="trend-desc">Superposition de bagues fines, bracelets délicats. Marché stable, très concurrentiel. Peut compléter une gamme mais peu différenciant pour l'identité Overly.</div><div class="trend-sources"><span class="trend-src">Instagram</span><span class="trend-src">Pinterest</span></div></div>
-    <div class="card" style="margin-top:16px;"><div class="card-title">🔗 Sources à consulter <div class="line"></div></div><div style="display:flex;flex-direction:column;gap:8px;"><a href="https://trends.google.com/trends/explore?q=tennis+chain+jewelry" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Google Trends — Tennis chain jewelry</a><a href="https://www.pinterest.com/search/pins/?q=jewelry+trends+2025" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Pinterest — Jewelry trends 2025</a><a href="https://www.tiktok.com/search?q=jewelry+trend+2025" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ TikTok — Jewelry trend 2025</a><a href="https://www.etsy.com/market/trending_jewelry" target="_blank" style="font-size:12px;color:var(--accent-ink);text-decoration:none;">→ Etsy — Bijoux tendance</a></div></div>
-  </div>
-  <!-- COUPES & SERTISSAGES -->
-  <div class="pane" id="bij-coupes-section" style="display:none;">
-    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">💎 Coupes de pierres — <span id="cuts-count"></span></div>
-    <div class="cut-grid" id="cuts-grid"></div>
-    <div style="font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 10px;">🔧 Sertissages — <span id="settings-count"></span></div>
-    <div class="cut-grid" id="settings-grid"></div>
-  </div>
-</div>
-
 <!-- ============ VIEW: BIBLIO ============ -->
 <div class="view view-tabbed" id="view-biblio">
   <img class="view-banner" id="banner-biblio" alt="">
@@ -2908,7 +2706,7 @@ function showSV(groupId, svId){
 
 /* ============ VUES GROUPÉES ============ */
 const GROUPS = {
-  finance: { tabs:[{id:'intendance',label:'🙏 Intendance'},{id:'salaires',label:'💶 Salaires'},{id:'ventes',label:'🛍️ Ventes'}] },
+  finance: { tabs:[{id:'intendance',label:'🙏 Intendance'},{id:'salaires',label:'💶 Salaires'}] },
   objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] }
   // routine retiré — habitudes et planning sont des vues autonomes
 };
@@ -2944,13 +2742,13 @@ const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal', biblio:'Biblio',
-  sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
+  sleep:'Sommeil', planning:'Planning', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
 };
 const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
   mindset:'perso', journal:'perso', biblio:'perso',
-  sleep:'vie', planning:'vie', bijoux:'marque', achats:'style', capture:'today', tracker:'today'
+  sleep:'vie', planning:'vie', achats:'style', capture:'today', tracker:'today'
 };
 
 /* ===== SKILL TREE NAV ===== */
@@ -2970,9 +2768,6 @@ const ST_CATS = {
     {id:'mindset',   icon:'✨', label:'Mindset'},
     {id:'journal',   icon:'📓', label:'Journal'},
     {id:'biblio',    icon:'📺', label:'Biblio'}
-  ]},
-  marque: {icon:'💎', label:'Marque', views:[
-    {id:'bijoux',    icon:'💍', label:'Bijoux'}
   ]},
   style:  {icon:'🛍️', label:'Style', views:[
     {id:'achats',    icon:'🛍️', label:'Achats'}
@@ -5266,8 +5061,8 @@ const RECOMMENDED_HABITS = [
     desc:'10 minutes max avant de dormir. 1) Écris tes 3 priorités du lendemain dans l\'onglet Tâches ici. 2) Prépare ta tenue sur la chaise ou dans un endroit visible. 3) Vérifie ton réveil. C\'est tout. L\'objectif : ne pas prendre de décisions fatigantes le matin. Le matin, ton énergie mentale est à son maximum — utilise-la pour avancer, pas pour chercher tes affaires.' },
   { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain',
     desc:'Astuce simple : remplis une bouteille de 75cl le matin et une autre à midi — objectif, finir les deux. Quand la bouteille est sur la table, tu bois automatiquement sans y penser. Au travail, bois un verre à chaque pause. La déshydratation est la première cause de fatigue, maux de tête et difficultés à se concentrer. L\'impact sur l\'énergie est réel en 2 semaines.' },
-  { cat:'📚 Compétences', name:'Étudier 1 créateur de bijoux : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
-    desc:'Va sur Instagram, TikTok ou Etsy. Cherche un créateur de bijoux (FR : "bijoux fait main", "bijoux acier inoxydable", "bijoux créateur". INT : "handmade jewelry", "jewelry brand"). Observe : Quels sont ses prix pour quels types de pièces ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
+  { cat:'📚 Compétences', name:'Étudier 1 concurrent : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
+    desc:'Va sur Instagram, TikTok ou Etsy. Cherche quelqu\'un qui fait la même chose que toi, en France et à l\'étranger. Observe : quels sont ses prix, pour quoi exactement ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
   { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé',
     desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer son activité", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Prends des notes dans l\'onglet Biblio ici — colle le lien pour ne pas perdre la vidéo.' },
   { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction avant d\'avoir lu',
@@ -5450,95 +5245,6 @@ function removeHabit(idx){
   renderHabits(); renderRecommendedHabits();
 }
 
-/* ============ VENTES ============ */
-const VENTES_KEY = 'ventes_data';
-let ventesData = { bijoux:[], chaussures:{ lot:0, items:[] } };
-function showVentesTab(tab){
-  ['bijoux','chaussures','calc'].forEach(t=>{
-    document.getElementById('vt-'+t).style.display = t===tab ? '' : 'none';
-    document.querySelector('.ventes-subtab[data-vt="'+t+'"]').classList.toggle('active', t===tab);
-  });
-}
-function renderVentes(){
-  renderVentesList('bijoux');
-  renderVentesList('chaussures');
-  const lot = ventesData.chaussures.lot || 0;
-  document.getElementById('vc-lot').value = lot || '';
-}
-function renderVentesList(type){
-  const items = type==='bijoux' ? ventesData.bijoux : ventesData.chaussures.items;
-  const listEl = document.getElementById('ventes-'+type+'-list');
-  if(!items.length){ listEl.innerHTML='<div style="font-size:12px;color:var(--muted3);font-style:italic;padding:6px 0;">Aucune vente enregistrée.</div>'; }
-  else {
-    listEl.innerHTML = items.map((v,i)=>`<div class="vente-row">
-      <div class="vente-nom">${escapeHtml(v.nom)}</div>
-      <div class="vente-prix">+${v.prix.toFixed(2)} €</div>
-      <button class="vente-del" onclick="removeVente('${type}',${i})">✕</button>
-    </div>`).join('');
-  }
-  recalcVentes(type);
-}
-function addVente(type){
-  const nom = document.getElementById(type==='bijoux'?'vb-nom':'vc-nom').value.trim();
-  const prix = parseFloat(document.getElementById(type==='bijoux'?'vb-prix':'vc-prix').value)||0;
-  if(!nom||!prix) return;
-  if(type==='bijoux') ventesData.bijoux.push({nom,prix,date:todayISO()});
-  else ventesData.chaussures.items.push({nom,prix,date:todayISO()});
-  saveKey(VENTES_KEY, JSON.stringify(ventesData));
-  document.getElementById(type==='bijoux'?'vb-nom':'vc-nom').value='';
-  document.getElementById(type==='bijoux'?'vb-prix':'vc-prix').value='';
-  renderVentesList(type);
-}
-function removeVente(type,idx){
-  if(type==='bijoux') ventesData.bijoux.splice(idx,1);
-  else ventesData.chaussures.items.splice(idx,1);
-  saveKey(VENTES_KEY, JSON.stringify(ventesData));
-  renderVentesList(type);
-}
-function recalcVentes(type){
-  if(type==='bijoux'){
-    const items = ventesData.bijoux;
-    const total = items.reduce((s,v)=>s+v.prix,0);
-    document.getElementById('vb-nb').textContent = items.length;
-    document.getElementById('vb-total').textContent = total.toFixed(2)+' €';
-    document.getElementById('vb-moy').textContent = items.length ? (total/items.length).toFixed(2)+' €' : '0 €';
-  } else {
-    const lot = parseFloat(document.getElementById('vc-lot').value)||0;
-    ventesData.chaussures.lot = lot;
-    saveKey(VENTES_KEY, JSON.stringify(ventesData));
-    const items = ventesData.chaussures.items;
-    const total = items.reduce((s,v)=>s+v.prix,0);
-    document.getElementById('vc-nb').textContent = items.length;
-    document.getElementById('vc-total').textContent = total.toFixed(2)+' €';
-    document.getElementById('vc-profit').textContent = (total-lot).toFixed(2)+' €';
-    syncShoesToGoal(total);
-  }
-}
-/* Synchro : total des ventes de chaussures → source "chaussures" de l'objectif,
-   si une telle source existe. Sinon on ne fait rien : l'objectif courant n'a
-   peut-être plus de revente dans ses sources. */
-function syncShoesToGoal(total){
-  if(total===undefined) total = (ventesData.chaussures.items||[]).reduce((s,v)=>s+v.prix,0);
-  saveKey('cash_shoes', total);
-  if(typeof glCurrent === 'undefined' || !glCurrent) return;
-  const src = (glCurrent.sources||[]).find(s=>/chaussure|shoe|sneaker/i.test(s.label||''));
-  if(!src || src.value === total) return;
-  src.value = total;
-  glSave();
-  if(typeof glRenderAll === 'function') glRenderAll();
-}
-function calcPrix(){
-  const cout = parseFloat(document.getElementById('calc-cout').value)||0;
-  const temps = parseFloat(document.getElementById('calc-temps').value)||0;
-  const taux = parseFloat(document.getElementById('calc-taux').value)||0;
-  const marge = parseFloat(document.getElementById('calc-marge').value)||0;
-  const base = cout + (temps*taux);
-  if(!base){ document.getElementById('calc-result').style.display='none'; return; }
-  const prix = base * (1 + marge/100);
-  document.getElementById('calc-result').style.display='';
-  document.getElementById('calc-prix-final').textContent = prix.toFixed(2)+' €';
-  document.getElementById('calc-detail').textContent = 'Coût total: '+base.toFixed(2)+' € · Marge: +'+(prix-base).toFixed(2)+' €';
-}
 
 /* ============ OBJECTIFS HEBDO ============ */
 const OBJ_HEBDO_KEY = 'obj_hebdo';
@@ -5709,226 +5415,6 @@ function loadBookStatuses(){
     badge.textContent = saved === 'done' ? '✓ Lu' : 'En cours';
   });
 }
-/* ===== BIJOUX ===== */
-function switchBijTab(tab){
-  ['moodboard','idees','produits','tendances','coupes'].forEach(t=>{
-    document.getElementById('bij-'+t+'-section').style.display = t===tab ? '' : 'none';
-    document.getElementById('btab-'+t).classList.toggle('active', t===tab);
-  });
-}
-function isPageUrl(u){
-  return /pinterest\.[a-z.]+\/pin\//i.test(u) || /\/pin\.it\//i.test(u) || /pin\.it\//i.test(u)
-      || /instagram\.com\/(p|reel)\//i.test(u) || /^https?:\/\/(www\.)?pinterest\./i.test(u);
-}
-function addMoodImage(){
-  const inp = document.getElementById('mood-url-input');
-  const url = inp.value.trim();
-  if(!url) return;
-  if(isPageUrl(url)){
-    showToast('⚠️ Ça c\'est le lien de la PAGE, pas de l\'image');
-    setTimeout(()=>showToast('Appui long sur l\'image → « Copier l\'adresse de l\'image »'), 1500);
-    return;
-  }
-  if(!/^https?:\/\//i.test(url) && !/^data:image\//i.test(url)){
-    showToast('⚠️ Lien invalide — il doit commencer par https://');
-    return;
-  }
-  let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
-  imgs.push(url);
-  saveKey('bij_moodboard', JSON.stringify(imgs));
-  inp.value = '';
-  renderMoodboard(imgs);
-  showToast('🎨 Ajouté au moodboard');
-}
-/* Import depuis la galerie : redimensionne pour rester léger */
-function addMoodFile(input){
-  const file = input.files && input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    const img = new Image();
-    img.onload = ()=>{
-      const MAX = 620;
-      let w = img.width, h = img.height;
-      if(w>h && w>MAX){ h = Math.round(h*MAX/w); w = MAX; }
-      else if(h>=w && h>MAX){ w = Math.round(w*MAX/h); h = MAX; }
-      const cv = document.createElement('canvas');
-      cv.width = w; cv.height = h;
-      cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      const data = cv.toDataURL('image/jpeg', 0.72);
-      let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
-      imgs.push(data);
-      saveKey('bij_moodboard', JSON.stringify(imgs));
-      renderMoodboard(imgs);
-      showToast('🎨 Image importée !');
-    };
-    img.onerror = ()=> showToast('⚠️ Fichier image illisible');
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-function deleteMoodImage(idx){
-  let imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
-  imgs.splice(idx,1);
-  saveKey('bij_moodboard', JSON.stringify(imgs));
-  renderMoodboard(imgs);
-}
-function renderMoodboard(imgs){
-  const grid = document.getElementById('mood-grid');
-  if(!grid) return;
-  if(!imgs.length){ grid.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:14px 0;">Moodboard vide — ajoute ta première inspiration.</div>'; return; }
-  grid.innerHTML = imgs.map((url,i)=>`
-    <div class="mood-tile">
-      <img src="${escapeHtml(url)}" alt="inspiration" referrerpolicy="no-referrer" loading="lazy" onerror="this.closest('.mood-tile').classList.add('err')">
-      <div class="mood-broken">🚫<span>Image bloquée<br>par le site source</span></div>
-      <button class="mood-tile-del" onclick="deleteMoodImage(${i})">✕</button>
-    </div>`).join('');
-}
-/* ===== BIBLIOTHÈQUE COUPES & SERTISSAGES ===== */
-const GEM_CUTS = [
- {n:'Brillant rond', d:'57-58 facettes, éclat maximal. La référence absolue.', s:'<circle cx="50" cy="50" r="37"/><polygon points="50,13 76,24 87,50 76,76 50,87 24,76 13,50 24,24"/><path d="M50 13V87M13 50H87M24 24L76 76M76 24L24 76"/>'},
- {n:'Princesse', d:'Carrée, angles vifs, très brillante. Moderne.', s:'<rect x="17" y="17" width="66" height="66"/><path d="M17 17L83 83M83 17L17 83M50 17L83 50L50 83L17 50Z"/>'},
- {n:'Coussin', d:'Carré aux angles adoucis. Vibe vintage.', s:'<rect x="16" y="16" width="68" height="68" rx="20"/><path d="M50 16V84M16 50H84M28 26L72 74M72 26L28 74"/>'},
- {n:'Ovale', d:'Allonge le doigt, brillance de type brillant.', s:'<ellipse cx="50" cy="50" rx="26" ry="37"/><path d="M50 13V87M24 50H76M33 26L67 74M67 26L33 74"/>'},
- {n:'Émeraude', d:'Rectangulaire à degrés. Élégance Art déco.', s:'<polygon points="31,14 69,14 81,26 81,74 69,86 31,86 19,74 19,26"/><polygon points="36,24 64,24 73,32 73,68 64,76 36,76 27,68 27,32"/><rect x="36" y="38" width="28" height="24"/>'},
- {n:'Asscher', d:'Émeraude carrée, effet miroirs infinis.', s:'<polygon points="31,16 69,16 84,31 84,69 69,84 31,84 16,69 16,31"/><polygon points="37,26 63,26 74,37 74,63 63,74 37,74 26,63 26,37"/><rect x="38" y="38" width="24" height="24"/>'},
- {n:'Radiant', d:'Rectangle à coins coupés + éclat du brillant.', s:'<polygon points="30,14 70,14 82,26 82,74 70,86 30,86 18,74 18,26"/><path d="M18 26L50 50L18 74M82 26L50 50L82 74M30 14L50 50L70 14M30 86L50 50L70 86"/>'},
- {n:'Poire', d:'Goutte d\'eau : pointe + arrondi. Pendentifs et bagues.', s:'<path d="M50 10C66 32 79 48 79 62A29 29 0 1 1 21 62C21 48 34 32 50 10Z"/><path d="M50 10V91M27 54H73M34 32L66 76M66 32L34 76"/>'},
- {n:'Marquise', d:'Navette allongée à deux pointes. Doigt affiné.', s:'<path d="M50 10C67 27 75 39 75 50C75 61 67 73 50 90C33 73 25 61 25 50C25 39 33 27 50 10Z"/><path d="M50 10V90M29 40L71 60M71 40L29 60"/>'},
- {n:'Cœur', d:'Symbole romantique, taille exigeante.', s:'<path d="M50 86C21 62 15 44 25 31C33 20 46 21 50 33C54 21 67 20 75 31C85 44 79 62 50 86Z"/><path d="M50 33V86M31 42L69 66M69 42L31 66"/>'},
- {n:'Baguette', d:'Rectangle fin à degrés. Pierre d\'accompagnement.', s:'<rect x="31" y="12" width="38" height="76"/><rect x="39" y="22" width="22" height="56"/><rect x="45" y="34" width="10" height="32"/>'},
- {n:'Trillion', d:'Triangle brillant, souvent en pierres latérales.', s:'<path d="M50 12C68 38 82 60 88 78C62 90 38 90 12 78C18 60 32 38 50 12Z"/><path d="M50 30L70 70H30Z M50 12L50 30M12 78L30 70M88 78L70 70"/>'},
- {n:'Taille rose', d:'Dôme facetté, base plate. Taille antique.', s:'<circle cx="50" cy="50" r="37"/><polygon points="50,21 75,36 75,64 50,79 25,64 25,36"/><path d="M50 21L50 79M25 36L75 64M75 36L25 64"/>'},
- {n:'Taille ancienne', d:'Old European — l\'ancêtre du brillant, facettes larges.', s:'<circle cx="50" cy="50" r="37"/><circle cx="50" cy="50" r="12"/><path d="M50 13V38M50 62V87M13 50H38M62 50H87M24 24L41 41M76 24L59 41M24 76L41 59M76 76L59 59"/>'},
- {n:'Briolette', d:'Goutte 100% facettée. Boucles et pendentifs.', s:'<path d="M50 8C67 30 77 46 77 60A27 27 0 1 1 23 60C23 46 33 30 50 8Z"/><path d="M50 8L37 31L50 46L36 62L50 79L64 62L50 46L63 31Z M30 45L70 45M27 62L73 62"/>'},
- {n:'Cabochon', d:'Dôme poli sans facettes. Pierres opaques (onyx, turquoise).', s:'<ellipse cx="50" cy="52" rx="34" ry="29"/><path d="M23 61Q50 78 77 61M33 38Q42 30 55 32"/>'},
- {n:'Hexagonale', d:'Six côtés. Géométrique, éditorial, moderne.', s:'<polygon points="50,12 82,31 82,69 50,88 18,69 18,31"/><polygon points="50,28 68,39 68,61 50,72 32,61 32,39"/><path d="M50 12V28M82 31L68 39M82 69L68 61M50 88V72M18 69L32 61M18 31L32 39"/>'},
- {n:'Cerf-volant (Kite)', d:'Losange asymétrique. Très utilisé en dark luxury.', s:'<polygon points="50,10 80,42 50,90 20,42"/><path d="M50 10V90M20 42H80"/>'},
- {n:'Bouclier (Shield)', d:'Forme blindée unique. Chevalières et pièces fortes.', s:'<path d="M27 16H73L81 42L50 87L19 42Z"/><path d="M27 16L50 44L73 16M19 42L50 44L81 42M50 44V87"/>'},
- {n:'Demi-lune', d:'Moitié de pierre. Pierre latérale élégante.', s:'<path d="M21 37H79C79 63 66 80 50 80C34 80 21 63 21 37Z"/><path d="M21 37L50 80M79 37L50 80M36 37L50 80M64 37L50 80"/>'},
- {n:'Trapèze', d:'Épaule les pierres centrales dans les bagues 3 pierres.', s:'<polygon points="27,32 73,32 83,68 17,68"/><polygon points="35,42 65,42 71,58 29,58"/>'},
- {n:'Portrait', d:'Plate et transparente comme une fenêtre. Rare.', s:'<rect x="22" y="27" width="56" height="46"/><rect x="29" y="34" width="42" height="32"/><path d="M22 27L29 34M78 27L71 34M22 73L29 66M78 73L71 66"/>'},
- {n:'Taille française', d:'Croix au sommet. Vintage années 20.', s:'<rect x="18" y="18" width="64" height="64"/><path d="M18 18L82 82M82 18L18 82"/><polygon points="50,18 82,50 50,82 18,50"/>'}
-];
-const GEM_SETTINGS = [
- {n:'Serti griffes', d:'4 à 6 griffes. Laisse passer un max de lumière. Le classique.', s:'<path d="M32 42H68L50 68Z M32 42L40 31H60L68 42"/><path d="M29 29C25 36 25 47 31 52M71 29C75 36 75 47 69 52"/><path d="M16 72C30 61 70 61 84 72"/>'},
- {n:'Serti clos', d:'Le métal entoure toute la pierre. Protection maximale.', s:'<path d="M36 42H64L50 62Z M36 42L43 34H57L64 42"/><path d="M30 30V47H40M70 30V47H60"/><path d="M16 72C30 60 70 60 84 72"/>'},
- {n:'Serti demi-clos', d:'La pierre n\'est entourée que partiellement.', s:'<path d="M36 42H64L50 62Z M36 42L43 34H57L64 42"/><path d="M30 30V47H40"/><path d="M70 33C74 38 74 45 69 49"/><path d="M16 72C30 60 70 60 84 72"/>'},
- {n:'Serti rail', d:'Pierres alignées entre deux rails de métal.', s:'<path d="M12 40H88M12 62H88"/><polygon points="27,44 34,51 27,58 20,51"/><polygon points="50,44 57,51 50,58 43,51"/><polygon points="73,44 80,51 73,58 66,51"/>'},
- {n:'Serti pavé', d:'Surface entièrement pavée de micro-pierres.', s:'<circle cx="30" cy="38" r="8"/><circle cx="50" cy="38" r="8"/><circle cx="70" cy="38" r="8"/><circle cx="40" cy="55" r="8"/><circle cx="60" cy="55" r="8"/><circle cx="50" cy="72" r="8"/>'},
- {n:'Serti grain', d:'Petits grains de métal levés qui tiennent chaque pierre.', s:'<circle cx="30" cy="50" r="9"/><circle cx="50" cy="50" r="9"/><circle cx="70" cy="50" r="9"/><circle cx="40" cy="41" r="2" fill="currentColor"/><circle cx="40" cy="59" r="2" fill="currentColor"/><circle cx="60" cy="41" r="2" fill="currentColor"/><circle cx="60" cy="59" r="2" fill="currentColor"/><path d="M14 36H86M14 64H86"/>'},
- {n:'Serti barrette', d:'Barres verticales entre chaque pierre.', s:'<path d="M22 34V66M46 34V66M70 34V66"/><polygon points="34,42 40,50 34,58 28,50"/><polygon points="58,42 64,50 58,58 52,50"/><polygon points="80,44 84,50 80,56 76,50"/>'},
- {n:'Serti tension', d:'La pierre semble flotter, tenue par la pression du métal.', s:'<path d="M12 60C20 46 31 41 41 43M88 60C80 46 69 41 59 43"/><polygon points="42,40 58,40 50,58"/><path d="M42 40L46 32H54L58 40"/>'},
- {n:'Serti invisible', d:'Aucun métal visible entre les pierres. Effet mystère.', s:'<rect x="26" y="26" width="23" height="23"/><rect x="51" y="26" width="23" height="23"/><rect x="26" y="51" width="23" height="23"/><rect x="51" y="51" width="23" height="23"/><path d="M26 37.5H74M37.5 26V74M62.5 26V74M26 62.5H74"/>'},
- {n:'Serti étoilé (flush)', d:'Pierre encastrée au ras du métal. Discret et solide.', s:'<path d="M12 62C30 46 70 46 88 62"/><circle cx="50" cy="52" r="9"/><path d="M50 36V43M66 40L61 46M34 40L39 46M70 54H63M30 54H37"/>'},
- {n:'Halo', d:'Couronne de petites pierres autour de la pierre centrale.', s:'<circle cx="50" cy="50" r="13"/><circle cx="50" cy="24" r="6"/><circle cx="69" cy="31" r="6"/><circle cx="76" cy="50" r="6"/><circle cx="69" cy="69" r="6"/><circle cx="50" cy="76" r="6"/><circle cx="31" cy="69" r="6"/><circle cx="24" cy="50" r="6"/><circle cx="31" cy="31" r="6"/>'},
- {n:'Cathédrale', d:'Arches de métal qui élèvent la pierre comme une nef.', s:'<path d="M12 74C24 58 34 50 42 46M88 74C76 58 66 50 58 46"/><path d="M35 40H65L50 60Z M35 40L42 32H58L65 40"/><path d="M24 68C32 57 39 52 44 50M76 68C68 57 61 52 56 50"/>'},
- {n:'Serti inversé', d:'Diamant monté à l\'envers, pointe vers le haut. Tendance récente, très dark luxury.', tag:'RÉCENT', s:'<path d="M32 58H68L50 30Z"/><path d="M32 58L40 66H60L68 58"/><path d="M14 76C30 65 70 65 86 76"/>'},
- {n:'Serti illusion', d:'Plaque de métal facettée qui grossit visuellement la pierre.', s:'<polygon points="50,24 76,50 50,76 24,50"/><circle cx="50" cy="50" r="8"/><path d="M50 24V42M76 50H58M50 76V58M24 50H42"/>'},
- {n:'Cluster', d:'Grappe de petites pierres = effet grosse pierre à petit prix.', s:'<circle cx="50" cy="50" r="9"/><circle cx="50" cy="31" r="8"/><circle cx="66" cy="40" r="8"/><circle cx="66" cy="60" r="8"/><circle cx="50" cy="69" r="8"/><circle cx="34" cy="60" r="8"/><circle cx="34" cy="40" r="8"/>'}
-];
-function renderGemLibrary(){
-  const wrap = s => `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
-  const card = it => `<div class="cut-card">${wrap(it.s)}${it.tag?`<div><span class="cut-tag">${it.tag}</span></div>`:''}<div class="cut-name">${it.n}</div><div class="cut-desc">${it.d}</div></div>`;
-  const cg = document.getElementById('cuts-grid');
-  const sg = document.getElementById('settings-grid');
-  if(cg) cg.innerHTML = GEM_CUTS.map(card).join('');
-  if(sg) sg.innerHTML = GEM_SETTINGS.map(card).join('');
-  const cc = document.getElementById('cuts-count');
-  const sc = document.getElementById('settings-count');
-  if(cc) cc.textContent = GEM_CUTS.length + ' tailles';
-  if(sc) sc.textContent = GEM_SETTINGS.length + ' types';
-}
-
-/* ===== BANQUE D'IDÉES BIJOUX ===== */
-function saveBijIdea(){
-  const ta = document.getElementById('bij-notes');
-  const txt = ta.value.trim();
-  if(!txt){ showToast('⚠️ Écris ton idée d\'abord'); return; }
-  let ideas = [];
-  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
-  ideas.unshift({id:Date.now(), txt, date:todayISO()});
-  saveKey('bij_ideas', JSON.stringify(ideas));
-  ta.value = '';
-  renderBijIdeas();
-  showToast('💡 Idée enregistrée !');
-}
-function deleteBijIdea(id){
-  let ideas = [];
-  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
-  ideas = ideas.filter(x=>x.id!==id);
-  saveKey('bij_ideas', JSON.stringify(ideas));
-  renderBijIdeas();
-}
-function renderBijIdeas(){
-  const list = document.getElementById('bij-ideas-list');
-  if(!list) return;
-  let ideas = [];
-  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
-  const cnt = document.getElementById('bij-idea-count');
-  if(cnt) cnt.textContent = ideas.length + (ideas.length>1?' idées':' idée');
-  if(!ideas.length){ list.innerHTML = '<div style="font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:12px 0;">Aucune idée enregistrée. Note ta première inspiration ci-dessus.</div>'; return; }
-  list.innerHTML = ideas.map(it=>`
-    <div class="idea-card">
-      <button class="idea-del" onclick="deleteBijIdea(${it.id})">✕</button>
-      <div class="idea-txt">${escapeHtml(it.txt)}</div>
-      <div class="idea-date">${it.date}</div>
-    </div>`).join('');
-}
-function addProduct(){
-  const inp = document.getElementById('prod-input');
-  const name = inp.value.trim();
-  if(!name) return;
-  let prods = JSON.parse(loadKey('bij_products')||'[]');
-  prods.push({name, status:'idee'});
-  saveKey('bij_products', JSON.stringify(prods));
-  inp.value = '';
-  renderProducts(prods);
-}
-function cycleProdStatus(idx){
-  let prods = JSON.parse(loadKey('bij_products')||'[]');
-  const cycle = ['idee','test','flagship'];
-  const cur = cycle.indexOf(prods[idx].status);
-  prods[idx].status = cycle[(cur+1)%3];
-  saveKey('bij_products', JSON.stringify(prods));
-  renderProducts(prods);
-}
-function deleteProduct(idx){
-  let prods = JSON.parse(loadKey('bij_products')||'[]');
-  prods.splice(idx,1);
-  saveKey('bij_products', JSON.stringify(prods));
-  renderProducts(prods);
-}
-function renderProducts(prods){
-  const list = document.getElementById('prod-list');
-  if(!list) return;
-  const labels = {idee:'Idée',test:'En test',flagship:'⭐ Flagship'};
-  list.innerHTML = prods.map((p,i)=>`
-    <div class="prod-item">
-      <span class="prod-name">${escapeHtml(p.name)}</span>
-      <span class="prod-tag ${p.status}" onclick="cycleProdStatus(${i})">${labels[p.status]||p.status}</span>
-      <button class="prod-del" onclick="deleteProduct(${i})">✕</button>
-    </div>`).join('');
-}
-function initBijoux(){
-  const imgs = JSON.parse(loadKey('bij_moodboard')||'[]');
-  renderMoodboard(imgs);
-  const prods = JSON.parse(loadKey('bij_products')||'[]');
-  renderProducts(prods);
-  // migration : l'ancien bloc de notes devient la première idée de la banque
-  const old = (loadKey('bij_notes')||'').trim();
-  let ideas = [];
-  try{ ideas = JSON.parse(loadKey('bij_ideas')||'[]'); }catch(e){ ideas = []; }
-  if(old && !ideas.length){
-    ideas.push({id:Date.now(), txt:old, date:todayISO()});
-    saveKey('bij_ideas', JSON.stringify(ideas));
-    saveKey('bij_notes', '');
-  }
-  renderBijIdeas();
-  renderGemLibrary();
-}
-
 /* ============ ACHATS — wishlist à seuils + mannequin ============ */
 const SHOP_CATS = {
   vet: {ic:'👕', lb:'Vêtements',    slot:'torse'},
@@ -7645,10 +7131,6 @@ function initApp(){
   habitsData = JSON.parse(loadKey(HABITS_KEY) || '[]');
   habitsData = habitsData.filter(h => h && typeof h.name === 'string' && h.name.trim() !== '');
   habitsState = JSON.parse(loadKey(HABITS_STATE_KEY) || '{}');
-  ventesData = JSON.parse(loadKey(VENTES_KEY) || '{}');
-  if(!ventesData.bijoux) ventesData.bijoux = [];
-  if(!ventesData.chaussures) ventesData.chaussures = { lot:0, items:[] };
-  if(!ventesData.chaussures.items) ventesData.chaussures.items = [];
   objHebdo = JSON.parse(loadKey(OBJ_HEBDO_KEY) || '[{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false}]');
   ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
   ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
@@ -7665,7 +7147,6 @@ function initApp(){
   // nav tree
   initNavTreePeeks();
   loadBookStatuses();
-  initBijoux();
   initShop();
   initRpg();
   initCapture();
@@ -7705,8 +7186,6 @@ function initApp(){
   initNightBanner();
   renderHabits();
   renderRecommendedHabits();
-  // ventes
-  renderVentes();
   // objectifs hebdo + résumé
   renderObjHebdo();
   // idées
