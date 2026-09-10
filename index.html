@@ -1319,6 +1319,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="btn-primary" id="auth-submit-btn" onclick="authSubmit()">Se connecter</button>
     <div class="auth-error" id="auth-error"></div>
     <div class="auth-toggle" id="auth-toggle-row">Pas encore de compte ? <a onclick="authToggleMode()">Créer un compte</a></div>
+    <div class="auth-toggle" id="auth-forgot-row" style="margin-top:6px;"><a onclick="authResetPassword()">Mot de passe oublié ?</a></div>
   </div>
 </div>
 
@@ -1367,11 +1368,15 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <img class="view-banner" id="banner-home" alt="">
 
+  <!-- Premier lancement : sans ça, un compte neuf s'ouvre sur une app vide
+       sans dire par où commencer. Disparaît dès l'objectif créé. -->
+  <div id="welcome-card"></div>
+
   <div class="hero">
     <div class="hero-top">
       <div>
         <div class="hero-label">🎯 Objectif principal</div>
-        <div class="hero-main">1 500 – 2 000 € pour lancer ma marque de bijoux<br><span style="color:var(--text-dim);font-weight:600;">via KFC (CDI) + revente chaussures</span></div>
+        <div class="hero-main" id="home-goal">—</div>
       </div>
       <div>
         <div class="hero-days mono" id="home-days">—</div>
@@ -1553,13 +1558,13 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <div class="card">
-    <div class="card-title">🎯 Visualisation & Focus — Ma marque de bijoux <div class="line"></div></div>
-    <textarea id="m-vision" placeholder="Décris ta vision : à quoi ressemble le succès de ta marque de bijoux ? Comment tu te sens quand elle décolle ? Sois précis(e), ressens-le comme si c'était déjà vrai..." style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:120px;resize:vertical;"></textarea>
+    <div class="card-title">🎯 Visualisation & Focus — Ma vision <div class="line"></div></div>
+    <textarea id="m-vision" placeholder="Décris ta vision : à quoi ressemble ta réussite ? Comment tu te sens quand ça décolle ? Sois précis(e), ressens-le comme si c'était déjà vrai..." style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;min-height:120px;resize:vertical;"></textarea>
     <button class="btn-primary" style="width:100%;margin-top:10px;" onclick="saveMindsetVision()">💾 Enregistrer ma vision</button>
   </div>
 
   <div class="card">
-    <div class="card-title">💡 Capture d'idées — bijoux &amp; business <div class="line"></div></div>
+    <div class="card-title">💡 Capture d'idées <div class="line"></div></div>
     <div id="idees-list" style="margin-bottom:8px;"></div>
     <div style="display:flex;gap:8px;">
       <input type="text" id="idee-input" placeholder="Une idée de collection, de post, de client..." style="flex:1;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:12.5px;padding:8px 10px;font-family:inherit;" onkeydown="if(event.key==='Enter')addIdee()">
@@ -1728,7 +1733,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   </div>
 
   <div class="card" style="background:var(--sunken);margin-top:4px;">
-    <div style="font-size:11px;color:var(--muted2);">Plan démarré le 26 juin 2026 · Maintenance des liens : mercredi (selon planning KFC).</div>
+    <div style="font-size:11px;color:var(--muted2);"><span id="p30-start-lbl">—</span> · Un thème par jour, à adapter à ton rythme.</div>
   </div>
 </div>
 
@@ -2115,7 +2120,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
       <div class="card">
         <div class="scr-fld">
           <label class="scr-lbl">🎬 Titre de la vidéo</label>
-          <textarea class="scr-ta" id="scr-title" rows="1" placeholder="Ex. Comment j'ai lancé ma marque de bijoux à 0€"></textarea>
+          <textarea class="scr-ta" id="scr-title" rows="1" placeholder="Ex. Comment j'ai lancé mon projet à 0€"></textarea>
         </div>
         <div class="scr-fld">
           <label class="scr-lbl">📏 Format</label>
@@ -2788,13 +2793,28 @@ function authSubmit(){
     : auth.createUserWithEmailAndPassword(email, password);
   action.catch(e => { errEl.textContent = authErrorMessage(e); });
 }
+/* Sans ça, un mot de passe oublié = un compte perdu pour de bon, puisque
+   personne d'autre ne peut le réinitialiser. */
+function authResetPassword(){
+  const email = document.getElementById('auth-email').value.trim();
+  const errEl = document.getElementById('auth-error');
+  if(!email){ errEl.textContent = 'Écris ton e-mail au-dessus, puis reclique ici.'; return; }
+  auth.sendPasswordResetEmail(email)
+    .then(()=>{ errEl.style.color = 'var(--ok)';
+                errEl.textContent = 'E-mail envoyé — regarde ta boîte de réception (et les spams).'; })
+    .catch(e => { errEl.style.color = ''; errEl.textContent = authErrorMessage(e); });
+}
 function authErrorMessage(e){
   const map = {
     'auth/invalid-email': 'Adresse e-mail invalide.',
     'auth/user-not-found': 'Aucun compte avec cet e-mail.',
     'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/invalid-credential': 'E-mail ou mot de passe incorrect.',
     'auth/email-already-in-use': 'Un compte existe déjà avec cet e-mail.',
-    'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).'
+    'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).',
+    'auth/too-many-requests': 'Trop de tentatives — réessaie dans quelques minutes.',
+    'auth/network-request-failed': 'Pas de connexion — vérifie ton réseau.',
+    'auth/operation-not-allowed': "La création de compte n'est pas activée sur ce projet."
   };
   return map[e.code] || ('Erreur : ' + e.message);
 }
@@ -2925,20 +2945,6 @@ const VIEW_LABELS = {
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal', biblio:'Biblio',
   sleep:'Sommeil', planning:'Planning', bijoux:'Bijoux', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
-};
-const NAV_PEEKS = {
-  tasks:     ['Déclaration Hill','💪 45 pompes','📖 Lire 10 pages','💎 Session bijoux','💰 Compteur cash'],
-  habitudes: ['🧠 Méditation 10 min','💧 Boire 2L eau','📵 Pas réseaux avant 10h'],
-  capture:   ['🎬 3 questions','⏱️ 2 min face caméra','🎞️ File de montage'],
-  tracker:   ['📊 Monthly grid','🔥 Streaks per habit','📈 Momentum'],
-  finance:   ['Salaires & revenus','Dépenses du mois','Bilan net'],
-  objectifs: ['Objectif en cours','Historique des objectifs','Plan 30 jours vidéos'],
-  mindset:   ['Check-in émotionnel','Affirmations','Vision'],
-  journal:   ['Entrées du journal'],
-  biblio:    ['Notes vidéos YouTube'],
-  sleep:     ['Qualité, énergie, humeur'],
-  planning:  ['Semaine en cours'],
-  bijoux:    ['🎨 Moodboard','💎 Produits','📈 Tendances 2025']
 };
 const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
@@ -3761,23 +3767,24 @@ function newTaskId(){ return 't' + Date.now().toString(36); }
 function taskDoneCount(st){ return st ? TASK_IDS.filter(id => st[id]).length : 0; }
 
 /* Jeu de départ, repris tel quel de l'ancienne version figée. */
+/* Point de départ d'un compte neuf. Volontairement générique : chacun
+   supprime, renomme et ajoute ce qu'il veut. Rien ici ne suppose un métier,
+   une croyance ou un projet particulier. */
 function tasksDefaults(){
   return [
-    { id:'t11', section:'matin', name:'🙏 Prière avant de travailler', sub:'Super important — se recentrer et confier sa journée avant tout',
-      how:"Avant d'ouvrir quoi que ce soit, prends un moment au calme. Confie ta journée, remercie, demande la clarté et la force. C'est le socle de tout le reste." },
-    { id:'t1', section:'matin', name:'Déclaration Hill à voix haute + Visualisation', sub:'Ancrer le désir, la foi et l\'objectif en cours',
+    { id:'t1', section:'matin', name:'Déclaration à voix haute + Visualisation', sub:'Ancrer le désir, la foi et l\'objectif en cours',
       how:'Debout, voix claire et confiante. Lis ta déclaration à voix haute :', decl:'matin' },
-    { id:'t2', section:'matin', name:'💪 Faire 45 pompes', sub:'Corps actif = esprit actif dès le réveil',
-      how:'En séries si besoin. Le but est de finir les 45, pas de les faire d\'un coup. Le corps donne le ton de la journée.' },
-    { id:'t3', section:'matin', name:'📖 Lire 10 pages de mon livre', sub:'Nourrir l\'esprit avant le bruit du monde',
+    { id:'t2', section:'matin', name:'💪 Bouger 15 minutes', sub:'Corps actif = esprit actif dès le réveil',
+      how:'Ce que tu veux : pompes, marche rapide, étirements, corde à sauter. Le corps donne le ton de la journée.' },
+    { id:'t3', section:'matin', name:'📖 Lire 10 pages', sub:'Nourrir l\'esprit avant le bruit du monde',
       how:'Téléphone loin. 10 pages minimum, stylo en main pour noter une idée. Avant les réseaux, avant les messages.' },
-    { id:'t7', section:'journee', name:'💎 Session bijoux — Apprentissage & vision marque', sub:'Pinterest · Instagram · branding · lexique',
-      how:"20-30 min. Étudie avec ton contact bijoux ou en solo : comment identifier un bijou, marges, fournisseurs. Analyse 2-3 bijoux en vente. Note du nouveau vocabulaire (argent 925, plaqué or, poinçons...) dans ton Carnet de bord. Explore Pinterest/Instagram pour ton branding." },
-    { id:'t8', section:'journee', name:'💰 Mettre à jour le compteur cash', sub:'Mes sources → progression réelle vers l\'objectif',
-      how:"Ouvre l'onglet Objectif et mets à jour chacune de tes sources d'argent. C'est ton score du jour — chaque euro compte." },
+    { id:'t7', section:'journee', name:'🎯 Une heure sur mon projet', sub:'Le travail de fond, celui que personne ne voit',
+      how:"Bloque un créneau et coupe les notifications. Une heure vraiment concentrée vaut mieux qu'une journée dispersée." },
+    { id:'t8', section:'journee', name:'💰 Mettre à jour mes sources de revenus', sub:'Ma progression réelle vers l\'objectif',
+      how:"Ouvre l'onglet Objectif et mets à jour chacune de tes sources. C'est ton score du jour." },
     { id:'t9', section:'soir', name:'📌 Écrire mes 3 priorités du lendemain', sub:'Clarifier la journée suivante avant de dormir',
       how:"5 min. Écris 3 actions concrètes pour demain — pas des envies, des engagements. Classe-les par ordre d'impact." },
-    { id:'t10', section:'soir', name:'Déclaration Hill + Visualisation — Soir', sub:'Planter la graine dans le subconscient avant le sommeil',
+    { id:'t10', section:'soir', name:'Déclaration + Visualisation — Soir', sub:'Planter la graine dans le subconscient avant le sommeil',
       how:'Juste avant de te coucher, relis la même déclaration à voix basse.', decl:'soir' }
   ];
 }
@@ -3953,7 +3960,7 @@ function resetTasksDay(){
 /* ============ OBJECTIF MODULABLE + HISTORIQUE ============
    Un objectif = titre, pourquoi, montant, dates, déclaration, et une liste de
    sources d'argent librement modifiable. Chaque source peut compter ou non dans
-   le total (ex : "Uber Eats gagné" est informatif, "Pocket Revolut" compte).
+   le total (une source suivie pour information ne coche pas « compte »).
    Quand un objectif est clôturé il part dans l'historique avec un statut. */
 
 /* Pas d'option "Abandonné" : un objectif raté se retente, il ne se classe pas. */
@@ -3991,39 +3998,19 @@ function glSave(){
   saveKey('goal_history', JSON.stringify(glHistory));
 }
 
-/* Première ouverture après la refonte : on archive l'objectif du 16 août 2026,
-   atteint en avance, en récupérant les montants déjà saisis. */
+/* Un compte neuf démarre vide : pas d'objectif d'emprunt, pas d'historique
+   hérité de quelqu'un d'autre. Seules deux sources de revenus génériques sont
+   posées, à renommer. L'accueil guide ensuite vers la création de l'objectif. */
 function glBootstrap(){
   const rawCur = loadKey('goal_current'), rawHist = loadKey('goal_history');
   try { if(rawHist) glHistory = JSON.parse(rawHist) || []; } catch(e){ glHistory = []; }
   try { if(rawCur) glCurrent = JSON.parse(rawCur); } catch(e){ glCurrent = null; }
   if(glCurrent) return;
 
-  if(!rawHist){
-    const revolut = parseFloat(loadKey('cash_revolut')) || 0;
-    const liquide = parseFloat(loadKey('cash_liquide')) || 0;
-    const kfc     = parseFloat(loadKey('cash_kfc')) || 0;
-    const shoes   = parseFloat(loadKey('cash_shoes')) || 0;
-    glHistory = [{
-      id: 1,
-      title: '2 000 € pour lancer ma marque de bijoux',
-      why: 'Capital de départ pour le premier stock',
-      amount: 2000, startDate: '2026-06-26', deadline: '2026-08-16',
-      sources: [
-        { id:11, emoji:'💳', label:'Pocket Revolut', value:revolut, counts:true },
-        { id:12, emoji:'💵', label:'Argent liquide', value:liquide, counts:true },
-        { id:13, emoji:'💼', label:'KFC',            value:kfc,     counts:false },
-        { id:14, emoji:'👟', label:'Chaussures',     value:shoes,   counts:false }
-      ],
-      declaration: "« Je réunis 2 000 € d'ici le 16 août 2026 grâce à KFC, mes chaussures et ma détermination, pour lancer ma marque de bijoux. La date est fixée, l'objectif est réel, je crois en ma capacité à l'atteindre. Je le vois, je le ressens — c'est déjà en route. »",
-      status: 'reussi', closedAt: todayISO(), finalTotal: revolut + liquide
-    }];
-  }
   glCurrent = glBlank();
   glCurrent.sources = [
-    { id:Date.now()+1, emoji:'🛵', label:'Uber Eats',      value:0, counts:false },
-    { id:Date.now()+2, emoji:'💳', label:'Pocket Revolut', value:0, counts:true  },
-    { id:Date.now()+3, emoji:'💵', label:'Argent liquide', value:0, counts:true  }
+    { id:Date.now()+1, emoji:'💼', label:'Revenu principal', value:0, counts:true },
+    { id:Date.now()+2, emoji:'💰', label:'Épargne',          value:0, counts:true }
   ];
   glSave();
 }
@@ -4193,6 +4180,19 @@ function glRenderHero(){
 
   const hd = document.getElementById('home-days');
   if(hd) hd.textContent = reached ? '✓' : (d===null ? '—' : Math.max(d,0));
+  /* L'accueil affiche l'objectif RÉEL, plus une phrase écrite en dur. Tant
+     qu'il n'y en a pas, on invite à le créer au lieu de laisser un tiret. */
+  const hg = document.getElementById('home-goal');
+  if(hg){
+    if(glHasGoal()){
+      const via = (g.sources || []).filter(s => s.counts).map(s => s.label).filter(Boolean);
+      hg.innerHTML = glEsc(g.title || (glFmt(amt) + ' €')) +
+        (via.length ? '<br><span style="color:var(--text-dim);font-weight:600;">via ' + glEsc(via.join(' + ')) + '</span>' : '');
+    } else {
+      hg.innerHTML = '<span style="color:var(--text-dim);font-weight:600;">Aucun objectif pour le moment — ' +
+        '<a onclick="goTo(\'objectifs\')" style="color:var(--accent-ink);cursor:pointer;text-decoration:underline;">définis le tien</a></span>';
+    }
+  }
   const hp = document.getElementById('home-cash-pct');
   if(hp) hp.textContent = pct + '%';
 }
@@ -4502,29 +4502,26 @@ let rmEditing = null;   /* id de la phase en cours de modification, ou 'new' */
 function newPhaseId(){ return 'ph' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function rmSave(){ saveKey('roadmap_def', JSON.stringify(rmPhases)); }
 
-/* Point de départ à la première ouverture. Chacun réécrit ensuite la sienne :
-   rien ici n'est figé. */
+/* Trame de départ d'un compte neuf : la FORME d'une feuille de route, pas le
+   contenu de quelqu'un d'autre. Chaque phase se renomme, se déplace, se
+   supprime, et les étapes s'écrivent une par ligne. */
 const RM_SEED = [
-  { stage:'Court terme', title:'🏦 Débloquer le levier', period:'Maintenant → 7 déc. 2026',
-    tasks:[['💼','Démarrer la mission jeune (contrat 6 mois)'],['📄','Monter le dossier de prêt sur 36 mois'],
-           ['🏦','Débloquer les 4 500 €'],['🎓',"Verrouiller ma place dans l'accompagnement Delta"],
-           ['🧠','Rituel Hill matin + soir sans exception'],['📊','Tracker chaque euro qui rentre']],
-    goal:"🎯 4 500 € débloqués et accompagnement payé d'ici le 7 décembre 2026" },
-  { stage:'Démarrage', title:'👕 Retail & Resell', period:'Déc. 2026 → printemps 2027',
-    tasks:[['📦',"Premier stock via l'accompagnement"],['🎓','Appliquer la méthode Delta à la lettre'],
-           ['📲','Vendre : Vinted, Instagram, Vestiaire, LBC'],['💰','Mettre 5 000 € de côté, intouchables'],
-           ['🔁','Réinvestir chaque bénéfice en stock'],['⭐','Premiers avis + réputation en ligne']],
-    goal:"🎯 Le prêt est couvert d'avance — et le stock tourne tout seul" },
-  { stage:'Moyen terme', title:'🏷️ Ma marque de vêtements', period:'2027',
-    tasks:[['🏷️',"Créer le nom et l'identité de la marque"],['🧵','Trouver mes fournisseurs et ma production'],
-           ['📸','Shooter la première collection'],['📱','Instagram + TikTok dédiés à la marque'],
-           ['📦','Packaging premium, unboxing soigné'],['💬','Communauté de clients fidèles']],
-    goal:'🎯 Ma marque existe et vend — en plus du resell qui tourne' },
-  { stage:'Long terme', title:'👑 Full bénéf & liberté', period:'2028 → +',
-    tasks:[['🚗',"Racheter l'Audi Q7 de ma mère"],['💎','Mes bijoux custom, des pièces uniques'],
-           ['📈','Équipe, automatisation, systèmes'],['🌍',"Vendre à l'international"],
-           ['🤝','Collaborations et placements'],['🕊','Vivre bien, être libre']],
-    goal:"🎯 Full bénéfice — le début qui me permet d'aller extrêmement loin" }
+  { stage:'Court terme', title:'🚀 Lancer', period:'Les 3 prochains mois',
+    tasks:[['🎯',"Définir mon objectif chiffré et sa date"],['📋','Lister ce qui me manque pour démarrer'],
+           ['🧠','Ancrer ma déclaration matin et soir'],['📊','Suivre mes revenus chaque semaine']],
+    goal:'🎯 Mon objectif est fixé et les premiers euros rentrent' },
+  { stage:'Construction', title:'🧱 Installer', period:'3 à 12 mois',
+    tasks:[['🔁','Répéter ce qui marche, couper le reste'],['💰','Mettre de côté sans y toucher'],
+           ['🤝','Trouver les bonnes personnes autour de moi'],['⭐','Construire ma réputation']],
+    goal:'🎯 Ça tourne sans que je doive tout relancer chaque jour' },
+  { stage:'Moyen terme', title:'📈 Faire grandir', period:"L'année suivante",
+    tasks:[['🏷️',"Poser mon nom et mon identité"],['🌍','Toucher plus de monde'],
+           ['🧰','Automatiser ce qui me prend du temps'],['💬','Fidéliser ceux qui me suivent']],
+    goal:'🎯 Ce que je construis existe et vit par lui-même' },
+  { stage:'Long terme', title:'👑 En profiter', period:'Au-delà',
+    tasks:[['🕊','Vivre bien et être libre'],['📚','Transmettre ce que j\u2019ai appris'],
+           ['🌱','Ouvrir le chapitre suivant']],
+    goal:'🎯 Le début qui me permet d\u2019aller loin' }
 ];
 
 function rmLoad(){
@@ -4648,7 +4645,75 @@ function rmRender(){
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
 
+/* ============ PREMIER LANCEMENT ============
+   Un compte neuf arrive sur une app entièrement vide. Sans repère, on ne sait
+   pas que tout se personnalise. Cette carte pose l'objectif — le seul réglage
+   dont dépendent la déclaration, les 7 règles, le compte à rebours et les
+   observations — puis s'efface définitivement. */
+function welcomeDone(){ return loadKey('welcome_done') === '1'; }
+function welcomeSkip(){
+  saveKey('welcome_done', '1');
+  renderWelcome();
+  showToast('👍 Tu pourras tout régler depuis Objectif → Vision');
+}
+function welcomeSubmit(){
+  const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+  const titre = val('wc-title');
+  const montant = parseFloat(val('wc-amount')) || 0;
+  const date = val('wc-deadline');
+  if(!titre){ showToast('Donne un nom à ton objectif'); return; }
+  if(montant <= 0){ showToast('Indique le montant à atteindre'); return; }
+  if(!date){ showToast('Choisis une date limite'); return; }
+
+  glCurrent.title = titre;
+  glCurrent.why = val('wc-why') || titre;
+  glCurrent.amount = montant;
+  glCurrent.startDate = todayISO();
+  glCurrent.deadline = date;
+  /* La déclaration est générée depuis ces champs : elle est donc juste dès la
+     première lecture, et les 7 règles se calent dessus toutes seules. */
+  if(!String(glCurrent.declaration || '').trim()) glCurrent.declaration = glDraftDecl();
+  glSave();
+  saveKey('welcome_done', '1');
+  glRenderAll(); renderWelcome();
+  showToast('🎯 Objectif créé — ta déclaration est prête dans Objectif → Hill');
+}
+function renderWelcome(){
+  const w = document.getElementById('welcome-card'); if(!w) return;
+  /* On sort dès qu'un objectif existe : rien à expliquer à quelqu'un qui a
+     déjà commencé, y compris un compte qui existait avant cet écran. */
+  if(welcomeDone() || (typeof glHasGoal === 'function' && glHasGoal())){ w.innerHTML = ''; return; }
+
+  const dans3mois = (()=>{ const d = new Date(); d.setMonth(d.getMonth() + 3);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); })();
+
+  w.innerHTML =
+    '<div class="card" style="border-color:var(--accent);background:linear-gradient(135deg,var(--surface),var(--raised));">' +
+      '<div class="card-title">👋 Bienvenue <div class="line"></div></div>' +
+      '<div style="font-size:12.5px;color:var(--text-soft);line-height:1.7;margin-bottom:14px;">' +
+        'Cette app est vide, et c\'est voulu : <b>tout se personnalise</b> — tes tâches, tes habitudes, ' +
+        'tes sources de revenus, ta feuille de route, jusqu\'aux visuels de chaque page.<br>' +
+        'Commence par ton objectif. C\'est lui qui alimente ta déclaration, tes 7 règles et ton compte à rebours.' +
+      '</div>' +
+      '<div class="gl-field"><label>Mon objectif</label>' +
+        '<input id="wc-title" placeholder="Ex : 3 000 € pour lancer mon activité"></div>' +
+      '<div class="gl-field"><label>À quoi ça va servir</label>' +
+        '<input id="wc-why" placeholder="Ex : mon premier stock"></div>' +
+      '<div class="gl-grid2">' +
+        '<div class="gl-field"><label>Montant à atteindre (€)</label>' +
+          '<input id="wc-amount" type="number" step="any" placeholder="3000"></div>' +
+        '<div class="gl-field"><label>Date limite</label>' +
+          '<input id="wc-deadline" type="date" value="' + dans3mois + '"></div>' +
+      '</div>' +
+      '<div class="gl-actions">' +
+        '<button class="gl-btn primary" onclick="welcomeSubmit()">✓ Créer mon objectif</button>' +
+        '<button class="gl-btn" onclick="welcomeSkip()">Plus tard</button>' +
+      '</div>' +
+    '</div>';
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
 function glRenderAll(){
+  renderWelcome();
   glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes(); rmRender();
   if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
@@ -4658,7 +4723,30 @@ function updateCountdown(){ glRenderHero(); }
 function loadCashProgress(){ glBootstrap(); rmLoad(); glRenderAll(); }
 
 /* ============ PLAN 30 JOURS ============ */
-const P30_START = new Date(2026, 5, 26);
+/* La date de départ appartient à chacun : elle est posée au premier passage
+   sur l'onglet. Codée en dur, le plan d'un nouvel arrivant aurait démarré
+   des mois avant son inscription. */
+let P30_START = new Date();
+function p30LoadStart(){
+  const iso = loadKey('plan30_start');
+  if(iso && /^\d{4}-\d{2}-\d{2}$/.test(iso)){
+    P30_START = new Date(iso + 'T00:00:00');
+  } else {
+    P30_START = new Date(); P30_START.setHours(0,0,0,0);
+    saveKey('plan30_start', todayISO());
+  }
+  const lbl = document.getElementById('p30-start-lbl');
+  if(lbl) lbl.textContent = 'Plan démarré le ' + glDateFR(
+    P30_START.getFullYear() + '-' +
+    String(P30_START.getMonth()+1).padStart(2,'0') + '-' +
+    String(P30_START.getDate()).padStart(2,'0'));
+}
+function p30Restart(){
+  if(!confirm('Recommencer le plan à partir d’aujourd’hui ?\n\nTes jours déjà validés sont conservés.')) return;
+  saveKey('plan30_start', todayISO());
+  p30LoadStart(); p30Render();
+  showToast('🔄 Plan redémarré aujourd’hui');
+}
 const P30_THEMES = [
   { key:'mindset', emoji:'🧠', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
   { key:'manifestation', emoji:'✨', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
@@ -5022,11 +5110,11 @@ const MINDSET_CHECKIN_KEY = 'mindset_checkins';
 const MINDSET_VISION_KEY = 'mindset_vision';
 const MINDSET_AFFIRMATIONS = [
   "Je suis aligné(e) avec l'abondance et le succès.",
-  "Chaque jour, j'attire les bonnes opportunités pour ma marque de bijoux.",
+  "Chaque jour, j'attire les bonnes opportunités pour mon projet.",
   "Ma confiance grandit à chaque pas que je fais vers mes objectifs.",
   "L'argent et les bonnes personnes viennent facilement à moi.",
   "Je mérite la réussite et je l'accueille pleinement.",
-  "Ma marque de bijoux est un aimant à clients fidèles.",
+  "Ce que je construis attire des gens fidèles.",
   "Je transforme chaque obstacle en opportunité de grandir.",
   "Mon focus est puissant, mes actions sont alignées avec ma vision.",
   "Je suis reconnaissant(e) pour tout ce qui se construit déjà.",
@@ -5038,7 +5126,7 @@ const MINDSET_AFFIRMATIONS = [
 ];
 const MINDSET_REMINDERS = [
   "Rappelle-toi : une vente, un message, un pas à la fois.",
-  "Visualise ta marque de bijoux entre les mains de tes clients.",
+  "Visualise ton projet entre les mains de ceux qu'il sert.",
   "Reste concentré(e) sur ce que tu peux contrôler aujourd'hui.",
   "Ton énergie attire ce qui te ressemble — reste positif(ve).",
   "Chaque jour de discipline te rapproche de ta liberté.",
@@ -5107,7 +5195,7 @@ function renderSalaireList(type){
     return;
   }
   wrap.innerHTML = items.map((item,i)=>`<div class="money-row">
-    <input type="text" class="money-input-label" placeholder="${type==='revenus'?'Ex. Salaire KFC':'Ex. Abonnement téléphone'}" value="${escapeHtml(item.label||'')}" oninput="recalcSalaires()">
+    <input type="text" class="money-input-label" placeholder="${type==='revenus'?'Ex. Salaire':'Ex. Abonnement téléphone'}" value="${escapeHtml(item.label||'')}" oninput="recalcSalaires()">
     <input type="number" class="money-input-amount" placeholder="0" step="0.01" value="${item.amount || ''}" oninput="recalcSalaires()">
     <button class="money-del-btn" onclick="removeSalaireRow('${type}',${i})" title="Supprimer">✕</button>
   </div>`).join('');
@@ -5177,11 +5265,11 @@ const RECOMMENDED_HABITS = [
   { cat:'💪 Discipline', name:'Préparer demain la veille (tâches + tenue)', consequence:'Coucher 30 min plus tard = fatigue assumée',
     desc:'10 minutes max avant de dormir. 1) Écris tes 3 priorités du lendemain dans l\'onglet Tâches ici. 2) Prépare ta tenue sur la chaise ou dans un endroit visible. 3) Vérifie ton réveil. C\'est tout. L\'objectif : ne pas prendre de décisions fatigantes le matin. Le matin, ton énergie mentale est à son maximum — utilise-la pour avancer, pas pour chercher tes affaires.' },
   { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain',
-    desc:'Astuce simple : remplis une bouteille de 75cl le matin et une autre à midi — objectif, finir les deux. Quand la bouteille est sur la table, tu bois automatiquement sans y penser. Au KFC, bois un verre entre chaque pause. La déshydratation est la première cause de fatigue, maux de tête et difficultés à se concentrer. L\'impact sur l\'énergie est réel en 2 semaines.' },
+    desc:'Astuce simple : remplis une bouteille de 75cl le matin et une autre à midi — objectif, finir les deux. Quand la bouteille est sur la table, tu bois automatiquement sans y penser. Au travail, bois un verre à chaque pause. La déshydratation est la première cause de fatigue, maux de tête et difficultés à se concentrer. L\'impact sur l\'énergie est réel en 2 semaines.' },
   { cat:'📚 Compétences', name:'Étudier 1 créateur de bijoux : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
     desc:'Va sur Instagram, TikTok ou Etsy. Cherche un créateur de bijoux (FR : "bijoux fait main", "bijoux acier inoxydable", "bijoux créateur". INT : "handmade jewelry", "jewelry brand"). Observe : Quels sont ses prix pour quels types de pièces ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
   { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé',
-    desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer une marque de bijoux", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Prends des notes dans l\'onglet Biblio ici — colle le lien pour ne pas perdre la vidéo.' },
+    desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer son activité", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Prends des notes dans l\'onglet Biblio ici — colle le lien pour ne pas perdre la vidéo.' },
   { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction avant d\'avoir lu',
     desc:'10 pages = 10 à 15 minutes. Livres recommandés pour ta situation : "Atomic Habits" (James Clear — transformer ses habitudes en profondeur), "The Compound Effect" (Darren Hardy — les petites actions quotidiennes qui font tout), "L\'art de se lancer" (Reid Hoffman). Lis le matin ou avant de dormir. Jamais sur téléphone — papier ou liseuse uniquement, sinon tu te retrouves à scroller.' },
 ];
@@ -5193,7 +5281,7 @@ function initNightBanner(){
   if(isNightMode){
     banner.innerHTML = `<div class="habit-refdate-banner"><span class="habit-refdate-txt">📅 Mode nuit — tu valides pour ${habitRefDate}</span><button class="night-banner-btn" onclick="resetNightMode()">↩ Revenir à aujourd'hui</button></div>`;
   } else if(new Date().getHours() < 5){
-    banner.innerHTML = `<div class="night-banner"><span class="night-banner-txt">🌙 Tu rentres tard du KFC ? Valide tes habitudes pour hier sans casser ta streak.</span><button class="night-banner-btn" onclick="setNightMode()">Valider pour hier</button></div>`;
+    banner.innerHTML = `<div class="night-banner"><span class="night-banner-txt">🌙 Tu rentres tard ? Valide tes habitudes pour hier sans casser ta streak.</span><button class="night-banner-btn" onclick="setNightMode()">Valider pour hier</button></div>`;
   } else {
     banner.innerHTML = '';
   }
@@ -5855,13 +5943,10 @@ let shopItems = [];
 let shopOutfit = {};
 
 /* Cash disponible pour les seuils de la wishlist : le total qui compte dans
-   l'objectif en cours. Repli sur les anciennes clés tant que l'objectif n'est
-   pas chargé (premier rendu). */
+   l'objectif en cours. Zéro tant qu'aucun objectif n'existe. */
 function shopCash(){
   if(typeof glCurrent !== 'undefined' && glCurrent) return glTotal(glCurrent);
-  const r = parseFloat(loadKey('cash_revolut'));
-  const c = parseFloat(loadKey('cash_liquide'));
-  return (isNaN(r)?0:r) + (isNaN(c)?0:c);
+  return 0;
 }
 function switchShopTab(tab){
   document.getElementById('shoptab-mannequin').style.display = tab==='mannequin' ? '' : 'none';
@@ -7590,6 +7675,7 @@ function initApp(){
   updateCountdown();
   loadCashProgress();
   // plan30
+  p30LoadStart();
   p30Render();
   // sleep
   buildScale('s-quality','quality');
