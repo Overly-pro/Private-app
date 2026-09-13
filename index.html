@@ -800,6 +800,74 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 
 
+
+/* ===== PARCOURS D'ACCUEIL =====
+   Plein écran, un écran = une idée. Le rythme fait le travail : chaque
+   élément entre avec un léger décalage, l'œil suit sans effort. */
+#onb{position:fixed;inset:0;z-index:3000;background:var(--bg);display:none;overflow:hidden;}
+#onb.open{display:flex;flex-direction:column;}
+.onb-top{display:flex;align-items:center;gap:10px;padding:18px 20px 0;flex-shrink:0;}
+.onb-dots{display:flex;gap:5px;flex:1;}
+.onb-dot{height:2px;flex:1;background:rgba(var(--ink),0.14);overflow:hidden;}
+.onb-dot i{display:block;height:100%;width:0;background:var(--accent);transition:width .45s ease;}
+.onb-dot.done i{width:100%;}
+.onb-skip{background:none;border:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 2px;letter-spacing:.5px;}
+.onb-skip:hover{color:var(--text);}
+
+.onb-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;
+  padding:24px 24px 10px;max-width:560px;width:100%;margin:0 auto;box-sizing:border-box;}
+@media (min-width:900px){ .onb-body{padding:30px 24px 14px;} }
+
+.onb-kicker{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-ink);margin-bottom:14px;}
+.onb-h{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(30px,7vw,46px);line-height:1.12;
+  color:var(--text-strong);letter-spacing:-.5px;margin-bottom:14px;}
+.onb-h em{font-style:italic;color:var(--accent-ink);text-shadow:var(--glow-txt);}
+.onb-p{font-size:14px;line-height:1.7;color:var(--text-dim);margin-bottom:8px;max-width:44ch;}
+.onb-p b{color:var(--text-strong);font-weight:700;}
+
+/* chaque enfant marqué .onb-in monte d'un cran, décalé par --i */
+.onb-in{opacity:0;transform:translateY(14px);animation:onbIn .55s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:calc(var(--i,0) * 90ms);}
+@keyframes onbIn{to{opacity:1;transform:none;}}
+
+/* la démonstration : deux trajectoires, celle qu'on subit et celle qu'on choisit */
+.onb-track{margin:18px 0 6px;}
+.onb-line{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.onb-line-lb{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);width:74px;flex-shrink:0;}
+.onb-bar{flex:1;height:8px;background:rgba(var(--ink),0.07);overflow:hidden;position:relative;}
+.onb-bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--muted3);animation:onbGrow 1.1s cubic-bezier(.22,1,.36,1) forwards;animation-delay:.35s;}
+.onb-bar.win i{background:linear-gradient(90deg,var(--accent-deep),var(--accent));box-shadow:var(--glow);animation-delay:.7s;}
+@keyframes onbGrow{to{width:var(--w,100%);}}
+.onb-line-v{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);width:58px;text-align:right;flex-shrink:0;}
+.onb-bar.win + .onb-line-v{color:var(--accent-ink);font-weight:700;}
+
+/* le chiffre-choc, compté à l'écran */
+.onb-big{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(56px,17vw,104px);line-height:1;
+  color:var(--text-strong);text-shadow:var(--glow-txt);letter-spacing:-2px;}
+.onb-big-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+
+/* bénéfices : une ligne, une icône, pas de carte */
+.onb-ben{display:flex;align-items:flex-start;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);}
+.onb-ben:last-child{border-bottom:none;}
+.onb-ben .ico{color:var(--accent-ink);margin-top:1px;}
+.onb-ben-t{font-size:13.5px;font-weight:700;color:var(--text-strong);margin-bottom:2px;}
+.onb-ben-d{font-size:12px;color:var(--muted);line-height:1.55;}
+
+.onb-field{margin-bottom:12px;}
+.onb-field label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin-bottom:7px;}
+.onb-field input{width:100%;box-sizing:border-box;background:var(--sunken);border:1px solid var(--field-border);
+  border-radius:var(--r-sm);color:var(--text);font-size:16px;padding:13px 14px;font-family:inherit;}
+.onb-field input:focus{outline:none;border-color:var(--accent);box-shadow:var(--glow);}
+.onb-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.onb-foot{flex-shrink:0;padding:14px 24px calc(20px + env(safe-area-inset-bottom));max-width:560px;width:100%;margin:0 auto;box-sizing:border-box;}
+.onb-go{width:100%;padding:16px;border:none;border-radius:var(--r-sm);background:var(--accent);color:var(--on-accent);
+  font-size:14px;font-weight:800;letter-spacing:.3px;cursor:pointer;font-family:inherit;box-shadow:var(--glow);}
+.onb-go:hover{background:var(--accent2);}
+.onb-go:disabled{opacity:.35;box-shadow:none;cursor:default;}
+.onb-back{width:100%;margin-top:8px;padding:11px;background:none;border:none;color:var(--muted2);font-size:12px;
+  font-weight:600;cursor:pointer;font-family:inherit;}
+.onb-back:hover{color:var(--text);}
 /* ===== MARQUE POSÉE, PLUS TAPISSÉE =====
    Le logo ne couvre plus l'écran entier. Il se pose en diagonale dans le coin
    des cartes qui ouvrent une section : présent, jamais gênant, et il occupe
@@ -1271,6 +1339,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <div id="login-flash"></div>
 
 <!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
+<div id="onb"></div>
 <div id="cal-modal" onclick="if(event.target===this)calClose()"></div>
 
 <div id="nm-tele">
@@ -3735,6 +3804,196 @@ function rmRender(){
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
 
+/* ============ PARCOURS D'ACCUEIL ============
+   Le principe est celui d'Opal : au lieu de promettre, on montre le chiffre
+   de la personne. Opal affiche les heures perdues à scroller ; ici on affiche
+   les jours qui restent avant l'échéance qu'elle vient de fixer, et ce que
+   ça coûte par jour. C'est SA donnée, pas un argument.
+
+   Règle que je me suis fixée : aucune statistique inventée. Tout ce qui est
+   chiffré à l'écran est calculé à partir de ce qu'elle a saisi. */
+let onbStep = 0;
+let onbData = { title:'', amount:0, deadline:'' };
+
+function onbDone(){ return loadKey('onb_done') === '1'; }
+function onbShouldRun(){
+  if(onbDone()) return false;
+  /* un compte qui a déjà un objectif a déjà commencé : on ne lui explique rien */
+  return !(typeof glHasGoal === 'function' && glHasGoal());
+}
+function onbStart(){
+  onbStep = 0;
+  document.getElementById('onb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  onbRender();
+}
+function onbFinish(creer){
+  if(creer && onbData.title && onbData.amount > 0 && onbData.deadline){
+    glCurrent.title = onbData.title;
+    glCurrent.why = onbData.title;
+    glCurrent.amount = onbData.amount;
+    glCurrent.startDate = todayISO();
+    glCurrent.deadline = onbData.deadline;
+    if(!String(glCurrent.declaration || '').trim()) glCurrent.declaration = glDraftDecl();
+    glSave();
+  }
+  saveKey('onb_done', '1');
+  saveKey('welcome_done', '1');       /* la carte d'accueil ferait doublon */
+  document.getElementById('onb').classList.remove('open');
+  document.body.style.overflow = '';
+  if(typeof glRenderAll === 'function') glRenderAll();
+  if(typeof renderWelcome === 'function') renderWelcome();
+  if(creer) showToast('🎯 Ton objectif est posé — ta déclaration t\'attend');
+}
+function onbNext(){ onbStep++; onbRender(); }
+function onbPrev(){ if(onbStep > 0){ onbStep--; onbRender(); } }
+
+/* ---- calculs, tous issus de la saisie ---- */
+function onbDays(){
+  if(!onbData.deadline) return 0;
+  const t = new Date(onbData.deadline + 'T00:00:00'), n = new Date(); n.setHours(0,0,0,0);
+  return Math.max(1, Math.ceil((t - n) / 86400000));
+}
+function onbPerDay(){ const j = onbDays(); return j ? onbData.amount / j : 0; }
+function onbFmt(n){ return Math.round(n).toLocaleString('fr-FR'); }
+
+/* ---- les écrans ---- */
+function onbScreens(){
+  const j = onbDays(), pj = onbPerDay();
+  return [
+  /* 0 — l'accroche. On nomme le problème avant de proposer quoi que ce soit. */
+  { kicker:'OVERLY',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">Un objectif sans trace,<br><em>c\'est une intention.</em></div>' +
+      '<div class="onb-p onb-in" style="--i:2">Tu te fixes quelque chose. Trois semaines plus tard, tu ne sais plus ' +
+      'si tu es en avance ou en retard, ni ce que tu as vraiment fait.</div>' +
+      '<div class="onb-p onb-in" style="--i:3">Ce n\'est pas un manque de motivation. <b>C\'est un manque de trace.</b></div>',
+    cta:'Continuer' },
+
+  /* 1 — la démonstration. Deux trajectoires, la même durée. */
+  { kicker:'CE QUI CHANGE',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">La différence tient<br>à <em>une ligne par jour.</em></div>' +
+      '<div class="onb-p onb-in" style="--i:2">Même période. Même personne. La seule variable, c\'est de noter ' +
+      'ce qui a été fait.</div>' +
+      '<div class="onb-track onb-in" style="--i:3">' +
+        '<div class="onb-line"><span class="onb-line-lb">Sans trace</span>' +
+          '<span class="onb-bar" style="--w:22%"><i></i></span><span class="onb-line-v">?</span></div>' +
+        '<div class="onb-line"><span class="onb-line-lb">Avec trace</span>' +
+          '<span class="onb-bar win" style="--w:100%"><i></i></span><span class="onb-line-v">visible</span></div>' +
+      '</div>' +
+      '<div class="onb-p onb-in" style="--i:4">À gauche tu devines. À droite tu <b>sais</b> — et ce que tu sais, tu peux le corriger.</div>',
+    cta:'Je veux voir' },
+
+  /* 2 — la saisie. Trois champs, pas un de plus. */
+  { kicker:'TON OBJECTIF',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">Qu\'est-ce que<br>tu vises ?</div>' +
+      '<div class="onb-p onb-in" style="--i:2">Un montant et une date. C\'est tout ce dont l\'app a besoin pour ' +
+      'travailler à ta place.</div>' +
+      '<div class="onb-in" style="--i:3">' +
+        '<div class="onb-field"><label>Mon objectif</label>' +
+          '<input id="onb-title" placeholder="Ex : 3 000 € pour lancer mon activité" value="' + glEsc(onbData.title) + '" oninput="onbSync()"></div>' +
+        '<div class="onb-2">' +
+          '<div class="onb-field"><label>Montant (€)</label>' +
+            '<input id="onb-amount" type="number" inputmode="numeric" placeholder="3000" value="' + (onbData.amount || '') + '" oninput="onbSync()"></div>' +
+          '<div class="onb-field"><label>Date limite</label>' +
+            '<input id="onb-deadline" type="date" value="' + glEsc(onbData.deadline) + '" oninput="onbSync()"></div>' +
+        '</div>' +
+      '</div>',
+    cta:'Calculer', needs:true },
+
+  /* 3 — le retour. Son chiffre, pas le nôtre. */
+  { kicker:'TON CHIFFRE',
+    html:
+      '<div class="onb-in" style="--i:1;text-align:center;margin-bottom:22px">' +
+        '<div class="onb-big" id="onb-count">0</div>' +
+        '<div class="onb-big-sub">jours devant toi</div>' +
+      '</div>' +
+      '<div class="onb-p onb-in" style="--i:2">Pour ' + glEsc(onbData.title || 'ton objectif') + ', il te faut ' +
+        '<b>' + onbFmt(pj) + ' € par jour</b>' + (pj < 1 ? '' : ', tous les jours, sans en sauter un') + '.</div>' +
+      '<div class="onb-p onb-in" style="--i:3">Ce chiffre-là, personne ne te l\'avait donné. ' +
+        'À partir de maintenant tu l\'as sous les yeux <b>chaque matin</b>, et tu vois s\'il monte ou s\'il descend.</div>',
+    cta:'Et ensuite ?', after:onbCountUp },
+
+  /* 4 — ce que l'app fait de cette donnée. */
+  { kicker:'CE QUE TU OBTIENS',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">Quatre choses,<br>tous les jours.</div>' +
+      '<div class="onb-in" style="--i:2">' +
+        onbBen('calendar','Ta journée posée à l\'heure','Tes tâches ont un horaire et une durée. Tu ne décides plus quoi faire, tu suis.') +
+        onbBen('target','Ta déclaration, écrite pour toi','Générée depuis ton objectif. Lue matin et soir, elle grave le chiffre.') +
+        onbBen('chart','Tes constats, pas tes impressions','« Après 8 h de sommeil tu fais 7 tâches, après moins tu en fais 3. » Ça vient de tes données.') +
+        onbBen('flame','La série que tu ne veux pas casser','Le seul mécanisme qui tienne quand la motivation tombe.') +
+      '</div>',
+    cta:'Dernière étape' },
+
+  /* 5 — la sortie. On referme sur le même chiffre. */
+  { kicker:'C\'EST PARTI',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">' + j + ' jours.<br><em>Le compte a commencé.</em></div>' +
+      '<div class="onb-p onb-in" style="--i:2">Ta déclaration est écrite, tes règles sont calées sur ton objectif, ' +
+      'et ton calendrier t\'attend.</div>' +
+      '<div class="onb-p onb-in" style="--i:3">Une seule chose à faire en sortant d\'ici : <b>cocher la première case.</b></div>',
+    cta:'Entrer', last:true }
+  ];
+}
+function onbBen(ic, titre, desc){
+  return '<div class="onb-ben">' + icon(ic, 21) +
+    '<div><div class="onb-ben-t">' + titre + '</div><div class="onb-ben-d">' + desc + '</div></div></div>';
+}
+
+/* Le compteur monte au lieu de s'afficher : c'est ce qui fait ressentir la
+   durée au lieu de la lire. */
+function onbCountUp(){
+  const el = document.getElementById('onb-count'); if(!el) return;
+  const cible = onbDays(), t0 = performance.now(), duree = 900;
+  const pas = now => {
+    const p = Math.min(1, (now - t0) / duree);
+    el.textContent = Math.round(cible * (1 - Math.pow(1 - p, 3)));
+    if(p < 1) requestAnimationFrame(pas);
+  };
+  requestAnimationFrame(pas);
+}
+function onbSync(){
+  const g = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+  onbData.title = g('onb-title');
+  onbData.amount = parseFloat(g('onb-amount')) || 0;
+  onbData.deadline = g('onb-deadline');
+  const b = document.getElementById('onb-go');
+  if(b) b.disabled = !onbReady();
+}
+function onbReady(){
+  return !!onbData.title && onbData.amount > 0 && onbData.deadline && onbDays() > 0;
+}
+function onbRender(){
+  const w = document.getElementById('onb'); if(!w) return;
+  const ecrans = onbScreens();
+  onbStep = Math.max(0, Math.min(ecrans.length - 1, onbStep));
+  const s = ecrans[onbStep];
+
+  w.innerHTML =
+    '<div class="onb-top">' +
+      '<div class="onb-dots">' + ecrans.map((_, i) =>
+        '<span class="onb-dot' + (i <= onbStep ? ' done' : '') + '"><i></i></span>').join('') + '</div>' +
+      (s.last ? '' : '<button class="onb-skip" onclick="onbFinish(false)">Passer</button>') +
+    '</div>' +
+    '<div class="onb-body">' +
+      '<div class="onb-kicker onb-in" style="--i:0">' + s.kicker + '</div>' +
+      s.html +
+    '</div>' +
+    '<div class="onb-foot">' +
+      '<button class="onb-go" id="onb-go" onclick="' + (s.last ? 'onbFinish(true)' : 'onbNext()') + '">' + s.cta + '</button>' +
+      (onbStep > 0 ? '<button class="onb-back" onclick="onbPrev()">Retour</button>' : '') +
+    '</div>';
+
+  if(s.needs) onbSync();
+  if(typeof s.after === 'function') setTimeout(s.after, 120);
+  if(typeof paintIcons === 'function') paintIcons(w);
+  const first = w.querySelector('.onb-body input');
+  if(first && window.matchMedia('(min-width:900px)').matches) setTimeout(() => first.focus(), 320);
+}
+
 /* ============ PREMIER LANCEMENT ============
    Un compte neuf arrive sur une app entièrement vide. Sans repère, on ne sait
    pas que tout se personnalise. Cette carte pose l'objectif — le seul réglage
@@ -3772,7 +4031,7 @@ function renderWelcome(){
   const w = document.getElementById('welcome-card'); if(!w) return;
   /* On sort dès qu'un objectif existe : rien à expliquer à quelqu'un qui a
      déjà commencé, y compris un compte qui existait avant cet écran. */
-  if(welcomeDone() || (typeof glHasGoal === 'function' && glHasGoal())){ w.innerHTML = ''; return; }
+  if(welcomeDone() || onbDone() || (typeof glHasGoal === 'function' && glHasGoal())){ w.innerHTML = ''; return; }
 
   const dans3mois = (()=>{ const d = new Date(); d.setMonth(d.getMonth() + 3);
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); })();
@@ -6755,6 +7014,9 @@ function initApp(){
   setupNotifications();
   paintIcons();
   wrapEmojis(document.body);
+  /* en dernier : le parcours a besoin de l'objectif déjà chargé pour savoir
+     s'il a quelque chose à expliquer */
+  if(onbShouldRun()) onbStart();
 }
 let scWidget = null;
 let scPlaying = false;
