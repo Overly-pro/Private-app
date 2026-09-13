@@ -663,6 +663,66 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .sync-dot.error{background:var(--accent);box-shadow:0 0 8px rgba(var(--accent-rgb),0.8);}
 .sync-dot.offline{background:var(--muted3);}
 
+
+/* ===== OBJECTIFS — liste, courbe, natures ===== */
+.gl-card{border:1px solid var(--border2);border-left:3px solid var(--gc);border-radius:var(--r);
+  background:var(--surface);margin-bottom:9px;overflow:hidden;}
+.gl-card.actif{border-color:var(--gc);box-shadow:0 0 0 1px var(--gc) inset;}
+.gl-head{width:100%;display:flex;align-items:center;gap:11px;padding:13px 14px;background:none;border:none;
+  color:var(--text);cursor:pointer;font-family:inherit;text-align:left;}
+.gl-head-ic{color:var(--gc);flex-shrink:0;display:flex;}
+.gl-head-txt{flex:1;min-width:0;}
+.gl-head-t{display:block;font-size:13.5px;font-weight:700;color:var(--text-strong);overflow-wrap:break-word;}
+.gl-head-s{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;}
+.gl-head-pct{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--gc);flex-shrink:0;}
+.gl-bar{height:3px;background:rgba(var(--ink),0.07);}
+.gl-bar i{display:block;height:100%;transition:width .4s ease;}
+.gl-body{display:none;padding:4px 14px 14px;}
+.gl-card.open .gl-body{display:block;}
+.gl-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0;}
+.gl-nums dt{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);}
+.gl-nums dd{margin:2px 0 0;font-size:14px;font-weight:700;color:var(--text-strong);font-family:'Space Mono',monospace;}
+.gl-chart{display:block;margin:10px 0 4px;background:var(--sunken);border-radius:var(--r-sm);}
+.gl-sub{font-size:8.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin:14px 0 7px;}
+.gl-log{display:flex;align-items:center;gap:7px;}
+.gl-log input{flex:1;min-width:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:var(--r-sm);
+  color:var(--text);font-size:14px;padding:9px 11px;font-family:inherit;}
+.gl-log-u{font-size:11px;color:var(--muted2);flex-shrink:0;}
+.gl-hint{font-size:10px;color:var(--muted3);line-height:1.5;margin-top:6px;}
+.gl-tagact{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gc);
+  border:1px solid var(--gc);border-radius:var(--r-sm);padding:6px 10px;}
+.gl-pace{font-size:10.5px;color:var(--muted);margin:8px 0 2px;}
+.gl-perso{font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted3);}
+
+/* natures : la même grille dans l'app et dans le parcours d'accueil */
+.gl-kinds{margin-top:14px;}
+.gl-kinds-lb{font-size:8.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;}
+.gl-kinds-row{display:flex;flex-wrap:wrap;gap:6px;}
+.gl-kind{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:var(--r-sm);
+  border:1px dashed var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;
+  cursor:pointer;font-family:inherit;}
+.gl-kind:hover{border-style:solid;border-color:var(--kc);color:var(--kc);}
+.gl-kind .ico{color:var(--kc);}
+
+.onb-kinds{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin:6px 0 4px;}
+.onb-kind{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 8px;border-radius:var(--r-sm);
+  border:1px solid var(--border2);background:var(--surface);color:var(--muted2);cursor:pointer;font-family:inherit;}
+.onb-kind .ico{color:var(--kc);}
+.onb-kind.on{border-color:var(--kc);background:rgba(var(--ink),0.05);box-shadow:0 0 0 1px var(--kc) inset;}
+.onb-kind-l{font-size:11.5px;font-weight:700;color:var(--text-strong);}
+.onb-kind-u{font-size:9.5px;color:var(--muted3);}
+
+.gl-hist{border:1px solid var(--border2);border-left:3px solid var(--gc);border-radius:var(--r);
+  background:var(--surface);padding:13px 14px;margin-bottom:9px;}
+.gl-hist-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px;}
+.gl-hist-t{font-size:13px;font-weight:700;color:var(--text-strong);}
+.gl-hist-m{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.gl-hist-st{font-size:9px;font-weight:700;letter-spacing:1px;padding:4px 8px;border-radius:var(--r-sm);
+  border:1px solid var(--border2);flex-shrink:0;white-space:nowrap;}
+.gl-hist-st.reussi{color:var(--ok);border-color:rgba(var(--ok-rgb),0.4);}
+.gl-hist-st.rate{color:var(--accent-ink);border-color:rgba(var(--accent-rgb),0.4);}
+.gl-hist-toggle{background:none;border:none;color:var(--muted2);font-size:10.5px;cursor:pointer;
+  font-family:inherit;padding:6px 0 0;}
 /* ===== RÉPARTITION — camembert + parts ===== */
 .int-top{display:flex;align-items:center;gap:18px;margin:4px 0 6px;flex-wrap:wrap;}
 .int-pie-wrap{width:150px;height:150px;flex-shrink:0;filter:drop-shadow(0 4px 14px rgba(0,0,0,.4));}
@@ -1412,10 +1472,11 @@ html.owner .subtab.owner-only{display:block!important;}
       <div class="stat-val" id="home-tasks-done">—</div>
       <div class="stat-lbl">tâches aujourd'hui</div>
     </div>
-    <div class="stat" onclick="goTo('goal')">
+    <div class="stat" onclick="goTo('objectifs')">
       <div class="stat-val" id="home-cash-pct">0%</div>
-      <div class="stat-lbl">objectif cash atteint</div>
+      <div class="stat-lbl">objectif atteint</div>
     </div>
+  </div>
 
   <div class="launch-grid">
     <button class="launch-tile" onclick="goTo('finance')"><span class="launch-ic" data-ico="wallet"></span><span class="launch-lb">Finance</span></button>
@@ -2287,6 +2348,9 @@ const ICONS = {
   bed:       'M3.5 19v-8m0 4h17v4m0-4v-2.5a2 2 0 0 0-2-2H10V15M7 11.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z',
   grid:      'M4 4h6.5v6.5H4V4Zm9.5 0H20v6.5h-6.5V4ZM4 13.5h6.5V20H4v-6.5Zm9.5 0H20V20h-6.5v-6.5Z',
   repeat:    'M20 11.5A8 8 0 0 0 6.3 6.1L4 8.4m0-4.4v4.4h4.4M4 12.5a8 8 0 0 0 13.7 5.4l2.3-2.3m0 4.4v-4.4h-4.4',
+  scale:     'M12 4.5v15M7 19.5h10M4 9h16M4 9l-2.2 5.4a3.4 3.4 0 0 0 4.4 0L4 9Zm16 0-2.2 5.4a3.4 3.4 0 0 0 4.4 0L20 9Zm-8-4.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z',
+  dumbbell:  'M3 9v6m3-8v10m12-10v10m3-8v6M6 12h12',
+  clock:     'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-14v5.2l3.4 2',
   hand:      'M8 11V5.6a1.6 1.6 0 0 1 3.2 0V11m0-.6V4.6a1.6 1.6 0 0 1 3.2 0V11m0-.4V6.4a1.6 1.6 0 0 1 3.2 0V15c0 3.3-2.3 6-5.6 6S6 18.6 6 15v-2.4a1.6 1.6 0 0 1 2-1.5'
 };
 /* Un emoji faisait 1 caractère ; une icône fait un nœud. On garde donc la même
@@ -2939,35 +3003,108 @@ function resetTasksDay(){
   if(typeof calRender === 'function') calRender();
 }
 
-/* ============ OBJECTIF MODULABLE + HISTORIQUE ============
-   Un objectif = titre, pourquoi, montant, dates, déclaration, et une liste de
-   sources d'argent librement modifiable. Chaque source peut compter ou non dans
-   le total (une source suivie pour information ne coche pas « compte »).
-   Quand un objectif est clôturé il part dans l'historique avec un statut. */
+/* ============ OBJECTIFS — plusieurs, typés, suivis ============
+   Avant : un seul objectif, forcément en euros, alimenté par des « sources
+   d'argent ». Or on ne mesure pas un poids, des séances ou des heures avec
+   des sources de revenus, et personne ne poursuit une seule chose à la fois.
 
-/* Pas d'option "Abandonné" : un objectif raté se retente, il ne se classe pas. */
+   Le modèle repose sur trois idées :
+   - une NATURE (argent, poids, physique, sport, temps, savoir, autre) qui
+     porte l'unité, la couleur et le sens de progression ;
+   - un SENS : atteindre une cible en montant, ou en descendant — perdre du
+     poids progresse vers le bas, l'ancien calcul aurait affiché 0 % ;
+   - un JOURNAL de relevés datés, qui donne la courbe et évite de retenir
+     « où j'en étais la semaine dernière ».
+
+   L'argent garde ses sources, qui restent le bon outil quand plusieurs
+   entrées alimentent un même total. Pour le reste, on relève une valeur. */
+
+const GOAL_KINDS = {
+  finance: { label:'Argent',   icon:'wallet',   color:'#e03535', unit:'€',       dir:'up',
+             ex:'3 000 € pour lancer mon activité', src:true },
+  poids:   { label:'Poids',    icon:'scale',    color:'#4fb477', unit:'kg',      dir:'down',
+             ex:'Descendre à 75 kg' },
+  forme:   { label:'Physique', icon:'dumbbell', color:'#e08a35', unit:'kg',      dir:'up',
+             ex:'Prendre 5 kg de muscle' },
+  sport:   { label:'Sport',    icon:'flame',    color:'#d8c341', unit:'séances', dir:'up',
+             ex:'120 séances cette année' },
+  temps:   { label:'Temps',    icon:'clock',    color:'#3f9ad8', unit:'heures',  dir:'up',
+             ex:'200 h sur mon projet' },
+  savoir:  { label:'Savoir',   icon:'book',     color:'#8b6fd4', unit:'livres',  dir:'up',
+             ex:'24 livres cette année' },
+  autre:   { label:'Autre',    icon:'target',   color:'#c95a9c', unit:'',        dir:'up',
+             ex:'Ce que tu veux mesurer' }
+};
+function glKind(g){ return GOAL_KINDS[(g && g.kind) || 'autre'] || GOAL_KINDS.autre; }
+function glColor(g){ return (g && g.color) || glKind(g).color; }
+function glUnit(g){ return (g && g.unit !== undefined && g.unit !== null) ? g.unit : glKind(g).unit; }
+
 const GL_STATUS = {
   reussi:  { label:'Réussi',     emoji:'✅' },
   attente: { label:'En attente', emoji:'⏳' },
   rate:    { label:'Raté',       emoji:'❌' }
 };
-let glCurrent = null;
-let glHistory = [];
 
-function glBlank(){
-  return { id:Date.now(), title:'', why:'', amount:0,
-           startDate:todayISO(), deadline:'', sources:[], declaration:'',
-           status:'attente', closedAt:null, finalTotal:null };
+let glGoals = [];        /* tous les objectifs en cours */
+let glActiveId = null;   /* celui que l'accueil et le compte à rebours suivent */
+let glCurrent = null;    /* référence vive vers l'objectif actif */
+let glHistory = [];
+let glOpenId = null;     /* objectif déplié dans la liste */
+
+function glBlank(kind){
+  const k = GOAL_KINDS[kind] ? kind : 'finance';
+  return { id:'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+           kind:k, title:'', why:'', target:0, unit:GOAL_KINDS[k].unit,
+           from:0, current:0, log:[],
+           startDate:todayISO(), deadline:'', sources:[],
+           declaration:'', status:'attente', closedAt:null, finalTotal:null,
+           color:GOAL_KINDS[k].color };
 }
-function glTotal(g){ return (g.sources||[]).filter(s=>s.counts).reduce((a,s)=>a+(parseFloat(s.value)||0),0); }
-function glPct(g){ const a=parseFloat(g.amount)||0; return a<=0?0:Math.min(Math.round(glTotal(g)/a*100),100); }
-function glReached(g){ const a=parseFloat(g.amount)||0; return a>0 && glTotal(g)>=a; }
+
+/* ---- mesure ----
+   L'argent additionne ses sources ; tout le reste lit la dernière valeur
+   relevée. Une seule fonction pour les deux, pour que l'affichage et les
+   calculs ne divergent jamais. */
+function glValue(g){
+  if(!g) return 0;
+  if(glKind(g).src) return (g.sources||[]).filter(s=>s.counts).reduce((a,s)=>a+(parseFloat(s.value)||0),0);
+  /* Tant qu'aucun relevé n'a été fait, la valeur courante est le point de
+     départ. Sans ça un objectif qui descend partait de 0, donc déjà sous sa
+     cible, et s'affichait atteint à 100 % avant le premier pesage. */
+  if(!(g.log || []).length) return parseFloat(g.from) || 0;
+  return parseFloat(g.current) || 0;
+}
+function glTotal(g){ return glValue(g); }        /* nom conservé : appelé ailleurs */
+function glPct(g){
+  if(!g) return 0;
+  const cible = parseFloat(g.target)||0, v = glValue(g), dep = parseFloat(g.from)||0;
+  if(glKind(g).dir === 'down'){
+    /* on descend vers la cible : le progrès se mesure depuis le point de départ */
+    const course = dep - cible;
+    if(course <= 0) return v <= cible ? 100 : 0;
+    return Math.max(0, Math.min(100, Math.round((dep - v) / course * 100)));
+  }
+  const course = cible - dep;
+  if(course <= 0) return v >= cible && cible > 0 ? 100 : 0;
+  return Math.max(0, Math.min(100, Math.round((v - dep) / course * 100)));
+}
+function glReached(g){
+  if(!g) return false;
+  const cible = parseFloat(g.target)||0, v = glValue(g);
+  if(glKind(g).dir === 'down') return cible > 0 && v > 0 && v <= cible;
+  return cible > 0 && v >= cible;
+}
+function glRemain(g){
+  const cible = parseFloat(g.target)||0, v = glValue(g);
+  return glKind(g).dir === 'down' ? Math.max(0, v - cible) : Math.max(0, cible - v);
+}
 function glDaysLeft(g){
-  if(!g.deadline) return null;
+  if(!g || !g.deadline) return null;
   const t=new Date(g.deadline+'T00:00:00'), n=new Date(); n.setHours(0,0,0,0);
   return Math.ceil((t-n)/86400000);
 }
 function glFmt(n){ return (parseFloat(n)||0).toLocaleString('fr-FR'); }
+function glVal(g, n){ const u = glUnit(g); return glFmt(n) + (u ? ' ' + u : ''); }
 function glDateFR(iso){
   if(!iso) return '—';
   const d=new Date(iso+'T00:00:00');
@@ -2975,357 +3112,376 @@ function glDateFR(iso){
 }
 function glEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function glAutoGrow(el){ el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+
+/* ---- persistance et reprise de l'ancien format ---- */
 function glSave(){
-  saveKey('goal_current', JSON.stringify(glCurrent));
+  saveKey('goals', JSON.stringify({ goals:glGoals, active:glActiveId }));
   saveKey('goal_history', JSON.stringify(glHistory));
 }
+function glSync(){ glCurrent = glGoals.find(g=>g.id===glActiveId) || glGoals[0] || null; }
 
-/* Un compte neuf démarre vide : pas d'objectif d'emprunt, pas d'historique
-   hérité de quelqu'un d'autre. Seules deux sources de revenus génériques sont
-   posées, à renommer. L'accueil guide ensuite vers la création de l'objectif. */
 function glBootstrap(){
-  const rawCur = loadKey('goal_current'), rawHist = loadKey('goal_history');
-  try { if(rawHist) glHistory = JSON.parse(rawHist) || []; } catch(e){ glHistory = []; }
-  try { if(rawCur) glCurrent = JSON.parse(rawCur); } catch(e){ glCurrent = null; }
-  if(glCurrent) return;
-
-  glCurrent = glBlank();
-  glCurrent.sources = [
-    { id:Date.now()+1, emoji:'💼', label:'Revenu principal', value:0, counts:true },
-    { id:Date.now()+2, emoji:'💰', label:'Épargne',          value:0, counts:true }
-  ];
-  glSave();
+  try { glHistory = JSON.parse(loadKey('goal_history')) || []; } catch(e){ glHistory = []; }
+  let d = null;
+  try { d = JSON.parse(loadKey('goals') || 'null'); } catch(e){ d = null; }
+  if(d && Array.isArray(d.goals)){
+    glGoals = d.goals; glActiveId = d.active || (glGoals[0] && glGoals[0].id) || null;
+    glGoals.forEach(g => { if(!g.log) g.log = []; if(!g.kind) g.kind = 'finance'; });
+    glSync(); return;
+  }
+  /* Reprise de l'objectif unique : il devient le premier objectif « argent »,
+     avec ses sources, sa déclaration et ses dates. Rien n'est perdu. */
+  let vieux = null;
+  try { vieux = JSON.parse(loadKey('goal_current') || 'null'); } catch(e){ vieux = null; }
+  if(vieux){
+    const g = glBlank('finance');
+    g.title = vieux.title || ''; g.why = vieux.why || '';
+    g.target = parseFloat(vieux.amount) || 0;
+    g.startDate = vieux.startDate || todayISO(); g.deadline = vieux.deadline || '';
+    g.sources = vieux.sources || []; g.declaration = vieux.declaration || '';
+    g.rulesOverride = vieux.rulesOverride; g.status = vieux.status || 'attente';
+    glGoals = [g]; glActiveId = g.id;
+  } else {
+    const g = glBlank('finance');
+    g.sources = [
+      { id:Date.now()+1, emoji:'💼', label:'Revenu principal', value:0, counts:true },
+      { id:Date.now()+2, emoji:'💰', label:'Épargne',          value:0, counts:true }
+    ];
+    glGoals = [g]; glActiveId = g.id;
+  }
+  glSync(); glSave();
 }
 
 /* ---- mutations ---- */
-function glSet(field, val){
-  glCurrent[field] = (field==='amount') ? (parseFloat(val)||0) : val;
+function glSet(field, val, id){
+  const g = id ? glGoals.find(x=>x.id===id) : glCurrent; if(!g) return;
+  g[field] = (field==='target'||field==='from'||field==='current') ? (parseFloat(val)||0) : val;
+  if(field === 'kind'){ g.unit = GOAL_KINDS[val] ? GOAL_KINDS[val].unit : ''; g.color = glKind(g).color; }
   glSave(); glRenderAll();
 }
-function glSrcSet(id, field, val){
-  const s = (glCurrent.sources||[]).find(x=>x.id===id); if(!s) return;
+function glSrcSet(sid, field, val, gid){
+  const g = gid ? glGoals.find(x=>x.id===gid) : glCurrent; if(!g) return;
+  const s = (g.sources||[]).find(x=>x.id===sid); if(!s) return;
   s[field] = (field==='value') ? (parseFloat(val)||0) : val;
   glSave(); glRenderAll();
 }
-function glSrcAdd(){
-  glCurrent.sources = glCurrent.sources || [];
-  glCurrent.sources.push({ id:Date.now(), emoji:'💰', label:'', value:0, counts:true });
+function glSrcAdd(gid){
+  const g = gid ? glGoals.find(x=>x.id===gid) : glCurrent; if(!g) return;
+  g.sources = g.sources || [];
+  g.sources.push({ id:Date.now(), emoji:'💰', label:'', value:0, counts:true });
   glSave(); glRenderAll();
 }
-function glSrcDel(id){
-  glCurrent.sources = (glCurrent.sources||[]).filter(x=>x.id!==id);
+function glSrcDel(sid, gid){
+  const g = gid ? glGoals.find(x=>x.id===gid) : glCurrent; if(!g) return;
+  g.sources = (g.sources||[]).filter(x=>x.id!==sid);
   glSave(); glRenderAll();
 }
-function glClose(){
-  const g = glCurrent;
-  if(!g.title && !g.amount){ showToast('Rien à clôturer — cet objectif est vide'); return; }
-  const suggested = glReached(g) ? 'reussi' : 'rate';
-  const label = GL_STATUS[suggested].label;
-  if(!confirm(`Clôturer « ${g.title||'objectif sans titre'} » et l'archiver en « ${label} » ?\n\nTu pourras changer le statut à tout moment dans l'historique.`)) return;
-  g.status = suggested;
-  g.closedAt = todayISO();
-  g.finalTotal = glTotal(g);
+/* Un relevé daté : c'est lui qui construit la courbe. Deux relevés le même
+   jour se remplacent, sinon un jour d'hésitation ferait trois points. */
+function glLog(gid, valeur){
+  const g = glGoals.find(x=>x.id===gid); if(!g) return;
+  const v = parseFloat(valeur); if(isNaN(v)) return;
+  g.current = v;
+  g.log = (g.log||[]).filter(p=>p.d !== todayISO());
+  g.log.push({ d:todayISO(), v:v });
+  g.log.sort((a,b)=> a.d < b.d ? -1 : 1);
+  glSave(); glRenderAll();
+  showToast('📍 ' + glVal(g, v) + ' enregistré');
+}
+function glLogFromField(gid){
+  const el = document.getElementById('gl-log-'+gid); if(!el) return;
+  if(el.value === '') { showToast('Entre une valeur'); return; }
+  glLog(gid, el.value); el.value = '';
+}
+function glAdd(kind){
+  const g = glBlank(kind || 'finance');
+  if(glKind(g).src) g.sources = [{ id:Date.now(), emoji:'💼', label:'Revenu principal', value:0, counts:true }];
+  glGoals.push(g); glActiveId = g.id; glOpenId = g.id;
+  glSync(); glSave(); glRenderAll();
+  showToast('🎯 Nouvel objectif — donne-lui un nom et une cible');
+}
+function glPick(id){ glActiveId = id; glSync(); glSave(); glRenderAll(); }
+function glToggleOpen(id){ glOpenId = (glOpenId === id ? null : id); glRenderAll(); }
+function glClose(id){
+  const g = glGoals.find(x=>x.id===id) || glCurrent; if(!g) return;
+  if(!confirm('Clôturer « ' + (g.title || 'cet objectif') + ' » ?\n\nIl rejoint ton historique.')) return;
+  g.closedAt = todayISO(); g.finalTotal = glValue(g);
+  g.status = glReached(g) ? 'reussi' : 'attente';
   glHistory.unshift(g);
-  glCurrent = glBlank();
-  glSave(); glRenderAll();
-  showToast(GL_STATUS[suggested].emoji + ' Objectif archivé');
-  showSubtab('goal','history');
+  glGoals = glGoals.filter(x=>x.id!==g.id);
+  if(glActiveId === g.id) glActiveId = glGoals[0] ? glGoals[0].id : null;
+  glSync(); glSave(); glRenderAll();
+  showToast('🏆 Objectif archivé');
 }
-function glNew(){
-  if((glCurrent.title || glCurrent.amount) &&
-     !confirm("Repartir d'un objectif vierge ?\n\nL'objectif en cours sera effacé sans être archivé. Utilise plutôt « Clôturer » si tu veux le garder dans l'historique.")) return;
-  glCurrent = glBlank();
-  glSave(); glRenderAll();
-  showToast('🎯 Nouvel objectif');
+function glDel(id){
+  const g = glGoals.find(x=>x.id===id); if(!g) return;
+  if(!confirm('Supprimer « ' + (g.title || 'cet objectif') + ' » ?\n\nIl ne rejoint pas l’historique.')) return;
+  glGoals = glGoals.filter(x=>x.id!==id);
+  if(glActiveId === id) glActiveId = glGoals[0] ? glGoals[0].id : null;
+  glSync(); glSave(); glRenderAll();
 }
-function glHistStatus(id, status){
+function glHasGoal(){
+  return glGoals.some(g => String(g.title||'').trim() || (parseFloat(g.target)||0) > 0);
+}
+function glHistStatus(id, st){
   const h = glHistory.find(x=>x.id===id); if(!h) return;
-  h.status = status; glSave(); glRenderHistory();
-  showToast(GL_STATUS[status].emoji + ' ' + GL_STATUS[status].label);
+  h.status = st; glSave(); glRenderHistory();
 }
-function glHistToggle(id){ document.getElementById('glh-'+id)?.classList.toggle('open'); }
+function glHistToggle(id){
+  const el = document.getElementById('glh-'+id); if(el) el.classList.toggle('open');
+}
 function glHistDel(id){
-  const h = glHistory.find(x=>x.id===id); if(!h) return;
-  if(!confirm(`Supprimer définitivement « ${h.title||'objectif sans titre'} » de l'historique ?`)) return;
-  glHistory = glHistory.filter(x=>x.id!==id);
-  glSave(); glRenderHistory();
+  if(!confirm('Supprimer définitivement cet objectif de ton historique ?')) return;
+  glHistory = glHistory.filter(x=>x.id!==id); glSave(); glRenderHistory();
 }
 function glReopen(id){
   const h = glHistory.find(x=>x.id===id); if(!h) return;
-  if(glCurrent.title || glCurrent.amount){ showToast("Clôture d'abord l'objectif en cours"); return; }
+  h.closedAt = null; h.status = 'attente';
+  glGoals.push(h); glActiveId = h.id;
   glHistory = glHistory.filter(x=>x.id!==id);
-  h.status='attente'; h.closedAt=null; h.finalTotal=null;
-  glCurrent = h;
-  glSave(); glRenderAll();
-  showToast('↩ Objectif réouvert');
-  showSubtab('goal','progress');
+  glSync(); glSave(); glRenderAll();
+  showToast('↩ Objectif remis en cours');
 }
 
-/* ---- déclaration ---- */
-/* Aligne les champs de l'objectif sur ce qui est écrit dans la déclaration.
-   L'inverse de « régénérer » : ici c'est le texte qui a raison. */
-function glAlignFromDecl(){
-  const g = glCurrent;
-  if(!g || !g.declaration) return;
-  const m = g.declaration.match(/(\d[\d\s  .]*)\s*€/);
-  if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,'')); if(n) g.amount = n; }
-  const annees = (g.declaration.match(/\b(20\d{2})\b/g) || []).map(Number);
-  if(annees.length){
-    g.deadline = g.deadline ? String(annees[0]) + g.deadline.slice(4) : annees[0] + '-12-31';
+/* ---- la courbe ----
+   Deux tracés : les relevés réels, et la ligne droite qu'il faudrait suivre
+   pour arriver à la date. L'écart entre les deux dit tout, sans commentaire. */
+function glChart(g, w, h){
+  const log = (g.log||[]).slice();
+  const dep = parseFloat(g.from)||0, cible = parseFloat(g.target)||0;
+  if(!g.deadline || !cible) return '';
+  const t0 = new Date(g.startDate+'T00:00:00').getTime();
+  const t1 = new Date(g.deadline +'T00:00:00').getTime();
+  if(!(t1 > t0)) return '';
+  const lo = Math.min(dep, cible), hi = Math.max(dep, cible);
+  const span = (hi - lo) || 1;
+  const px = t => 4 + (Math.max(t0, Math.min(t1, t)) - t0) / (t1 - t0) * (w - 8);
+  const py = v => h - 6 - (Math.max(lo, Math.min(hi, v)) - lo) / span * (h - 14);
+
+  /* la trajectoire idéale */
+  const ideal = '<line x1="'+px(t0)+'" y1="'+py(dep)+'" x2="'+px(t1)+'" y2="'+py(cible)+'" ' +
+    'stroke="rgba(var(--ink),0.22)" stroke-width="1.5" stroke-dasharray="4 4"/>';
+
+  /* les relevés, en partant du point de départ */
+  const pts = [{d:g.startDate, v:dep}].concat(log)
+    .map(p => px(new Date(p.d+'T00:00:00').getTime()).toFixed(1) + ',' + py(p.v).toFixed(1));
+  const col = glColor(g);
+  const trace = pts.length > 1
+    ? '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="2.5" ' +
+      'stroke-linejoin="round" stroke-linecap="round"/>' : '';
+  const dots = log.map(p =>
+    '<circle cx="'+px(new Date(p.d+'T00:00:00').getTime()).toFixed(1)+'" cy="'+py(p.v).toFixed(1)+'" r="3" fill="'+col+'"/>').join('');
+
+  /* où on en est aujourd'hui, sur l'axe du temps */
+  const now = Date.now();
+  const auj = (now >= t0 && now <= t1)
+    ? '<line x1="'+px(now)+'" y1="2" x2="'+px(now)+'" y2="'+(h-4)+'" stroke="var(--accent)" stroke-width="1" opacity=".5"/>' : '';
+
+  return '<svg class="gl-chart" viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" preserveAspectRatio="none">' +
+    ideal + auj + trace + dots + '</svg>';
+}
+
+/* ---- rendu : la liste des objectifs ---- */
+function glRenderActive(){
+  const w = document.getElementById('goal-active-wrap'); if(!w) return;
+  if(!glGoals.length){
+    w.innerHTML = '<div class="gl-empty">Aucun objectif en cours.<br>Ajoute le premier ci-dessous.</div>' + glAddBar();
+    return;
   }
-  glSave(); glRenderAll();
-  showToast('✅ Objectif aligné sur ta déclaration');
+  w.innerHTML = glGoals.map(g => glCard(g)).join('') + glAddBar();
+  const f = document.getElementById('gl-focus'); if(f){ glAutoGrow(f); }
 }
-/* Réécrit la déclaration à partir des champs et l'enregistre directement. */
-function glRegenDecl(){
-  glCurrent.declaration = glDraftDecl();
-  glSave(); glRenderAll();
-  showToast('✨ Déclaration régénérée depuis ton objectif');
+function glAddBar(){
+  return '<div class="gl-kinds"><div class="gl-kinds-lb">Ajouter un objectif</div><div class="gl-kinds-row">' +
+    Object.keys(GOAL_KINDS).map(k =>
+      '<button class="gl-kind" style="--kc:' + GOAL_KINDS[k].color + '" onclick="glAdd(\'' + k + '\')">' +
+        icon(GOAL_KINDS[k].icon, 16) + GOAL_KINDS[k].label + '</button>').join('') +
+    '</div></div>';
 }
-function glDraftDecl(){
-  const g = glCurrent;
-  const amt = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : '[montant]';
-  const date = g.deadline ? glDateFR(g.deadline) : '[date]';
-  const srcs = (g.sources||[]).map(s=>s.label).filter(Boolean);
-  const via = srcs.length ? srcs.join(', ') : '[mes sources de revenus]';
-  const but = g.why || g.title || '[mon projet]';
-  return `« Je réunis ${amt} d'ici le ${date}.
+function glCard(g){
+  const K = glKind(g), col = glColor(g);
+  const pct = glPct(g), d = glDaysLeft(g), atteint = glReached(g);
+  const ouvert = glOpenId === g.id, actif = glActiveId === g.id;
+  const v = glValue(g), cible = parseFloat(g.target)||0;
 
-En échange, je m'engage à donner le meilleur de moi-même sur ${via}, chaque jour, sans exception.
+  /* rythme : la part de temps écoulée, à comparer à la part accomplie */
+  let rythme = '';
+  if(cible && g.deadline && g.startDate){
+    const s=new Date(g.startDate+'T00:00:00'), e=new Date(g.deadline+'T00:00:00'), n=new Date(); n.setHours(0,0,0,0);
+    const span=(e-s)/86400000, gone=(n-s)/86400000;
+    if(span > 0){
+      const tp = Math.max(0, Math.min(100, Math.round(gone/span*100)));
+      const delta = pct - tp;
+      rythme = '<div class="gl-pace">Temps écoulé <b>'+tp+'%</b> · avancement <b>'+pct+'%</b> — ' +
+        '<b style="color:'+(atteint||delta>=0?'var(--ok)':'var(--accent-ink)')+'">' +
+        (atteint ? 'atteint' : (delta>=0 ? 'en avance de '+delta+' pts' : 'en retard de '+Math.abs(delta)+' pts')) + '</b></div>';
+    }
+  }
 
-Cet argent est le carburant de ${but}.
+  const srcRows = (g.sources||[]).map(s =>
+    '<div class="gl-src-row">' +
+      '<input class="gl-src-emoji" value="'+glEsc(s.emoji)+'" maxlength="4" onchange="glSrcSet('+s.id+',\'emoji\',this.value,\''+g.id+'\')">' +
+      '<input class="gl-src-name" value="'+glEsc(s.label)+'" placeholder="Nom de la source" onchange="glSrcSet('+s.id+',\'label\',this.value,\''+g.id+'\')">' +
+      '<input class="gl-src-val" type="number" step="any" value="'+s.value+'" onchange="glSrcSet('+s.id+',\'value\',this.value,\''+g.id+'\')"><span class="gl-src-unit">'+glEsc(glUnit(g))+'</span>' +
+      '<label class="gl-counts"><input type="checkbox" '+(s.counts?'checked':'')+' onchange="glSrcSet('+s.id+',\'counts\',this.checked,\''+g.id+'\')">compte</label>' +
+      '<button class="gl-src-del" onclick="glSrcDel('+s.id+',\''+g.id+'\')" title="Supprimer">✕</button>' +
+    '</div>').join('');
 
-La date est fixée, le montant est réel, je crois profondément en ma capacité à l'atteindre.
-Je le vois, je le ressens — c'est déjà en route. »`;
+  return '<div class="gl-card' + (ouvert?' open':'') + (actif?' actif':'') + '" style="--gc:'+col+'">' +
+    '<button class="gl-head" onclick="glToggleOpen(\''+g.id+'\')">' +
+      '<span class="gl-head-ic">' + icon(K.icon, 18) + '</span>' +
+      '<span class="gl-head-txt">' +
+        '<span class="gl-head-t">' + (glEsc(g.title) || '<i>Sans nom</i>') + '</span>' +
+        '<span class="gl-head-s">' + K.label + (cible ? ' · ' + glVal(g, cible) : '') +
+          (d===null ? '' : ' · ' + (d<0 ? Math.abs(d)+' j de retard' : d+' j restants')) + '</span>' +
+      '</span>' +
+      '<span class="gl-head-pct">' + (atteint ? '✓' : pct + '%') + '</span>' +
+    '</button>' +
+    '<div class="gl-bar"><i style="width:'+pct+'%;background:'+col+'"></i></div>' +
+    '<div class="gl-body">' +
+      (cible ? '<div class="gl-nums">' +
+        '<div><dt>Actuel</dt><dd style="color:'+col+'">'+glVal(g, v)+'</dd></div>' +
+        '<div><dt>'+(K.dir==='down'?'À perdre':'Il reste')+'</dt><dd>'+glVal(g, glRemain(g))+'</dd></div>' +
+        '<div><dt>Échéance</dt><dd>'+glDateFR(g.deadline)+'</dd></div>' +
+      '</div>' : '') +
+      rythme +
+      glChart(g, 320, 92) +
+      (K.src
+        ? '<div class="gl-sub">Mes sources</div>' + srcRows +
+          '<button class="gl-add" onclick="glSrcAdd(\''+g.id+'\')">+ Ajouter une source</button>'
+        : '<div class="gl-sub">Où j’en suis aujourd’hui</div>' +
+          '<div class="gl-log"><input id="gl-log-'+g.id+'" type="number" step="any" placeholder="'+glFmt(v)+'">' +
+            '<span class="gl-log-u">'+glEsc(glUnit(g))+'</span>' +
+            '<button class="gl-btn primary" onclick="glLogFromField(\''+g.id+'\')">Relever</button></div>' +
+          '<div class="gl-hint">Chaque relevé ajoute un point à la courbe. Un seul par jour, le dernier remplace.</div>') +
+      '<div class="gl-sub">Réglages</div>' +
+      '<div class="gl-field"><label>Nom</label>' +
+        '<input value="'+glEsc(g.title)+'" placeholder="'+glEsc(K.ex)+'" onchange="glSet(\'title\',this.value,\''+g.id+'\')"></div>' +
+      '<div class="gl-grid2">' +
+        '<div class="gl-field"><label>Cible ('+glEsc(glUnit(g)||'unité')+')</label>' +
+          '<input type="number" step="any" value="'+(cible||'')+'" onchange="glSet(\'target\',this.value,\''+g.id+'\')"></div>' +
+        '<div class="gl-field"><label>Point de départ</label>' +
+          '<input type="number" step="any" value="'+(parseFloat(g.from)||0)+'" onchange="glSet(\'from\',this.value,\''+g.id+'\')"></div>' +
+      '</div>' +
+      '<div class="gl-grid2">' +
+        '<div class="gl-field"><label>Début</label>' +
+          '<input type="date" value="'+glEsc(g.startDate)+'" onchange="glSet(\'startDate\',this.value,\''+g.id+'\')"></div>' +
+        '<div class="gl-field"><label>Échéance</label>' +
+          '<input type="date" value="'+glEsc(g.deadline)+'" onchange="glSet(\'deadline\',this.value,\''+g.id+'\')"></div>' +
+      '</div>' +
+      '<div class="gl-actions">' +
+        (actif ? '<span class="gl-tagact">Objectif principal</span>'
+               : '<button class="gl-btn" onclick="glPick(\''+g.id+'\')">Suivre celui-ci en priorité</button>') +
+        '<button class="gl-btn done" onclick="glClose(\''+g.id+'\')">🏆 Clôturer</button>' +
+        '<button class="gl-btn" onclick="glDel(\''+g.id+'\')">🗑 Supprimer</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
 }
-/* Remplit le champ sans enregistrer : le brouillon reste à personnaliser. */
-function glSuggestDecl(){
-  const ta = document.getElementById('gl-decl-ta');
-  if(ta){ ta.value = glDraftDecl(); glAutoGrow(ta); }
-  showToast('✨ Brouillon généré — à toi de le personnaliser');
-}
-function glSaveDecl(){
-  const ta = document.getElementById('gl-decl-ta'); if(!ta) return;
-  glCurrent.declaration = ta.value;
-  glSave(); glRenderAll();
-  showToast('✅ Déclaration enregistrée');
-}
-
-/* ---- rendu ---- */
-let glFoldOpen = false;
-function glHasGoal(){
-  return !!String(glCurrent && glCurrent.title || '').trim() || (parseFloat(glCurrent && glCurrent.amount)||0) > 0;
-}
-function glToggleFold(){ glFoldOpen = !glFoldOpen; glRenderParams(); }
-function glAddGoal(){
-  const t = String(glCurrent.title||'').trim();
-  const a = parseFloat(glCurrent.amount)||0;
-  if(!t){ showToast('Donne un nom à ton objectif'); return; }
-  if(a <= 0){ showToast('Indique le montant à atteindre'); return; }
-  glFoldOpen = false;
-  glSave(); glRenderAll();
-  showToast('🎯 Objectif ajouté');
-}
+/* L'ancien bandeau de tête ne sert plus : la liste porte déjà le compte à
+   rebours et la progression de chaque objectif. On garde la fonction, le
+   reste de l'app l'appelle, et elle alimente l'accueil. */
 function glRenderHero(){
-  if(!glCurrent) return;
-  const g = glCurrent, w = document.getElementById('goal-hero-wrap'); if(!w) return;
-  const d = glDaysLeft(g), reached = glReached(g), pct = glPct(g);
-  const amt = parseFloat(g.amount)||0, tot = glTotal(g);
-
-  /* libellé du compte à rebours, partagé par les deux formats */
-  let dLabel, dVal, dCol = '';
-  if(reached)         { dVal='✓';               dLabel='objectif atteint'; dCol='color:var(--ok);'; }
-  else if(d === null) { dVal='—';               dLabel='pas de date'; }
-  else if(d < 0)      { dVal=Math.abs(d);       dLabel='jours de retard'; }
-  else                { dVal=d;                 dLabel='jours restants'; }
-
-  /* L'objectif n'apparaît que dans l'onglet Cash, dont c'est le sujet. */
-  w.innerHTML = `<div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
-    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;">
-        <div class="hero-label">🎯 Objectif</div>
-        <div style="font-size:17px;font-weight:800;color:var(--text-strong);line-height:1.3;overflow-wrap:break-word;">${g.title ? glEsc(g.title) : 'À définir'}</div>
-        <div style="font-size:11.5px;color:var(--text-soft);margin-top:3px;overflow-wrap:break-word;">${g.why ? glEsc(g.why) : "Crée-le juste en dessous"}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div class="hero-days mono" style="font-size:32px;${dCol}">${dVal}</div>
-        <div class="hero-days-lbl">${dLabel}</div>
-      </div>
-    </div>
-    ${glHasGoal() ? `<dl class="gl-recap">
-      <div><dt>Montant</dt><dd>${amt>0?glFmt(amt)+' €':'—'}</dd></div>
-      <div><dt>Atteint</dt><dd style="color:var(--ok);">${glFmt(tot)} €</dd></div>
-      <div><dt>Début</dt><dd>${glDateFR(g.startDate)}</dd></div>
-      <div><dt>Échéance</dt><dd>${glDateFR(g.deadline)}</dd></div>
-    </dl>` : ''}
-  </div>`;
-
+  const g = glCurrent;
   const hd = document.getElementById('home-days');
-  if(hd) hd.textContent = reached ? '✓' : (d===null ? '—' : Math.max(d,0));
-  /* L'accueil affiche l'objectif RÉEL, plus une phrase écrite en dur. Tant
-     qu'il n'y en a pas, on invite à le créer au lieu de laisser un tiret. */
+  const hp = document.getElementById('home-cash-pct');
   const hg = document.getElementById('home-goal');
+  if(hd) hd.textContent = !g ? '—' : (glReached(g) ? '✓' : (glDaysLeft(g)===null ? '—' : Math.max(glDaysLeft(g),0)));
+  if(hp) hp.textContent = (g ? glPct(g) : 0) + '%';
   if(hg){
-    if(glHasGoal()){
-      /* On ne cite que les sources REELLEMENT alimentées. Sinon l'accueil
-         annonçait « via Revenu principal + Épargne » à quelqu'un qui n'avait
-         encore rien saisi : une information inventée dès le premier écran. */
-      const via = (g.sources || []).filter(s => s.counts && (parseFloat(s.value) || 0) > 0)
-                                   .map(s => s.label).filter(Boolean);
-      hg.innerHTML = glEsc(g.title || (glFmt(amt) + ' €')) +
-        (via.length ? '<br><span style="color:var(--text-dim);font-weight:600;">via ' + glEsc(via.join(' + ')) + '</span>' : '');
+    if(g && glHasGoal()){
+      const K = glKind(g);
+      /* « 88 kg sur 75 kg » se lit mal quand on descend : on montre le
+         trajet, pas un rapport qui donne l'impression d'avoir dépassé. */
+      const detail = !parseFloat(g.target) ? ''
+        : (K.dir === 'down'
+            ? ' · ' + glVal(g, glValue(g)) + ' → ' + glVal(g, g.target)
+            : ' · ' + glVal(g, glValue(g)) + ' sur ' + glVal(g, g.target));
+      hg.innerHTML = glEsc(g.title || glVal(g, g.target)) +
+        '<br><span style="color:var(--text-dim);font-weight:600;">' + K.label + detail + '</span>';
     } else {
       hg.innerHTML = '<span style="color:var(--text-dim);font-weight:600;">Aucun objectif pour le moment — ' +
         '<a onclick="goTo(\'objectifs\')" style="color:var(--accent-ink);cursor:pointer;text-decoration:underline;">définis le tien</a></span>';
     }
   }
-  const hp = document.getElementById('home-cash-pct');
-  if(hp) hp.textContent = pct + '%';
+  const w = document.getElementById('goal-hero-wrap'); if(w) w.innerHTML = '';
 }
+function glRenderParams(){ const w = document.getElementById('goal-params-wrap'); if(w) w.innerHTML = ''; }
+function glToggleFold(){}
+function glAddGoal(){ glAdd('finance'); }
 
-function glRenderActive(){
-  if(!glCurrent) return;
-  const g = glCurrent, w = document.getElementById('goal-active-wrap'); if(!w) return;
-  const amt = parseFloat(g.amount)||0, tot = glTotal(g), pct = glPct(g), reste = Math.max(amt-tot,0);
-
-  const row = s => `<div class="gl-src-row">
-      <input class="gl-src-emoji" value="${glEsc(s.emoji)}" maxlength="4" onchange="glSrcSet(${s.id},'emoji',this.value)">
-      <input class="gl-src-name" value="${glEsc(s.label)}" placeholder="Nom de la source" onchange="glSrcSet(${s.id},'label',this.value)">
-      <input class="gl-src-val" type="number" step="any" value="${s.value}" title="Montant déjà réuni sur cette source" onchange="glSrcSet(${s.id},'value',this.value)"><span class="gl-src-unit">€</span>
-      <label class="gl-counts" title="Décoche pour suivre cette source sans l'ajouter au total"><input type="checkbox" ${s.counts?'checked':''} onchange="glSrcSet(${s.id},'counts',this.checked)">compte</label>
-      <button class="gl-src-del" onclick="glSrcDel(${s.id})" title="Supprimer cette source">✕</button>
-    </div>`;
-
-  /* rythme : es-tu en avance ou en retard sur le temps écoulé ? */
-  let pace = '';
-  if(amt > 0 && g.deadline && g.startDate){
-    const s = new Date(g.startDate+'T00:00:00'), e = new Date(g.deadline+'T00:00:00'), n = new Date(); n.setHours(0,0,0,0);
-    const span = (e-s)/86400000, gone = (n-s)/86400000;
-    if(span > 0){
-      const timePct = Math.max(0, Math.min(100, Math.round(gone/span*100)));
-      const delta = pct - timePct;
-      const word = glReached(g) ? 'Objectif atteint 🎉' : (delta >= 0 ? `En avance de ${delta} pts` : `En retard de ${Math.abs(delta)} pts`);
-      const col = glReached(g) ? 'var(--ok)' : (delta >= 0 ? 'var(--ok)' : 'var(--accent-ink)');
-      pace = `<div class="gl-pace">⏱ Temps écoulé <b>${timePct}%</b> · progression <b>${pct}%</b> — <b style="color:${col}">${word}</b></div>`;
-    }
+/* ---- déclaration (réservée au propriétaire) ---- */
+function glDraftDecl(){
+  const g = glCurrent; if(!g) return '';
+  const K = glKind(g);
+  const cible = parseFloat(g.target) > 0 ? glVal(g, g.target) : '[ma cible]';
+  const date = g.deadline ? glDateFR(g.deadline) : '[date]';
+  const but = g.why || g.title || '[mon projet]';
+  const verbe = K.dir === 'down' ? 'Je descends à' : 'J’atteins';
+  const via = K.src
+    ? ((g.sources||[]).map(s=>s.label).filter(Boolean).join(', ') || '[mes sources]')
+    : 'ce que je fais chaque jour';
+  return '« ' + verbe + ' ' + cible + ' d’ici le ' + date + '.\n\n' +
+    'En échange, je m’engage à donner le meilleur de moi-même sur ' + via + ', chaque jour, sans exception.\n\n' +
+    'C’est le carburant de ' + but + '.\n\n' +
+    'La date est fixée, le chiffre est réel, je crois profondément en ma capacité à l’atteindre.\n' +
+    'Je le vois, je le ressens — c’est déjà en route. »';
+}
+function glRegenDecl(){ if(!glCurrent) return; glCurrent.declaration = glDraftDecl(); glSave(); glRenderAll(); showToast('✨ Déclaration régénérée'); }
+function glSuggestDecl(){ const ta=document.getElementById('gl-decl-ta'); if(ta){ ta.value = glDraftDecl(); glAutoGrow(ta); } showToast('✨ Brouillon généré'); }
+function glSaveDecl(){ const ta=document.getElementById('gl-decl-ta'); if(!ta||!glCurrent) return; glCurrent.declaration = ta.value; glSave(); glRenderAll(); showToast('✅ Déclaration enregistrée'); }
+function glAlignFromDecl(){
+  const g = glCurrent; if(!g || !g.declaration) return;
+  const m = g.declaration.match(/(\d[\d\s  .]*)/);
+  if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,'')); if(n) g.target = n; }
+  const an = (g.declaration.match(/\b(20\d{2})\b/g)||[]).map(Number);
+  if(an.length) g.deadline = g.deadline ? String(an[0]) + g.deadline.slice(4) : an[0] + '-12-31';
+  glSave(); glRenderAll(); showToast('✅ Objectif aligné sur ta déclaration');
+}
+function glDeclMismatch(){
+  const g = glCurrent; if(!g || !g.declaration) return null;
+  const ecarts = [], cible = parseFloat(g.target)||0;
+  if(cible > 0){
+    const m = g.declaration.match(/(\d[\d\s  .]*)/);
+    if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,''));
+      if(n && Math.round(n) !== Math.round(cible)) ecarts.push('la cible — ' + glFmt(n) + ' dans le texte, ' + glFmt(cible) + ' dans l’objectif'); }
   }
-
-  w.innerHTML = `
-  <div class="card">
-    <div class="card-title">💰 Progression${amt>0?' vers '+glFmt(amt)+' €':''} <div class="line"></div><span class="mono" style="color:var(--accent-ink);font-weight:700;">${pct}%</span></div>
-    <div class="pb-bar-wrap"><div class="pb-bar" style="width:${pct}%"></div></div>
-    <div class="pb-sources" style="margin-top:12px;">
-      <div class="pb-source highlight-source" style="flex:2;">
-        <div class="pbs-label">Total qui compte</div>
-        <div class="pbs-val" style="color:var(--green);font-size:22px;">${glFmt(tot)} €</div>
-        <div class="pbs-label" style="margin-top:3px;">→ somme des sources cochées « compte »</div>
-      </div>
-      <div class="pb-source">
-        <div class="pbs-label">📊 Il manque</div>
-        <div class="pbs-val" style="color:var(--accent-ink);">${glFmt(reste)} €</div>
-        <div class="pbs-label" style="margin-top:2px;">pour l'objectif</div>
-      </div>
-    </div>
-    ${pace}
-  </div>
-
-  <div class="card">
-    <div class="card-title">💵 Mes sources de revenus <div class="line"></div></div>
-    <div style="font-size:10px;color:var(--muted2);line-height:1.5;margin-bottom:9px;">
-      Coche « compte » pour les sources qui alimentent réellement le total. Décoche pour celles que tu veux seulement suivre (ex : ce que tu as gagné au total).
-    </div>
-    ${(g.sources||[]).length ? (g.sources||[]).map(row).join('') : '<div class="gl-empty">Aucune source pour le moment.</div>'}
-    <button class="gl-add" onclick="glSrcAdd()">+ Ajouter une source</button>
-  </div>
-
-  `;
+  if(g.deadline){
+    const an = parseInt(g.deadline.slice(0,4),10);
+    const y = (g.declaration.match(/\b(20\d{2})\b/g)||[]).map(Number);
+    if(y.length && y.indexOf(an) === -1) ecarts.push('l’année — ' + y[0] + ' dans le texte, ' + an + ' dans l’objectif');
+  }
+  return ecarts.length ? ecarts : null;
 }
-
-/* Les paramètres de l'objectif vivent dans l'onglet Vision : c'est là qu'on
-   décide QUOI on veut (montant, dates, plan). L'onglet Cash ne montre plus
-   que le suivi. Avant, le formulaire était noyé sous la progression et
-   restait introuvable. */
-function glRenderParams(){
-  if(!glCurrent) return;
-  const g = glCurrent, w = document.getElementById('goal-params-wrap'); if(!w) return;
-  const amt = parseFloat(g.amount)||0;
-  /* Formulaire des paramètres : visible tant qu'aucun objectif n'existe,
-     replié dans un volet une fois qu'il est créé. */
-  const form = `
-    <div class="gl-field"><label>Objectif</label>
-      <input value="${glEsc(g.title)}" placeholder="Ex : 3 000 € pour lancer la production" onchange="glSet('title',this.value)"></div>
-    <div class="gl-field"><label>Pourquoi / à quoi ça sert</label>
-      <input value="${glEsc(g.why)}" placeholder="Ex : premier stock de la marque" onchange="glSet('why',this.value)"></div>
-    <div class="gl-grid2">
-      <div class="gl-field"><label>Montant à atteindre (€)</label>
-        <input type="number" step="any" value="${amt||''}" placeholder="0" onchange="glSet('amount',this.value)"></div>
-      <div class="gl-field"><label>Date de début</label>
-        <input type="date" value="${glEsc(g.startDate)}" onchange="glSet('startDate',this.value)"></div>
-    </div>
-    <div class="gl-field"><label>Date limite</label>
-      <input type="date" value="${glEsc(g.deadline)}" onchange="glSet('deadline',this.value)"></div>`;
-
-  const params = glHasGoal()
-    ? `<div class="gl-fold${glFoldOpen?' open':''}">
-         <button class="gl-fold-head" onclick="glToggleFold()">⚙️ Paramètres de l'objectif<span class="gl-fold-chev">▼</span></button>
-         <div class="gl-fold-body">${form}
-           <div class="gl-actions">
-             <button class="gl-btn done" onclick="glClose()">🏆 Clôturer et archiver</button>
-             <button class="gl-btn" onclick="glNew()">🎯 Repartir de zéro</button>
-           </div>
-         </div>
-       </div>`
-    : `<div class="card">
-         <div class="card-title">🎯 Créer mon objectif <div class="line"></div></div>
-         ${form}
-         <div class="gl-actions">
-           <button class="gl-btn primary" onclick="glAddGoal()">✓ Ajouter l'objectif</button>
-         </div>
-       </div>`;
-
-  w.innerHTML = params;
-}
-
 function glRenderDecl(){
-  if(!glCurrent) return;
-  const g = glCurrent, w = document.getElementById('goal-decl-wrap'); if(!w) return;
-  w.innerHTML = `
-  <div class="hill-formula">
-    <div class="hf-label">✨ Ta Déclaration de Désir — À lire 2x/jour à voix haute</div>
-    ${g.declaration
-      ? `<div class="hf-text">${glEsc(g.declaration).replace(/\n/g,'<br>')}</div>
-         <div class="hf-note">Lire à voix haute, avec émotion intense. L'émotion est le catalyseur qui grave ça dans le subconscient.</div>`
-      : `<div class="gl-empty">Pas encore de déclaration pour cet objectif.<br>Écris-la ci-dessous, ou génère un brouillon à partir de tes paramètres.</div>`}
-  </div>
-  ${(()=>{ const e = glDeclMismatch(); return e ? `<div class="gl-warn">
-      ⚠️ Ta déclaration ne dit pas la même chose que ton objectif : ${e.map(x=>glEsc(x)).join(' · ')}.<br>
-      Les règles, la progression et le compte à rebours suivent l'objectif. Choisis lequel des deux a raison :
-      <div class="gl-actions">
-        <button class="gl-btn primary" onclick="glAlignFromDecl()">📥 Mon texte a raison — aligner l'objectif</button>
-        <button class="gl-btn" onclick="glRegenDecl()">♻️ Mon objectif a raison — réécrire la déclaration</button>
-      </div>
-    </div>` : ''; })()}
-  <div class="card">
-    <div class="card-title">✍️ Écrire ma déclaration <div class="line"></div></div>
-    <div class="gl-field">
-      <textarea id="gl-decl-ta" placeholder="Ta déclaration, au présent, avec une date et un montant précis..." oninput="glAutoGrow(this)">${glEsc(g.declaration)}</textarea>
-    </div>
-    <div class="gl-actions">
-      <button class="gl-btn" onclick="glSuggestDecl()">✨ Générer un brouillon</button>
-      <button class="gl-btn primary" onclick="glSaveDecl()">Enregistrer</button>
-    </div>
-  </div>`;
+  const w = document.getElementById('goal-decl-wrap'); if(!w) return;
+  const g = glCurrent;
+  if(!g){ w.innerHTML = '<div class="gl-empty">Crée un objectif pour écrire ta déclaration.</div>'; return; }
+  const e = glDeclMismatch();
+  w.innerHTML =
+    '<div class="hill-formula">' +
+      '<div class="hf-label">Ta déclaration — à lire à voix haute</div>' +
+      (g.declaration
+        ? '<div class="hf-text">' + glEsc(g.declaration).replace(/\n/g,'<br>') + '</div>'
+        : '<div class="gl-empty">Pas encore de déclaration pour cet objectif.</div>') +
+    '</div>' +
+    (e ? '<div class="gl-warn">⚠️ Ta déclaration ne dit pas la même chose que ton objectif : ' + e.map(glEsc).join(' · ') + '.' +
+      '<div class="gl-actions">' +
+        '<button class="gl-btn primary" onclick="glAlignFromDecl()">📥 Aligner l’objectif</button>' +
+        '<button class="gl-btn" onclick="glRegenDecl()">♻️ Réécrire la déclaration</button>' +
+      '</div></div>' : '') +
+    '<div class="card"><div class="card-title">Écrire ma déclaration <div class="line"></div></div>' +
+      '<div class="gl-field"><textarea id="gl-decl-ta" oninput="glAutoGrow(this)" ' +
+        'placeholder="Au présent, avec une date et un chiffre précis...">' + glEsc(g.declaration) + '</textarea></div>' +
+      '<div class="gl-actions">' +
+        '<button class="gl-btn" onclick="glSuggestDecl()">✨ Générer un brouillon</button>' +
+        '<button class="gl-btn primary" onclick="glSaveDecl()">Enregistrer</button>' +
+      '</div></div>';
   const ta = document.getElementById('gl-decl-ta'); if(ta) glAutoGrow(ta);
 }
 
-/* Les 7 principes de Hill sont fixes, mais leur formulation est réécrite à
-   partir de l'objectif en cours : montant, échéance, projet et sources.
-   Elles suivent donc la déclaration au lieu de rester sur l'ancien objectif. */
-let glRuleEditing = null;   /* index de la règle en cours de modification */
-
-/* Une règle réécrite à la main cesse de se régénérer — sinon la prochaine
-   modification de l'objectif effacerait ton texte. Le bouton ↺ la remet en
-   automatique. */
+/* ---- les 7 règles, calées sur l'objectif actif ---- */
+let glRuleEditing = null;
 function glRules(){
   const ov = (glCurrent && glCurrent.rulesOverride) || {};
   return glRulesAuto().map((r,i) => ov[i] ? [r[0], ov[i], true] : [r[0], r[1], false]);
@@ -3333,150 +3489,97 @@ function glRules(){
 function glRuleEdit(i){ glRuleEditing = i; glRenderRules(); }
 function glRuleCancel(){ glRuleEditing = null; glRenderRules(); }
 function glRuleSave(){
-  const ta = document.getElementById('gl-rule-ta'); if(!ta) return;
-  const txt = ta.value.trim();
+  const ta = document.getElementById('gl-rule-ta'); if(!ta || !glCurrent) return;
   glCurrent.rulesOverride = glCurrent.rulesOverride || {};
-  if(txt) glCurrent.rulesOverride[glRuleEditing] = txt;
-  else delete glCurrent.rulesOverride[glRuleEditing];
-  glRuleEditing = null;
-  glSave(); glRenderRules();
-  showToast('✅ Règle modifiée');
+  const t = ta.value.trim();
+  if(t) glCurrent.rulesOverride[glRuleEditing] = t; else delete glCurrent.rulesOverride[glRuleEditing];
+  glRuleEditing = null; glSave(); glRenderRules(); showToast('✅ Règle modifiée');
 }
 function glRuleReset(i){
-  if(glCurrent.rulesOverride) delete glCurrent.rulesOverride[i];
-  glRuleEditing = null;
-  glSave(); glRenderRules();
-  showToast('↺ Règle remise en automatique');
+  if(glCurrent && glCurrent.rulesOverride) delete glCurrent.rulesOverride[i];
+  glRuleEditing = null; glSave(); glRenderRules(); showToast('↺ Remise en automatique');
 }
 function glRulesAuto(){
-  const g = glCurrent || {};
-  const amt  = (parseFloat(g.amount)||0) > 0 ? glFmt(g.amount)+' €' : 'ton montant';
+  const g = glCurrent || {}, K = glKind(g);
+  const cible = (parseFloat(g.target)||0) > 0 ? glVal(g, g.target) : 'ta cible';
   const date = g.deadline ? glDateFR(g.deadline) : 'ta date limite';
   const but  = g.why || g.title || 'ton projet';
-  const srcs = (g.sources||[]).map(s=>s.label).filter(Boolean);
-  const via  = srcs.length ? srcs.join(', ') : 'tes sources de revenus';
+  const via  = K.src ? ((g.sources||[]).map(s=>s.label).filter(Boolean).join(', ') || 'tes sources')
+                     : 'ce que tu fais chaque jour';
   return [
-    ['Désir brûlant',              `${amt} n'est pas un vœu : c'est un montant, une date (${date}) et un plan. Ressens-le comme si c'était déjà fait.`],
-    ['Foi totale',                 `Tu ne « testes » pas, tu construis. Ton but — ${but} — existe déjà dans ta tête. Agis en conséquence chaque jour.`],
-    ['Autosuggestion quotidienne', `Ta déclaration à voix haute, matin et soir, avec émotion forte. C'est elle qui grave ${amt} dans ton subconscient.`],
-    ['Connaissances spécialisées', `Progresse chaque jour sur ton sujet : ${but}. Chaque session est un actif, jamais du temps perdu.`],
-    ['Plan organisé et exécuté',   `Écris tes 3 priorités chaque soir. Le lendemain tu sais exactement quoi faire — fini le flou du matin.`],
-    ['Décision rapide',            `Prix, réponse, action du jour : décide vite et ajuste ensuite. L'indécision coûte plus cher que l'erreur.`],
-    ['Persistance absolue',        `Un jour sans rentrée sur ${via} n'est pas un échec, c'est un jour de plus dans le processus. Agir quand même.`]
+    ['Désir brûlant',              cible + ' n’est pas un vœu : c’est un chiffre, une date (' + date + ') et un plan. Ressens-le comme si c’était déjà fait.'],
+    ['Foi totale',                 'Tu ne « testes » pas, tu construis. Ton but — ' + but + ' — existe déjà dans ta tête. Agis en conséquence.'],
+    ['Autosuggestion quotidienne', 'Ta déclaration à voix haute, matin et soir, avec émotion forte. C’est elle qui grave ' + cible + ' dans ton subconscient.'],
+    ['Connaissances spécialisées', 'Progresse chaque jour sur ton sujet : ' + but + '. Chaque session est un actif.'],
+    ['Plan organisé et exécuté',   'Écris tes 3 priorités chaque soir. Le lendemain tu sais exactement quoi faire.'],
+    ['Décision rapide',            'Décide vite et ajuste ensuite. L’indécision coûte plus cher que l’erreur.'],
+    ['Persistance absolue',        'Un jour sans avancée sur ' + via + ' n’est pas un échec, c’est un jour de plus dans le processus.']
   ];
 }
-/* Les règles, la progression et le compte à rebours lisent les CHAMPS de
-   l'objectif, jamais le texte libre de la déclaration. Si tu écris un autre
-   montant ou une autre année dans ta prose, rien ne peut le deviner — on te
-   le signale plutôt que de laisser les deux diverger en silence. */
-function glDeclMismatch(){
-  const g = glCurrent;
-  if(!g || !g.declaration) return null;
-  const txt = g.declaration, ecarts = [];
-  const amt = parseFloat(g.amount) || 0;
-  if(amt > 0){
-    const m = txt.match(/(\d[\d\s  .]*)\s*€/);
-    if(m){
-      const n = parseFloat(m[1].replace(/[\s  .]/g, ''));
-      if(n && Math.round(n) !== Math.round(amt)){
-        ecarts.push(`le montant — ${glFmt(n)} € dans le texte, ${glFmt(amt)} € dans l'objectif`);
-      }
-    }
-  }
-  if(g.deadline){
-    const an = parseInt(g.deadline.slice(0,4), 10);
-    const annees = (txt.match(/\b(20\d{2})\b/g) || []).map(Number);
-    if(annees.length && annees.indexOf(an) === -1){
-      ecarts.push(`l'année — ${annees[0]} dans le texte, ${an} dans l'objectif`);
-    }
-  }
-  return ecarts.length ? ecarts : null;
-}
-
 function glRenderRules(){
-  if(!glCurrent) return;
   const w = document.getElementById('goal-rules-wrap'); if(!w) return;
   const num = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣'];
-  w.innerHTML = `<div class="card-title">📋 Les 7 règles Hill adaptées à ton objectif <div class="line"></div></div>
-  <div class="card rule-card"><ul class="c-tasks">${
-    glRules().map(([titre, detail, perso], i) => {
-      if(glRuleEditing === i){
-        return `<li><span class="t-ico">${num[i]}</span><div class="t-txt" style="flex:1;">
-          <strong>${glEsc(titre)}</strong>
-          <div class="gl-field" style="margin-top:6px;">
-            <textarea id="gl-rule-ta" oninput="glAutoGrow(this)" placeholder="Laisse vide pour revenir au texte automatique">${glEsc(detail)}</textarea>
-          </div>
-          <div class="gl-actions">
-            <button class="gl-btn primary" onclick="glRuleSave()">✓ Enregistrer</button>
-            ${perso?`<button class="gl-btn" onclick="glRuleReset(${i})">↺ Texte automatique</button>`:''}
-            <button class="gl-btn" onclick="glRuleCancel()">Annuler</button>
-          </div></div></li>`;
-      }
-      return `<li><span class="t-ico">${num[i]}</span><div class="t-txt" style="flex:1;">
-        <strong>${glEsc(titre)}${perso?' <span class="gl-tag-perso">modifiée</span>':''}</strong>
-        <span class="detail">${glEsc(detail)}</span></div>
-        <button class="gl-rule-edit" onclick="glRuleEdit(${i})" title="Modifier cette règle">✏️</button></li>`;
-    }).join('')
-  }</ul>
-  <div style="font-size:10px;color:var(--muted2);line-height:1.5;margin-top:9px;">
-    Les règles se réécrivent seules quand tu changes ton objectif. Celles que tu modifies à la main gardent ton texte — le bouton ↺ les remet en automatique.
-  </div></div>`;
+  w.innerHTML = '<div class="card-title">Les 7 règles adaptées à ton objectif <div class="line"></div></div>' +
+    '<div class="card rule-card"><ul class="c-tasks">' +
+    glRules().map(([t,d,perso],i) => glRuleEditing === i
+      ? '<li><div class="gl-field"><textarea id="gl-rule-ta" oninput="glAutoGrow(this)">' + glEsc(d) + '</textarea></div>' +
+        '<div class="gl-actions"><button class="gl-btn primary" onclick="glRuleSave()">Enregistrer</button>' +
+        '<button class="gl-btn" onclick="glRuleReset(' + i + ')">↺ Automatique</button>' +
+        '<button class="gl-btn" onclick="glRuleCancel()">Annuler</button></div></li>'
+      : '<li><b>' + num[i] + ' ' + t + '</b> ' + glEsc(d) +
+        ' <button class="tk-edit" onclick="glRuleEdit(' + i + ')" title="Modifier">✏️</button>' +
+        (perso ? ' <span class="gl-perso">modifiée</span>' : '') + '</li>').join('') +
+    '</ul></div>';
   const ta = document.getElementById('gl-rule-ta'); if(ta) glAutoGrow(ta);
 }
 
+/* ---- historique ---- */
 function glRenderHistory(){
   const w = document.getElementById('goal-history-wrap'); if(!w) return;
-  if(!glHistory.length){
-    w.innerHTML = `<div class="card"><div class="gl-empty">Aucun objectif archivé pour l'instant.<br>Clôture ton objectif en cours pour le retrouver ici.</div></div>`;
-    return;
-  }
-  const opts = st => Object.entries(GL_STATUS)
-    .map(([k,v])=>`<option value="${k}"${k===st?' selected':''}>${v.emoji} ${v.label}</option>`).join('');
-  w.innerHTML = glHistory.map(h=>{
-    const st = GL_STATUS[h.status] ? h.status : 'attente';
-    const total = h.finalTotal!=null ? h.finalTotal : glTotal(h);
-    const amt = parseFloat(h.amount)||0;
-    const pct = amt>0 ? Math.min(Math.round(total/amt*100),100) : 0;
-    return `<div class="gl-hist" id="glh-${h.id}">
-      <div class="gl-hist-top">
-        <div class="gl-hist-ttl">${glEsc(h.title)||'Objectif sans titre'}</div>
-        <span class="gl-badge ${st}">${GL_STATUS[st].emoji} ${GL_STATUS[st].label}</span>
-      </div>
-      <div class="gl-hist-meta">
-        ${h.why ? glEsc(h.why)+'<br>' : ''}
-        Atteint : <b>${glFmt(total)} €</b>${amt>0?` / ${glFmt(amt)} € · <b>${pct}%</b>`:''}<br>
-        Du ${glDateFR(h.startDate)} au ${glDateFR(h.deadline)}${h.closedAt?` · clôturé le ${glDateFR(h.closedAt)}`:''}
-        ${(h.sources||[]).length?`<br>Sources : ${(h.sources||[]).map(s=>glEsc((s.emoji||'')+' '+s.label)).join(' · ')}`:''}
-      </div>
-      <select class="gl-hist-sel" onchange="glHistStatus(${h.id},this.value)">${opts(st)}</select>
-      ${h.declaration?`<button class="gl-hist-toggle" onclick="glHistToggle(${h.id})">📜 Voir la déclaration de l'époque</button>
-      <div class="gl-hist-decl">${glEsc(h.declaration).replace(/\n/g,'<br>')}</div>`:''}
-      <div class="gl-actions">
-        <button class="gl-btn" onclick="glReopen(${h.id})">↩ Réouvrir</button>
-        <button class="gl-btn" onclick="glHistDel(${h.id})">🗑 Supprimer</button>
-      </div>
-    </div>`;
+  if(!glHistory.length){ w.innerHTML = '<div class="gl-empty">Aucun objectif archivé pour le moment.</div>'; return; }
+  w.innerHTML = glHistory.map(h => {
+    const st = GL_STATUS[h.status] || GL_STATUS.attente, K = glKind(h);
+    return '<div class="gl-hist" id="glh-' + h.id + '" style="--gc:' + glColor(h) + '">' +
+      '<div class="gl-hist-top">' +
+        '<div><div class="gl-hist-t">' + (glEsc(h.title) || 'Sans nom') + '</div>' +
+        '<div class="gl-hist-m">' + K.label + ' · ' + glVal(h, h.finalTotal || 0) + ' sur ' + glVal(h, h.target) +
+        ' · clôturé le ' + glDateFR(h.closedAt) + '</div></div>' +
+        '<span class="gl-hist-st ' + h.status + '">' + st.emoji + ' ' + st.label + '</span>' +
+      '</div>' +
+      '<div class="gl-actions">' +
+        Object.keys(GL_STATUS).map(k => '<button class="gl-btn' + (h.status===k?' primary':'') +
+          '" onclick="glHistStatus(\'' + h.id + '\',\'' + k + '\')">' + GL_STATUS[k].emoji + ' ' + GL_STATUS[k].label + '</button>').join('') +
+        '<button class="gl-btn" onclick="glReopen(\'' + h.id + '\')">↩ Reprendre</button>' +
+        '<button class="gl-btn" onclick="glHistDel(\'' + h.id + '\')">🗑</button>' +
+      '</div>' +
+      (h.declaration ? '<button class="gl-hist-toggle" onclick="glHistToggle(\'' + h.id + '\')">📜 Voir la déclaration de l’époque</button>' +
+        '<div class="gl-hist-decl">' + glEsc(h.declaration).replace(/\n/g,'<br>') + '</div>' : '') +
+    '</div>';
   }).join('');
 }
-
-/* La déclaration alimente aussi les tâches du matin et du soir */
+/* Rappel de la déclaration dans les tâches — uniquement si elle existe. */
 function glRenderTaskEchoes(){
-  if(!glCurrent) return;
   const g = glCurrent;
-  const short = g.declaration
-    ? g.declaration.replace(/\s+/g,' ').trim()
-    : "Aucune déclaration pour l'instant — écris-la dans Objectif → Hill.";
+  const court = (g && g.declaration) ? g.declaration.replace(/\s+/g,' ').trim() : '';
   const rem = document.getElementById('task-decl-reminder');
-  if(rem) rem.innerHTML = `${glEsc(short.length>190?short.slice(0,190)+'…':short)} <span style="color:var(--accent-ink);font-style:normal;">Lire en entier →</span>`;
+  if(rem) rem.textContent = court || '—';
   const q1 = document.getElementById('t1-decl');
-  if(q1) q1.textContent = short;
-  const when = g.deadline ? 'le '+glDateFR(g.deadline) : 'le jour J';
-  const goalTxt = g.title || 'ton objectif';
-  document.querySelectorAll('.t-visu-date').forEach(el=>{
-    el.textContent = `${when}, ${goalTxt} atteint`;
+  if(q1) q1.textContent = court || '—';
+  document.querySelectorAll('.t-visu-date').forEach(el => {
+    el.textContent = (g && g.deadline) ? 'le ' + glDateFR(g.deadline) : 'le jour J';
   });
 }
-
+function glRenderAll(){
+  glSync();
+  if(typeof renderWelcome === 'function') renderWelcome();
+  glRenderHero(); glRenderActive(); glRenderParams();
+  glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
+  if(typeof calRender === 'function') calRender();
+  if(typeof paintIcons === 'function') paintIcons(document.getElementById('view-objectifs'));
+  if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
+}
+function updateCountdown(){ glRenderHero(); }
+function loadCashProgress(){ glBootstrap(); glRenderAll(); }
 /* ============ PARCOURS D'ACCUEIL ============
    Le principe est celui d'Opal : au lieu de promettre, on montre le chiffre
    de la personne. Opal affiche les heures perdues à scroller ; ici on affiche
@@ -3486,7 +3589,7 @@ function glRenderTaskEchoes(){
    Règle que je me suis fixée : aucune statistique inventée. Tout ce qui est
    chiffré à l'écran est calculé à partir de ce qu'elle a saisi. */
 let onbStep = 0;
-let onbData = { title:'', amount:0, deadline:'' };
+let onbData = { kind:null, title:'', amount:0, from:0, deadline:'' };
 
 function onbDone(){ return loadKey('onb_done') === '1'; }
 function onbShouldRun(){
@@ -3501,12 +3604,19 @@ function onbStart(){
   onbRender();
 }
 function onbFinish(creer){
-  if(creer && onbData.title && onbData.amount > 0 && onbData.deadline){
+  if(creer && onbData.title && onbData.amount > 0 && onbData.deadline && glCurrent){
+    const k = onbData.kind || 'finance';
+    glCurrent.kind = k;
+    glCurrent.unit = GOAL_KINDS[k].unit;
+    glCurrent.color = GOAL_KINDS[k].color;
     glCurrent.title = onbData.title;
     glCurrent.why = onbData.title;
-    glCurrent.amount = onbData.amount;
+    glCurrent.target = onbData.amount;
+    glCurrent.from = onbData.from || 0;
     glCurrent.startDate = todayISO();
     glCurrent.deadline = onbData.deadline;
+    /* une nature sans sources n'en garde aucune : elles n'auraient pas de sens */
+    if(!GOAL_KINDS[k].src) glCurrent.sources = [];
     if(!String(glCurrent.declaration || '').trim()) glCurrent.declaration = glDraftDecl();
     glSave();
   }
@@ -3527,7 +3637,22 @@ function onbDays(){
   const t = new Date(onbData.deadline + 'T00:00:00'), n = new Date(); n.setHours(0,0,0,0);
   return Math.max(1, Math.ceil((t - n) / 86400000));
 }
-function onbPerDay(){ const j = onbDays(); return j ? onbData.amount / j : 0; }
+/* Ce qu'il y a à parcourir, pas la cible brute : pour un objectif qui
+   descend, viser 75 kg en partant de 88 demande d'en perdre 13, pas 75. */
+function onbDistance(){
+  const c = parseFloat(onbData.amount)||0, f = parseFloat(onbData.from)||0;
+  const d = Math.abs(c - f);
+  return d || c;
+}
+function onbPerDay(){ const j = onbDays(); return j ? onbDistance() / j : 0; }
+/* « 0 kg par jour » ne veut rien dire. En dessous d'une unité par jour on
+   passe à la semaine, puis au mois : le chiffre redevient parlant. */
+function onbRythme(){
+  const u = onbKind().unit || 'point', pj = onbPerDay();
+  if(pj >= 1)      return { v:onbFmt(pj),      u:u, q:'par jour' };
+  if(pj * 7 >= 1)  return { v:onbFmt(pj*7),    u:u, q:'par semaine' };
+  return { v:(Math.round(pj*30*10)/10).toLocaleString('fr-FR'), u:u, q:'par mois' };
+}
 function onbFmt(n){ return Math.round(n).toLocaleString('fr-FR'); }
 
 /* ---- les écrans ---- */
@@ -3558,7 +3683,26 @@ function onbScreens(){
       '<div class="onb-p onb-in" style="--i:4">À gauche tu devines. À droite tu <b>sais</b> — et ce que tu sais, tu peux le corriger.</div>',
     cta:'Je veux voir' },
 
-  /* 2 — la saisie. Trois champs, pas un de plus. */
+  /* 3 — la saisie, habillée par la nature choisie. */
+  /* 2 — la nature. Poser la question avant le chiffre change tout : un
+     objectif de poids ne se mesure pas en euros, et une app qui suppose
+     l'argent exclut tout le monde dès le premier écran. */
+  { kicker:'TA NATURE D\'OBJECTIF',
+    html:
+      '<div class="onb-h onb-in" style="--i:1">Tu vises quoi,<br><em>au juste ?</em></div>' +
+      '<div class="onb-p onb-in" style="--i:2">Choisis la nature : elle décide de l\'unité, de la couleur et ' +
+      'de la façon dont ta progression se mesure.</div>' +
+      '<div class="onb-kinds onb-in" style="--i:3">' +
+        Object.keys(GOAL_KINDS).map(k => {
+          const K = GOAL_KINDS[k];
+          return '<button class="onb-kind' + (onbData.kind === k ? ' on' : '') + '" style="--kc:' + K.color + '" ' +
+            'onclick="onbSetKind(\'' + k + '\')">' + icon(K.icon, 22) +
+            '<span class="onb-kind-l">' + K.label + '</span>' +
+            '<span class="onb-kind-u">' + (K.unit || '—') + '</span></button>';
+        }).join('') +
+      '</div>',
+    cta:'Continuer', needsKind:true },
+
   { kicker:'TON OBJECTIF',
     html:
       '<div class="onb-h onb-in" style="--i:1">Qu\'est-ce que<br>tu vises ?</div>' +
@@ -3566,13 +3710,18 @@ function onbScreens(){
       'travailler à ta place.</div>' +
       '<div class="onb-in" style="--i:3">' +
         '<div class="onb-field"><label>Mon objectif</label>' +
-          '<input id="onb-title" placeholder="Ex : 3 000 € pour lancer mon activité" value="' + glEsc(onbData.title) + '" oninput="onbSync()"></div>' +
+          '<input id="onb-title" placeholder="Ex : ' + glEsc(onbKind().ex) + '" value="' + glEsc(onbData.title) + '" oninput="onbSync()"></div>' +
         '<div class="onb-2">' +
-          '<div class="onb-field"><label>Montant (€)</label>' +
+          '<div class="onb-field"><label>Cible' + (onbKind().unit ? ' (' + onbKind().unit + ')' : '') + '</label>' +
             '<input id="onb-amount" type="number" inputmode="numeric" placeholder="3000" value="' + (onbData.amount || '') + '" oninput="onbSync()"></div>' +
           '<div class="onb-field"><label>Date limite</label>' +
             '<input id="onb-deadline" type="date" value="' + glEsc(onbData.deadline) + '" oninput="onbSync()"></div>' +
         '</div>' +
+        /* Sans point de départ, un objectif qui descend n'a pas de distance à
+           parcourir, et sa progression ne veut rien dire. */
+        '<div class="onb-field"><label>' + (onbKind().dir === 'down' ? 'Où j’en suis aujourd’hui' : 'Mon point de départ') +
+          (onbKind().unit ? ' (' + onbKind().unit + ')' : '') + '</label>' +
+          '<input id="onb-from" type="number" inputmode="numeric" placeholder="0" value="' + (onbData.from || '') + '" oninput="onbSync()"></div>' +
       '</div>',
     cta:'Calculer', needs:true },
 
@@ -3583,8 +3732,9 @@ function onbScreens(){
         '<div class="onb-big" id="onb-count">0</div>' +
         '<div class="onb-big-sub">jours devant toi</div>' +
       '</div>' +
-      '<div class="onb-p onb-in" style="--i:2">Pour ' + glEsc(onbData.title || 'ton objectif') + ', il te faut ' +
-        '<b>' + onbFmt(pj) + ' € par jour</b>' + (pj < 1 ? '' : ', tous les jours, sans en sauter un') + '.</div>' +
+      (()=>{ const R = onbRythme(); return
+      '<div class="onb-p onb-in" style="--i:2">Pour ' + glEsc(onbData.title || 'ton objectif') + ', ça fait ' +
+        '<b>' + R.v + ' ' + R.u + ' ' + R.q + '</b>, sans en sauter un.</div>'; })() +
       '<div class="onb-p onb-in" style="--i:3">Ce chiffre-là, personne ne te l\'avait donné. ' +
         'À partir de maintenant tu l\'as sous les yeux <b>chaque matin</b>, et tu vois s\'il monte ou s\'il descend.</div>',
     cta:'Et ensuite ?', after:onbCountUp },
@@ -3628,11 +3778,19 @@ function onbCountUp(){
   };
   requestAnimationFrame(pas);
 }
+function onbKind(){ return GOAL_KINDS[onbData.kind] || GOAL_KINDS.finance; }
+function onbSetKind(k){
+  onbData.kind = k;
+  /* un objectif qui descend part d'une valeur actuelle : on la demandera
+     à l'écran suivant via le champ « aujourd'hui » */
+  onbRender();
+}
 function onbSync(){
   const g = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
   onbData.title = g('onb-title');
   onbData.amount = parseFloat(g('onb-amount')) || 0;
   onbData.deadline = g('onb-deadline');
+  onbData.from = parseFloat(g('onb-from')) || 0;
   const b = document.getElementById('onb-go');
   if(b) b.disabled = !onbReady();
 }
@@ -3661,6 +3819,7 @@ function onbRender(){
     '</div>';
 
   if(s.needs) onbSync();
+  else if(s.needsKind){ const b = document.getElementById('onb-go'); if(b) b.disabled = !onbData.kind; }
   if(typeof s.after === 'function') setTimeout(s.after, 120);
   if(typeof paintIcons === 'function') paintIcons(w);
   const first = w.querySelector('.onb-body input');
@@ -3689,7 +3848,7 @@ function welcomeSubmit(){
 
   glCurrent.title = titre;
   glCurrent.why = val('wc-why') || titre;
-  glCurrent.amount = montant;
+  glCurrent.target = montant;
   glCurrent.startDate = todayISO();
   glCurrent.deadline = date;
   /* La déclaration est générée depuis ces champs : elle est donc juste dès la
@@ -5771,7 +5930,7 @@ function insights(){
   /* 4. Objectif : le rythme actuel mène-t-il à la date visée ? */
   try {
     if(typeof glCurrent!=='undefined' && glCurrent && glHasGoal() && glCurrent.deadline){
-      const total = glTotal(glCurrent), cible = parseFloat(glCurrent.amount)||0;
+      const total = glTotal(glCurrent), cible = parseFloat(glCurrent.target)||0;
       const reste = cible - total, jours = glDaysLeft(glCurrent);
       if(reste > 0 && jours > 0){
         const parJour = reste/jours;
