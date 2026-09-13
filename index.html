@@ -130,7 +130,8 @@ html.theme-light{
 *{box-sizing:border-box;margin:0;padding:0;}
 /* Largeurs de la navigation de gauche. Sur mobile la colonne des sous-vues
    se pose par-dessus le contenu, donc seul le rail décale la page. */
-:root{ --rail-w:68px; --subs-w:238px; --thread-w:46px; }
+/* Le rail latéral n'existe plus : la barre est en haut ou en bas et ne
+   décale plus le contenu horizontalement. */
 body{
   font-family:'Manrope','Helvetica Neue',Arial,sans-serif;
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
@@ -138,7 +139,6 @@ body{
   background:var(--bg); color:var(--text);
   min-height:100vh; margin:0; position:relative;
   display:flex; align-items:stretch;
-  padding-left:var(--rail-w);
 }
 .app-shell{
   flex:1; min-width:0; padding:8px 5px 22px; max-width:760px; margin:0 auto;
@@ -435,72 +435,50 @@ body{ background:var(--bg); }
 
 /* === NAV TREE === */
 
-/* ===== NAVIGATION PERMANENTE (rail + sous-vues) =====
-   Le rail des catégories reste toujours visible, à gauche. Choisir une
-   catégorie déplie ses sous-vues dans la colonne voisine, reliées par le
-   fil rouge. Sur mobile cette colonne se pose par-dessus le contenu. */
-.app-nav{position:fixed;left:0;top:0;bottom:0;z-index:120;display:flex;
-  background:var(--panel-solid);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-  border-right:0.5px solid rgba(var(--ink),0.08);}
-.nav-rail{width:var(--rail-w);flex-shrink:0;display:flex;flex-direction:column;gap:3px;
-  padding:12px 6px 18px;overflow-y:auto;scrollbar-width:none;}
-.nav-rail::-webkit-scrollbar{display:none;}
-.nav-logo{width:30px;height:auto;margin:0 auto 12px;display:block;cursor:pointer;
-  filter:invert(var(--brandw-invert));mix-blend-mode:var(--brand-blend);opacity:.95;}
-.nav-cat{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:9px 2px;border-radius:var(--r-lg);border:0.5px solid transparent;background:none;
-  color:var(--muted2);font-family:inherit;font-size:8px;font-weight:700;letter-spacing:.2px;
-  cursor:pointer;transition:background .18s,color .18s,border-color .18s;text-align:center;}
-.nav-cat-ic{font-size:20px;line-height:1;}
-.nav-cat-lb{line-height:1.15;}
-.nav-cat:hover{background:rgba(var(--ink),0.06);color:var(--text);}
-.nav-cat.st-active-cat{background:rgba(var(--accent-rgb),0.12);border-color:rgba(var(--accent-rgb),0.32);color:var(--accent-ink);}
-/* la barre rouge de la catégorie active, comme un onglet sélectionné */
-.nav-cat.st-active-cat::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);
-  width:3px;height:24px;border-radius:0 3px 3px 0;background:var(--accent);
-  box-shadow:0 0 8px rgba(var(--accent-rgb),0.7);}
-/* La marge à gauche n'est pas décorative : c'est le couloir dans lequel le
-   fil rouge se déploie. Trop étroit, la courbe s'écrase contre le rail. */
-.nav-subs{width:var(--subs-w);flex-shrink:0;display:flex;flex-direction:column;gap:9px;
-  padding:16px 13px 20px var(--thread-w);overflow-y:auto;border-left:0.5px solid rgba(var(--ink),0.05);}
-.nav-subs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;
-  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
-  padding-bottom:10px;border-bottom:0.5px solid rgba(var(--ink),0.06);}
-.nav-subs-close{display:none;}
-/* Le fil rouge doit se peindre AU-DESSUS de la colonne des sous-vues.
-   Le couloir qu'il traverse est la marge intérieure de cette colonne : sans
-   z-index superieur, le fond opaque du panneau recouvre le fil et il ne
-   reste que le bout visible entre le rail et le bord du panneau.
-   pointer-events:none, donc il n'intercepte aucun clic. */
-.app-nav .st-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:140;}
+/* ===== BARRE DE NAVIGATION =====
+   Un seul composant, deux placements. Sur ordinateur elle se pose en haut,
+   collante : le regard part de là et le curseur y va sans effort. Sur
+   téléphone elle descend en bas, à portée de pouce, parce que la main tient
+   l'appareil par le bas. */
+.nav-bar{position:fixed;left:0;right:0;z-index:120;display:flex;align-items:stretch;
+  background:var(--panel-solid);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+.nav-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:9px 4px;background:none;border:none;color:var(--muted2);cursor:pointer;
+  font-family:inherit;position:relative;transition:color .15s;}
+.nav-item-lb{font-size:9.5px;font-weight:700;letter-spacing:.4px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.nav-item:hover{color:var(--text);}
+.nav-item.on{color:var(--accent-ink);}
+.nav-item.on .ico{filter:drop-shadow(var(--glow-txt));}
+/* le trait qui marque la section active : sous l'icône en bas, au-dessus en haut */
+.nav-item.on::after{content:'';position:absolute;left:22%;right:22%;height:2px;background:var(--accent);}
 
-/* Mobile : la colonne des sous-vues se pose par-dessus le contenu.
-   Ce bloc doit rester APRÈS les règles ci-dessus : à spécificité égale,
-   c'est la dernière déclaration qui gagne. */
-@media (max-width:899px){
-  /* Replié, le panneau doit sortir COMPLÈTEMENT de l'écran : sa largeur plus
-     celle du rail. Sinon, avec son z-index supérieur, il recouvre les boutons
-     du rail au lieu de disparaître derrière. */
-  .nav-subs{position:fixed;left:var(--rail-w);top:0;bottom:0;z-index:121;
-    transform:translateX(calc(-100% - var(--rail-w) - 6px));
-    transition:transform .26s cubic-bezier(0.32,0.72,0,1);
-    background:var(--panel-solid);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-    border-right:0.5px solid rgba(var(--ink),0.08);}
-  .app-nav.subs-open .nav-subs{transform:translateX(0);}
-  .nav-subs-close{display:block;}
-  /* le fil rouge n'a pas de sens tant que la colonne est repliée */
-  .app-nav .st-svg{display:none;}
-  .app-nav.subs-open .st-svg{display:block;width:calc(var(--rail-w) + var(--subs-w));}
+/* --- téléphone : en bas --- */
+.nav-bar{bottom:0;border-top:1px solid var(--border2);padding-bottom:env(safe-area-inset-bottom);}
+.nav-item.on::after{top:0;}
+body{padding-bottom:70px;}
+
+/* --- ordinateur : en haut --- */
+@media (min-width:900px){
+  .nav-bar{top:0;bottom:auto;border-top:none;border-bottom:1px solid var(--border2);
+    justify-content:center;gap:2px;padding:0 18px;}
+  .nav-item{flex:0 0 auto;min-width:92px;flex-direction:row;gap:8px;padding:13px 16px;}
+  .nav-item-lb{font-size:11.5px;}
+  .nav-item.on::after{top:auto;bottom:0;left:12%;right:12%;}
+  body{padding-bottom:0;padding-top:56px;}
 }
 
-.nav-tree-overlay{position:fixed;inset:0;z-index:110;background:var(--scrim);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;opacity:0;transition:opacity .22s;}
-.nav-tree-overlay.open{display:block;opacity:1;}
-
-/* Onglets de sous-vues (Capture, Achats) */
-.bij-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-.bij-tab{padding:7px 11px;font-size:10px;font-weight:700;letter-spacing:.4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
-.bij-tab.active{background:rgba(var(--accent-rgb),0.08);border-color:rgba(var(--accent-rgb),0.3);color:var(--accent-ink);}
-
+/* --- onglets de sous-vues, DANS la page --- */
+.nav-tabs{display:none;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.nav-tabs.on{display:flex;}
+.nav-tab{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:var(--r-sm);
+  border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;
+  cursor:pointer;font-family:inherit;}
+.nav-tab .ico{width:15px;height:15px;}
+.nav-tab:hover{color:var(--text);border-color:var(--muted3);}
+.nav-tab.on{background:rgba(var(--accent-rgb),0.1);border-color:var(--accent-ink);color:var(--accent-ink);}
+.nav-title{font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1.1;
+  color:var(--text-strong);margin:2px 0 12px;letter-spacing:-.4px;}
 /* ===== ACHATS — mannequin + wishlist à seuils ===== */
 .man-stage{position:relative;height:400px;margin-bottom:10px;}
 .man-3d{position:absolute;inset:0;z-index:1;}
@@ -1108,8 +1086,7 @@ html.owner .subtab.owner-only{display:block!important;}
    et un peu plus large. Une seule valeur à régler : max-width ci-dessous. */
 @media (min-width:900px){
   /* Les deux colonnes de navigation restent dépliées en permanence */
-  :root{ --rail-w:80px; --subs-w:252px; --thread-w:52px; }
-  body{align-items:flex-start;padding-left:calc(var(--rail-w) + var(--subs-w));}
+  body{align-items:flex-start;}
   .app-shell{max-width:900px;width:100%;margin:0 auto;padding:14px 20px 40px;}
   .nav-cat{font-size:8.5px;}
 }
@@ -1433,7 +1410,10 @@ html.owner .subtab.owner-only{display:block!important;}
   </div>
 </div>
 
-<div id="section-subnav" class="section-subnav"></div>
+<!-- Titre de la page et onglets de ses sous-vues : la navigation vit dans
+     la page, plus dans un volet qui la recouvre. -->
+<div class="nav-title" id="nav-title"></div>
+<div class="nav-tabs" id="nav-tabs"></div>
 
 
 <!-- ============ VIEW: HOME ============ -->
@@ -2045,51 +2025,9 @@ html.owner .subtab.owner-only{display:block!important;}
 <div id="nav-tree-overlay" class="nav-tree-overlay" onclick="closeNavTree()"></div>
 
 <!-- NAVIGATION PERMANENTE — rail des catégories + colonne des sous-vues -->
-<aside class="app-nav" id="app-nav">
-  <div class="nav-rail">
-    <img class="nav-logo" src="brand/logo-mark-white.png" alt="Overly" onclick="stSelectCat('home')">
-    <button class="nav-cat" id="stcat-home"   onclick="stSelectCat('home')"><span class="nav-cat-ic" data-ico="home"></span><span class="nav-cat-lb">Accueil</span></button>
-    <button class="nav-cat" id="stcat-routine" onclick="stSelectCat('routine')"><span class="nav-cat-ic" data-ico="repeat"></span><span class="nav-cat-lb">Routine</span></button>
-    <button class="nav-cat" id="stcat-objectif" onclick="stSelectCat('objectif')"><span class="nav-cat-ic" data-ico="target"></span><span class="nav-cat-lb">Objectif</span></button>
-    <button class="nav-cat" id="stcat-argent" onclick="stSelectCat('argent')"><span class="nav-cat-ic" data-ico="wallet"></span><span class="nav-cat-lb">Argent</span></button>
-    <button class="nav-cat" id="stcat-perso"  onclick="stSelectCat('perso')"><span class="nav-cat-ic" data-ico="spark"></span><span class="nav-cat-lb">Perso</span></button>
-    <button class="nav-cat" id="stcat-style"  onclick="stSelectCat('style')"><span class="nav-cat-ic" data-ico="bag"></span><span class="nav-cat-lb">Style</span></button>
-    <button class="nav-cat" id="stcat-vie"    onclick="stSelectCat('vie')"><span class="nav-cat-ic" data-ico="moon"></span><span class="nav-cat-lb">Vie</span></button>
-  </div>
-  <div class="nav-subs" id="nav-subs">
-    <div class="nav-subs-head">
-      <span id="nav-subs-title">Navigation</span>
-      <button class="st-close nav-subs-close" onclick="closeNavTree()">✕</button>
-    </div>
-    <div class="st-col-r" id="st-col-r">
-      <span class="st-empty">Choisis une catégorie à gauche</span>
-    </div>
-  </div>
-  <!-- le fil rouge relie la catégorie active à ses sous-vues -->
-  <svg class="st-svg" id="st-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-</aside>
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="bnav-btn active" data-section="home" onclick="goToSection('home')">
-    <span class="bnav-ic" data-ico="home"></span><span class="bnav-lb">Accueil</span>
-  </button>
-  <button class="bnav-btn" data-section="routine" onclick="goToSection('routine')">
-    <span class="bnav-ic" data-ico="repeat"></span><span class="bnav-lb">Routine</span>
-  </button>
-  <button class="bnav-btn" data-section="objectif" onclick="goToSection('objectif')">
-    <span class="bnav-ic" data-ico="target"></span><span class="bnav-lb">Objectif</span>
-  </button>
-  <button class="bnav-btn" data-section="argent" onclick="goToSection('argent')">
-    <span class="bnav-ic" data-ico="wallet"></span><span class="bnav-lb">Argent</span>
-  </button>
-  <button class="bnav-btn" data-section="perso" onclick="goToSection('perso')">
-    <span class="bnav-ic" data-ico="spark"></span><span class="bnav-lb">Perso</span>
-  </button>
-  <button class="bnav-btn" data-section="vie" onclick="goToSection('vie')">
-    <span class="bnav-ic" data-ico="moon"></span><span class="bnav-lb">Vie</span>
-  </button>
-</nav>
+<!-- Barre de navigation : en haut sur ordinateur, en bas sur téléphone.
+     Le même balisage, deux placements — le CSS s'en charge. -->
+<nav class="nav-bar" id="nav-bar"></nav>
 
 <!-- ============ FIREBASE (cloud sync) ============ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -2438,8 +2376,7 @@ function goTo(view){
   if(el) el.classList.add('active');
   if(view === 'achats' && typeof ensureThree === 'function') ensureThree(init3D);
   if(svState[view]) showSV(view, svState[view]);
-  const section = VIEW_TO_SECTION[view] || 'home';
-  updateSectionNav(section, view);
+  navSync(view);
   window.scrollTo(0,0);
 }
 function showSV(groupId, svId){
@@ -2472,178 +2409,117 @@ const VIEW_TO_SECTION = {};
 Object.entries(SECTIONS).forEach(([sec,s])=>s.views.forEach(v=>VIEW_TO_SECTION[v]=sec));
 let currentSection = 'home';
 
-function goToSection(section){
-  currentSection = section;
-  goTo(SECTIONS[section].views[0]);
-}
-
-function updateSectionNav(section, activeView){
-  updateNavTreeActive(section, activeView);
-}
-
-function goSubView(section, view){
-  currentSection = section;
-  goTo(view);
-}
-
-/* ============ NAV TREE ============ */
-const VIEW_LABELS = {
-  home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
-  finance:'Finance', objectifs:'Objectifs',
-  mindset:'Mindset', journal:'Journal',
-  sleep:'Sommeil', planning:'Planning', achats:'Achats', tracker:'Habit Tracker'
-};
-const VIEW_TO_CAT = {
-  home:'home', tasks:'routine', habitudes:'routine',
-  finance:'argent', objectifs:'objectif',
-  mindset:'perso', journal:'perso',
-  sleep:'vie', planning:'vie', achats:'style', tracker:'routine'
-};
-
-/* ===== SKILL TREE NAV ===== */
+/* ===== LES CATÉGORIES =====
+   Source unique de la barre, des onglets et des titres de page. Une
+   catégorie ouvre soit une vue directe, soit une page avec ses sous-vues
+   en onglets — soit, pour la vue client, déclenche une action. */
 const ST_CATS = {
-  home:   {icon:'home', label:'Accueil', direct:'home', views:[]},
+  home:     {icon:'home',   label:'Accueil', direct:'home', views:[]},
   /* « Aujourd'hui » avec un éclair ne disait rien : on ne devinait ni le
-     sujet ni l'usage. « Routine » nomme ce qu'il y a dedans — ce qu'on
-     refait chaque jour — et la flèche circulaire le dit sans le lire. */
-  routine: {icon:'repeat', label:'Routine', views:[
-    {id:'tasks',     icon:'check',  label:'Tâches'},
-    {id:'habitudes', icon:'flame',  label:'Habitudes'},
-    {id:'tracker',   icon:'chart',  label:"Tracker d'habitudes"}
+     sujet ni l'usage. « Routine » nomme ce qu'il y a dedans. */
+  routine:  {icon:'repeat', label:'Routine', views:[
+    {id:'tasks',     icon:'check',    label:'Tâches'},
+    {id:'habitudes', icon:'flame',    label:'Habitudes'},
+    {id:'tracker',   icon:'chart',    label:"Tracker d'habitudes"}
   ]},
   /* L'objectif quitte Argent : tous les objectifs ne sont pas financiers. */
   objectif: {icon:'target', label:'Objectif', direct:'objectifs', views:[]},
-  argent: {icon:'wallet', label:'Argent', direct:'finance', views:[]},
-  perso:  {icon:'spark', label:'Perso', views:[
-    {id:'mindset',   icon:'spark', label:'Mindset'},
-    {id:'journal',   icon:'note',  label:'Journal'}
+  argent:   {icon:'wallet', label:'Argent',  direct:'finance', views:[]},
+  perso:    {icon:'spark',  label:'Perso', views:[
+    {id:'mindset',   icon:'spark',    label:'Mindset'},
+    {id:'journal',   icon:'note',     label:'Journal'}
   ]},
-  style:  {icon:'bag', label:'Style', direct:'achats', views:[]},
-  vie:    {icon:'moon', label:'Vie', views:[
+  style:    {icon:'bag',    label:'Style',   direct:'achats', views:[]},
+  vie:      {icon:'moon',   label:'Vie', views:[
     {id:'sleep',     icon:'bed',      label:'Sommeil'},
     {id:'planning',  icon:'calendar', label:'Planning'}
-  ]}
+  ]},
+  /* Visible uniquement en mode propriétaire : bascule l'app en vue client
+     et revient. Rien n'est effacé, seules les vues réservées se masquent. */
+  apercu:   {icon:'user',   label:'Vue client', ownerOnly:true, action:'ownerPreview'}
 };
-let stActiveCat = null;
 
-/* Retrouve la catégorie qui contient une vue, sans dépendre des sections. */
-function stCatOfView(view){
-  if(view === 'home') return 'home';
-  return Object.keys(ST_CATS).find(k =>
-    (ST_CATS[k].views||[]).some(v => v.id === view)) || null;
-}
-function stHighlightCat(cat){
-  Object.keys(ST_CATS).forEach(k=>{
-    const btn = document.getElementById('stcat-'+k);
-    if(btn) btn.classList.toggle('st-active-cat', k===cat);
-  });
-}
-function stSelectCat(cat){
-  const def = ST_CATS[cat];
-  stActiveCat = cat;
-  stHighlightCat(cat);
-  stRenderSubs();
-  /* Une catégorie sans sous-vue mène directement à son écran. */
-  if(def && def.direct){ navSelectView(def.direct); return; }
-  /* Sur mobile la colonne se déplie par-dessus le contenu. */
-  if(window.innerWidth < 900) openNavTree();
-}
+/* ============ NAVIGATION ============
+   Avant : un rail vertical et un volet dépliant, sur les deux plateformes.
+   Il occupait 68 px en permanence sur PC, et cliquer une catégorie ouvrait
+   un panneau par-dessus la page sans jamais y entrer — on restait sur
+   l'accueil en croyant avoir changé de section.
 
-function stRenderSubs(){
-  const colR = document.getElementById('st-col-r');
-  if(!colR) return;
-  const def = stActiveCat ? (ST_CATS[stActiveCat]||{}) : {};
-  const views = def.views || [];
-  const titre = document.getElementById('nav-subs-title');
-  if(titre) titre.textContent = stActiveCat ? def.label : 'Navigation';
-  const curActive = document.querySelector('.view.active');
-  const activeId = curActive ? curActive.id.replace('view-','') : '';
-  if(!views.length){
-    colR.innerHTML = '<span class="st-empty">' +
-      (stActiveCat ? 'Cette catégorie mène droit à son écran.' : 'Choisis une catégorie à gauche') + '</span>';
-    stDrawLines(); return;
+   Maintenant une barre unique, alimentée par ST_CATS, et deux placements :
+   en HAUT sur ordinateur, où le regard part du haut et où le curseur se
+   déplace librement ; en BAS sur téléphone, à portée de pouce. Une catégorie
+   ouvre toujours une vraie page, et ses sous-vues s'affichent en onglets
+   sous le titre. */
+let navCat = 'home';
+
+function navRender(){
+  const bar = document.getElementById('nav-bar'); if(!bar) return;
+  bar.innerHTML = Object.keys(ST_CATS).map(k => {
+    const c = ST_CATS[k];
+    if(c.ownerOnly && !isOwner()) return '';
+    return '<button class="nav-item' + (navCat === k ? ' on' : '') + '" data-cat="' + k + '" ' +
+      'onclick="navGo(\'' + k + '\')"><span class="nav-item-ic" data-ico="' + c.icon + '"></span>' +
+      '<span class="nav-item-lb">' + c.label + '</span></button>';
+  }).join('');
+  if(typeof paintIcons === 'function') paintIcons(bar);
+}
+/* Les sous-vues d'une catégorie deviennent des onglets DANS la page, au lieu
+   d'un volet flottant à côté. */
+function navRenderTabs(){
+  const w = document.getElementById('nav-tabs'); if(!w) return;
+  const c = ST_CATS[navCat];
+  if(!c || !c.views || c.views.length < 2){ w.innerHTML = ''; w.classList.remove('on'); return; }
+  w.classList.add('on');
+  w.innerHTML = c.views.map(v =>
+    '<button class="nav-tab' + (currentView === v.id ? ' on' : '') + '" onclick="navSelectView(\'' + v.id + '\')">' +
+      '<span data-ico="' + v.icon + '"></span>' + v.label + '</button>').join('');
+  if(typeof paintIcons === 'function') paintIcons(w);
+}
+function navGo(cat){
+  const c = ST_CATS[cat]; if(!c) return;
+  /* une catégorie peut déclencher une action au lieu d'ouvrir une page */
+  if(c.action){ if(typeof window[c.action] === 'function') window[c.action](); return; }
+  /* une catégorie peut déclencher une action au lieu d'ouvrir une page */
+  if(c.action){ if(typeof window[c.action] === 'function') window[c.action](); return; }
+  navCat = cat;
+  const cible = c.direct || (c.views && c.views[0] && c.views[0].id);
+  if(cible) goTo(cible); else { navRender(); navRenderTabs(); }
+}
+function navSelectView(view){ goTo(view); }
+
+/* Appelé par goTo : la barre et les onglets suivent la vue affichée, d'où
+   qu'on y arrive — barre, tuile de l'accueil ou lien interne. */
+let currentView = 'home';
+/* La catégorie d'une vue se déduit de ST_CATS lui-même : une table
+   parallèle à tenir à jour finissait toujours par diverger. */
+function navCatOf(view){
+  for(const k in ST_CATS){
+    const c = ST_CATS[k];
+    if(c.direct === view) return k;
+    if((c.views || []).some(v => v.id === view)) return k;
   }
-  colR.innerHTML = views.map(v=>
-    `<button class="st-node${activeId===v.id?' st-active-sub':''}" id="stsub-${v.id}" onclick="navSelectView('${v.id}')">${v.icon} ${v.label}</button>`
-  ).join('');
-  requestAnimationFrame(stDrawLines);
+  return 'home';
 }
-
-function stDrawLines(){
-  const svg = document.getElementById('st-svg');
-  /* Tant que le panneau mobile est replié, les sous-vues sont hors écran :
-     inutile de tracer, ce sera fait à l'ouverture. */
-  const navEl = document.getElementById('app-nav');
-  if(svg && navEl && window.innerWidth < 900 && !navEl.classList.contains('subs-open')){
-    svg.innerHTML = ''; return;
+function navSync(view){
+  currentView = view;
+  navCat = navCatOf(view);
+  navRender(); navRenderTabs();
+  const t = document.getElementById('nav-title');
+  if(t){
+    const c = ST_CATS[navCat] || {};
+    const sv = (c.views || []).find(v => v.id === view);
+    t.textContent = sv ? sv.label : (c.label || '');
   }
-  /* le repère du tracé est la navigation entière : le fil part du rail
-     et rejoint la colonne des sous-vues */
-  const wrap = document.getElementById('app-nav');
-  if(!svg||!wrap){ if(svg) svg.innerHTML=''; return; }
-  if(!stActiveCat){ svg.innerHTML=''; return; }
-  const catBtn = document.getElementById('stcat-'+stActiveCat);
-  if(!catBtn){ svg.innerHTML=''; return; }
-  const wRect = wrap.getBoundingClientRect();
-  const cRect = catBtn.getBoundingClientRect();
-  /* x1 = right edge of cat node relative to SVG origin (left of wrap) */
-  const x1 = cRect.right - wRect.left;
-  const y1 = cRect.top + cRect.height / 2 - wRect.top;
-  const isDark = !document.documentElement.classList.contains('theme-light');
-  const lc = isDark ? 'rgba(224,53,53,0.55)' : 'rgba(224,53,53,0.6)';
-  const dc = isDark ? 'rgba(224,53,53,0.8)'  : 'rgba(224,53,53,0.85)';
-  let inner = `<circle cx="${x1}" cy="${y1}" r="3.5" fill="${dc}"/>`;
-  (ST_CATS[stActiveCat].views||[]).forEach(v=>{
-    const sub = document.getElementById('stsub-'+v.id);
-    if(!sub) return;
-    const sRect = sub.getBoundingClientRect();
-    /* x2 = left edge of sub node relative to SVG origin */
-    const x2 = sRect.left - wRect.left;
-    const y2 = sRect.top + sRect.height / 2 - wRect.top;
-    const cx1 = x1 + (x2 - x1) * 0.55;
-    const cx2 = x2 - (x2 - x1) * 0.55;
-    inner += `<path d="M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}" fill="none" stroke="${lc}" stroke-width="1.5" stroke-linecap="round"/>`;
-    inner += `<circle cx="${x2}" cy="${y2}" r="3" fill="${dc}"/>`;
-  });
-  svg.innerHTML = inner;
 }
-
-/* Sur mobile uniquement : déplie la colonne des sous-vues par-dessus le contenu. */
-/* Rotation ou redimensionnement : les positions changent, on retrace. */
-window.addEventListener('resize', () => requestAnimationFrame(stDrawLines));
-
-function openNavTree(){
-  document.getElementById('app-nav')?.classList.add('subs-open');
-  document.getElementById('nav-tree-overlay')?.classList.add('open');
-  /* Le fil ne peut être tracé qu'une fois le panneau arrivé : dessiné pendant
-     le glissement, les sous-vues sont encore hors écran et la courbe part de
-     coordonnées négatives, d'où un fil écrasé contre le rail. */
-  const subs = document.getElementById('nav-subs');
-  if(subs){
-    const fini = e => { if(e.target !== subs) return;
-      subs.removeEventListener('transitionend', fini); stDrawLines(); };
-    subs.addEventListener('transitionend', fini);
-  }
-  setTimeout(stDrawLines, 340);   /* filet si la transition ne se déclenche pas */
-}
-function closeNavTree(){
-  document.getElementById('app-nav')?.classList.remove('subs-open');
-  document.getElementById('nav-tree-overlay')?.classList.remove('open');
-}
-function navSelectView(view){
-  const mobile = window.innerWidth < 900;
-  closeNavTree();
-  if(mobile) setTimeout(()=>goTo(view), 160); else goTo(view);
-}
-/* Appelé à chaque changement de vue : la navigation reflète toujours l'écran
-   affiché, quelle que soit la façon dont on y est arrivé. */
-function updateNavTreeActive(section, view){
-  const cat = stCatOfView(view) || section;
-  stActiveCat = cat;
-  stHighlightCat(cat);
-  stRenderSubs();
-}
-function initNavTreePeeks(){ /* replaced by skill tree — no-op */ }
+/* Anciens points d'appel, conservés pour ne pas courir après chaque lien. */
+function goToSection(section){ navGo(section); }
+function goSubView(section, view){ goTo(view); }
+function stSelectCat(cat){ navGo(cat); }
+function updateNavTreeActive(){ }
+function initNavTreePeeks(){ }
+function openNavTree(){ }
+function closeNavTree(){ }
+function updateSectionNav(){ }
 function buildGroupedViews(){
   Object.entries(GROUPS).forEach(([groupId, group])=>{
     const tabsEl = document.getElementById(groupId+'-tabs');
@@ -3019,23 +2895,33 @@ function resetTasksDay(){
    L'argent garde ses sources, qui restent le bon outil quand plusieurs
    entrées alimentent un même total. Pour le reste, on relève une valeur. */
 
+/* Six natures. « Poids » et « Physique » n'en font plus qu'une : c'était le
+   même domaine, séparé pour une raison technique — l'un descendait, l'autre
+   montait — et cette contrainte d'implémentation n'avait rien à faire à
+   l'écran. Le sens se DÉDUIT maintenant des chiffres : viser moins que son
+   point de départ, c'est descendre. Plus besoin de le déclarer.
+   Sport reste à part parce qu'on y compte des séances, pas une mesure du
+   corps : ce n'est ni la même unité ni la même façon de progresser. */
 const GOAL_KINDS = {
-  finance: { label:'Argent',   icon:'wallet',   color:'#e03535', unit:'€',       dir:'up',
-             ex:'3 000 € pour lancer mon activité', src:true },
-  poids:   { label:'Poids',    icon:'scale',    color:'#4fb477', unit:'kg',      dir:'down',
-             ex:'Descendre à 75 kg' },
-  forme:   { label:'Physique', icon:'dumbbell', color:'#e08a35', unit:'kg',      dir:'up',
-             ex:'Prendre 5 kg de muscle' },
-  sport:   { label:'Sport',    icon:'flame',    color:'#d8c341', unit:'séances', dir:'up',
-             ex:'120 séances cette année' },
-  temps:   { label:'Temps',    icon:'clock',    color:'#3f9ad8', unit:'heures',  dir:'up',
-             ex:'200 h sur mon projet' },
-  savoir:  { label:'Savoir',   icon:'book',     color:'#8b6fd4', unit:'livres',  dir:'up',
-             ex:'24 livres cette année' },
-  autre:   { label:'Autre',    icon:'target',   color:'#c95a9c', unit:'',        dir:'up',
-             ex:'Ce que tu veux mesurer' }
+  finance: { label:'Argent', icon:'wallet',   color:'#e03535', unit:'€',       ex:'3 000 € pour lancer mon activité', src:true },
+  sante:   { label:'Santé',  icon:'scale',    color:'#4fb477', unit:'kg',      ex:'Descendre à 75 kg, ou prendre 5 kg de muscle' },
+  sport:   { label:'Sport',  icon:'dumbbell', color:'#e08a35', unit:'séances', ex:'120 séances cette année' },
+  temps:   { label:'Temps',  icon:'clock',    color:'#3f9ad8', unit:'heures',  ex:'200 h sur mon projet' },
+  savoir:  { label:'Savoir', icon:'book',     color:'#8b6fd4', unit:'livres',  ex:'24 livres cette année' },
+  autre:   { label:'Autre',  icon:'target',   color:'#c95a9c', unit:'',        ex:'Ce que tu veux mesurer' }
 };
-function glKind(g){ return GOAL_KINDS[(g && g.kind) || 'autre'] || GOAL_KINDS.autre; }
+/* Les anciennes natures pointent vers Santé : personne ne perd son objectif. */
+const GOAL_KIND_MIGRATE = { poids:'sante', forme:'sante' };
+function glKind(g){
+  let k = (g && g.kind) || 'autre';
+  if(GOAL_KIND_MIGRATE[k]) k = GOAL_KIND_MIGRATE[k];
+  return GOAL_KINDS[k] || GOAL_KINDS.autre;
+}
+/* Le sens de progression, lu dans les chiffres plutôt que déclaré. */
+function glDir(g){
+  const c = parseFloat(g && g.target) || 0, f = parseFloat(g && g.from) || 0;
+  return (f > 0 && c > 0 && c < f) ? 'down' : 'up';
+}
 function glColor(g){ return (g && g.color) || glKind(g).color; }
 function glUnit(g){ return (g && g.unit !== undefined && g.unit !== null) ? g.unit : glKind(g).unit; }
 
@@ -3078,7 +2964,7 @@ function glTotal(g){ return glValue(g); }        /* nom conservé : appelé aill
 function glPct(g){
   if(!g) return 0;
   const cible = parseFloat(g.target)||0, v = glValue(g), dep = parseFloat(g.from)||0;
-  if(glKind(g).dir === 'down'){
+  if(glDir(g) === 'down'){
     /* on descend vers la cible : le progrès se mesure depuis le point de départ */
     const course = dep - cible;
     if(course <= 0) return v <= cible ? 100 : 0;
@@ -3091,12 +2977,12 @@ function glPct(g){
 function glReached(g){
   if(!g) return false;
   const cible = parseFloat(g.target)||0, v = glValue(g);
-  if(glKind(g).dir === 'down') return cible > 0 && v > 0 && v <= cible;
+  if(glDir(g) === 'down') return cible > 0 && v > 0 && v <= cible;
   return cible > 0 && v >= cible;
 }
 function glRemain(g){
   const cible = parseFloat(g.target)||0, v = glValue(g);
-  return glKind(g).dir === 'down' ? Math.max(0, v - cible) : Math.max(0, cible - v);
+  return glDir(g) === 'down' ? Math.max(0, v - cible) : Math.max(0, cible - v);
 }
 function glDaysLeft(g){
   if(!g || !g.deadline) return null;
@@ -3126,7 +3012,12 @@ function glBootstrap(){
   try { d = JSON.parse(loadKey('goals') || 'null'); } catch(e){ d = null; }
   if(d && Array.isArray(d.goals)){
     glGoals = d.goals; glActiveId = d.active || (glGoals[0] && glGoals[0].id) || null;
-    glGoals.forEach(g => { if(!g.log) g.log = []; if(!g.kind) g.kind = 'finance'; });
+    glGoals.forEach(g => {
+      if(!g.log) g.log = [];
+      if(!g.kind) g.kind = 'finance';
+      /* les natures fusionnées sont réécrites une fois pour toutes */
+      if(GOAL_KIND_MIGRATE[g.kind]) { g.kind = GOAL_KIND_MIGRATE[g.kind]; g.color = glKind(g).color; }
+    });
     glSync(); return;
   }
   /* Reprise de l'objectif unique : il devient le premier objectif « argent »,
@@ -3341,7 +3232,7 @@ function glCard(g){
     '<div class="gl-body">' +
       (cible ? '<div class="gl-nums">' +
         '<div><dt>Actuel</dt><dd style="color:'+col+'">'+glVal(g, v)+'</dd></div>' +
-        '<div><dt>'+(K.dir==='down'?'À perdre':'Il reste')+'</dt><dd>'+glVal(g, glRemain(g))+'</dd></div>' +
+        '<div><dt>'+(glDir(g)==='down'?'À perdre':'Il reste')+'</dt><dd>'+glVal(g, glRemain(g))+'</dd></div>' +
         '<div><dt>Échéance</dt><dd>'+glDateFR(g.deadline)+'</dd></div>' +
       '</div>' : '') +
       rythme +
@@ -3394,7 +3285,7 @@ function glRenderHero(){
       /* « 88 kg sur 75 kg » se lit mal quand on descend : on montre le
          trajet, pas un rapport qui donne l'impression d'avoir dépassé. */
       const detail = !parseFloat(g.target) ? ''
-        : (K.dir === 'down'
+        : (glDir(g) === 'down'
             ? ' · ' + glVal(g, glValue(g)) + ' → ' + glVal(g, g.target)
             : ' · ' + glVal(g, glValue(g)) + ' sur ' + glVal(g, g.target));
       hg.innerHTML = glEsc(g.title || glVal(g, g.target)) +
@@ -3417,7 +3308,7 @@ function glDraftDecl(){
   const cible = parseFloat(g.target) > 0 ? glVal(g, g.target) : '[ma cible]';
   const date = g.deadline ? glDateFR(g.deadline) : '[date]';
   const but = g.why || g.title || '[mon projet]';
-  const verbe = K.dir === 'down' ? 'Je descends à' : 'J’atteins';
+  const verbe = glDir(g) === 'down' ? 'Je descends à' : 'J’atteins';
   const via = K.src
     ? ((g.sources||[]).map(s=>s.label).filter(Boolean).join(', ') || '[mes sources]')
     : 'ce que je fais chaque jour';
@@ -3719,7 +3610,7 @@ function onbScreens(){
         '</div>' +
         /* Sans point de départ, un objectif qui descend n'a pas de distance à
            parcourir, et sa progression ne veut rien dire. */
-        '<div class="onb-field"><label>' + (onbKind().dir === 'down' ? 'Où j’en suis aujourd’hui' : 'Mon point de départ') +
+        '<div class="onb-field"><label>' + ((parseFloat(onbData.from)||0) > 0 && (parseFloat(onbData.amount)||0) < (parseFloat(onbData.from)||0) ? 'Où j’en suis aujourd’hui' : 'Mon point de départ') +
           (onbKind().unit ? ' (' + onbKind().unit + ')' : '') + '</label>' +
           '<input id="onb-from" type="number" inputmode="numeric" placeholder="0" value="' + (onbData.from || '') + '" oninput="onbSync()"></div>' +
       '</div>',
@@ -6279,6 +6170,7 @@ function initApp(){
   maybeShowNotifBanner();
   setupNotifications();
   ownerLoad();
+  navSync('home');
   paintIcons();
   wrapEmojis(document.body);
   /* en dernier : le parcours a besoin de l'objectif déjà chargé pour savoir
