@@ -328,7 +328,7 @@ body{ background:var(--bg); }
 .cap-b-tag.captured{background:rgba(var(--amber-rgb),0.1);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.25);}
 .cap-b-tag.edited{background:rgba(var(--info-rgb),0.1);color:var(--info);border:1px solid rgba(var(--info-rgb),0.28);}
 .cap-b-tag.posted{background:rgba(var(--ok-rgb),0.1);color:var(--ok);border:1px solid rgba(var(--ok-rgb),0.3);}
-/* HABIT TRACKER (AB Academy style, patte Overly) */
+/* HABIT TRACKER — grille mensuelle */
 .ht-monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .ht-monthbar button{background:rgba(var(--ink),0.05);border:0.5px solid rgba(var(--ink),0.14);color:var(--text);border-radius:var(--r);width:34px;height:32px;font-size:15px;cursor:pointer;font-family:inherit;}
 .ht-month-lbl{font-size:16px;font-family:'Instrument Serif',Georgia,serif;letter-spacing:1px;text-transform:uppercase;}
@@ -895,6 +895,13 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .glow{text-shadow:var(--glow-txt);}
 .hero-days, .ring-pct{text-shadow:var(--glow-txt);}
 .hero{position:relative;box-shadow:var(--glow-soft);}
+
+/* ===== RÉSERVÉ AU PROPRIÉTAIRE =====
+   Masqué par défaut, y compris pour moi tant que je n'active pas le mode :
+   c'est ce qui me permet de voir l'app exactement comme un client la voit. */
+.owner-only{display:none!important;}
+html.owner .owner-only{display:revert!important;}
+html.owner .subtab.owner-only{display:block!important;}
 /* ===== ICÔNES AU TRAIT =====
    Elles héritent de la couleur du texte : un seul état actif à gérer, et
    elles suivent le thème sans retouche. */
@@ -982,29 +989,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .input-row button,.btn-primary{background:linear-gradient(135deg,var(--solid-a),var(--solid-b));border:none;border-radius:var(--r);color:var(--on-solid);font-size:11px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:inherit;}
 
 /* TIMELINE (roadmap / routine detail) */
-.phase-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:16px 17px;margin-bottom:10px;position:relative;overflow:hidden;}
-.phase-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-.p1::before{background:var(--orange);} .p2::before{background:var(--gold);} .p3::before{background:var(--accent);} .p4::before{background:var(--green);}
-.ph-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
-.ph-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.p1 .ph-label{color:var(--orange);} .p2 .ph-label{color:var(--gold);} .p3 .ph-label{color:var(--accent-ink);} .p4 .ph-label{color:var(--green);}
-.ph-title{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
-.ph-period{margin-left:auto;font-size:10px;color:var(--muted);font-style:italic;white-space:nowrap;}
-.ph-tasks{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.ph-tasks li{font-size:11.5px;color:var(--text-dim);padding:6px 9px;background:var(--sunken);border-radius:var(--r);display:flex;align-items:flex-start;gap:5px;line-height:1.4;}
-.ph-goal{margin-top:12px;padding:8px 12px;border-radius:var(--r);font-size:12px;font-weight:600;}
-.p1 .ph-goal{background:var(--raised);color:var(--orange);} .p2 .ph-goal{background:var(--raised);color:var(--gold);}
-.p3 .ph-goal{background:var(--raised);color:var(--accent-ink);} .p4 .ph-goal{background:var(--raised);color:var(--green);}
-.arrow{text-align:center;color:var(--muted3);font-size:18px;margin:4px 0;}
-/* Feuille de route modifiable : les outils restent discrets tant qu'on ne
-   survole pas la carte, et sont toujours visibles au doigt sur mobile. */
-.ph-tools{display:flex;gap:1px;margin-left:6px;flex-shrink:0;opacity:0;transition:opacity .15s;}
-.phase-card:hover .ph-tools{opacity:1;}
-.ph-tools button{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;font-family:inherit;}
-.ph-tools button:hover{color:var(--accent-ink);}
-.ph-tools button:disabled{opacity:.25;cursor:default;}
-.ph-tools button:disabled:hover{color:var(--muted3);}
-@media (max-width:899px){ .ph-tools{opacity:1;} }
 
 .hill-formula{background:var(--raised);border:1px solid rgba(var(--ink),0.2);border-radius:var(--r);padding:18px;margin-bottom:14px;}
 .hf-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
@@ -1377,7 +1361,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <div class="app-header">
   <div>
-    <div class="title logo-overly-wrap" onclick="goTo('home')" style="cursor:pointer;" role="button" aria-label="Retour à l'accueil">
+    <div class="title logo-overly-wrap" onclick="ownerTap();goTo('home')" style="cursor:pointer;" role="button" aria-label="Retour à l'accueil">
       <img class="logo-mark" src="brand/logo-mark-white.png" alt="Overly">
       <img class="logo-detailed" src="brand/logo-detailed-white.png" alt="OVERLY">
     </div>
@@ -1449,7 +1433,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="launch-tile" onclick="goTo('journal')"><span class="launch-ic" data-ico="note"></span><span class="launch-lb">Journal</span></button>
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic" data-ico="moon"></span><span class="launch-lb">Sommeil</span></button>
     <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic" data-ico="bag"></span><span class="launch-lb">Achats</span></button>
-    <button class="launch-tile" onclick="goTo('capture')"><span class="launch-ic" data-ico="camera"></span><span class="launch-lb">Capture</span></button>
     <button class="launch-tile" onclick="goTo('tracker')"><span class="launch-ic" data-ico="chart"></span><span class="launch-lb">Tracker</span></button>
   </div>
 
@@ -1613,32 +1596,24 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
   <!-- Chaque onglet est autonome : un seul panneau s'affiche, rien d'autre. -->
   <div class="subtabs">
-    <button class="subtab active" data-goal-tab="progress" onclick="showSubtab('goal','progress')">💰 Cash</button>
-    <button class="subtab" data-goal-tab="roadmap" onclick="showSubtab('goal','roadmap')">🗺 Vision</button>
-    <button class="subtab" data-goal-tab="hill" onclick="showSubtab('goal','hill')">✨ Hill</button>
-    <button class="subtab" data-goal-tab="history" onclick="showSubtab('goal','history')">🏆 Historique</button>
+    <button class="subtab active" data-goal-tab="progress" onclick="showSubtab('goal','progress')">Objectif</button>
+    <button class="subtab owner-only" data-goal-tab="hill" onclick="showSubtab('goal','hill')">Déclaration</button>
+    <button class="subtab" data-goal-tab="history" onclick="showSubtab('goal','history')">Historique</button>
   </div>
 
   <!-- CASH — l'objectif et sa progression, et rien d'autre -->
   <div class="subpanel active" id="goal-panel-progress">
     <div id="goal-hero-wrap"></div>
     <div id="goal-active-wrap"></div>
+    <!-- Les paramètres reviennent ici : un seul onglet Objectif, où l'on voit
+         où l'on en est ET où l'on règle la cible. La Vision faisait un
+         détour de plus pour une feuille de route que personne ne remplissait. -->
+    <div id="goal-params-wrap"></div>
   </div>
 
   <!-- HISTORIQUE -->
   <div class="subpanel" id="goal-panel-history">
     <div id="goal-history-wrap"></div>
-  </div>
-
-  <!-- ROADMAP -->
-  <div class="subpanel" id="goal-panel-roadmap">
-
-    <!-- Les paramètres vivent ici : Vision = ce que je veux (objectif, montant,
-         dates, plan). Cash = où j'en suis. On ne cherche plus le formulaire
-         dans l'onglet du suivi. -->
-    <div id="goal-params-wrap"></div>
-
-    <div id="goal-roadmap-wrap"></div>
   </div>
 
   <!-- HILL -->
@@ -1963,7 +1938,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div class="card-title">🔥 100 Perfect Days Challenge</div>
     <div style="display:flex;align-items:baseline;gap:8px;"><span class="ht-chal-num" id="ht-chal">0</span><span style="font-size:12px;color:var(--muted);">/ 100 perfect days</span></div>
     <div class="ht-chal-bar"><div class="ht-chal-fill" id="ht-chal-fill" style="width:0%;"></div></div>
-    <div style="font-size:9.5px;color:var(--muted2);margin-top:7px;line-height:1.5;">A perfect day = all habits checked. Screenshot it for the AB Academy Skool 📸</div>
+    <div style="font-size:9.5px;color:var(--muted2);margin-top:7px;line-height:1.5;">A perfect day = every habit checked. No exception.</div>
   </div>
 
   <div class="card">
@@ -2005,114 +1980,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
       <button class="btn-primary" style="padding:9px 16px;" onclick="htAddHabit()">+</button>
     </div>
     <div style="font-size:9px;color:var(--muted2);margin-top:6px;text-align:center;">Tap a cell to check · tap a habit name to rename or delete</div>
-  </div>
-</div>
-
-<!-- ============ VIEW: CAPTURE ============ -->
-<div class="view view-tabbed" id="view-capture">
-
-  <div class="bij-tabs">
-    <button class="bij-tab active" id="captab-daily" onclick="switchCapTab('daily')">🎥 Quotidien</button>
-    <button class="bij-tab" id="captab-scripts" onclick="switchCapTab('scripts')">🎬 Scripts</button>
-    <button class="bij-tab" id="captab-notes" onclick="switchCapTab('notes')">📓 Note à moi-même</button>
-  </div>
-
-  <!-- NOTE À MOI-MÊME : 3 questions puis le script du jour -->
-  <div class="pane" id="cap-notes-section" style="display:none;">
-    <div id="nm-wrap"></div>
-  </div>
-
-  <!-- QUOTIDIEN -->
-  <div class="pane" id="cap-daily-section">
-    <div class="card rpg-card">
-      <div class="card-title">🎥 Capture du jour</div>
-      <div id="cap-today-body"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🎬 Les 3 questions — garde-les en tête</div>
-      <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;line-height:1.5;">Réponds en 2 mots si tu veux (juste pour t'aider), puis parle face caméra. Zéro script, zéro pression.</div>
-      <div class="cap-q"><span class="cap-q-n">1</span> Qu'est-ce que j'ai fait aujourd'hui pour le projet ?</div>
-      <textarea class="cap-ta" id="cap-q1" placeholder="Ex. contacté 3 fournisseurs, filmé les bagues..." oninput="capSaveDraft()"></textarea>
-      <div class="cap-q"><span class="cap-q-n">2</span> Une chose que j'ai apprise ?</div>
-      <textarea class="cap-ta" id="cap-q2" placeholder="Ex. le SEO Insta, négocier un prix..." oninput="capSaveDraft()"></textarea>
-      <div class="cap-q"><span class="cap-q-n">3</span> C'est quoi la suite ?</div>
-      <textarea class="cap-ta" id="cap-q3" placeholder="Ex. demain je monte 2 vidéos..." oninput="capSaveDraft()"></textarea>
-    </div>
-
-    <div class="card">
-      <div class="card-title">⏱️ Minuteur 2 minutes</div>
-      <div class="cap-timer" id="cap-timer">2:00</div>
-      <button class="cap-rec" id="cap-timer-btn" onclick="capToggleTimer()">▶️ Lancer le minuteur</button>
-      <div style="font-size:9.5px;color:var(--muted2);text-align:center;margin-top:8px;line-height:1.5;">Le minuteur est juste un repère. Filme avec l'appli caméra de ton téléphone, puis reviens valider.</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🎞️ File de montage — batch 1-2×/semaine</div>
-      <div style="font-size:10px;color:var(--muted2);margin-bottom:8px;line-height:1.5;">Tes captures s'empilent ici. Tape sur une ligne pour la faire passer : Capturée → Montée → Postée.</div>
-      <div id="cap-batch-list"></div>
-    </div>
-  </div>
-
-  <!-- SCRIPTS -->
-  <div class="pane" id="cap-scripts-section" style="display:none;">
-    <!-- Liste -->
-    <div id="scr-list-view">
-      <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="scrNew()">+ Nouveau script</button>
-      <div id="scr-list"></div>
-    </div>
-    <!-- Éditeur -->
-    <div id="scr-editor" style="display:none;">
-      <button style="background:none;border:0.5px solid var(--border2);color:var(--muted2);border-radius:var(--r);padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit;margin-bottom:10px;" onclick="scrCloseEditor()">← Retour</button>
-      <div class="card">
-        <div class="scr-fld">
-          <label class="scr-lbl">🎬 Titre de la vidéo</label>
-          <textarea class="scr-ta" id="scr-title" rows="1" placeholder="Ex. Comment j'ai lancé mon projet à 0€"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">📏 Format</label>
-          <div class="scr-seg" id="scr-format"></div>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">🎯 But de la vidéo<small>Qu'est-ce que le spectateur doit ressentir / faire à la fin ?</small></label>
-          <textarea class="scr-ta" id="scr-goal" rows="1" placeholder="Ex. Inspirer + montrer que c'est possible sans argent"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">👥 Pour qui<small>Ton spectateur idéal</small></label>
-          <textarea class="scr-ta" id="scr-audience" rows="1" placeholder="Ex. Jeunes 16-25 qui veulent se lancer"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">🪝 Hook — 3 premières secondes<small>La phrase qui empêche de scroller</small></label>
-          <textarea class="scr-ta" id="scr-hook" placeholder="Ex. « À 18 ans, j'ai lancé une marque avec 0€ en poche. Voilà comment. »"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">📣 Intro<small>Contexte + promesse de la vidéo</small></label>
-          <textarea class="scr-ta" id="scr-intro" placeholder="Qui tu es, de quoi tu vas parler, pourquoi rester jusqu'au bout"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">🗂️ Plan / points clés<small>Une idée par ligne — l'ossature de ta vidéo</small></label>
-          <textarea class="scr-ta" id="scr-points" style="min-height:120px;" placeholder="1. Le déclic&#10;2. Les 3 erreurs du début&#10;3. Ce qui a tout changé&#10;4. Les résultats aujourd'hui"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">💬 Story / exemple perso<small>Le moment vécu qui rend la vidéo unique</small></label>
-          <textarea class="scr-ta" id="scr-story" placeholder="Une anecdote concrète, un échec, une victoire..."></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">📣 CTA — appel à l'action<small>Ce que tu demandes à la fin</small></label>
-          <textarea class="scr-ta" id="scr-cta" placeholder="Ex. Abonne-toi pour suivre le lancement · commente ton objectif"></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">🎞️ B-roll / notes de tournage<small>Plans à filmer, lieux, accessoires</small></label>
-          <textarea class="scr-ta" id="scr-broll" placeholder="Ex. gros plan sur les bagues, plan atelier, écran du tracker..."></textarea>
-        </div>
-        <div class="scr-fld">
-          <label class="scr-lbl">📌 Statut</label>
-          <div class="scr-seg" id="scr-statusseg"></div>
-        </div>
-        <button class="btn-primary" style="width:100%;" onclick="scrSave()">💾 Enregistrer le script</button>
-        <button style="width:100%;margin-top:8px;background:none;border:0.5px solid rgba(var(--accent-rgb),0.3);color:var(--accent-ink);border-radius:var(--r);padding:9px;font-size:11px;cursor:pointer;font-family:inherit;" onclick="scrDelete()">🗑️ Supprimer ce script</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -2540,6 +2407,52 @@ function icon(nom, taille){
     '<path d="' + d + '"/></svg>';
 }
 
+/* ============ COMPTE PROPRIÉTAIRE ============
+   Un même code pour deux publics n'a pas les mêmes besoins. Certaines
+   fonctions n'ont de sens que pour moi — la déclaration de Hill suppose
+   d'avoir lu le livre — et brouilleraient la lecture pour quelqu'un qui
+   découvre l'app.
+
+   Le mode propriétaire les rend visibles sur MON compte seulement. Il ne
+   donne accès à aucune donnée : chaque compte ne lit que la sienne, les
+   règles Firestore l'imposent. Ce n'est qu'un interrupteur d'affichage, ce
+   qui est heureux car le code ci-dessous est public comme tout le dépôt.
+
+   Usage : dans l'app, cinq touches sur le logo de l'en-tête, puis le code. */
+const OWNER_CODE = 'overly-owner';
+let ownerMode = false;
+
+function isOwner(){ return ownerMode; }
+function ownerLoad(){
+  ownerMode = loadKey('owner_mode') === '1';
+  ownerApply();
+}
+/* Une classe sur <html> suffit à piloter tout le CSS conditionnel. */
+function ownerApply(){
+  document.documentElement.classList.toggle('owner', ownerMode);
+}
+let ownerTaps = 0, ownerTapT = null;
+function ownerTap(){
+  clearTimeout(ownerTapT);
+  ownerTaps++;
+  ownerTapT = setTimeout(() => { ownerTaps = 0; }, 1200);
+  if(ownerTaps < 5) return;
+  ownerTaps = 0;
+  if(ownerMode){
+    if(!confirm('Repasser en vue client ?\n\nTu verras l’app exactement comme tes utilisateurs.')) return;
+    ownerMode = false; saveKey('owner_mode', '0');
+  } else {
+    const c = prompt('Code propriétaire :');
+    if(c === null) return;
+    if(c.trim().toLowerCase() !== OWNER_CODE){ showToast('Code incorrect'); return; }
+    ownerMode = true; saveKey('owner_mode', '1');
+  }
+  ownerApply();
+  if(typeof glRenderAll === 'function') glRenderAll();
+  if(typeof renderTasks === 'function') renderTasks();
+  showToast(ownerMode ? '🔑 Mode propriétaire activé' : '👤 Vue client activée');
+}
+
 /* ============ NAVIGATION ============ */
 const svState = {};
 function goTo(view){
@@ -2603,13 +2516,13 @@ const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
   mindset:'Mindset', journal:'Journal',
-  sleep:'Sommeil', planning:'Planning', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
+  sleep:'Sommeil', planning:'Planning', achats:'Achats', tracker:'Habit Tracker'
 };
 const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
   mindset:'perso', journal:'perso',
-  sleep:'vie', planning:'vie', achats:'style', capture:'today', tracker:'today'
+  sleep:'vie', planning:'vie', achats:'style', tracker:'today'
 };
 
 /* ===== SKILL TREE NAV ===== */
@@ -2618,8 +2531,7 @@ const ST_CATS = {
   today:  {icon:'⚡', label:"Aujourd'hui",  views:[
     {id:'tasks',     icon:'✅', label:'Tâches'},
     {id:'habitudes', icon:'🔁', label:'Habitudes'},
-    {id:'tracker',   icon:'📊', label:'Habit Tracker'},
-    {id:'capture',   icon:'🎥', label:'Capture'}
+    {id:'tracker',   icon:'📊', label:'Habit Tracker'}
   ]},
   argent: {icon:'💰', label:'Argent', views:[
     {id:'finance',   icon:'💸', label:'Finance'},
@@ -2908,8 +2820,8 @@ function taskDoneCount(st){ return st ? TASK_IDS.filter(id => st[id]).length : 0
    une croyance ou un projet particulier. */
 function tasksDefaults(){
   return [
-    { id:'t1', section:'matin', name:'Déclaration à voix haute + Visualisation', sub:'Ancrer le désir, la foi et l\'objectif en cours',
-      how:'Debout, voix claire et confiante. Lis ta déclaration à voix haute :', decl:'matin' },
+    { id:'t1', section:'matin', name:'Relire mon objectif', sub:'Se rappeler le chiffre et la date avant de commencer',
+      how:"Ouvre l'onglet Objectif. Regarde le montant, la date, les jours qui restent. Trente secondes suffisent : c'est le cadre de ta journée." },
     { id:'t2', section:'matin', name:'💪 Bouger 15 minutes', sub:'Corps actif = esprit actif dès le réveil',
       how:'Ce que tu veux : pompes, marche rapide, étirements, corde à sauter. Le corps donne le ton de la journée.' },
     { id:'t3', section:'matin', name:'📖 Lire 10 pages', sub:'Nourrir l\'esprit avant le bruit du monde',
@@ -2920,8 +2832,8 @@ function tasksDefaults(){
       how:"Ouvre l'onglet Objectif et mets à jour chacune de tes sources. C'est ton score du jour." },
     { id:'t9', section:'soir', name:'📌 Écrire mes 3 priorités du lendemain', sub:'Clarifier la journée suivante avant de dormir',
       how:"5 min. Écris 3 actions concrètes pour demain — pas des envies, des engagements. Classe-les par ordre d'impact." },
-    { id:'t10', section:'soir', name:'Déclaration + Visualisation — Soir', sub:'Planter la graine dans le subconscient avant le sommeil',
-      how:'Juste avant de te coucher, relis la même déclaration à voix basse.', decl:'soir' }
+    { id:'t10', section:'soir', name:'Faire le point sur ma journée', sub:'Ce qui a avancé, ce qui a bloqué',
+      how:"Deux minutes avant de dormir. Qu'est-ce qui a réellement avancé aujourd'hui ? Qu'est-ce qui t'a fait perdre du temps ? Tu sauras quoi corriger demain." }
   ];
 }
 function tasksLoad(){
@@ -3650,160 +3562,6 @@ function glRenderTaskEchoes(){
   });
 }
 
-/* ============ FEUILLE DE ROUTE (modifiable) ============
-   Les phases étaient écrites en dur dans le HTML : impossible de les changer
-   sans toucher au code. Elles vivent maintenant dans les données, comme les
-   tâches et les sources. Le numéro « Phase N » est calculé à l'affichage —
-   supprimer ou déplacer une phase renumérote tout le reste automatiquement. */
-let rmPhases = [];
-let rmEditing = null;   /* id de la phase en cours de modification, ou 'new' */
-
-function newPhaseId(){ return 'ph' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function rmSave(){ saveKey('roadmap_def', JSON.stringify(rmPhases)); }
-
-/* Trame de départ d'un compte neuf : la FORME d'une feuille de route, pas le
-   contenu de quelqu'un d'autre. Chaque phase se renomme, se déplace, se
-   supprime, et les étapes s'écrivent une par ligne. */
-const RM_SEED = [
-  { stage:'Court terme', title:'🚀 Lancer', period:'Les 3 prochains mois',
-    tasks:[['🎯',"Définir mon objectif chiffré et sa date"],['📋','Lister ce qui me manque pour démarrer'],
-           ['🧠','Ancrer ma déclaration matin et soir'],['📊','Suivre mes revenus chaque semaine']],
-    goal:'🎯 Mon objectif est fixé et les premiers euros rentrent' },
-  { stage:'Construction', title:'🧱 Installer', period:'3 à 12 mois',
-    tasks:[['🔁','Répéter ce qui marche, couper le reste'],['💰','Mettre de côté sans y toucher'],
-           ['🤝','Trouver les bonnes personnes autour de moi'],['⭐','Construire ma réputation']],
-    goal:'🎯 Ça tourne sans que je doive tout relancer chaque jour' },
-  { stage:'Moyen terme', title:'📈 Faire grandir', period:"L'année suivante",
-    tasks:[['🏷️',"Poser mon nom et mon identité"],['🌍','Toucher plus de monde'],
-           ['🧰','Automatiser ce qui me prend du temps'],['💬','Fidéliser ceux qui me suivent']],
-    goal:'🎯 Ce que je construis existe et vit par lui-même' },
-  { stage:'Long terme', title:'👑 En profiter', period:'Au-delà',
-    tasks:[['🕊','Vivre bien et être libre'],['📚','Transmettre ce que j\u2019ai appris'],
-           ['🌱','Ouvrir le chapitre suivant']],
-    goal:'🎯 Le début qui me permet d\u2019aller loin' }
-];
-
-function rmLoad(){
-  let raw = null;
-  try { raw = JSON.parse(loadKey('roadmap_def') || 'null'); } catch(e){ raw = null; }
-  if(Array.isArray(raw)){ rmPhases = raw; return; }
-  rmPhases = RM_SEED.map(p => ({
-    id: newPhaseId(),
-    stage: p.stage, title: p.title, period: p.period, goal: p.goal,
-    tasks: p.tasks.map(t => ({ emoji:t[0], text:t[1] }))
-  }));
-  rmSave();
-}
-
-/* Une ligne de texte → une étape. L'emoji de tête, s'il y en a un, devient
-   la puce ; sinon on met un point. Ça évite un mini-formulaire par ligne. */
-function rmParseTasks(txt){
-  return String(txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(line=>{
-    let m = null;
-    /* Couvre aussi les chiffres encadrés (1️⃣), les drapeaux (🇫🇷), les
-       teintes de peau (👍🏽) et les emojis composés (👨‍👩‍👧). */
-    try { m = line.match(/^((?:[0-9#*]️?⃣|\p{Regional_Indicator}{2}|\p{Extended_Pictographic}[️\u{1F3FB}-\u{1F3FF}]*)(?:‍(?:\p{Extended_Pictographic}[️\u{1F3FB}-\u{1F3FF}]*|[0-9#*]️?⃣))*)\s*(.*)$/u); }
-    catch(e){ m = line.match(/^([^\w\s.,;:!?'"()\[\]-]+)\s*(.*)$/); }
-    return (m && m[2]) ? { emoji:m[1], text:m[2] } : { emoji:'•', text:line };
-  });
-}
-function rmTasksToText(p){
-  return ((p && p.tasks) || []).map(t => (t.emoji && t.emoji !== '•' ? t.emoji + ' ' : '') + t.text).join('\n');
-}
-
-/* ---- mutations ---- */
-function rmOpen(id){ rmEditing = id; rmRender(); }
-function rmCancel(){ rmEditing = null; rmRender(); }
-function rmMove(id, dir){
-  const i = rmPhases.findIndex(p => p.id === id), j = i + dir;
-  if(i < 0 || j < 0 || j >= rmPhases.length) return;
-  const tmp = rmPhases[i]; rmPhases[i] = rmPhases[j]; rmPhases[j] = tmp;
-  rmSave(); rmRender();
-}
-function rmSaveForm(){
-  const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
-  const title = val('rm-title');
-  if(!title){ showToast('Donne un titre à cette phase'); return; }
-  const data = { stage:val('rm-stage'), title:title, period:val('rm-period'),
-                 goal:val('rm-goal'), tasks:rmParseTasks(val('rm-tasks')) };
-  if(rmEditing === 'new'){
-    rmPhases.push(Object.assign({ id:newPhaseId() }, data));
-    showToast('✅ Phase ajoutée');
-  } else {
-    const p = rmPhases.find(x => x.id === rmEditing);
-    if(p) Object.assign(p, data);
-    showToast('✅ Phase modifiée');
-  }
-  rmEditing = null; rmSave(); rmRender();
-}
-function rmDelete(){
-  const p = rmPhases.find(x => x.id === rmEditing); if(!p) return;
-  if(!confirm('Supprimer la phase « ' + p.title + ' » ?')) return;
-  rmPhases = rmPhases.filter(x => x.id !== rmEditing);
-  rmEditing = null; rmSave(); rmRender();
-  showToast('🗑 Phase supprimée');
-}
-
-/* ---- rendu ---- */
-function rmCard(p, i, n){
-  const cls = 'p' + ((i % 4) + 1);
-  const etapes = (p.tasks || []).map(t =>
-    '<li><span>' + glEsc(t.emoji) + '</span>' + glEsc(t.text) + '</li>').join('');
-  return '<div class="phase-card ' + cls + '">' +
-    '<div class="ph-head">' +
-      '<div>' +
-        '<div class="ph-label">Phase ' + (i+1) + (p.stage ? ' · ' + glEsc(p.stage) : '') + '</div>' +
-        '<div class="ph-title">' + glEsc(p.title) + '</div>' +
-      '</div>' +
-      '<div class="ph-period">' + glEsc(p.period || '') + '</div>' +
-      '<div class="ph-tools">' +
-        '<button onclick="rmMove(\'' + p.id + '\',-1)" title="Monter cette phase"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
-        '<button onclick="rmMove(\'' + p.id + '\',1)" title="Descendre cette phase"' + (i === n-1 ? ' disabled' : '') + '>↓</button>' +
-        '<button onclick="rmOpen(\'' + p.id + '\')" title="Modifier cette phase">✏️</button>' +
-      '</div>' +
-    '</div>' +
-    (etapes ? '<ul class="ph-tasks">' + etapes + '</ul>' : '') +
-    (p.goal ? '<div class="ph-goal">' + glEsc(p.goal) + '</div>' : '') +
-  '</div>';
-}
-function rmForm(p){
-  const isNew = !p;
-  const v = p || { stage:'', title:'', period:'', goal:'', tasks:[] };
-  return '<div class="tk-form">' +
-    '<div class="gl-field"><label>Titre de la phase</label>' +
-      '<input id="rm-title" value="' + glEsc(v.title) + '" placeholder="Ex : 🏦 Débloquer le levier"></div>' +
-    '<div class="gl-grid2">' +
-      '<div class="gl-field"><label>Horizon</label>' +
-        '<input id="rm-stage" value="' + glEsc(v.stage) + '" placeholder="Ex : Court terme"></div>' +
-      '<div class="gl-field"><label>Période</label>' +
-        '<input id="rm-period" value="' + glEsc(v.period) + '" placeholder="Ex : Maintenant → déc. 2026"></div>' +
-    '</div>' +
-    '<div class="gl-field"><label>Les étapes — une par ligne</label>' +
-      '<textarea id="rm-tasks" placeholder="📄 Monter le dossier de prêt&#10;🏦 Débloquer les fonds" oninput="glAutoGrow(this)">' + glEsc(rmTasksToText(v)) + '</textarea></div>' +
-    '<div class="gl-field"><label>Objectif de la phase</label>' +
-      '<input id="rm-goal" value="' + glEsc(v.goal) + '" placeholder="Ex : 🎯 Les fonds sont débloqués"></div>' +
-    '<div class="gl-actions">' +
-      '<button class="gl-btn primary" onclick="rmSaveForm()">' + (isNew ? '✓ Ajouter la phase' : '✓ Enregistrer') + '</button>' +
-      (isNew ? '' : '<button class="gl-btn" onclick="rmDelete()">🗑 Supprimer</button>') +
-      '<button class="gl-btn" onclick="rmCancel()">Annuler</button>' +
-    '</div>' +
-  '</div>';
-}
-function rmRender(){
-  const w = document.getElementById('goal-roadmap-wrap'); if(!w) return;
-  const n = rmPhases.length;
-  const corps = n
-    ? rmPhases.map((p, i) => rmEditing === p.id ? rmForm(p) : rmCard(p, i, n))
-              .join('<div class="arrow">↓</div>')
-    : '<div class="gl-empty">Ta feuille de route est vide. Ajoute ta première phase ci-dessous.</div>';
-  w.innerHTML = '<div class="card-title">🗺 Ma feuille de route <div class="line"></div></div>' +
-    corps +
-    (rmEditing === 'new' ? rmForm(null)
-                         : '<button class="tk-add" onclick="rmOpen(\'new\')">+ Ajouter une phase</button>');
-  const ta = document.getElementById('rm-tasks'); if(ta) glAutoGrow(ta);
-  if(typeof wrapEmojis === 'function') wrapEmojis(w);
-}
-
 /* ============ PARCOURS D'ACCUEIL ============
    Le principe est celui d'Opal : au lieu de promettre, on montre le chiffre
    de la personne. Opal affiche les heures perdues à scroller ; ici on affiche
@@ -4477,13 +4235,13 @@ function calDelete(){
 
 function glRenderAll(){
   renderWelcome();
-  glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes(); rmRender();
+  glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
   if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
 }
 
 /* compatibilité : anciens points d'appel */
 function updateCountdown(){ glRenderHero(); }
-function loadCashProgress(){ glBootstrap(); rmLoad(); glRenderAll(); }
+function loadCashProgress(){ glBootstrap(); glRenderAll(); }
 
 /* ============ PLAN 30 JOURS ============ */
 /* La date de départ appartient à chacun : elle est posée au premier passage
@@ -5281,7 +5039,6 @@ const NOTIF_TYPES = [
   { key:'tasks',  icon:'✅', label:'Rappel tâches du midi',  defHour:12, title:'✅ Mon Espace — Tâches du jour',       bodyFn: ()=>'Tu as des tâches à accomplir aujourd\'hui. Ouvre l\'app pour les voir !' },
   { key:'habits', icon:'🔥', label:'Rappel habitudes',       defHour:18, title:'🔥 Mon Espace — Habitudes du soir',   bodyFn: ()=>'As-tu coché toutes tes habitudes d\'aujourd\'hui ?' },
   { key:'pm',     icon:'📓', label:'Journal du soir',        defHour:21, title:'📓 Mon Espace — Journal du soir',     bodyFn: ()=>'C\'est l\'heure de ton bilan. Prends 5 minutes pour toi.' },
-  { key:'capture',icon:'🎥', label:'Capture vidéo du jour',  defHour:22, title:'🎥 Overly — Ta capture du jour',      bodyFn: ()=> capDoneToday && capDoneToday() ? '✅ Déjà filmée aujourd\'hui — bien joué !' : '2 min face caméra sur ta journée. Les images d\'aujourd\'hui ne se refilmeront jamais.' },
   { key:'sleep',  icon:'🌙', label:'Heure de dormir',        defHour:22, title:'🌙 Overly — Il est l\'heure',         bodyFn: ()=>'Lance ton suivi de sommeil et va te coucher. Ton corps te dira merci demain.' },
 ];
 function renderNotifSettings(){
@@ -5753,7 +5510,6 @@ function rpgQuests(){
   return [
     {ic:'✅', name:'Terminer les '+T_TOTAL+' tâches du jour', xp:50, done:!!xpDay['quest-alltasks'], prog:Math.min(tasksDone,T_TOTAL)+'/'+T_TOTAL},
     {ic:'🔥', name:'Valider 3 habitudes', xp:30, done:!!xpDay['quest-3habits'], prog:Math.min(habitsDone,3)+'/3'},
-    {ic:'🎥', name:'Filmer ma capture du jour', xp:15, done:!!xpDay['capture'], prog:xpDay['capture']?'1/1':'0/1'},
     {ic:'📓', name:'Écrire dans le journal', xp:20, done:!!xpDay['journal'], prog:xpDay['journal']?'1/1':'0/1'},
     {ic:'😴', name:'Logger ma nuit de sommeil', xp:10, done:!!xpDay['sleep'], prog:xpDay['sleep']?'1/1':'0/1'}
   ];
@@ -5789,9 +5545,11 @@ function initRpg(){
   renderRpg();
 }
 
-/* ============ HABIT TRACKER (grille mensuelle, style AB Academy) ============ */
-const HT_DEFAULT = ['Sleep 8h','Drink water','Daily push ups','Read 10 pages of my book','Visualisation','minimum 1 ab academy youtube video','minimum 1 ab academy skool video','learn about the jewelery game','writte 3 priorities for tmrw','Record 1 video for content'];
-const HT_MIGRATE = {'Dormir 8h':'Sleep 8h','Boire de l\'eau':'Drink water','Pompes du jour':'Daily push ups','Lire 10 pages':'Read 10 pages of my book','1 vidéo YouTube AB Academy':'minimum 1 ab academy youtube video','1 vidéo Skool AB Academy':'minimum 1 ab academy skool video','Apprendre le game de la joaillerie':'learn about the jewelery game','Écrire 3 priorités pour demain':'writte 3 priorities for tmrw','Filmer 1 vidéo de contenu':'Record 1 video for content'};
+/* ============ HABIT TRACKER (grille mensuelle) ============ */
+/* Aucune habitude par défaut : la grille démarre vide, chacun ajoute les
+   siennes avec le champ sous le tableau. Les libellés étaient les miens,
+   references a une academie ou les autres ne sont pas inscrits. */
+const HT_DEFAULT = [];
 let htHabits = [];
 let htData = {};        // { "YYYY-M": { habitIdx: { day: 1 } } }
 let htCursor = null;    // {y, m}  m = 0-11
@@ -5809,10 +5567,6 @@ function htDaysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
 function htEnsure(y,m){ const k=htMonKey(y,m); if(!htData[k]) htData[k]={}; return htData[k]; }
 function htLoad(){
   try{ htHabits = JSON.parse(loadKey('ht_habits')||'null') || HT_DEFAULT.slice(); }catch(e){ htHabits = HT_DEFAULT.slice(); }
-  // migration FR -> EN des libellés d'habitudes
-  let changed = false;
-  htHabits = htHabits.map(h=>{ if(HT_MIGRATE[h]){ changed = true; return HT_MIGRATE[h]; } return h; });
-  if(changed) saveKey('ht_habits', JSON.stringify(htHabits));
   try{ htData = JSON.parse(loadKey('ht_data')||'{}'); }catch(e){ htData = {}; }
   const n = new Date();
   htCursor = {y:n.getFullYear(), m:n.getMonth()};
@@ -6097,134 +5851,8 @@ function htCheckPerfectDay(){
   saveKey(flag,'1');
   addXp('ht-perfectday', 40);
   showToast('🏆 PERFECT DAY — all habits checked!');
-  setTimeout(()=>showToast('📸 Screenshot your tracker for the AB Academy Skool!'), 1400);
 }
 function initTracker(){ htLoad(); renderTracker(); }
-
-/* ============ CAPTURE VIDÉO QUOTIDIENNE ============ */
-let capBatch = [];
-let capTimerInt = null, capTimerLeft = 120;
-function capSaveDraft(){
-  saveKey('cap_draft_'+todayISO(), JSON.stringify({
-    q1:document.getElementById('cap-q1').value,
-    q2:document.getElementById('cap-q2').value,
-    q3:document.getElementById('cap-q3').value
-  }));
-}
-function capLoadDraft(){
-  let d = {};
-  try{ d = JSON.parse(loadKey('cap_draft_'+todayISO())||'{}'); }catch(e){}
-  const e1=document.getElementById('cap-q1'), e2=document.getElementById('cap-q2'), e3=document.getElementById('cap-q3');
-  if(e1) e1.value = d.q1||''; if(e2) e2.value = d.q2||''; if(e3) e3.value = d.q3||'';
-}
-function capDoneToday(){ return capBatch.some(c=>c.date===todayISO()); }
-function renderCapToday(){
-  const wrap = document.getElementById('cap-today-body');
-  if(!wrap) return;
-  const streak = capStreak();
-  if(capDoneToday()){
-    wrap.innerHTML = `<div class="cap-done-box">✅ Capture faite aujourd'hui !<br><span style="font-size:11px;color:var(--muted);">🔥 ${streak} jour${streak>1?'s':''} d'affilée — ne casse pas la chaîne</span></div>`;
-  } else {
-    wrap.innerHTML = `
-      <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Le seul geste vraiment quotidien : 2 min face caméra sur ta journée. Même crevé à 23h. Les images d'aujourd'hui ne se refilmeront jamais.${streak>0?'<br>🔥 <b>'+streak+' jour'+(streak>1?'s':'')+'</b> d\'affilée — tiens la chaîne !':''}</div>
-      <button class="cap-rec" onclick="capMarkDone()">🎥 J'ai filmé ma capture — +15 XP</button>`;
-  }
-}
-function capMarkDone(){
-  if(capDoneToday()) return;
-  capBatch.unshift({id:Date.now(), date:todayISO(), status:'captured'});
-  saveKey('cap_batch', JSON.stringify(capBatch));
-  addXp('capture', 15);
-  showToast('🎥 Capture validée — la chaîne continue !');
-  renderCapToday();
-  renderCapBatch();
-}
-function capStreak(){
-  const days = capBatch.map(c=>c.date);
-  let streak = 0;
-  let cur = new Date();
-  if(!days.includes(todayISO())) cur.setDate(cur.getDate()-1);
-  for(let i=0;i<400;i++){
-    const iso = cur.toISOString().slice(0,10);
-    if(days.includes(iso)){ streak++; cur.setDate(cur.getDate()-1); }
-    else break;
-  }
-  return streak;
-}
-const CAP_FLOW = {captured:{lb:'📹 Capturée',next:'edited'}, edited:{lb:'✂️ Montée',next:'posted'}, posted:{lb:'✅ Postée',next:'captured'}};
-function capCycle(id){
-  const c = capBatch.find(x=>x.id===id);
-  if(!c) return;
-  c.status = CAP_FLOW[c.status].next;
-  saveKey('cap_batch', JSON.stringify(capBatch));
-  if(c.status==='posted') showToast('🚀 Postée — bravo !');
-  renderCapBatch();
-}
-function capDel(id, ev){
-  ev.stopPropagation();
-  capBatch = capBatch.filter(x=>x.id!==id);
-  saveKey('cap_batch', JSON.stringify(capBatch));
-  renderCapToday(); renderCapBatch();
-}
-function renderCapBatch(){
-  const list = document.getElementById('cap-batch-list');
-  if(!list) return;
-  if(!capBatch.length){ list.innerHTML = '<div style="font-size:11px;color:var(--muted3);font-style:italic;text-align:center;padding:8px 0;">Aucune capture encore. Filme ta première aujourd\'hui !</div>'; return; }
-  const cls = {captured:'captured', edited:'edited', posted:'posted'};
-  list.innerHTML = capBatch.slice(0,30).map(c=>{
-    const f = CAP_FLOW[c.status];
-    return `<div class="cap-batch-row" onclick="capCycle(${c.id})">
-      <span style="font-size:14px;">🎬</span>
-      <span class="cap-b-date">${c.date===todayISO()?"Aujourd'hui":c.date}</span>
-      <span class="cap-b-tag ${cls[c.status]}">${f.lb}</span>
-      <button class="shop-del" onclick="capDel(${c.id},event)">✕</button>
-    </div>`;
-  }).join('');
-}
-function capToggleTimer(){
-  const btn = document.getElementById('cap-timer-btn');
-  const disp = document.getElementById('cap-timer');
-  if(capTimerInt){
-    clearInterval(capTimerInt); capTimerInt=null;
-    disp.classList.remove('running');
-    btn.textContent='▶️ Lancer le minuteur';
-    return;
-  }
-  capTimerLeft = 120;
-  disp.classList.add('running');
-  btn.textContent='⏸️ Stop';
-  const tick = ()=>{
-    const m = Math.floor(capTimerLeft/60), s = capTimerLeft%60;
-    disp.textContent = m+':'+(s<10?'0':'')+s;
-    if(capTimerLeft<=0){
-      clearInterval(capTimerInt); capTimerInt=null;
-      disp.classList.remove('running');
-      btn.textContent='▶️ Relancer';
-      showToast('⏱️ 2 minutes écoulées — coupe et valide ta capture !');
-      return;
-    }
-    capTimerLeft--;
-  };
-  tick();
-  capTimerInt = setInterval(tick, 1000);
-}
-function initCapture(){
-  try{ capBatch = JSON.parse(loadKey('cap_batch')||'[]'); }catch(e){ capBatch = []; }
-  capLoadDraft();
-  renderCapToday();
-  renderCapBatch();
-  initScripts();
-}
-function switchCapTab(tab){
-  ['daily','scripts','notes'].forEach(k=>{
-    const pane = document.getElementById(k==='daily'?'cap-daily-section':k==='scripts'?'cap-scripts-section':'cap-notes-section');
-    if(pane) pane.style.display = tab===k ? '' : 'none';
-    const btn = document.getElementById('captab-'+k);
-    if(btn) btn.classList.toggle('active', tab===k);
-  });
-  if(tab==='scripts'){ scrCloseEditor(); renderScrList(); }
-  if(tab==='notes'){ nmRender(); }
-}
 
 /* ===== CE QUE JE REMARQUE — analyse des données réelles =====
    Aucune formule creuse : chaque observation est calculée à partir de ce qui
@@ -6606,328 +6234,6 @@ function intRender(){
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
 
-/* ===== NOTE À MOI-MÊME — script vidéo quotidien =====
-   Le principe : on ne remplit pas le script en premier. On vide sa journée en
-   trois questions, puis le script se pré-remplit à partir des réponses.
-   Les phrases entre guillemets sont fixes : elles ne sont ni modifiables ni
-   stockées, elles servent de repères à lire pendant le tournage. */
-const NM_STATUS = [
-  { k:'brouillon', l:'Brouillon', e:'📝' },
-  { k:'tournee',   l:'Tournée',   e:'🎬' },
-  { k:'publiee',   l:'Publiée',   e:'🚀' }
-];
-/* Notes de réserve, pour les jours où la question 3 ne donne rien. */
-const NM_RESERVE = [
-  "Ce que j'ai cru faire gagner du temps aujourd'hui, et qui m'en a coûté.",
-  "La tâche que je repousse depuis plusieurs jours — et ce que ça dit.",
-  "Une chose que je croyais compliquée et qui a pris dix minutes.",
-  "Le moment où j'ai voulu abandonner aujourd'hui, et ce qui m'a fait continuer.",
-  "Ce que j'aurais dit à quelqu'un qui débute, en une phrase.",
-  "La différence entre ce que j'avais prévu ce matin et ce que j'ai vraiment fait.",
-  "Un détail que personne ne verra dans la vidéo mais qui a tout changé."
-];
-let nmNotes = [];
-let nmView = 'list';     /* 'list' | 'capture' | 'script' */
-let nmCurrent = null;
-let nmReserveOpen = false;
-
-function nmLoad(){
-  try { nmNotes = JSON.parse(loadKey('notes_mm') || '[]') || []; } catch(e){ nmNotes = []; }
-}
-function nmSave(){ saveKey('notes_mm', JSON.stringify(nmNotes)); }
-function nmGet(id){ return nmNotes.find(n => n.id === id); }
-function nmCur(){ return nmGet(nmCurrent); }
-function nmNextNum(){ return nmNotes.reduce((m,n)=>Math.max(m, n.num||0), 0) + 1; }
-function nmPrefix(num){ return 'Note à moi-même #' + num + ' — '; }
-function nmLaunchUsed(){ return nmNotes.some(n => n.launch); }
-function nmStatus(k){ return NM_STATUS.find(s=>s.k===k) || NM_STATUS[0]; }
-
-function nmNew(){
-  const num = nmNextNum();
-  nmNotes.unshift({
-    id: 'nm' + Date.now().toString(36), num, date: todayISO(), status: 'brouillon',
-    title: nmPrefix(num), q1:'', q2:'', q3:'',
-    hook:'', thing1:'', thing2:'', thing3:'', block:'',
-    note:'', source:'', application:'', broll:"j'écris la note dans le carnet",
-    launch:false, launchText:'', generated:false
-  });
-  nmCurrent = nmNotes[0].id; nmView = 'capture';
-  nmSave(); nmRender();
-}
-function nmOpen(id){
-  const n = nmGet(id); if(!n) return;
-  nmCurrent = id; nmView = n.generated ? 'script' : 'capture';
-  nmRender();
-}
-function nmBack(){ nmView = 'list'; nmCurrent = null; nmReserveOpen = false; nmRender(); }
-function nmSet(field, val){
-  const n = nmCur(); if(!n) return;
-  n[field] = val; nmSave();
-  /* on ne redessine pas : cela ferait perdre le curseur pendant la saisie */
-}
-function nmSetAndRender(field, val){ nmSet(field, val); nmRender(); }
-function nmDelete(id){
-  const n = nmGet(id); if(!n) return;
-  if(!confirm('Supprimer la note n°' + n.num + ' ?\n\nLes numéros des autres notes ne changent pas.')) return;
-  nmNotes = nmNotes.filter(x => x.id !== id);
-  if(nmCurrent === id) nmBack(); else nmRender();
-  nmSave(); showToast('🗑 Note supprimée');
-}
-/* Cœur de l'outil : les réponses aux questions 2 et 3 alimentent le script. */
-function nmGenerate(){
-  const n = nmCur(); if(!n) return;
-  if(!String(n.block||'').trim() && n.q2) n.block = n.q2;
-  if(!String(n.note||'').trim()  && n.q3) n.note  = n.q3;
-  n.generated = true; nmView = 'script';
-  nmSave(); nmRender();
-  showToast('📓 Script pré-rempli depuis tes réponses');
-}
-function nmToggleReserve(){ nmReserveOpen = !nmReserveOpen; nmRender(); }
-function nmUseReserve(i){
-  const n = nmCur(); if(!n) return;
-  n.note = NM_RESERVE[i]; nmReserveOpen = false;
-  nmSave(); nmRender();
-}
-
-/* Texte complet, phrases fixes et champs enchaînés, pour la vue tournage. */
-function nmFullScript(n){
-  const l = [];
-  l.push(['fixe', 'Note à moi-même, numéro ' + n.num + '.']);
-  if(n.hook) l.push(['champ', n.hook]);
-  l.push(['fixe', 'Restez jusqu’à la fin, c’est là que j’écris la note.']);
-  [n.thing1, n.thing2, n.thing3].forEach(t => { if(t) l.push(['champ', t]); });
-  if(n.block) l.push(['champ', n.block]);
-  if(n.launch && n.launchText) l.push(['champ', n.launchText]);
-  l.push(['fixe', 'Avant de vous laisser — note à moi-même, numéro ' + n.num + '.']);
-  if(n.note) l.push(['champ', n.note]);
-  if(n.source) l.push(['champ', n.source]);
-  if(n.application) l.push(['champ', n.application]);
-  l.push(['fixe', 'Voilà. Si ça vous sert à vous aussi, tant mieux. À demain.']);
-  return l;
-}
-function nmTeleprompt(id){
-  const n = nmGet(id) || nmCur(); if(!n) return;
-  const ov = document.getElementById('nm-tele');
-  document.getElementById('nm-tele-body').innerHTML =
-    `<div class="nm-tele-num">n°${n.num}</div>` +
-    nmFullScript(n).map(([t,txt]) =>
-      `<p class="nm-tele-line ${t==='fixe'?'fixe':''}">${glEsc(txt)}</p>`).join('');
-  ov.classList.add('open');
-}
-function nmTelepromptClose(){ document.getElementById('nm-tele').classList.remove('open'); }
-
-/* ---- rendu ---- */
-function nmChamp(label, field, val, ph, rows){
-  return `<div class="nm-field">
-    <label>${glEsc(label)}</label>
-    <textarea rows="${rows||2}" placeholder="${glEsc(ph||'')}" oninput="glAutoGrow(this);nmSet('${field}',this.value)">${glEsc(val||'')}</textarea>
-  </div>`;
-}
-function nmFixe(txt){ return `<p class="nm-fixe">« ${glEsc(txt)} »</p>`; }
-function nmHint(txt){ return `<p class="nm-hint">${glEsc(txt)}</p>`; }
-
-function nmRenderList(){
-  const parNum = [...nmNotes].sort((a,b)=>b.num-a.num);
-  return `<button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="nmNew()">+ Nouvelle note à moi-même</button>
-  ${parNum.length ? parNum.map(n=>{
-    const s = nmStatus(n.status);
-    const titre = String(n.title||'').replace(nmPrefix(n.num),'').trim();
-    return `<div class="nm-row" onclick="nmOpen('${n.id}')">
-      <div class="nm-row-num">${n.num}</div>
-      <div class="nm-row-body">
-        <div class="nm-row-title">${glEsc(titre || n.hook || 'Sans titre')}</div>
-        <div class="nm-row-meta">${glDateFR(n.date)} · ${s.e} ${s.l}</div>
-      </div>
-      <button class="nm-row-del" onclick="event.stopPropagation();nmDelete('${n.id}')" title="Supprimer">🗑</button>
-    </div>`;
-  }).join('') : '<div class="gl-empty">Aucune note pour le moment.<br>La première portera le n°1.</div>'}`;
-}
-
-function nmRenderCapture(n){
-  return `<div class="nm-head">
-      <button class="nm-back" onclick="nmBack()">← Historique</button>
-      <span class="nm-badge">n°${n.num}</span>
-    </div>
-    <div class="card">
-      <div class="card-title">📓 Vider ma journée <div class="line"></div></div>
-      <p class="nm-hint">Trois questions, en vrac. Le script se remplira ensuite tout seul à partir de tes réponses.</p>
-      ${nmChamp("Qu'est-ce que j'ai fait aujourd'hui ?", 'q1', n.q1, 'en vrac, sans trier, sans faire de phrases.', 4)}
-      ${nmChamp("Qu'est-ce qui n'a pas marché, ou qu'est-ce que je ne sais pas encore ?", 'q2', n.q2, 'le truc, c’est que… / ce que je ne sais pas encore, c’est…', 3)}
-      ${nmChamp("Qu'est-ce que j'ai compris que je ne savais pas hier ?", 'q3', n.q3, 'ça n’a pas besoin d’être une grande leçon.', 3)}
-      <button class="btn-primary" style="width:100%;margin-top:6px;" onclick="nmGenerate()">Générer le script →</button>
-    </div>`;
-}
-
-function nmRenderScript(n){
-  const s = nmStatus(n.status);
-  const lancement = n.launch || !nmLaunchUsed();
-  return `<div class="nm-head">
-      <button class="nm-back" onclick="nmBack()">← Historique</button>
-      <span class="nm-badge">n°${n.num}</span>
-      <select class="nm-status" onchange="nmSetAndRender('status',this.value)">
-        ${NM_STATUS.map(x=>`<option value="${x.k}"${x.k===n.status?' selected':''}>${x.e} ${x.l}</option>`).join('')}
-      </select>
-    </div>
-
-    <div class="card">
-      <div class="nm-field"><label>Titre de la vidéo</label>
-        <input id="nm-title" value="${glEsc(n.title)}" oninput="nmSet('title',this.value)"></div>
-      <div class="gl-actions">
-        <button class="gl-btn primary" onclick="nmTeleprompt('${n.id}')">🎬 Vue tournage</button>
-        <button class="gl-btn" onclick="nmView='capture';nmRender()">← Revoir mes 3 réponses</button>
-      </div>
-    </div>
-
-    <div class="card nm-bloc">
-      <div class="card-title">🎯 Accroche <span class="nm-duree">15 sec</span><div class="line"></div></div>
-      ${nmFixe('Note à moi-même, numéro ' + n.num + '.')}
-      ${nmChamp('Le truc le plus fort de la journée, en une phrase', 'hook', n.hook, '', 2)}
-      ${nmFixe('Restez jusqu’à la fin, c’est là que j’écris la note.')}
-      ${nmHint('Pas de « salut à tous, bienvenue sur ma chaîne » — on rentre direct.')}
-    </div>
-
-    <div class="card nm-bloc">
-      <div class="card-title">📅 La journée <span class="nm-duree">3 à 5 min</span><div class="line"></div></div>
-      ${nmChamp('Chose 1', 'thing1', n.thing1, '', 2)}
-      ${nmChamp('Chose 2', 'thing2', n.thing2, '', 2)}
-      ${nmChamp('Chose 3 (facultatif)', 'thing3', n.thing3, '', 2)}
-      ${nmChamp('Le blocage du jour', 'block', n.block, 'repris de ta réponse à la question 2', 3)}
-      ${nmHint('Pour chaque chose : ce que j’ai fait → ce qui s’est passé. Le blocage est obligatoire.')}
-    </div>
-
-    ${lancement ? `<div class="card nm-bloc">
-      <div class="card-title">🚀 Vidéo de lancement <div class="line"></div></div>
-      <label class="nm-switch"><input type="checkbox" ${n.launch?'checked':''} onchange="nmSetAndRender('launch',this.checked)"> Insérer le bloc « j'explique le concept »</label>
-      ${n.launch ? nmChamp('Le concept, expliqué une bonne fois', 'launchText', n.launchText, 'pourquoi je documente, une vidéo par jour, et ce que ça donnera', 4) : ''}
-      ${nmHint(nmLaunchUsed() && !n.launch ? 'Déjà utilisé sur une autre note.' : 'À n’utiliser que pour la toute première vidéo. Ensuite l’option disparaît.')}
-    </div>` : ''}
-
-    <div class="card nm-bloc">
-      <div class="card-title">📓 La note <span class="nm-duree">60 à 90 sec</span><div class="line"></div></div>
-      ${nmFixe('Avant de vous laisser — note à moi-même, numéro ' + n.num + '.')}
-      ${nmChamp('La note, en une phrase', 'note', n.note, 'reprise de ta réponse à la question 3', 2)}
-      <button class="nm-reserve-btn" onclick="nmToggleReserve()">💡 Je sèche — voir les notes de réserve</button>
-      ${nmReserveOpen ? `<div class="nm-reserve">${NM_RESERVE.map((r,i)=>
-        `<button class="nm-reserve-item" onclick="nmUseReserve(${i})">${glEsc(r)}</button>`).join('')}</div>` : ''}
-      ${nmChamp("D'où ça sort (le fait concret d'aujourd'hui)", 'source', n.source, '', 2)}
-      ${nmChamp('Pour toi qui regardes — une seule application', 'application', n.application, '', 2)}
-      ${nmChamp('B-roll / notes de tournage', 'broll', n.broll, '', 2)}
-    </div>
-
-    <div class="card nm-bloc">
-      <div class="card-title">🏁 Fermeture <span class="nm-duree">5 sec</span><div class="line"></div></div>
-      ${nmFixe('Voilà. Si ça vous sert à vous aussi, tant mieux. À demain.')}
-      ${nmHint('Rien après. Pas d’outro.')}
-    </div>`;
-}
-
-function nmRender(){
-  const w = document.getElementById('nm-wrap'); if(!w) return;
-  if(!nmNotes.length && nmView !== 'list' ) nmView = 'list';
-  const n = nmCur();
-  if(nmView === 'list' || !n) w.innerHTML = nmRenderList();
-  else if(nmView === 'capture') w.innerHTML = nmRenderCapture(n);
-  else w.innerHTML = nmRenderScript(n);
-  w.querySelectorAll('textarea').forEach(glAutoGrow);
-  if(typeof wrapEmojis === 'function') wrapEmojis(w);
-}
-
-/* ===== CONSTRUCTEUR DE SCRIPTS ===== */
-const SCR_FORMATS = [{k:'short',l:'⚡ Short (<60s)'},{k:'moyenne',l:'🎬 Moyenne (3-8min)'},{k:'longue',l:'🎥 Longue (10min+)'}];
-const SCR_STATUS = [{k:'idee',l:'Idée'},{k:'afilmer',l:'À filmer'},{k:'filme',l:'Filmé'},{k:'monte',l:'Monté'},{k:'poste',l:'Posté'}];
-const SCR_STATUS_L = {idee:'Idée',afilmer:'À filmer',filme:'Filmé',monte:'Monté',poste:'Posté'};
-const SCR_FMT_L = {short:'SHORT',moyenne:'MOYENNE',longue:'LONGUE'};
-let scripts = [];
-let scrCurrentId = null;
-function scrFields(){ return ['title','goal','audience','hook','intro','points','story','cta','broll']; }
-function initScripts(){
-  try{ scripts = JSON.parse(loadKey('cap_scripts')||'[]'); }catch(e){ scripts = []; }
-  renderScrList();
-}
-function renderScrList(){
-  const list = document.getElementById('scr-list');
-  if(!list) return;
-  if(!scripts.length){
-    list.innerHTML = '<div style="font-size:12px;color:var(--muted3);font-style:italic;text-align:center;padding:16px 0;">Aucun script. Crée ton premier — juste assez pour savoir de quoi tu parles, sans sur-scripter.</div>';
-    return;
-  }
-  list.innerHTML = scripts.map(s=>{
-    const nbPoints = (s.points||'').split('\n').filter(x=>x.trim()).length;
-    return `<div class="scr-card" onclick="scrOpen(${s.id})">
-      <div class="scr-card-top">
-        <span class="scr-card-title">${escapeHtml(s.title||'Script sans titre')}</span>
-        <span class="scr-fmt">${SCR_FMT_L[s.format]||'—'}</span>
-      </div>
-      <div class="scr-card-meta">${s.goal?escapeHtml(s.goal):'<span style=\"color:var(--muted3)\">But non défini</span>'}</div>
-      <div style="display:flex;align-items:center;gap:8px;margin-top:7px;">
-        <span class="scr-status ${s.status||'idee'}">${SCR_STATUS_L[s.status]||'Idée'}</span>
-        <span style="font-size:9px;color:var(--muted2);">${nbPoints} point${nbPoints>1?'s':''}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-function scrRenderSegs(){
-  document.getElementById('scr-format').innerHTML = SCR_FORMATS.map(f=>`<button data-k="${f.k}" onclick="scrPickFormat('${f.k}')">${f.l}</button>`).join('');
-  document.getElementById('scr-statusseg').innerHTML = SCR_STATUS.map(s=>`<button data-k="${s.k}" onclick="scrPickStatus('${s.k}')">${s.l}</button>`).join('');
-}
-let scrDraftFormat = 'moyenne', scrDraftStatus = 'idee';
-function scrPickFormat(k){ scrDraftFormat = k; document.querySelectorAll('#scr-format button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
-function scrPickStatus(k){ scrDraftStatus = k; document.querySelectorAll('#scr-statusseg button').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
-function scrGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
-function scrAutosizeAll(){ document.querySelectorAll('#scr-editor .scr-ta').forEach(t=>{ t.oninput=()=>scrGrow(t); scrGrow(t); }); }
-function scrShowEditor(){
-  document.getElementById('scr-list-view').style.display = 'none';
-  document.getElementById('scr-editor').style.display = '';
-  scrRenderSegs();
-}
-function scrCloseEditor(){
-  document.getElementById('scr-editor').style.display = 'none';
-  document.getElementById('scr-list-view').style.display = '';
-}
-function scrNew(){
-  scrCurrentId = null;
-  scrDraftFormat = 'moyenne'; scrDraftStatus = 'idee';
-  scrShowEditor();
-  scrFields().forEach(f=> document.getElementById('scr-'+f).value = '');
-  scrPickFormat('moyenne'); scrPickStatus('idee');
-  scrAutosizeAll();
-  window.scrollTo(0,0);
-}
-function scrOpen(id){
-  const s = scripts.find(x=>x.id===id);
-  if(!s) return;
-  scrCurrentId = id;
-  scrShowEditor();
-  scrFields().forEach(f=> document.getElementById('scr-'+f).value = s[f]||'');
-  scrPickFormat(s.format||'moyenne'); scrPickStatus(s.status||'idee');
-  scrAutosizeAll();
-  window.scrollTo(0,0);
-}
-function scrSave(){
-  const data = {format:scrDraftFormat, status:scrDraftStatus};
-  scrFields().forEach(f=> data[f] = document.getElementById('scr-'+f).value.trim());
-  if(!data.title){ showToast('⚠️ Donne un titre à ton script'); return; }
-  if(scrCurrentId){
-    const i = scripts.findIndex(x=>x.id===scrCurrentId);
-    if(i>=0) scripts[i] = Object.assign({}, scripts[i], data);
-  } else {
-    data.id = Date.now();
-    scripts.unshift(data);
-  }
-  saveKey('cap_scripts', JSON.stringify(scripts));
-  renderScrList();
-  scrCloseEditor();
-  showToast('🎬 Script enregistré !');
-}
-function scrDelete(){
-  if(!scrCurrentId){ scrCloseEditor(); return; }
-  if(!confirm('Supprimer ce script ?')) return;
-  scripts = scripts.filter(x=>x.id!==scrCurrentId);
-  saveKey('cap_scripts', JSON.stringify(scripts));
-  renderScrList();
-  scrCloseEditor();
-}
-
 function initApp(){
   // Enregistrer le service worker (notifications en arrière-plan)
   if('serviceWorker' in navigator){
@@ -6953,7 +6259,6 @@ function initApp(){
   ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
   // tasks
   tasksLoad();
-  nmLoad();
   intLoad(); intRender();
   renderInsights();
   dataStats();
@@ -6968,7 +6273,6 @@ function initApp(){
   initNavTreePeeks();
   initShop();
   initRpg();
-  initCapture();
   initTracker();
   updateNavTreeActive('home','home');
   // goal
@@ -7012,6 +6316,7 @@ function initApp(){
   // notifications
   maybeShowNotifBanner();
   setupNotifications();
+  ownerLoad();
   paintIcons();
   wrapEmojis(document.body);
   /* en dernier : le parcours a besoin de l'objectif déjà chargé pour savoir
