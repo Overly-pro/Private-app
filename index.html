@@ -747,6 +747,73 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .nm-tele-line.fixe{color:var(--muted2);font-style:italic;}
 @media (max-width:899px){ .nm-tele-line{font-size:23px;} #nm-tele{padding:60px 18px 70px;} }
 
+/* ===== CALENDRIER DE LA JOURNÉE =====
+   Une grille d'heures où l'on pose des blocs : on voit la journée se remplir
+   au lieu de lire une liste sans horaire. */
+.cal-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.cal-nav{width:32px;height:32px;flex-shrink:0;border-radius:9px;border:1px solid var(--border2);background:var(--raised);color:var(--text);font-size:14px;cursor:pointer;font-family:inherit;padding:0;}
+.cal-nav:hover{border-color:var(--accent);color:var(--accent-ink);}
+.cal-date{flex:1;min-width:0;}
+.cal-date-d{font-size:14px;font-weight:800;color:var(--text-strong);text-transform:capitalize;line-height:1.2;}
+.cal-date-s{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.cal-today-btn{flex-shrink:0;padding:7px 12px;border-radius:9px;border:1px solid var(--border2);background:var(--raised);color:var(--muted2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cal-today-btn.on{border-color:var(--accent);color:var(--accent-ink);}
+
+.cal-wrap{position:relative;border:1px solid var(--border2);border-radius:12px;background:var(--surface);overflow:hidden;}
+.cal-scroll{position:relative;overflow-y:auto;max-height:62vh;}
+@media (min-width:900px){ .cal-scroll{max-height:68vh;} }
+.cal-grid{position:relative;}
+.cal-hour{position:relative;height:var(--cal-hh);border-top:1px solid var(--border);box-sizing:border-box;}
+.cal-hour:first-child{border-top:none;}
+.cal-hour::after{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px dashed rgba(var(--ink),0.06);}
+.cal-hour-lb{position:absolute;left:0;top:-1px;width:var(--cal-gut);text-align:right;padding-right:7px;font-size:9px;
+  font-family:'Space Mono',monospace;color:var(--muted3);transform:translateY(-1px);pointer-events:none;}
+.cal-slots{position:absolute;left:var(--cal-gut);right:0;top:0;bottom:0;}
+.cal-layer{position:absolute;left:var(--cal-gut);right:6px;top:0;bottom:0;pointer-events:none;}
+
+.cal-ev{position:absolute;left:0;right:0;border-radius:8px;padding:4px 7px;overflow:hidden;cursor:pointer;
+  border-left:3px solid var(--ev-col,var(--accent));background:var(--ev-bg,rgba(var(--accent-rgb),0.13));
+  pointer-events:auto;box-sizing:border-box;transition:box-shadow .15s;touch-action:none;}
+.cal-ev:hover{box-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.cal-ev.dragging{opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,0.45);z-index:30;}
+.cal-ev-t{font-size:11px;font-weight:700;color:var(--text-strong);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-ev-h{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:1px;}
+.cal-ev.done{opacity:.5;}
+.cal-ev.done .cal-ev-t{text-decoration:line-through;}
+.cal-ev-chk{position:absolute;top:3px;right:4px;width:18px;height:18px;border-radius:5px;border:1px solid var(--border2);
+  background:var(--sunken);color:var(--ok);font-size:11px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+.cal-ev.done .cal-ev-chk{background:var(--ok);color:#06240f;border-color:var(--ok);}
+.cal-ev-grip{position:absolute;left:0;right:0;bottom:0;height:9px;cursor:ns-resize;touch-action:none;}
+.cal-ev-grip::after{content:'';position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:22px;height:2px;border-radius:2px;background:rgba(var(--ink),0.28);}
+.cal-ev.short{padding-top:2px;}
+.cal-ev.short .cal-ev-h{display:none;}
+
+.cal-now{position:absolute;left:0;right:0;height:0;border-top:1.5px solid var(--accent);z-index:20;pointer-events:none;}
+.cal-now::before{content:'';position:absolute;left:calc(var(--cal-gut) - 4px);top:-4px;width:8px;height:8px;border-radius:50%;background:var(--accent);}
+
+.cal-empty{padding:22px 14px;text-align:center;font-size:11.5px;color:var(--muted3);font-style:italic;}
+.cal-tray{margin-top:10px;}
+.cal-tray-head{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted3);margin-bottom:7px;}
+.cal-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.cal-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;border:1px dashed var(--border2);
+  background:var(--sunken);color:var(--text-dim);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+.cal-chip:hover{border-color:var(--accent);color:var(--accent-ink);border-style:solid;}
+.cal-chip.new{border-color:var(--accent);color:var(--accent-ink);}
+
+/* modale d'édition */
+#cal-modal{position:fixed;inset:0;z-index:2600;background:rgba(0,0,0,0.8);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);overflow-y:auto;padding:22px 16px 40px;display:none;}
+#cal-modal.open{display:block;}
+.cal-panel{max-width:520px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:18px;}
+.cal-rep{display:flex;flex-wrap:wrap;gap:6px;}
+.cal-rep button{padding:7px 11px;border-radius:9px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+.cal-rep button.on{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
+.cal-dows{display:flex;gap:5px;margin-top:8px;}
+.cal-dows button{flex:1;padding:7px 0;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cal-dows button.on{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
+.cal-cols{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px;}
+.cal-col{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer;padding:0;}
+.cal-col.on{border-color:var(--text-strong);}
+
 /* ===== STUDIO DE BANNIÈRES =====
    Cliquer sur le GIF d'une catégorie ouvre ce panneau : choisir le visuel,
    en ajouter par lien, régler la hauteur et le cadrage. */
@@ -1242,6 +1309,7 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <div id="login-flash"></div>
 
 <!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
+<div id="cal-modal" onclick="if(event.target===this)calClose()"></div>
 <div id="gif-studio" onclick="if(event.target===this)gsClose()"></div>
 
 <div id="nm-tele">
@@ -1455,12 +1523,20 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     </div>
   </div>
 
-  <div id="tasks-list"></div>
+  <!-- Le calendrier remplace la liste : une tâche a maintenant une heure et
+       une durée. La liste reste juste en dessous, repliée, pour créer et
+       modifier les tâches non négociables elles-mêmes. -->
+  <div class="card">
+    <div class="cal-head" id="cal-head"></div>
+    <div class="cal-wrap" id="cal-wrap"></div>
+    <div class="cal-tray" id="cal-tray"></div>
+  </div>
 
-  <div class="card" style="background:var(--sunken);">
-    <div class="card-title">⚡ Hebdomadaire <div class="line"></div></div>
-    <div style="font-size:13px;font-weight:600;color:var(--text-dim);">Alimenter les 4 playlists YouTube du plan 30 jours</div>
-    <div style="font-size:11px;color:var(--muted2);margin-top:2px;">20 min · 1 fois par semaine — mindset, manifestation, productivité, développement personnel</div>
+  <div class="gl-fold" id="tasks-fold">
+    <button class="gl-fold-head" onclick="toggleTasksList()">📋 Mes tâches non négociables<span class="gl-fold-chev">▼</span></button>
+    <div class="gl-fold-body">
+      <div id="tasks-list"></div>
+    </div>
   </div>
 
   <div class="reset-bar"><button class="btn-ghost" onclick="resetTasksDay()">↺ Réinitialiser la journée</button></div>
@@ -2412,7 +2488,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="nav-cat" id="stcat-today"  onclick="stSelectCat('today')"><span class="nav-cat-ic">⚡</span><span class="nav-cat-lb">Aujourd'hui</span></button>
     <button class="nav-cat" id="stcat-argent" onclick="stSelectCat('argent')"><span class="nav-cat-ic">💰</span><span class="nav-cat-lb">Argent</span></button>
     <button class="nav-cat" id="stcat-perso"  onclick="stSelectCat('perso')"><span class="nav-cat-ic">✨</span><span class="nav-cat-lb">Perso</span></button>
-    <button class="nav-cat" id="stcat-marque" onclick="stSelectCat('marque')"><span class="nav-cat-ic">💎</span><span class="nav-cat-lb">Marque</span></button>
     <button class="nav-cat" id="stcat-style"  onclick="stSelectCat('style')"><span class="nav-cat-ic">🛍️</span><span class="nav-cat-lb">Style</span></button>
     <button class="nav-cat" id="stcat-vie"    onclick="stSelectCat('vie')"><span class="nav-cat-ic">🌙</span><span class="nav-cat-lb">Vie</span></button>
   </div>
@@ -3645,6 +3720,14 @@ function renderTasks(){
   updateTaskProgress();
   if(typeof wrapEmojis === 'function') wrapEmojis(wrap);
 }
+/* La liste des non négociables reste repliée : le calendrier est la vue
+   principale, la liste sert à créer et modifier les tâches elles-mêmes. */
+let tasksFoldOpen = false;
+function toggleTasksList(){
+  tasksFoldOpen = !tasksFoldOpen;
+  const f = document.getElementById('tasks-fold');
+  if(f) f.classList.toggle('open', tasksFoldOpen);
+}
 function tkOpen(id){ tkEditing = id; renderTasks(); }
 function tkCancel(){ tkEditing = null; renderTasks(); }
 function tkSave(){
@@ -3659,15 +3742,27 @@ function tkSave(){
   } else {
     const t = tasks.find(x=>x.id===tkEditing);
     if(t){ t.name=name; t.sub=sub; t.how=how; t.section=section; }
+    /* le bloc du calendrier porte le même nom : on le suit */
+    if(typeof calEvents !== 'undefined'){
+      calEvents.filter(e=>e.taskId===tkEditing).forEach(e=>{ e.title = name; });
+      calSave();
+    }
     showToast('✅ Tâche modifiée');
   }
   tkEditing = null; tasksSave(); renderTasks();
+  if(typeof calRender === 'function') calRender();
 }
 function tkDelete(){
   const t = tasks.find(x=>x.id===tkEditing); if(!t) return;
   if(!confirm(`Supprimer « ${t.name} » ?\n\nLes journées déjà enregistrées ne sont pas modifiées.`)) return;
   tasks = tasks.filter(x=>x.id!==tkEditing);
+  /* sans ça le calendrier garderait des blocs pointant vers le vide */
+  if(typeof calEvents !== 'undefined'){
+    calEvents = calEvents.filter(e=>e.taskId!==tkEditing);
+    calSave();
+  }
   tkEditing = null; tasksSave(); renderTasks();
+  if(typeof calRender === 'function') calRender();
   showToast('🗑 Tâche supprimée');
 }
 
@@ -3714,6 +3809,8 @@ function toggleTask(id){
   if(done === T_TOTAL) showToast('🔥 Journée parfaite — '+T_TOTAL+'/'+T_TOTAL+' accompli !');
   if(taskState[id]) addXp('task-'+id, 10); else removeXp('task-'+id);
   checkQuests();
+  /* cocher dans la liste doit se voir dans le calendrier, et l'inverse */
+  if(typeof calRender === 'function' && calDate === taskRefDate) calRender();
 }
 function renderTask(id){
   const el = document.getElementById(id);
@@ -3750,6 +3847,7 @@ function resetTasksDay(){
   renderTasks();
   updateTaskProgress();
   initTaskNightBanner();
+  if(typeof calRender === 'function') calRender();
 }
 
 /* ============ OBJECTIF MODULABLE + HISTORIQUE ============
@@ -4507,6 +4605,420 @@ function renderWelcome(){
     '</div>';
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
+/* ============ CALENDRIER DE LA JOURNÉE ============
+   La liste de tâches ne disait que QUOI faire. Ici on dit aussi QUAND, et
+   combien de temps. Deux sortes de blocs cohabitent :
+   - ceux liés à une tâche non négociable (taskId) : les cocher met à jour la
+     progression, la série et les observations, exactement comme avant ;
+   - ceux créés de toutes pièces (courses, rendez-vous) : ils ne comptent pas
+     dans le score du jour, qui reste celui des non négociables.
+   La récurrence n'est pas stockée jour par jour : un bloc porte sa règle et
+   on calcule ses occurrences à l'affichage. Un an de routine = un objet. */
+const CAL_KEY = 'cal_events';
+const CAL_SNAP = 5;                    /* minutes : pas de déplacement */
+const CAL_COLORS = ['#e03535','#e08a35','#d8c341','#4fb477','#3f9ad8','#8b6fd4','#c95a9c'];
+let calEvents = [];
+let calDate = todayISO();
+let calEditing = null;                 /* id en cours d'édition, ou 'new' */
+let calDraftTask = null;               /* tâche choisie dans le bac, à placer */
+let calRepDraft = 'daily';
+let calDaysDraft = [];
+let calColorDraft = CAL_COLORS[0];
+
+const CAL_DOW = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const CAL_REPS = [
+  { id:'none',     label:'Une seule fois' },
+  { id:'daily',    label:'Tous les jours' },
+  { id:'weekdays', label:'En semaine' },
+  { id:'weekly',   label:'Certains jours' }
+];
+
+function calLoad(){
+  let raw = null;
+  try { raw = JSON.parse(loadKey(CAL_KEY) || 'null'); } catch(e){ raw = null; }
+  calEvents = Array.isArray(raw) ? raw : calSeed();
+  if(!Array.isArray(raw)) calSave();
+}
+function calSave(){ saveKey(CAL_KEY, JSON.stringify(calEvents)); }
+function calNewId(){ return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+
+/* Premier lancement : les tâches existantes sont posées à des heures
+   plausibles selon leur moment de journée, pour que la grille ne soit pas
+   vide. Tout se déplace ensuite. */
+function calSeed(){
+  /* Chaque moment de journée a son heure de départ ; à l'intérieur, les blocs
+     s'enchaînent au lieu de se superposer. */
+  const base = { matin:[7*60, 30], journee:[14*60, 45], soir:[21*60, 20] };
+  const curseur = { matin:base.matin[0], journee:base.journee[0], soir:base.soir[0] };
+  let out = [], i = 0;
+  (typeof tasks !== 'undefined' ? tasks : []).forEach(t => {
+    const sec = base[t.section] ? t.section : 'journee';
+    const dur = base[sec][1];
+    out.push({
+      id: calNewId(), taskId: t.id, title: t.name, notes: '',
+      start: calMinToHM(curseur[sec]), dur: dur, rep: 'daily', days: [],
+      date: null, from: todayISO(), color: CAL_COLORS[i++ % CAL_COLORS.length]
+    });
+    curseur[sec] += dur + 10;          /* 10 min de respiration entre deux */
+  });
+  return out;
+}
+
+/* ---- temps ---- */
+function calMinToHM(min){
+  min = Math.max(0, Math.min(24*60 - 1, Math.round(min)));
+  return String(Math.floor(min/60)).padStart(2,'0') + ':' + String(min%60).padStart(2,'0');
+}
+function calHMToMin(hm){
+  const p = String(hm||'00:00').split(':');
+  return (parseInt(p[0],10)||0) * 60 + (parseInt(p[1],10)||0);
+}
+function calDateFR(iso){
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+}
+function calShift(n){
+  const d = new Date(calDate + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  calDate = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  calRender();
+}
+function calGoToday(){ calDate = todayISO(); calRender(); }
+
+/* ---- récurrence ---- */
+function calOccursOn(ev, iso){
+  if(ev.rep === 'none') return ev.date === iso;
+  if(ev.from && iso < ev.from) return false;
+  if(ev.until && iso > ev.until) return false;
+  const dow = new Date(iso + 'T12:00:00').getDay();
+  if(ev.rep === 'daily')    return true;
+  if(ev.rep === 'weekdays') return dow >= 1 && dow <= 5;
+  if(ev.rep === 'weekly')   return (ev.days || []).indexOf(dow) !== -1;
+  return false;
+}
+function calDayEvents(iso){
+  return calEvents.filter(e => calOccursOn(e, iso))
+                  .sort((a,b) => calHMToMin(a.start) - calHMToMin(b.start));
+}
+
+/* ---- état d'avancement ----
+   Pour aujourd'hui on écrit dans le même objet que la liste de tâches, sinon
+   la progression et la série se désynchroniseraient du calendrier. */
+function calDoneId(ev){ return ev.taskId || ('ev-' + ev.id); }
+function calStateFor(iso){
+  if(iso === taskRefDate) return taskState;
+  try { return JSON.parse(loadKey(TK_STATE_PREFIX + iso) || '{}'); } catch(e){ return {}; }
+}
+function calIsDone(ev){ return !!calStateFor(calDate)[calDoneId(ev)]; }
+function calToggle(id, evt){
+  if(evt) evt.stopPropagation();
+  const ev = calEvents.find(e => e.id === id); if(!ev) return;
+  const key = calDoneId(ev);
+  if(calDate === taskRefDate){
+    /* passe par le moteur existant : progression, XP, quêtes, série */
+    if(ev.taskId && typeof toggleTask === 'function'){ toggleTask(ev.taskId); }
+    else {
+      taskState[key] = !taskState[key];
+      saveTaskState(taskState);
+    }
+  } else {
+    const st = calStateFor(calDate);
+    st[key] = !st[key];
+    saveKey(TK_STATE_PREFIX + calDate, JSON.stringify(st));
+  }
+  calRender();
+}
+
+/* ---- disposition : les blocs qui se chevauchent se partagent la largeur ---- */
+function calLayout(list){
+  const items = list.map(e => ({ ev:e, s:calHMToMin(e.start), e:calHMToMin(e.start) + Math.max(e.dur,5) }));
+  const cols = [];
+  items.forEach(it => {
+    let c = 0;
+    while(cols[c] && cols[c] > it.s) c++;
+    cols[c] = it.e;
+    it.col = c;
+  });
+  /* nombre de voisins réellement simultanés, pour ne pas rétrécir inutilement */
+  items.forEach(it => {
+    it.total = items.filter(o => o.s < it.e && o.e > it.s).reduce((m,o) => Math.max(m, o.col + 1), 1);
+  });
+  return items;
+}
+
+/* ---- rendu ---- */
+function calBounds(list){
+  let lo = 7*60, hi = 22*60;
+  list.forEach(it => { lo = Math.min(lo, calHMToMin(it.start)); hi = Math.max(hi, calHMToMin(it.start) + it.dur); });
+  return { h0: Math.max(0, Math.floor(lo/60) - 1), h1: Math.min(24, Math.ceil(hi/60) + 1) };
+}
+function calRender(){
+  const w = document.getElementById('cal-wrap'); if(!w) return;
+  const list = calDayEvents(calDate);
+  const { h0, h1 } = calBounds(list);
+  const HH = 56;                                   /* hauteur d'une heure, px */
+  const top = m => (m - h0*60) / 60 * HH;
+
+  const heures = [];
+  for(let h = h0; h < h1; h++){
+    heures.push('<div class="cal-hour" data-h="' + h + '">' +
+      '<span class="cal-hour-lb">' + String(h).padStart(2,'0') + 'h</span></div>');
+  }
+
+  const blocs = calLayout(list).map(it => {
+    const ev = it.ev, fait = calIsDone(ev);
+    const haut = Math.max(ev.dur / 60 * HH, 22);
+    const largeur = 100 / it.total, gauche = it.col * largeur;
+    const fin = calMinToHM(calHMToMin(ev.start) + ev.dur);
+    return '<div class="cal-ev' + (fait ? ' done' : '') + (haut < 34 ? ' short' : '') + '" data-ev="' + ev.id + '"' +
+      ' style="top:' + top(it.s) + 'px;height:' + haut + 'px;left:' + gauche + '%;width:calc(' + largeur + '% - 3px);' +
+      '--ev-col:' + ev.color + ';--ev-bg:' + ev.color + '26">' +
+      '<div class="cal-ev-t">' + glEsc(ev.title) + '</div>' +
+      '<div class="cal-ev-h">' + ev.start + ' – ' + fin + '</div>' +
+      '<button class="cal-ev-chk" onclick="calToggle(\'' + ev.id + '\',event)" title="Fait ?">✓</button>' +
+      '<div class="cal-ev-grip" data-grip="' + ev.id + '"></div>' +
+    '</div>';
+  }).join('');
+
+  /* trait de l'heure courante, seulement sur aujourd'hui */
+  let now = '';
+  if(calDate === todayISO()){
+    const n = new Date(), min = n.getHours()*60 + n.getMinutes();
+    if(min >= h0*60 && min <= h1*60) now = '<div class="cal-now" style="top:' + top(min) + 'px"></div>';
+  }
+
+  w.innerHTML =
+    '<div class="cal-scroll" id="cal-scroll" style="--cal-hh:' + HH + 'px;--cal-gut:44px">' +
+      '<div class="cal-grid" id="cal-grid">' + heures.join('') +
+        '<div class="cal-slots" id="cal-slots"></div>' +
+        '<div class="cal-layer">' + blocs + now + '</div>' +
+      '</div>' +
+    '</div>' +
+    (list.length ? '' : '<div class="cal-empty">Rien de prévu — touche la grille pour ajouter un moment.</div>');
+
+  calBindGrid(h0, HH);
+  calRenderHeader();
+  calRenderTray();
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
+function calRenderHeader(){
+  const h = document.getElementById('cal-head'); if(!h) return;
+  const list = calDayEvents(calDate);
+  const faits = list.filter(calIsDone).length;
+  const mins = list.reduce((s,e) => s + e.dur, 0);
+  const hstr = Math.floor(mins/60) + 'h' + (mins%60 ? String(mins%60).padStart(2,'0') : '');
+  h.innerHTML =
+    '<button class="cal-nav" onclick="calShift(-1)" title="Jour précédent">‹</button>' +
+    '<div class="cal-date"><div class="cal-date-d">' + calDateFR(calDate) + '</div>' +
+      '<div class="cal-date-s">' + list.length + ' moment' + (list.length>1?'s':'') +
+      ' · ' + hstr + ' · ' + faits + ' fait' + (faits>1?'s':'') + '</div></div>' +
+    '<button class="cal-nav" onclick="calShift(1)" title="Jour suivant">›</button>' +
+    '<button class="cal-today-btn' + (calDate===todayISO()?' on':'') + '" onclick="calGoToday()">Aujourd\'hui</button>';
+}
+/* Le bac réunit les tâches non négociables qui n'ont pas encore d'horaire. */
+function calRenderTray(){
+  const t = document.getElementById('cal-tray'); if(!t) return;
+  const placees = new Set(calEvents.map(e => e.taskId).filter(Boolean));
+  const libres = (typeof tasks !== 'undefined' ? tasks : []).filter(x => !placees.has(x.id));
+  t.innerHTML = '<div class="cal-tray-head">Ajouter au ' + (calDate===todayISO() ? 'jour' : 'jour affiché') + '</div>' +
+    '<div class="cal-chips">' +
+      '<button class="cal-chip new" onclick="calOpen(\'new\')">+ Nouveau moment</button>' +
+      libres.map(x => '<button class="cal-chip" onclick="calOpenForTask(\'' + x.id + '\')">' + glEsc(x.name) + '</button>').join('') +
+    '</div>';
+}
+
+/* ---- interactions sur la grille ---- */
+function calBindGrid(h0, HH){
+  const grid = document.getElementById('cal-grid'); if(!grid) return;
+  const minAt = clientY => {
+    const r = grid.getBoundingClientRect();
+    return h0*60 + (clientY - r.top) / HH * 60;
+  };
+  const snap = m => Math.round(m / CAL_SNAP) * CAL_SNAP;
+
+  /* toucher une zone vide : créer un moment à cette heure-là */
+  grid.addEventListener('click', e => {
+    if(e.target.closest('.cal-ev')) return;
+    calOpen('new', calMinToHM(Math.max(0, snap(minAt(e.clientY)))));
+  });
+
+  grid.querySelectorAll('.cal-ev').forEach(el => {
+    const id = el.dataset.ev;
+    const ev = calEvents.find(x => x.id === id); if(!ev) return;
+
+    el.addEventListener('pointerdown', e => {
+      if(e.target.closest('.cal-ev-chk')) return;
+      const grip = !!e.target.closest('.cal-ev-grip');
+      const depart = minAt(e.clientY);
+      const s0 = calHMToMin(ev.start), d0 = ev.dur;
+      let bouge = false;
+      try { el.setPointerCapture(e.pointerId); } catch(err){}
+
+      const move = m => {
+        const delta = minAt(m.clientY) - depart;
+        if(!bouge && Math.abs(delta) < 4) return;      /* un simple tap doit rester un tap */
+        bouge = true; el.classList.add('dragging');
+        if(grip){
+          ev.dur = Math.max(CAL_SNAP, snap(d0 + delta));
+        } else {
+          ev.start = calMinToHM(Math.max(0, Math.min(24*60 - ev.dur, snap(s0 + delta))));
+        }
+        el.style.top    = (calHMToMin(ev.start) - h0*60) / 60 * HH + 'px';
+        el.style.height = Math.max(ev.dur / 60 * HH, 22) + 'px';
+        const f = el.querySelector('.cal-ev-h');
+        if(f) f.textContent = ev.start + ' – ' + calMinToHM(calHMToMin(ev.start) + ev.dur);
+      };
+      const up = () => {
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        el.removeEventListener('pointercancel', up);
+        el.classList.remove('dragging');
+        if(bouge){ calSave(); calRender(); showToast('🕑 ' + ev.start + ' · ' + ev.dur + ' min'); }
+        else { calOpen(id); }
+      };
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+      e.preventDefault();
+    });
+  });
+
+  /* on centre la vue sur l'heure courante plutôt qu'en haut de la grille */
+  const sc = document.getElementById('cal-scroll');
+  if(sc && calDate === todayISO()){
+    const n = new Date(), min = n.getHours()*60 + n.getMinutes();
+    sc.scrollTop = Math.max(0, (min - h0*60) / 60 * HH - sc.clientHeight/3);
+  }
+}
+
+/* ---- modale ---- */
+function calOpenForTask(taskId){
+  const t = (typeof tasks !== 'undefined' ? tasks : []).find(x => x.id === taskId);
+  calDraftTask = t || null;
+  calOpen('new');
+}
+function calOpen(id, heure){
+  calEditing = id;
+  /* On vide d'abord : calRenderModal relit les champs pour ne pas perdre la
+     saisie entre deux rendus, et récupérerait sinon le titre de l'ouverture
+     précédente, encore présent dans le DOM. */
+  const boite = document.getElementById('cal-modal');
+  if(boite) boite.innerHTML = '';
+  const ev = id === 'new' ? null : calEvents.find(e => e.id === id);
+  calRepDraft   = ev ? ev.rep   : (calDraftTask ? 'daily' : 'none');
+  calDaysDraft  = ev ? (ev.days || []).slice() : [new Date(calDate + 'T12:00:00').getDay()];
+  calColorDraft = ev ? ev.color : CAL_COLORS[calEvents.length % CAL_COLORS.length];
+  document.getElementById('cal-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  calRenderModal(ev, heure);
+}
+function calClose(){
+  document.getElementById('cal-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  calEditing = null; calDraftTask = null;
+}
+function calSetRep(r){ calRepDraft = r; calRenderModal(calEditing === 'new' ? null : calEvents.find(e => e.id === calEditing)); }
+function calToggleDow(d){
+  const i = calDaysDraft.indexOf(d);
+  if(i === -1) calDaysDraft.push(d); else calDaysDraft.splice(i,1);
+  calRenderModal(calEditing === 'new' ? null : calEvents.find(e => e.id === calEditing));
+}
+function calSetColor(c){ calColorDraft = c; calRenderModal(calEditing === 'new' ? null : calEvents.find(e => e.id === calEditing)); }
+
+function calRenderModal(ev, heure){
+  const w = document.getElementById('cal-modal'); if(!w) return;
+  const val = k => {                       /* conserve la saisie en cours entre deux rendus */
+    const e = document.getElementById(k); return e ? e.value : null;
+  };
+  const titre = val('cal-f-title') !== null ? val('cal-f-title')
+              : (ev ? ev.title : (calDraftTask ? calDraftTask.name : ''));
+  const debut = val('cal-f-start') !== null ? val('cal-f-start')
+              : (ev ? ev.start : (heure || '09:00'));
+  const duree = val('cal-f-dur') !== null ? val('cal-f-dur') : (ev ? ev.dur : 30);
+  const notes = val('cal-f-notes') !== null ? val('cal-f-notes')
+              : (ev ? (ev.notes||'') : (calDraftTask ? (calDraftTask.sub||'') : ''));
+  const lie = ev ? ev.taskId : (calDraftTask ? calDraftTask.id : null);
+  const tLie = lie ? (typeof tasks !== 'undefined' ? tasks : []).find(x => x.id === lie) : null;
+
+  w.innerHTML =
+    '<div class="cal-panel">' +
+      '<div class="gs-head">' +
+        '<div><div class="gs-sub">' + (ev ? 'Modifier' : 'Nouveau moment') + '</div>' +
+          '<div class="gs-title">' + calDateFR(calDate) + '</div></div>' +
+        '<button class="gs-close" onclick="calClose()">✕ Fermer</button>' +
+      '</div>' +
+      (tLie ? '<div class="gs-note" style="margin:0 0 12px;">🔗 Lié à la tâche <b>' + glEsc(tLie.name) +
+              '</b> — la cocher ici met à jour ta progression du jour.</div>' : '') +
+      '<div class="gl-field"><label>Quoi</label>' +
+        '<input id="cal-f-title" value="' + glEsc(titre) + '" placeholder="Ex : Faire les courses"></div>' +
+      '<div class="gl-grid2">' +
+        '<div class="gl-field"><label>Début</label>' +
+          '<input id="cal-f-start" type="time" step="300" value="' + glEsc(debut) + '"></div>' +
+        '<div class="gl-field"><label>Durée (minutes)</label>' +
+          '<input id="cal-f-dur" type="number" min="5" step="5" value="' + duree + '"></div>' +
+      '</div>' +
+      '<div class="gl-field"><label>Répétition</label>' +
+        '<div class="cal-rep">' + CAL_REPS.map(r =>
+          '<button class="' + (calRepDraft === r.id ? 'on' : '') + '" onclick="calSetRep(\'' + r.id + '\')">' + r.label + '</button>').join('') +
+        '</div>' +
+        (calRepDraft === 'weekly' ? '<div class="cal-dows">' + CAL_DOW.map((d,i) =>
+          '<button class="' + (calDaysDraft.indexOf(i) !== -1 ? 'on' : '') + '" onclick="calToggleDow(' + i + ')">' + d + '</button>').join('') +
+        '</div>' : '') +
+      '</div>' +
+      '<div class="gl-field"><label>Couleur</label><div class="cal-cols">' +
+        CAL_COLORS.map(c => '<button class="cal-col' + (calColorDraft === c ? ' on' : '') + '" style="background:' + c +
+          '" onclick="calSetColor(\'' + c + '\')"></button>').join('') +
+      '</div></div>' +
+      '<div class="gl-field"><label>Note</label>' +
+        '<textarea id="cal-f-notes" placeholder="Facultatif" oninput="glAutoGrow(this)">' + glEsc(notes) + '</textarea></div>' +
+      '<div class="gl-actions">' +
+        '<button class="gl-btn primary" onclick="calSubmit()">' + (ev ? '✓ Enregistrer' : '✓ Ajouter') + '</button>' +
+        (ev ? '<button class="gl-btn" onclick="calDelete()">🗑 Supprimer</button>' : '') +
+        '<button class="gl-btn" onclick="calClose()">Annuler</button>' +
+      '</div>' +
+    '</div>';
+  const ta = document.getElementById('cal-f-notes'); if(ta) glAutoGrow(ta);
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
+function calSubmit(){
+  const g = k => { const e = document.getElementById(k); return e ? e.value.trim() : ''; };
+  const titre = g('cal-f-title');
+  if(!titre){ showToast('Donne un nom à ce moment'); return; }
+  const dur = Math.max(5, parseInt(g('cal-f-dur'),10) || 30);
+  if(calRepDraft === 'weekly' && !calDaysDraft.length){ showToast('Choisis au moins un jour'); return; }
+
+  const patch = {
+    title: titre, start: g('cal-f-start') || '09:00', dur: dur, notes: g('cal-f-notes'),
+    rep: calRepDraft, days: calDaysDraft.slice(), color: calColorDraft,
+    date: calRepDraft === 'none' ? calDate : null,
+    from: calRepDraft === 'none' ? null : calDate
+  };
+  if(calEditing === 'new'){
+    calEvents.push(Object.assign({ id: calNewId(), taskId: calDraftTask ? calDraftTask.id : null }, patch));
+    showToast('✅ Ajouté à ' + patch.start);
+  } else {
+    const ev = calEvents.find(e => e.id === calEditing);
+    if(ev){
+      /* on ne réécrit « from » que si la règle change : sinon déplacer un bloc
+         ferait disparaître son passé. */
+      if(ev.rep === patch.rep && ev.rep !== 'none') patch.from = ev.from;
+      Object.assign(ev, patch);
+    }
+    showToast('✅ Modifié');
+  }
+  calSave(); calClose(); calRender();
+}
+function calDelete(){
+  const ev = calEvents.find(e => e.id === calEditing); if(!ev) return;
+  const msg = ev.rep === 'none'
+    ? 'Supprimer « ' + ev.title + ' » ?'
+    : 'Supprimer « ' + ev.title + ' » de tous les jours ?\n\nCe moment se répète.';
+  if(!confirm(msg)) return;
+  calEvents = calEvents.filter(e => e.id !== calEditing);
+  calSave(); calClose(); calRender();
+  showToast('🗑 Supprimé');
+}
+
 function glRenderAll(){
   renderWelcome();
   glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes(); rmRender();
@@ -7143,6 +7655,9 @@ function initApp(){
   taskState = loadTaskState();
   renderTasks();
   updateTaskProgress();
+  // calendrier : apres tasksLoad, la graine a besoin des taches
+  calLoad();
+  calRender();
   initTaskNightBanner();
   // nav tree
   initNavTreePeeks();
