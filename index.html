@@ -1874,7 +1874,7 @@ html.owner .subtab.owner-only{display:block!important;}
     <div class="card-title">🔥 Habitudes du jour <div class="line"></div></div>
     <div id="habits-list"></div>
     <div class="habit-add-form">
-      <input type="text" id="habit-new-name" placeholder="Nom de l'habitude (ex: Poster 1 annonce)">
+      <input type="text" id="habit-new-name" placeholder="Nom de l'habitude (ex: Méditer 10 minutes)">
       <input type="text" id="habit-new-consequence" placeholder="Conséquence si non faite (ex: Pas de Netflix ce soir)">
       <button class="btn-primary" onclick="addHabit()">+ Ajouter</button>
     </div>
@@ -4817,12 +4817,6 @@ let habitsState = {};
 let habitRefDate = todayISO();
 
 const RECOMMENDED_HABITS = [
-  { cat:'💰 Vente & revente', name:'Poster 1 annonce ou story sur ce que je vends', consequence:'Pas de Netflix / séries ce soir',
-    desc:'Prends une photo de l\'article sur fond neutre (sol blanc, mur clair), lumière naturelle. Sur Vinted : titre = marque + modèle + taille + état, le plus précis possible. Compare 5 annonces similaires pour fixer ton prix, ni trop haut ni trop bas. Sur Instagram : story avec le prix bien visible, les dimensions, et une phrase courte type "disponible maintenant". Réponds aux DM le jour même.' },
-  { cat:'💰 Vente & revente', name:'Répondre à tous les messages acheteurs dans la journée', consequence:'1h en moins sur les réseaux demain',
-    desc:'Ouvre Vinted, LeBonCoin ou Instagram une fois le matin et une fois le soir. Réponds à chaque message — même "ce n\'est plus dispo" vaut mieux que le silence. Les réponses rapides boostent ta note vendeur = plus de visibilité = plus de ventes. Si quelqu\'un négocie, fixe à l\'avance ton prix plancher pour ne pas brader sous pression.' },
-  { cat:'💰 Vente & revente', name:'Identifier 1 nouveau lot ou opportunité', consequence:'Pas de musique pendant les trajets demain',
-    desc:'Cherche sur Vinted (filtre « lot » dans ta catégorie), LeBonCoin, Facebook Marketplace. Calcule la marge avant d\'acheter : prix d\'achat ÷ nombre de pièces = coût unitaire. Objectif minimum : revendre 2,5× le coût unitaire. Pense aussi aux vide-greniers locaux, aux dépôts-ventes, aux amis ou famille qui veulent vider leurs placards. Note les opportunités dans ton app.' },
   { cat:'🧠 Mindset', name:'Écouter 20 min de podcast business ou mindset', consequence:'Pas de TikTok / Reels pendant 24h',
     desc:'Pendant un trajet, la pause déjeuner ou une tâche répétitive. Podcasts FR : Génération Do It Yourself (Matthieu Stefani), Le Gratin (Pauline Laigneau), Marketing Mania. EN : School of Greatness, How I Built This. Astuce : écoute à x1.25. Note 1 idée clé dans ton Carnet après chaque épisode — sinon tu oublies tout.' },
   { cat:'🧠 Mindset', name:'Écrire 3 victoires de la journée dans mon journal', consequence:'Pas de réseaux sociaux avant 12h demain',
@@ -4835,8 +4829,6 @@ const RECOMMENDED_HABITS = [
     desc:'10 minutes max avant de dormir. 1) Écris tes 3 priorités du lendemain dans l\'onglet Tâches ici. 2) Prépare ta tenue sur la chaise ou dans un endroit visible. 3) Vérifie ton réveil. C\'est tout. L\'objectif : ne pas prendre de décisions fatigantes le matin. Le matin, ton énergie mentale est à son maximum — utilise-la pour avancer, pas pour chercher tes affaires.' },
   { cat:'💪 Discipline', name:'Boire 1,5L d\'eau dans la journée', consequence:'10 min de sport supplémentaires demain',
     desc:'Astuce simple : remplis une bouteille de 75cl le matin et une autre à midi — objectif, finir les deux. Quand la bouteille est sur la table, tu bois automatiquement sans y penser. Au travail, bois un verre à chaque pause. La déshydratation est la première cause de fatigue, maux de tête et difficultés à se concentrer. L\'impact sur l\'énergie est réel en 2 semaines.' },
-  { cat:'📚 Compétences', name:'Étudier 1 concurrent : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
-    desc:'Va sur Instagram, TikTok ou Etsy. Cherche quelqu\'un qui fait la même chose que toi, en France et à l\'étranger. Observe : quels sont ses prix, pour quoi exactement ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
   { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé',
     desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer son activité", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Note l\'idée que tu retiens dans ton Journal — sinon tu oublies tout.' },
   { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction avant d\'avoir lu',
