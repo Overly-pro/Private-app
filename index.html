@@ -841,6 +841,8 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .cal-dows button{flex:1;padding:7px 0;border-radius:var(--r);border:1px solid var(--border2);background:none;color:var(--muted2);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;}
 .cal-dows button.on{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
 .cal-cols{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px;}
+.cal-goal{width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:var(--r-sm);
+  color:var(--text);font-size:12.5px;padding:9px 11px;font-family:inherit;}
 .cal-col{width:26px;height:26px;border-radius:var(--r);border:2px solid transparent;cursor:pointer;padding:0;}
 .cal-col.on{border-color:var(--text-strong);}
 
@@ -3931,6 +3933,15 @@ function calBounds(list){
   list.forEach(it => { lo = Math.min(lo, calHMToMin(it.start)); hi = Math.max(hi, calHMToMin(it.start) + it.dur); });
   return { h0: Math.max(0, Math.floor(lo/60) - 1), h1: Math.min(24, Math.ceil(hi/60) + 1) };
 }
+/* Un bloc rattaché à un objectif en prend la couleur : d'un coup d'œil sur
+   la journée on voit ce qui sert à quoi, et ce qui ne sert à rien. */
+function calEvColor(ev){
+  if(ev.goalId && typeof glGoals !== 'undefined'){
+    const g = glGoals.find(x => x.id === ev.goalId);
+    if(g) return glColor(g);
+  }
+  return ev.color;
+}
 function calRender(){
   const w = document.getElementById('cal-wrap'); if(!w) return;
   const list = calDayEvents(calDate);
@@ -3951,7 +3962,7 @@ function calRender(){
     const fin = calMinToHM(calHMToMin(ev.start) + ev.dur);
     return '<div class="cal-ev' + (fait ? ' done' : '') + (haut < 34 ? ' short' : '') + '" data-ev="' + ev.id + '"' +
       ' style="top:' + top(it.s) + 'px;height:' + haut + 'px;left:' + gauche + '%;width:calc(' + largeur + '% - 3px);' +
-      '--ev-col:' + ev.color + ';--ev-bg:' + ev.color + '26">' +
+      '--ev-col:' + calEvColor(ev) + ';--ev-bg:' + calEvColor(ev) + '26">' +
       '<div class="cal-ev-t">' + glEsc(ev.title) + '</div>' +
       '<div class="cal-ev-h">' + ev.start + ' – ' + fin + '</div>' +
       '<button class="cal-ev-chk" onclick="calToggle(\'' + ev.id + '\',event)" title="Fait ?">✓</button>' +
@@ -4144,6 +4155,15 @@ function calRenderModal(ev, heure){
           '<button class="' + (calDaysDraft.indexOf(i) !== -1 ? 'on' : '') + '" onclick="calToggleDow(' + i + ')">' + d + '</button>').join('') +
         '</div>' : '') +
       '</div>' +
+      /* Rattacher à un objectif : le bloc en prend la couleur, et on lit sa
+         journée en voyant ce qui sert à quoi. */
+      '<div class="gl-field"><label>Rattacher à un objectif</label>' +
+        '<select id="cal-f-goal" class="cal-goal">' +
+          '<option value="">Aucun — couleur libre</option>' +
+          (typeof glGoals !== 'undefined' ? glGoals : []).map(g =>
+            '<option value="' + g.id + '"' + ((ev && ev.goalId === g.id) ? ' selected' : '') + '>' +
+              glEsc(g.title || glKind(g).label) + '</option>').join('') +
+        '</select></div>' +
       '<div class="gl-field"><label>Couleur</label><div class="cal-cols">' +
         CAL_COLORS.map(c => '<button class="cal-col' + (calColorDraft === c ? ' on' : '') + '" style="background:' + c +
           '" onclick="calSetColor(\'' + c + '\')"></button>').join('') +
@@ -4169,6 +4189,7 @@ function calSubmit(){
   const patch = {
     title: titre, start: g('cal-f-start') || '09:00', dur: dur, notes: g('cal-f-notes'),
     rep: calRepDraft, days: calDaysDraft.slice(), color: calColorDraft,
+    goalId: (document.getElementById('cal-f-goal') || {}).value || null,
     date: calRepDraft === 'none' ? calDate : null,
     from: calRepDraft === 'none' ? null : calDate
   };
