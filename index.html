@@ -1574,6 +1574,9 @@ html.owner .subtab.owner-only{display:block!important;}
     </div>
     <input type="file" id="data-import-file" accept="application/json" style="display:none" onchange="dataImport(this)">
     <div id="data-stats" class="nm-hint" style="margin-top:8px;"></div>
+    <div class="gl-actions" style="margin-top:10px;">
+      <button class="gl-btn" onclick="ownerManual()">🔑 Mode propriétaire</button>
+    </div>
   </div>
 
 </div>
@@ -2376,9 +2379,49 @@ const OWNER_CODE = 'overly-owner';
 let ownerMode = false;
 
 function isOwner(){ return ownerMode; }
+/* Le geste caché sur le logo n'a jamais été trouvé : c'est un mauvais
+   design, pas un mauvais usage. Le mode propriétaire s'active donc tout seul
+   quand le compte connecté est le mien.
+
+   On compare une EMPREINTE de l'adresse, pas l'adresse : le dépôt est
+   public, et y écrire l'e-mail en clair le publierait. L'empreinte ne se
+   remonte pas. Ce n'est pas un verrou pour autant — le mode propriétaire
+   n'ouvre aucune donnée, chaque compte ne lit que la sienne.
+
+   Un « 0 » explicite (je suis repassé en vue client avec le geste) est
+   respecté : la détection ne rallume pas derrière moi. */
+const OWNER_EMAIL_SHA256 = '789f43a8ccb341ea2b7952784a58ab90ae5f99ac6b9c42dd94cd6d661d90c427';
 function ownerLoad(){
   ownerMode = loadKey('owner_mode') === '1';
   ownerApply();
+  ownerAutoDetect();
+}
+async function ownerAutoDetect(){
+  try {
+    if(loadKey('owner_mode') === '0') return;
+    const u = (typeof auth !== 'undefined') && auth.currentUser;
+    if(!u || !u.email || !window.crypto || !crypto.subtle) return;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(u.email.trim().toLowerCase()));
+    const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+    if(hex !== OWNER_EMAIL_SHA256 || ownerMode) return;
+    ownerMode = true; saveKey('owner_mode', '1');
+    ownerApply();
+    if(typeof navRender === 'function') navRender();
+    if(typeof glRenderAll === 'function') glRenderAll();
+  } catch(e){}
+}
+/* Secours visible, si le compte propriétaire se connecte avec une autre
+   adresse : un vrai bouton, pas un geste à deviner. */
+function ownerManual(){
+  if(ownerMode){ showToast('🔑 Le mode propriétaire est déjà actif'); return; }
+  const c = prompt('Code propriétaire :');
+  if(c === null) return;
+  if(c.trim().toLowerCase() !== OWNER_CODE){ showToast('Code incorrect'); return; }
+  ownerMode = true; saveKey('owner_mode', '1');
+  ownerApply();
+  if(typeof navRender === 'function') navRender();
+  if(typeof glRenderAll === 'function') glRenderAll();
+  showToast('🔑 Mode propriétaire activé');
 }
 /* Une classe sur <html> suffit à piloter tout le CSS conditionnel. */
 function ownerApply(){
