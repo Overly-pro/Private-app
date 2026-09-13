@@ -904,6 +904,21 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .hero-days, .ring-pct{text-shadow:var(--glow-txt);}
 .hero{position:relative;box-shadow:var(--glow-soft);}
 
+.owner-switch{display:flex;align-items:center;gap:5px;background:rgba(var(--accent-rgb),0.1);
+  border:1px solid rgba(var(--accent-rgb),0.4);color:var(--accent-ink);border-radius:var(--r-sm);
+  padding:5px 9px;font-size:10px;font-weight:700;letter-spacing:.4px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.owner-switch:hover{background:rgba(var(--accent-rgb),0.18);}
+.owner-switch .ico{width:14px;height:14px;}
+/* Bandeau permanent pendant l'aperçu : impossible d'oublier qu'on n'est plus
+   sur son propre compte et de croire que ses données ont disparu. */
+#preview-bar{position:fixed;left:0;right:0;bottom:0;z-index:2900;display:none;align-items:center;gap:10px;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--accent);color:var(--on-accent);
+  font-size:11.5px;font-weight:700;}
+html.preview #preview-bar{display:flex;}
+#preview-bar span{flex:1;}
+#preview-bar button{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.35);color:#fff;
+  border-radius:var(--r-sm);padding:6px 11px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;}
+@media (max-width:620px){ .owner-switch span:not(.ico){display:none;} }
 /* ===== RÉSERVÉ AU PROPRIÉTAIRE =====
    Masqué par défaut, y compris pour moi tant que je n'active pas le mode :
    c'est ce qui me permet de voir l'app exactement comme un client la voit. */
@@ -1025,9 +1040,6 @@ html.owner .subtab.owner-only{display:block!important;}
 .today-channels span{color:var(--text);}
 .today-btn{flex-shrink:0;background:none;border:1px solid var(--accent);color:var(--accent-ink);border-radius:var(--r);padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 .today-btn.done{opacity:.5;}
-
-.p30-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:16px;}
-@media (max-width:480px){.p30-grid{grid-template-columns:repeat(5,1fr);}}
 
 /* ===== DESKTOP — une seule colonne, centrée =====
    Les grilles à plusieurs colonnes laissaient toujours des trous à droite des
@@ -1307,6 +1319,7 @@ html.owner .subtab.owner-only{display:block!important;}
 <div id="login-flash"></div>
 
 <!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
+<div id="preview-bar"><span>Aperçu client — tes données sont intactes, elles se réaffichent en sortant.</span><button onclick="ownerPreview()">Revenir</button></div>
 <div id="onb"></div>
 <div id="cal-modal" onclick="if(event.target===this)calClose()"></div>
 
@@ -1355,6 +1368,7 @@ html.owner .subtab.owner-only{display:block!important;}
     <button class="lv-chip" id="lv-chip" onclick="goTo('home')"><span data-ico="bolt"></span> LV 1</button>
     <span class="sync-dot idle" id="sync-dot" title="Tout est synchronisé"></span>
     <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Changer de thème"><span data-ico="moon"></span></button>
+    <button class="owner-switch owner-only" id="owner-switch" onclick="ownerPreview()" title="Voir l'app comme un client"><span data-ico="user"></span> Vue client</button>
     <button class="logout-btn" onclick="authLogout()">↪</button>
   </div>
 </div>
@@ -1402,11 +1416,6 @@ html.owner .subtab.owner-only{display:block!important;}
       <div class="stat-val" id="home-cash-pct">0%</div>
       <div class="stat-lbl">objectif cash atteint</div>
     </div>
-    <div class="stat" onclick="goTo('plan30')">
-      <div class="stat-val" id="home-plan-day">J0/30</div>
-      <div class="stat-lbl">plan 30 jours</div>
-    </div>
-  </div>
 
   <div class="launch-grid">
     <button class="launch-tile" onclick="goTo('finance')"><span class="launch-ic" data-ico="wallet"></span><span class="launch-lb">Finance</span></button>
@@ -1575,7 +1584,7 @@ html.owner .subtab.owner-only{display:block!important;}
 </div>
 
 <!-- ============ VIEW: GOAL ============ -->
-<div class="view view-tabbed" id="view-goal" data-tab="progress">
+<div class="view view-tabbed" id="view-objectifs" data-tab="progress">
 
 
   <!-- Chaque onglet est autonome : un seul panneau s'affiche, rien d'autre. -->
@@ -1641,91 +1650,6 @@ html.owner .subtab.owner-only{display:block!important;}
 </div>
 
 <!-- ============ VIEW: PLAN 30 JOURS ============ -->
-<div class="view" id="view-plan30">
-
-
-  <div class="card">
-    <div class="ring-row">
-      <div class="ring-box" style="width:78px;height:78px;">
-        <svg width="78" height="78" viewBox="0 0 78 78">
-          <circle class="ring-bg" cx="39" cy="39" r="33" stroke-width="7"/>
-          <circle class="ring-fill" cx="39" cy="39" r="33" stroke-width="7" style="stroke:var(--text-soft)" stroke-dasharray="207" stroke-dashoffset="207" id="p30-ring"/>
-        </svg>
-        <div class="ring-text"><span class="ring-pct" id="p30-pct" style="font-size:17px;">0%</span><span class="ring-lbl">JOURS</span></div>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:700;color:var(--text-strong);">Apprentissage YouTube — 30 jours</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:3px;">13h00–13h30 chaque jour. Coche chaque vidéo regardée.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="today-card" id="p30-todayCard">
-    <div class="today-content">
-      <div class="today-day" id="p30-todayDay">—</div>
-      <div id="p30-todayTag"></div>
-      <div class="today-theme" id="p30-todayTheme">—</div>
-      <div class="today-channels" id="p30-todayChannels">—</div>
-    </div>
-    <button class="today-btn" id="p30-todayBtn" onclick="toggleP30Today()">✓ Marquer fait</button>
-  </div>
-
-  <div class="card-title">— Progression des 30 jours <div class="line"></div></div>
-  <div class="p30-grid" id="p30-grid"></div>
-
-  <div class="card-title">— Thèmes, chaînes & liens validés <div class="line"></div></div>
-
-  <div class="legend-card">
-    <h3><span class="legend-dot">🧠</span>Mindset & Discipline</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/@davidgoggins" target="_blank">David Goggins</a></li>
-      <li><a href="https://www.youtube.com/@HamzaYT" target="_blank">Hamza Ahmed</a></li>
-      <li><a href="https://www.youtube.com/@hubermanlab" target="_blank">Andrew Huberman Lab</a></li>
-      <li><a href="https://www.youtube.com/watch?v=X0F7TDOg-Mk" target="_blank">▶ Jour 1 — Goggins Discipline</a></li>
-      <li><a href="https://www.youtube.com/watch?v=II1TOaSoOf8" target="_blank">▶ Jour 5 — Goggins Discipline</a></li>
-      <li><a href="https://www.youtube.com/watch?v=SBYvuAtaUtA" target="_blank">▶ Jour 9 — Goggins Discipline</a></li>
-    </ul>
-    <div class="legend-note">Jours 13/17/21/25/29 à compléter — voir Carnet de bord.</div>
-  </div>
-  <div class="legend-card">
-    <h3><span class="legend-dot">✨</span>Visualisation & Manifestation</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/@edMylett" target="_blank">Ed Mylett</a></li>
-      <li><a href="https://www.youtube.com/@TomBilyeu" target="_blank">Tom Bilyeu</a></li>
-      <li><a href="https://www.youtube.com/@LewisHowes" target="_blank">Lewis Howes</a></li>
-      <li>Recherche : "law of attraction visualization technique"</li>
-      <li>Recherche : "subconscious mind reprogramming sleep"</li>
-    </ul>
-    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
-  </div>
-  <div class="legend-card">
-    <h3><span class="legend-dot">⚡</span>Productivité & Organisation</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/@ThomasFrankExplains" target="_blank">Thomas Frank</a></li>
-      <li><a href="https://www.youtube.com/@aliabdaal" target="_blank">Ali Abdaal</a></li>
-      <li><a href="https://www.youtube.com/@mattdavella" target="_blank">Matt D'Avella</a></li>
-      <li>Recherche : "time blocking entrepreneur schedule"</li>
-      <li>Recherche : "second brain system Notion"</li>
-    </ul>
-    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
-  </div>
-  <div class="legend-card">
-    <h3><span class="legend-dot">🌱</span>Développement Personnel</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/@JayShettyPodcast" target="_blank">Jay Shetty</a></li>
-      <li><a href="https://www.youtube.com/@SimonSinek" target="_blank">Simon Sinek</a></li>
-      <li><a href="https://www.youtube.com/@BrendonBurchard" target="_blank">Brendon Burchard</a></li>
-      <li>Recherche : "napoleon hill think and grow rich animated"</li>
-      <li>Recherche : "Brendon Burchard high performance habits"</li>
-    </ul>
-    <div class="legend-note">Tous les liens jour à compléter au fil du plan.</div>
-  </div>
-
-  <div class="card" style="background:var(--sunken);margin-top:4px;">
-    <div style="font-size:11px;color:var(--muted2);"><span id="p30-start-lbl">—</span> · Un thème par jour, à adapter à ton rythme.</div>
-  </div>
-</div>
-
 <!-- ============ VIEW: SLEEP ============ -->
 <div class="view view-tabbed" id="view-sleep">
 
@@ -2051,14 +1975,6 @@ html.owner .subtab.owner-only{display:block!important;}
   </div>
 </div>
 <!-- ============ VUES GROUPÉES (créées par JS) ============ -->
-<div class="view view-tabbed" id="view-objectifs">
-  <div class="group-tabs" id="objectifs-tabs"></div>
-  <div id="objectifs-content"></div>
-</div>
-<div class="view view-tabbed" id="view-routine">
-  <div class="group-tabs" id="routine-tabs"></div>
-  <div id="routine-content"></div>
-</div>
 
 </div><!-- /app-shell -->
 
@@ -2072,7 +1988,8 @@ html.owner .subtab.owner-only{display:block!important;}
   <div class="nav-rail">
     <img class="nav-logo" src="brand/logo-mark-white.png" alt="Overly" onclick="stSelectCat('home')">
     <button class="nav-cat" id="stcat-home"   onclick="stSelectCat('home')"><span class="nav-cat-ic" data-ico="home"></span><span class="nav-cat-lb">Accueil</span></button>
-    <button class="nav-cat" id="stcat-today"  onclick="stSelectCat('today')"><span class="nav-cat-ic" data-ico="bolt"></span><span class="nav-cat-lb">Aujourd'hui</span></button>
+    <button class="nav-cat" id="stcat-routine" onclick="stSelectCat('routine')"><span class="nav-cat-ic" data-ico="repeat"></span><span class="nav-cat-lb">Routine</span></button>
+    <button class="nav-cat" id="stcat-objectif" onclick="stSelectCat('objectif')"><span class="nav-cat-ic" data-ico="target"></span><span class="nav-cat-lb">Objectif</span></button>
     <button class="nav-cat" id="stcat-argent" onclick="stSelectCat('argent')"><span class="nav-cat-ic" data-ico="wallet"></span><span class="nav-cat-lb">Argent</span></button>
     <button class="nav-cat" id="stcat-perso"  onclick="stSelectCat('perso')"><span class="nav-cat-ic" data-ico="spark"></span><span class="nav-cat-lb">Perso</span></button>
     <button class="nav-cat" id="stcat-style"  onclick="stSelectCat('style')"><span class="nav-cat-ic" data-ico="bag"></span><span class="nav-cat-lb">Style</span></button>
@@ -2094,19 +2011,22 @@ html.owner .subtab.owner-only{display:block!important;}
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="bnav-btn active" data-section="home" onclick="goToSection('home')">
-    <span class="bnav-ic">🏠</span><span class="bnav-lb">Accueil</span>
+    <span class="bnav-ic" data-ico="home"></span><span class="bnav-lb">Accueil</span>
   </button>
-  <button class="bnav-btn" data-section="today" onclick="goToSection('today')">
-    <span class="bnav-ic">✅</span><span class="bnav-lb">Aujourd'hui</span>
+  <button class="bnav-btn" data-section="routine" onclick="goToSection('routine')">
+    <span class="bnav-ic" data-ico="repeat"></span><span class="bnav-lb">Routine</span>
+  </button>
+  <button class="bnav-btn" data-section="objectif" onclick="goToSection('objectif')">
+    <span class="bnav-ic" data-ico="target"></span><span class="bnav-lb">Objectif</span>
   </button>
   <button class="bnav-btn" data-section="argent" onclick="goToSection('argent')">
-    <span class="bnav-ic">💰</span><span class="bnav-lb">Argent</span>
+    <span class="bnav-ic" data-ico="wallet"></span><span class="bnav-lb">Argent</span>
   </button>
   <button class="bnav-btn" data-section="perso" onclick="goToSection('perso')">
-    <span class="bnav-ic">✨</span><span class="bnav-lb">Perso</span>
+    <span class="bnav-ic" data-ico="spark"></span><span class="bnav-lb">Perso</span>
   </button>
   <button class="bnav-btn" data-section="vie" onclick="goToSection('vie')">
-    <span class="bnav-ic">🌙</span><span class="bnav-lb">Vie</span>
+    <span class="bnav-ic" data-ico="moon"></span><span class="bnav-lb">Vie</span>
   </button>
 </nav>
 
@@ -2366,6 +2286,7 @@ const ICONS = {
   note:      'M6 3.5h9L19 8v12.5H6V3.5Zm8.6 0V8H19M9 12h6m-6 3.5h4',
   bed:       'M3.5 19v-8m0 4h17v4m0-4v-2.5a2 2 0 0 0-2-2H10V15M7 11.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z',
   grid:      'M4 4h6.5v6.5H4V4Zm9.5 0H20v6.5h-6.5V4ZM4 13.5h6.5V20H4v-6.5Zm9.5 0H20V20h-6.5v-6.5Z',
+  repeat:    'M20 11.5A8 8 0 0 0 6.3 6.1L4 8.4m0-4.4v4.4h4.4M4 12.5a8 8 0 0 0 13.7 5.4l2.3-2.3m0 4.4v-4.4h-4.4',
   hand:      'M8 11V5.6a1.6 1.6 0 0 1 3.2 0V11m0-.6V4.6a1.6 1.6 0 0 1 3.2 0V11m0-.4V6.4a1.6 1.6 0 0 1 3.2 0V15c0 3.3-2.3 6-5.6 6S6 18.6 6 15v-2.4a1.6 1.6 0 0 1 2-1.5'
 };
 /* Un emoji faisait 1 caractère ; une icône fait un nœud. On garde donc la même
@@ -2409,8 +2330,20 @@ function ownerLoad(){
 }
 /* Une classe sur <html> suffit à piloter tout le CSS conditionnel. */
 function ownerApply(){
-  document.documentElement.classList.toggle('owner', ownerMode);
+  document.documentElement.classList.toggle('owner', ownerMode && !ownerPreviewOn);
 }
+/* Aperçu client : on éteint le mode propriétaire sans y toucher durablement.
+   Rien n'est effacé — seules les vues réservées se masquent — mais ça suffit
+   à voir ce qu'un utilisateur voit et ce qui lui manque. */
+let ownerPreviewOn = false;
+function ownerPreview(){
+  ownerPreviewOn = !ownerPreviewOn;
+  document.documentElement.classList.toggle('preview', ownerPreviewOn);
+  document.documentElement.classList.toggle('owner', ownerMode && !ownerPreviewOn);
+  if(typeof glRenderAll === 'function') glRenderAll();
+  showToast(ownerPreviewOn ? '👤 Tu vois ce que voit un client' : '🔑 Retour à ta vue');
+}
+
 let ownerTaps = 0, ownerTapT = null;
 function ownerTap(){
   clearTimeout(ownerTapT);
@@ -2459,17 +2392,17 @@ function showSV(groupId, svId){
 
 /* ============ VUES GROUPÉES ============ */
 const GROUPS = {
-  objectifs: { tabs:[{id:'goal',label:'💰 Objectif'},{id:'plan30',label:'🎥 Plan 30j'}] }
   // routine retiré — habitudes et planning sont des vues autonomes
 };
 
 /* ============ SECTIONS (bottom nav) ============ */
 const SECTIONS = {
   home:   { views:['home'],                              tabs:[] },
-  today:  { views:['tasks','habitudes'],                 tabs:['✅ Tâches','🔥 Habitudes'] },
-  argent: { views:['finance','objectifs'],               tabs:['💰 Finance','🎯 Objectifs'] },
-  perso:  { views:['mindset','journal'],                 tabs:['✨ Mindset','📓 Journal'] },
-  vie:    { views:['sleep','planning'],                  tabs:['😴 Sommeil','📅 Planning'] }
+  routine:{ views:['tasks','habitudes','tracker'],      tabs:['Tâches','Habitudes','Tracker'] },
+  objectif:{ views:['objectifs'],                       tabs:[] },
+  argent: { views:['finance'],                          tabs:[] },
+  perso:  { views:['mindset','journal'],                 tabs:['Mindset','Journal'] },
+  vie:    { views:['sleep','planning'],                  tabs:['Sommeil','Planning'] }
 };
 const VIEW_TO_SECTION = {};
 Object.entries(SECTIONS).forEach(([sec,s])=>s.views.forEach(v=>VIEW_TO_SECTION[v]=sec));
@@ -2497,34 +2430,34 @@ const VIEW_LABELS = {
   sleep:'Sommeil', planning:'Planning', achats:'Achats', tracker:'Habit Tracker'
 };
 const VIEW_TO_CAT = {
-  home:'home', tasks:'today', habitudes:'today',
-  finance:'argent', objectifs:'argent',
+  home:'home', tasks:'routine', habitudes:'routine',
+  finance:'argent', objectifs:'objectif',
   mindset:'perso', journal:'perso',
-  sleep:'vie', planning:'vie', achats:'style', tracker:'today'
+  sleep:'vie', planning:'vie', achats:'style', tracker:'routine'
 };
 
 /* ===== SKILL TREE NAV ===== */
 const ST_CATS = {
-  home:   {icon:'🏠', label:'Accueil',      direct:'home', views:[]},
-  today:  {icon:'⚡', label:"Aujourd'hui",  views:[
-    {id:'tasks',     icon:'✅', label:'Tâches'},
-    {id:'habitudes', icon:'🔁', label:'Habitudes'},
-    {id:'tracker',   icon:'📊', label:'Habit Tracker'}
+  home:   {icon:'home', label:'Accueil', direct:'home', views:[]},
+  /* « Aujourd'hui » avec un éclair ne disait rien : on ne devinait ni le
+     sujet ni l'usage. « Routine » nomme ce qu'il y a dedans — ce qu'on
+     refait chaque jour — et la flèche circulaire le dit sans le lire. */
+  routine: {icon:'repeat', label:'Routine', views:[
+    {id:'tasks',     icon:'check',  label:'Tâches'},
+    {id:'habitudes', icon:'flame',  label:'Habitudes'},
+    {id:'tracker',   icon:'chart',  label:"Tracker d'habitudes"}
   ]},
-  argent: {icon:'💰', label:'Argent', views:[
-    {id:'finance',   icon:'💸', label:'Finance'},
-    {id:'objectifs', icon:'🎯', label:'Objectifs'}
+  /* L'objectif quitte Argent : tous les objectifs ne sont pas financiers. */
+  objectif: {icon:'target', label:'Objectif', direct:'objectifs', views:[]},
+  argent: {icon:'wallet', label:'Argent', direct:'finance', views:[]},
+  perso:  {icon:'spark', label:'Perso', views:[
+    {id:'mindset',   icon:'spark', label:'Mindset'},
+    {id:'journal',   icon:'note',  label:'Journal'}
   ]},
-  perso:  {icon:'✨', label:'Perso', views:[
-    {id:'mindset',   icon:'✨', label:'Mindset'},
-    {id:'journal',   icon:'📓', label:'Journal'}
-  ]},
-  style:  {icon:'🛍️', label:'Style', views:[
-    {id:'achats',    icon:'🛍️', label:'Achats'}
-  ]},
-  vie:    {icon:'🌙', label:'Vie', views:[
-    {id:'sleep',     icon:'😴', label:'Sommeil'},
-    {id:'planning',  icon:'📅', label:'Planning'}
+  style:  {icon:'bag', label:'Style', direct:'achats', views:[]},
+  vie:    {icon:'moon', label:'Vie', views:[
+    {id:'sleep',     icon:'bed',      label:'Sommeil'},
+    {id:'planning',  icon:'calendar', label:'Planning'}
   ]}
 };
 let stActiveCat = null;
@@ -3234,7 +3167,11 @@ function glRenderHero(){
   const hg = document.getElementById('home-goal');
   if(hg){
     if(glHasGoal()){
-      const via = (g.sources || []).filter(s => s.counts).map(s => s.label).filter(Boolean);
+      /* On ne cite que les sources REELLEMENT alimentées. Sinon l'accueil
+         annonçait « via Revenu principal + Épargne » à quelqu'un qui n'avait
+         encore rien saisi : une information inventée dès le premier écran. */
+      const via = (g.sources || []).filter(s => s.counts && (parseFloat(s.value) || 0) > 0)
+                                   .map(s => s.label).filter(Boolean);
       hg.innerHTML = glEsc(g.title || (glFmt(amt) + ' €')) +
         (via.length ? '<br><span style="color:var(--text-dim);font-weight:600;">via ' + glEsc(via.join(' + ')) + '</span>' : '');
     } else {
@@ -3658,7 +3595,7 @@ function onbScreens(){
       '<div class="onb-h onb-in" style="--i:1">Quatre choses,<br>tous les jours.</div>' +
       '<div class="onb-in" style="--i:2">' +
         onbBen('calendar','Ta journée posée à l\'heure','Tes tâches ont un horaire et une durée. Tu ne décides plus quoi faire, tu suis.') +
-        onbBen('target','Ta déclaration, écrite pour toi','Générée depuis ton objectif. Lue matin et soir, elle grave le chiffre.') +
+        onbBen('target','Ton objectif toujours sous les yeux','Le montant, la date, les jours qui restent. Relu chaque matin, il cadre la journée.') +
         onbBen('chart','Tes constats, pas tes impressions','« Après 8 h de sommeil tu fais 7 tâches, après moins tu en fais 3. » Ça vient de tes données.') +
         onbBen('flame','La série que tu ne veux pas casser','Le seul mécanisme qui tienne quand la motivation tombe.') +
       '</div>',
@@ -3668,7 +3605,7 @@ function onbScreens(){
   { kicker:'C\'EST PARTI',
     html:
       '<div class="onb-h onb-in" style="--i:1">' + j + ' jours.<br><em>Le compte a commencé.</em></div>' +
-      '<div class="onb-p onb-in" style="--i:2">Ta déclaration est écrite, tes règles sont calées sur ton objectif, ' +
+      '<div class="onb-p onb-in" style="--i:2">Ton objectif est posé, ton compte à rebours tourne, ' +
       'et ton calendrier t\'attend.</div>' +
       '<div class="onb-p onb-in" style="--i:3">Une seule chose à faire en sortant d\'ici : <b>cocher la première case.</b></div>',
     cta:'Entrer', last:true }
@@ -4220,93 +4157,6 @@ function glRenderAll(){
 /* compatibilité : anciens points d'appel */
 function updateCountdown(){ glRenderHero(); }
 function loadCashProgress(){ glBootstrap(); glRenderAll(); }
-
-/* ============ PLAN 30 JOURS ============ */
-/* La date de départ appartient à chacun : elle est posée au premier passage
-   sur l'onglet. Codée en dur, le plan d'un nouvel arrivant aurait démarré
-   des mois avant son inscription. */
-let P30_START = new Date();
-function p30LoadStart(){
-  const iso = loadKey('plan30_start');
-  if(iso && /^\d{4}-\d{2}-\d{2}$/.test(iso)){
-    P30_START = new Date(iso + 'T00:00:00');
-  } else {
-    P30_START = new Date(); P30_START.setHours(0,0,0,0);
-    saveKey('plan30_start', todayISO());
-  }
-  const lbl = document.getElementById('p30-start-lbl');
-  if(lbl) lbl.textContent = 'Plan démarré le ' + glDateFR(
-    P30_START.getFullYear() + '-' +
-    String(P30_START.getMonth()+1).padStart(2,'0') + '-' +
-    String(P30_START.getDate()).padStart(2,'0'));
-}
-function p30Restart(){
-  if(!confirm('Recommencer le plan à partir d’aujourd’hui ?\n\nTes jours déjà validés sont conservés.')) return;
-  saveKey('plan30_start', todayISO());
-  p30LoadStart(); p30Render();
-  showToast('🔄 Plan redémarré aujourd’hui');
-}
-const P30_THEMES = [
-  { key:'mindset', emoji:'🧠', label:'Mindset & Discipline', channels:'David Goggins · Hamza Ahmed · Andrew Huberman' },
-  { key:'manifestation', emoji:'✨', label:'Visualisation & Manifestation', channels:'Ed Mylett · Tom Bilyeu · Lewis Howes' },
-  { key:'productivite', emoji:'⚡', label:'Productivité & Organisation', channels:"Thomas Frank · Ali Abdaal · Matt D'Avella" },
-  { key:'developpement', emoji:'🌱', label:'Développement Personnel', channels:'Jay Shetty · Simon Sinek · Brendon Burchard' }
-];
-const P30_DAYS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-const P30_MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-let p30Done = [];
-function p30Theme(i){ return P30_THEMES[i % 4]; }
-function p30Today(){ const now=new Date(); now.setHours(0,0,0,0); return Math.floor((now - P30_START) / 86400000); }
-function p30Save(){ saveKey('plan30_done', JSON.stringify(p30Done)); }
-function p30UpdateProgress(){
-  const count = p30Done.length;
-  const pct = Math.round((count / 30) * 100);
-  const circ = 2 * Math.PI * 33;
-  document.getElementById('p30-ring').style.strokeDashoffset = circ - (circ * count / 30);
-  document.getElementById('p30-pct').textContent = pct + '%';
-  document.getElementById('home-plan-day').textContent = 'J' + Math.min(p30Today()+1,30) + '/30';
-}
-function p30BuildToday(){
-  const idx = p30Today();
-  if(idx < 0 || idx >= 30){ document.getElementById('p30-todayCard').style.display='none'; return; }
-  const theme = p30Theme(idx);
-  const d = new Date(P30_START); d.setDate(d.getDate() + idx);
-  document.getElementById('p30-todayDay').textContent = `Jour ${idx+1} · ${P30_DAYS_FR[d.getDay()]} ${d.getDate()} ${P30_MONTHS_FR[d.getMonth()]}`;
-  document.getElementById('p30-todayTag').innerHTML = `<div class="tag tag-${theme.key}">${theme.label}</div>`;
-  document.getElementById('p30-todayTheme').textContent = theme.label;
-  document.getElementById('p30-todayChannels').innerHTML = `Chaînes : <span>${theme.channels}</span>`;
-  const btn = document.getElementById('p30-todayBtn');
-  if(p30Done.includes(idx)){ btn.textContent='✓ Fait !'; btn.classList.add('done'); }
-  else { btn.textContent='✓ Marquer fait'; btn.classList.remove('done'); }
-}
-function toggleP30Today(){
-  const idx = p30Today();
-  if(idx < 0 || idx >= 30) return;
-  if(p30Done.includes(idx)) p30Done = p30Done.filter(d=>d!==idx); else p30Done.push(idx);
-  p30Save(); p30Render();
-}
-function p30ToggleDay(idx){
-  if(p30Done.includes(idx)) p30Done = p30Done.filter(d=>d!==idx); else p30Done.push(idx);
-  p30Save(); p30Render();
-}
-function p30BuildGrid(){
-  const grid = document.getElementById('p30-grid');
-  grid.innerHTML = '';
-  const todayIdx = p30Today();
-  for(let i=0;i<30;i++){
-    const theme = p30Theme(i);
-    const isDone = p30Done.includes(i);
-    const isToday = i === todayIdx;
-    const cell = document.createElement('div');
-    cell.className = `day-cell t-${theme.key}${isDone?' done':''}${isToday?' is-today':''}`;
-    cell.innerHTML = `<div class="num">${i+1}</div><div class="dot">${theme.emoji}</div>`;
-    cell.title = `Jour ${i+1} — ${theme.label}`;
-    cell.onclick = () => p30ToggleDay(i);
-    grid.appendChild(cell);
-  }
-  wrapEmojis(grid);
-}
-function p30Render(){ p30BuildGrid(); p30BuildToday(); p30UpdateProgress(); }
 
 /* ============ SLEEP ============ */
 const SLEEP_ENTRIES_KEY = 'sleep_entries';
@@ -6200,7 +6050,6 @@ function initApp(){
   // grouper les vues en premier (avant tout rendu)
   buildGroupedViews();
   // repeupler les données en mémoire depuis le cloud (cloudData) avant tout rendu
-  p30Done = JSON.parse(loadKey('plan30_done') || '[]');
   sleepEntries = JSON.parse(loadKey(SLEEP_ENTRIES_KEY) || '{}');
   renderSleepLive();
   journalEntries = JSON.parse(loadKey(JOURNAL_KEY) || '{}');
@@ -6235,9 +6084,6 @@ function initApp(){
   // goal
   updateCountdown();
   loadCashProgress();
-  // plan30
-  p30LoadStart();
-  p30Render();
   // sleep
   buildScale('s-quality','quality');
   buildScale('s-energy','energy');
