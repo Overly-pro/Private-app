@@ -205,41 +205,11 @@ body{ background:var(--bg); }
 .view.active{display:block;animation:fadein .25s ease;}
 .subview{display:none;}
 .subview.active{display:block;animation:fadein .25s ease;}
-.view-banner{width:100%;height:170px;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:8px;display:block;opacity:0.9;border:0.5px solid rgba(var(--ink),0.14);}
 @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 .group-tabs{display:flex;gap:6px;margin-bottom:14px;}
 .group-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
 .group-tab.active{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
 /* BIBLIO TABS */
-.biblio-tabs{display:flex;gap:8px;margin-bottom:16px;}
-.biblio-tab{flex:1;padding:9px;font-size:11px;font-weight:700;letter-spacing:.5px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;}
-.biblio-tab.active{background:rgba(var(--accent-rgb),0.08);border-color:rgba(var(--accent-rgb),0.3);color:var(--accent-ink);}
-/* BOOK CARDS */
-.book-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
-.book-header{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:none;border:none;color:var(--text);cursor:pointer;font-family:inherit;text-align:left;}
-.book-emoji{font-size:26px;flex-shrink:0;}
-.book-info{flex:1;min-width:0;}
-.book-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
-.book-author{font-size:11px;color:var(--muted);}
-.book-badge{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:20px;flex-shrink:0;cursor:pointer;user-select:none;transition:all .15s;}
-.book-badge.done{background:rgba(var(--teal-rgb),0.1);color:var(--teal);border:1px solid rgba(var(--teal-rgb),0.25);}
-.book-badge.reading{background:rgba(var(--accent-rgb),0.08);color:var(--accent-ink);border:1px solid rgba(var(--accent-rgb),0.25);}
-.book-badge:active{transform:scale(0.93);}
-.book-arrow{font-size:9px;color:var(--muted);flex-shrink:0;transition:transform .2s;}
-.book-card.open .book-arrow{transform:rotate(90deg);}
-.book-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
-.book-card.open .book-body{display:block;}
-.book-summary-txt{font-size:12px;color:var(--muted);line-height:1.7;padding:12px 0 4px;}
-.book-sec-lbl{font-size:8.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
-.book-sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
-.book-pts{list-style:none;display:flex;flex-direction:column;gap:6px;}
-.book-pts li{font-size:12px;color:var(--text);line-height:1.55;padding-left:14px;position:relative;}
-.book-pts li::before{content:'—';position:absolute;left:0;color:var(--muted2);}
-.book-lessons{background:rgba(var(--accent-rgb),0.05);border:1px solid rgba(var(--accent-rgb),0.15);border-radius:10px;padding:12px 14px;margin-top:14px;}
-.book-lessons-ttl{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent-ink);margin-bottom:10px;}
-.book-lessons ol{counter-reset:ls;list-style:none;display:flex;flex-direction:column;gap:7px;}
-.book-lessons ol li{font-size:12px;color:var(--text);line-height:1.55;padding-left:20px;position:relative;counter-increment:ls;}
-.book-lessons ol li::before{content:counter(ls);position:absolute;left:0;font-size:9px;font-weight:800;color:var(--accent-ink);top:1px;}
 /* BIBLIO YOUTUBE — grille de vignettes */
 .yt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
 .yt-tile{background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
@@ -814,68 +784,13 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .cal-col{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer;padding:0;}
 .cal-col.on{border-color:var(--text-strong);}
 
-/* ===== STUDIO DE BANNIÈRES =====
-   Cliquer sur le GIF d'une catégorie ouvre ce panneau : choisir le visuel,
-   en ajouter par lien, régler la hauteur et le cadrage. */
-.view-banner{cursor:pointer;}
-#gif-studio{position:fixed;inset:0;z-index:2600;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow-y:auto;padding:22px 16px 40px;display:none;}
-#gif-studio.open{display:block;}
-.gs-panel{max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:18px 18px 22px;}
+/* ===== EN-TÊTE DE MODALE (partagé) ===== */
 .gs-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.gs-title{font-size:14px;font-weight:700;color:var(--text-strong);flex:1;}
-.gs-sub{font-size:10px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
-.gs-close{background:var(--raised);border:1px solid var(--border2);color:var(--text);border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.gs-title{font-size:15px;font-weight:700;color:var(--text-strong);flex:1;letter-spacing:-.2px;}
+.gs-sub{font-size:10px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;}
+.gs-close{background:var(--raised);border:1px solid var(--border2);color:var(--text);border-radius:var(--r-sm);padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;}
 .gs-close:hover{border-color:var(--accent);color:var(--accent-ink);}
-.gs-tabs{display:flex;gap:6px;margin-bottom:14px;}
-.gs-tab{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border2);background:none;color:var(--muted2);font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
-.gs-tab.active{background:rgba(var(--accent-rgb),0.12);border-color:var(--accent-ink);color:var(--accent-ink);}
-.gs-pane{display:none;} .gs-pane.active{display:block;}
-
-/* --- aperçu, commun aux deux onglets --- */
-.gs-preview-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border2);margin-bottom:12px;background:var(--sunken);}
-#gs-preview{width:100%;height:170px;object-fit:cover;object-position:center 30%;display:block;user-select:none;-webkit-user-drag:none;touch-action:none;cursor:grab;}
-#gs-preview.dragging{cursor:grabbing;}
-.gs-preview-hint{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:10px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,0.75));pointer-events:none;text-align:center;letter-spacing:.5px;}
-
-/* --- grille de choix --- */
-.gs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;}
-.gs-cell{position:relative;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--sunken);cursor:pointer;padding:0;font-family:inherit;}
-.gs-cell img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;}
-.gs-cell:hover{border-color:var(--muted3);}
-.gs-cell.sel{border-color:var(--accent);}
-.gs-cell.sel::after{content:'✓';position:absolute;top:4px;right:5px;width:19px;height:19px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-/* Le doublon refusé se signale lui-même : on montre lequel, au lieu de
-   laisser un simple message disparaître au bout de deux secondes. */
-.gs-cell.dup{border-color:var(--warn);animation:gsdup .45s ease 4;}
-@keyframes gsdup{0%,100%{box-shadow:0 0 0 0 rgba(var(--warn-rgb),0);}50%{box-shadow:0 0 0 4px rgba(var(--warn-rgb),0.45);}}
-.gs-cell.rnd{aspect-ratio:16/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted2);font-size:10.5px;font-weight:600;border:1px dashed var(--border2);}
-.gs-cell.rnd span{font-size:19px;}
-.gs-cell.sel.rnd{border-style:solid;color:var(--accent-ink);}
-.gs-del{position:absolute;top:4px;left:5px;width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,0.7);border:none;color:#fff;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}
-.gs-cell:hover .gs-del{display:flex;}
-.gs-broken{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;font-size:9px;color:var(--muted3);text-align:center;padding:6px;line-height:1.4;}
-
-/* --- ajout par lien --- */
-.gs-add{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
-.gs-add-row{display:flex;gap:7px;}
-.gs-add-row input{flex:1;min-width:0;background:var(--sunken);border:1px solid var(--field-border);border-radius:9px;color:var(--text);font-size:12px;padding:9px 11px;font-family:inherit;}
-.gs-note{font-size:10px;color:var(--muted3);line-height:1.55;margin-top:8px;}
-
-/* --- réglages --- */
-.gs-ctrl{margin-bottom:13px;}
-.gs-ctrl-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
-.gs-ctrl-label{font-size:11px;font-weight:600;color:var(--muted2);flex:1;}
-.gs-ctrl-val{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent-ink);font-weight:700;}
-.gs-row{display:flex;align-items:center;gap:8px;}
-.gs-row input[type=range]{flex:1;accent-color:var(--accent);height:4px;}
-.gs-step{width:31px;height:31px;flex-shrink:0;border-radius:8px;border:1px solid var(--border2);background:var(--raised);color:var(--text);font-size:14px;cursor:pointer;font-family:inherit;line-height:1;padding:0;}
-.gs-step:hover{border-color:var(--accent);color:var(--accent-ink);}
-.gs-pad{display:grid;grid-template-columns:repeat(3,31px);grid-template-rows:repeat(3,31px);gap:4px;justify-content:center;margin:2px auto 0;}
-.gs-pad .gs-step:nth-child(1){grid-area:1/2;} .gs-pad .gs-step:nth-child(2){grid-area:2/1;}
-.gs-pad .gs-step:nth-child(3){grid-area:2/3;} .gs-pad .gs-step:nth-child(4){grid-area:3/2;}
-.gs-pad .gs-step:nth-child(5){grid-area:2/2;font-size:11px;}
-.gs-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px;}
-@media (max-width:899px){ .gs-panel{padding:15px 14px 20px;} .gs-cell:hover .gs-del{display:none;} .gs-cell .gs-del{display:flex;} }
+.gs-note{font-size:10.5px;color:var(--muted3);line-height:1.6;}
 
 /* Tâches modifiables */
 .tk-edit{background:none;border:none;color:var(--muted3);font-size:12px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;opacity:0;transition:opacity .15s,color .15s;}
@@ -1023,7 +938,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   /* Plus aucun multi-colonnes ni grille : tout reste en flux normal. */
   .view,.view-tabbed,.pane,.subpanel,.subview{column-width:auto;column-count:1;}
 
-  .view-banner{height:210px;max-width:none;margin-right:0;}
   .hero{max-width:none;margin-right:0;}
   .stat-grid{max-width:none;margin-right:0;}
   .launch-grid{grid-template-columns:repeat(auto-fit,minmax(92px,1fr));}
@@ -1310,7 +1224,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- VUE TOURNAGE : le script complet en gros texte, à lire pendant le tournage -->
 <div id="cal-modal" onclick="if(event.target===this)calClose()"></div>
-<div id="gif-studio" onclick="if(event.target===this)gsClose()"></div>
 
 <div id="nm-tele">
   <button class="nm-tele-close" onclick="nmTelepromptClose()">✕ Fermer</button>
@@ -1339,7 +1252,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   <button class="nav-btn" data-view="finance" onclick="goTo('finance')"><span class="ic">💰</span><span class="lb">Finance</span></button>
   <button class="nav-btn" data-view="objectifs" onclick="goTo('objectifs')"><span class="ic">🎯</span><span class="lb">Objectifs</span></button>
   <button class="nav-btn" data-view="routine" onclick="goTo('routine')"><span class="ic">🔥</span><span class="lb">Routine</span></button>
-  <button class="nav-btn" data-view="biblio" onclick="goTo('biblio')"><span class="ic">📺</span><span class="lb">Biblio</span></button>
   <button class="nav-btn" data-view="sleep" onclick="goTo('sleep')"><span class="ic">😴</span><span class="lb">Sommeil</span></button>
   <button class="nav-btn" data-view="journal" onclick="goTo('journal')"><span class="ic">📓</span><span class="lb">Carnet</span></button>
 </nav>
@@ -1374,7 +1286,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: HOME ============ -->
 <div class="view active" id="view-home">
 
-  <img class="view-banner" id="banner-home" alt="">
 
   <!-- Premier lancement : sans ça, un compte neuf s'ouvre sur une app vide
        sans dire par où commencer. Disparaît dès l'objectif créé. -->
@@ -1425,7 +1336,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <button class="launch-tile" onclick="goTo('habitudes')"><span class="launch-ic">🔥</span><span class="launch-lb">Habitudes</span></button>
     <button class="launch-tile" onclick="goTo('mindset')"><span class="launch-ic">✨</span><span class="launch-lb">Mindset</span></button>
     <button class="launch-tile" onclick="goTo('journal')"><span class="launch-ic">📓</span><span class="launch-lb">Journal</span></button>
-    <button class="launch-tile" onclick="goTo('biblio')"><span class="launch-ic">📺</span><span class="launch-lb">Biblio</span></button>
     <button class="launch-tile" onclick="goTo('sleep')"><span class="launch-ic">😴</span><span class="launch-lb">Sommeil</span></button>
     <button class="launch-tile" onclick="goTo('achats')"><span class="launch-ic">🛍️</span><span class="launch-lb">Achats</span></button>
     <button class="launch-tile" onclick="goTo('capture')"><span class="launch-ic">🎥</span><span class="launch-lb">Capture</span></button>
@@ -1497,7 +1407,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: TASKS ============ -->
 <div class="view" id="view-tasks">
 
-  <img class="view-banner" id="banner-tasks" alt="">
 
   <div id="task-night-banner"></div>
 
@@ -1545,7 +1454,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: MINDSET ============ -->
 <div class="view" id="view-mindset">
 
-  <img class="view-banner" id="banner-mindset" alt="">
 
   <div class="card" style="background:linear-gradient(135deg,var(--surface),var(--raised));border-color:rgba(var(--ink),0.13);">
     <div class="card-title">✨ Affirmation du jour <div class="line"></div></div>
@@ -1591,7 +1499,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: GOAL ============ -->
 <div class="view view-tabbed" id="view-goal" data-tab="progress">
 
-  <img class="view-banner" id="banner-goal" alt="">
 
   <!-- Chaque onglet est autonome : un seul panneau s'affiche, rien d'autre. -->
   <div class="subtabs">
@@ -1633,14 +1540,12 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- ============ VIEW: INTENDANCE ============ -->
 <div class="view" id="view-intendance">
-  <img class="view-banner" id="banner-intendance" alt="">
   <div id="int-wrap"></div>
 </div>
 
 <!-- ============ VIEW: SALAIRES ============ -->
 <div class="view" id="view-salaires">
 
-  <img class="view-banner" id="banner-salaires" alt="">
 
   <div class="card">
     <div class="card-title">💶 Revenus mensuels <div class="line"></div></div>
@@ -1668,7 +1573,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: PLAN 30 JOURS ============ -->
 <div class="view" id="view-plan30">
 
-  <img class="view-banner" id="banner-plan30" alt="">
 
   <div class="card">
     <div class="ring-row">
@@ -1755,7 +1659,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: SLEEP ============ -->
 <div class="view view-tabbed" id="view-sleep">
 
-  <img class="view-banner" id="banner-sleep" alt="">
 
   <div class="subtabs">
     <button class="subtab active" data-sleep-tab="entry" onclick="showSubtab('sleep','entry')">📝 Saisie</button>
@@ -1875,7 +1778,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 <!-- ============ VIEW: JOURNAL ============ -->
 <div class="view" id="view-journal">
 
-  <img class="view-banner" id="banner-journal" alt="">
 
   <div class="card">
     <div class="card-title">📌 Mes 3 priorités pour demain <div class="line"></div></div>
@@ -1895,7 +1797,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- ============ VIEW: PLANNING SEMAINE ============ -->
 <div class="view" id="view-planning">
-  <img class="view-banner" id="banner-planning" alt="">
 
   <div class="card">
     <div class="card-title">🗓️ Mon planning de la semaine <div class="line"></div></div>
@@ -1905,7 +1806,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 </div>
 <!-- ============ VIEW: HABITUDES ============ -->
 <div class="view" id="view-habitudes">
-  <img class="view-banner" id="banner-habitudes" alt="">
 
   <div id="habit-night-banner"></div>
 
@@ -1933,7 +1833,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- ============ VIEW: HABIT TRACKER ============ -->
 <div class="view view-tabbed" id="view-tracker">
-  <img class="view-banner" id="banner-tracker" alt="">
 
   <div class="ht-monthbar">
     <button onclick="htShiftMonth(-1)">‹</button>
@@ -2000,7 +1899,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- ============ VIEW: CAPTURE ============ -->
 <div class="view view-tabbed" id="view-capture">
-  <img class="view-banner" id="banner-capture" alt="">
 
   <div class="bij-tabs">
     <button class="bij-tab active" id="captab-daily" onclick="switchCapTab('daily')">🎥 Quotidien</button>
@@ -2109,7 +2007,6 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 
 <!-- ============ VIEW: ACHATS ============ -->
 <div class="view view-tabbed" id="view-achats">
-  <img class="view-banner" id="banner-achats" alt="">
 
   <div class="bij-tabs">
     <button class="bij-tab active" id="stab-mannequin" onclick="switchShopTab('mannequin')">👤 Mannequin</button>
@@ -2191,284 +2088,16 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
     <div id="shop-list"></div>
   </div>
 </div>
-<!-- ============ VIEW: BIBLIO ============ -->
-<div class="view view-tabbed" id="view-biblio">
-  <img class="view-banner" id="banner-biblio" alt="">
-
-  <!-- Onglets -->
-  <div class="biblio-tabs">
-    <button class="biblio-tab active" id="btab-videos" onclick="switchBiblioTab('videos')">📺 Vidéos</button>
-    <button class="biblio-tab" id="btab-livres" onclick="switchBiblioTab('livres')">📚 Livres</button>
-  </div>
-
-  <!-- SECTION VIDÉOS -->
-  <div class="pane" id="biblio-videos-section">
-    <div id="yt-add-section">
-      <div class="card">
-        <div class="card-title">📺 Ajouter une vidéo <div class="line"></div></div>
-        <input type="url" id="yt-url-input" placeholder="Colle le lien YouTube ici..." style="width:100%;background:var(--sunken);border:1px solid var(--field-border);border-radius:8px;color:var(--text);font-size:13px;padding:10px;font-family:inherit;margin-bottom:10px;">
-        <button class="btn-primary" style="width:100%;" onclick="addYtNote()">🔍 Récupérer la vidéo</button>
-      </div>
-      <div class="yt-grid" id="yt-cards-grid"></div>
-    </div>
-    <div id="yt-detail-panel" style="display:none;"></div>
-  </div>
-
-  <!-- SECTION LIVRES -->
-  <div class="pane" id="biblio-livres-section" style="display:none;">
-
-    <!-- James Clear -->
-    <div class="book-card" id="book-clear">
-      <button class="book-header" onclick="toggleBook('book-clear')">
-        <span class="book-emoji">📗</span>
-        <div class="book-info">
-          <div class="book-title">Un rien peut tout changer</div>
-          <div class="book-author">James Clear</div>
-        </div>
-        <span class="book-badge done" id="badge-book-clear" onclick="toggleBookStatus('book-clear',event)">✓ Lu</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-clear-body">
-        <p class="book-summary-txt">De minuscules changements de comportement peuvent mener à des résultats remarquables. Le succès n'est pas le fruit de transformations radicales, mais de l'accumulation de petites améliorations de 1% chaque jour — qui finissent par composer un avantage décisif.</p>
-        <div class="book-sec-lbl">📖 Début — Les fondations</div>
-        <ul class="book-pts">
-          <li>1% d'amélioration par jour = 37× mieux en un an. 1% de régression = presque zéro.</li>
-          <li>Les systèmes > les objectifs : l'objectif dit où aller, le système détermine si tu y arrives.</li>
-          <li>L'identité d'abord : "Je suis quelqu'un qui..." avant même les résultats.</li>
-          <li>Le plateau du potentiel latent : les résultats tardent, mais s'accumulent en silence.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Les 4 lois</div>
-        <ul class="book-pts">
-          <li><strong>Loi 1 — Évidente :</strong> design de l'environnement, empilement d'habitudes.</li>
-          <li><strong>Loi 2 — Attrayante :</strong> associer la nouvelle habitude à quelque chose qu'on aime.</li>
-          <li><strong>Loi 3 — Facile :</strong> règle des 2 minutes, réduire la friction au minimum.</li>
-          <li><strong>Loi 4 — Satisfaisante :</strong> récompense immédiate pour ancrer l'habitude.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Maîtrise avancée</div>
-        <ul class="book-pts">
-          <li>La règle de Goldilocks : travailler à la limite de ses capacités pour rester motivé.</li>
-          <li>Attention aux automatismes : les bonnes habitudes peuvent aussi devenir des pièges.</li>
-          <li>Chaque action est un vote pour la personne que tu veux devenir.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>"Tu ne monteras pas au niveau de tes objectifs, tu tomberas au niveau de tes systèmes."</li>
-            <li>Deviens la personne d'abord — les preuves (habitudes) suivront.</li>
-            <li>Rends le bien facile, rends le mal difficile. Le design de l'environnement fait tout.</li>
-            <li>Règle des 2 minutes : toute nouvelle habitude doit pouvoir se faire en moins de 2 min.</li>
-            <li>Continue même quand tu ne vois pas de résultats — le plateau précède le décollage.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
-    <!-- Napoleon Hill -->
-    <div class="book-card" id="book-hill">
-      <button class="book-header" onclick="toggleBook('book-hill')">
-        <span class="book-emoji">💰</span>
-        <div class="book-info">
-          <div class="book-title">Réfléchissez et devenez riche</div>
-          <div class="book-author">Napoleon Hill</div>
-        </div>
-        <span class="book-badge done" id="badge-book-hill" onclick="toggleBookStatus('book-hill',event)">✓ Lu</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-hill-body">
-        <p class="book-summary-txt">Basé sur 20 ans d'étude des hommes les plus riches d'Amérique (Carnegie, Ford, Edison...), Napoleon Hill identifie 13 principes universels du succès. Le point de départ absolu : un désir ardent, pas un simple souhait — une obsession brûlante.</p>
-        <div class="book-sec-lbl">📖 Début — Le désir et la foi</div>
-        <ul class="book-pts">
-          <li>Le désir : définir précisément la somme voulue, la date, la contrepartie, le plan.</li>
-          <li>La foi : visualiser et croire en la réalisation de son désir comme s'il était déjà là.</li>
-          <li>L'auto-suggestion : programmer le subconscient par répétition d'affirmations chaque jour.</li>
-          <li>La connaissance spécialisée : savoir n'est rien — l'action organisée crée la richesse.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Les leviers du succès</div>
-        <ul class="book-pts">
-          <li>L'imagination créatrice : source de toutes les grandes idées et innovations.</li>
-          <li>La planification : transformer le désir en plan écrit, concret, immédiatement actionnable.</li>
-          <li>La décision : les riches décident vite, changent d'avis lentement. Les pauvres : l'inverse.</li>
-          <li>La persévérance : seule la volonté de continuer malgré les échecs distingue les winners.</li>
-          <li>Le Mastermind : s'entourer de personnes alignées sur ses objectifs crée une intelligence collective.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Subconscient et peurs</div>
-        <ul class="book-pts">
-          <li>Le subconscient travaille 24h/24 — nourris-le de désirs positifs, pas de peurs.</li>
-          <li>Le 6e sens s'active après la maîtrise des 12 autres principes.</li>
-          <li>Les 6 peurs fondamentales : pauvreté, critiques, mauvaise santé, amour perdu, vieillesse, mort.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>"Tout ce que l'esprit peut concevoir et croire, il peut l'atteindre."</li>
-            <li>Le désir ardent est la seule monnaie que l'univers accepte — pas les vœux pieux.</li>
-            <li>Crée ton Mastermind : 2 personnes ou plus, travaillant vers un but commun en harmonie.</li>
-            <li>Décide rapidement, agis immédiatement, persévère toujours.</li>
-            <li>Tes pensées deviennent des choses — protège ton esprit des pensées négatives.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
-    <!-- Robert Greene -->
-    <div class="book-card" id="book-greene">
-      <button class="book-header" onclick="toggleBook('book-greene')">
-        <span class="book-emoji">♟️</span>
-        <div class="book-info">
-          <div class="book-title">Les 48 lois du pouvoir</div>
-          <div class="book-author">Robert Greene</div>
-        </div>
-        <span class="book-badge reading" id="badge-book-greene" onclick="toggleBookStatus('book-greene',event)">En cours</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-greene-body">
-        <p class="book-summary-txt">À travers des centaines d'exemples historiques, Greene expose les règles immuables du jeu du pouvoir. Un manuel de stratégie tiré de Machiavel, Sun Tzu et des grands manipulateurs de l'histoire — indispensable pour comprendre les dynamiques sociales et s'y positionner.</p>
-        <div class="book-sec-lbl">📖 Début — Lois 1 à 16</div>
-        <ul class="book-pts">
-          <li><strong>Loi 1 :</strong> Ne jamais éclipser le maître — fais-le paraître toujours brillant.</li>
-          <li><strong>Loi 3 :</strong> Dissimuler ses intentions — garde tes plans secrets jusqu'à l'exécution.</li>
-          <li><strong>Loi 4 :</strong> Toujours en dire moins — le mystère crée le pouvoir.</li>
-          <li><strong>Loi 6 :</strong> Attirer l'attention à tout prix — être ignoré est pire qu'être critiqué.</li>
-          <li><strong>Loi 15 :</strong> Écraser totalement son ennemi — la demi-victoire plante les graines de la revanche.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Lois 17 à 32</div>
-        <ul class="book-pts">
-          <li><strong>Loi 17 :</strong> Cultiver l'imprévisibilité — tenir les autres en haleine.</li>
-          <li><strong>Loi 21 :</strong> Faire croire les gens qu'ils ont le choix alors qu'on tient les ficelles.</li>
-          <li><strong>Loi 25 :</strong> Se recréer — contrôle ton image, ne laisse pas les autres la définir.</li>
-          <li><strong>Loi 28 :</strong> Agir avec audace — les hésitants inspirent le mépris.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Lois 33 à 48</div>
-        <ul class="book-pts">
-          <li><strong>Loi 34 :</strong> Être royal dans sa manière d'agir — l'attitude crée la réalité.</li>
-          <li><strong>Loi 40 :</strong> Mépriser ce qu'on ne peut avoir — l'ignorer le rend moins puissant.</li>
-          <li><strong>Loi 46 :</strong> Ne jamais paraître trop parfait — l'envie est dangereuse.</li>
-          <li><strong>Loi 48 :</strong> Assumer une forme sans forme — être adaptable, insaisissable.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>Le pouvoir se joue toujours — consciemment ou non, tu es dans la partie.</li>
-            <li>Contrôle ton image avant que les autres ne le fassent pour toi.</li>
-            <li>La patience et le timing valent plus que la force brute.</li>
-            <li>L'information est pouvoir : écoute plus que tu ne parles.</li>
-            <li>Ne révèle jamais tes intentions ni tes faiblesses — même à tes proches.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sabri Suby -->
-    <div class="book-card" id="book-suby">
-      <button class="book-header" onclick="toggleBook('book-suby')">
-        <span class="book-emoji">🚀</span>
-        <div class="book-info">
-          <div class="book-title">Sell Like Crazy</div>
-          <div class="book-author">Sabri Suby</div>
-        </div>
-        <span class="book-badge done" id="badge-book-suby" onclick="toggleBookStatus('book-suby',event)">✓ Lu</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-suby-body">
-        <p class="book-summary-txt">Sabri Suby, fondateur de King Kong (une des agences marketing les plus rentables d'Australie), révèle son système en 8 phases pour transformer n'importe quelle activité en machine à vendre. Une approche directe, mesurable et ultra-pratique du marketing moderne.</p>
-        <div class="book-sec-lbl">📖 Début — Connaître et attirer</div>
-        <ul class="book-pts">
-          <li>Le "Dream Buyer" : profil ultra-précis du client idéal — peurs, désirs, blocages, rêves.</li>
-          <li>Le Halo Strategy : donner un maximum de valeur gratuitement avant de demander quoi que ce soit.</li>
-          <li>L'offre irrésistible : si refuser ton offre paraît stupide, tu as réussi.</li>
-          <li>Contrôle la conversation : celui qui éduque devient celui qui vend.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Convertir et convaincre</div>
-        <ul class="book-pts">
-          <li>Les entonnoirs de conversion : chaque étape doit qualifier davantage le prospect.</li>
-          <li>Le trafic payant : investis comme dans une machine à intérêts composés, pas comme une dépense.</li>
-          <li>80% des ventes se font après le 5e contact — la plupart abandonnent au 1er.</li>
-          <li>La preuve sociale : témoignages, études de cas et résultats concrets valent plus que n'importe quel argument.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Scaler et fidéliser</div>
-        <ul class="book-pts">
-          <li>Maximiser la valeur vie client (LTV) : vendre plus à ceux qui ont déjà acheté.</li>
-          <li>Upsells et cross-sells : augmenter la valeur de chaque transaction dès l'achat initial.</li>
-          <li>Réactiver les clients dormants : de l'argent caché dans ta base de données.</li>
-          <li>Scale seulement quand les fondamentaux sont rentables — jamais avant.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>Vends d'abord la valeur, ensuite le produit — donne avant de demander.</li>
-            <li>Connais ton client idéal mieux qu'il ne se connaît lui-même.</li>
-            <li>Une seule offre irrésistible vaut mieux que 10 produits moyens.</li>
-            <li>Le suivi est roi : la fortune est dans le follow-up.</li>
-            <li>Mesure tout — le marketing sans données, c'est de l'art, pas du business.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rhonda Byrne -->
-    <div class="book-card" id="book-byrne">
-      <button class="book-header" onclick="toggleBook('book-byrne')">
-        <span class="book-emoji">🌟</span>
-        <div class="book-info">
-          <div class="book-title">Le Secret</div>
-          <div class="book-author">Rhonda Byrne</div>
-        </div>
-        <span class="book-badge reading" id="badge-book-byrne" onclick="toggleBookStatus('book-byrne',event)">En cours</span>
-        <span class="book-arrow">▶</span>
-      </button>
-      <div class="book-body" id="book-byrne-body">
-        <p class="book-summary-txt">Rhonda Byrne révèle ce qu'elle appelle le plus grand secret de l'histoire : la loi de l'attraction. Ce que tu penses avec émotion, tu l'attires dans ta vie. Tes pensées dominantes — positives ou négatives — façonnent ta réalité, ton argent, ta santé et tes relations.</p>
-        <div class="book-sec-lbl">📖 Début — La loi de l'attraction</div>
-        <ul class="book-pts">
-          <li>Tes pensées sont des fréquences : tu attires ce sur quoi tu te concentres, que tu le veuilles ou non.</li>
-          <li>Penser à ce que tu NE veux pas... c'est encore l'attirer. Concentre-toi sur ce que tu veux.</li>
-          <li>Tes sentiments sont ta boussole : bien-être = bonne fréquence, mal-être = mauvaise fréquence.</li>
-          <li>Le semblable attire le semblable — deviens la fréquence de ce que tu désires.</li>
-        </ul>
-        <div class="book-sec-lbl">⚙️ Milieu — Le processus créatif</div>
-        <ul class="book-pts">
-          <li>Étape 1 — Demande : sois précis sur ce que tu veux, comme une commande à l'univers.</li>
-          <li>Étape 2 — Crois : agis, parle et pense comme si c'était déjà acquis.</li>
-          <li>Étape 3 — Reçois : ressens dès maintenant la joie de l'avoir — c'est ça qui accélère tout.</li>
-          <li>La gratitude est un multiplicateur : remercie pour ce que tu as et tu en attireras davantage.</li>
-          <li>La visualisation : ton cerveau ne distingue pas le réel de l'imaginé intensément.</li>
-        </ul>
-        <div class="book-sec-lbl">🏁 Fin — Appliquer le secret partout</div>
-        <ul class="book-pts">
-          <li>Argent : concentre-toi sur l'abondance, jamais sur le manque — le manque attire le manque.</li>
-          <li>Relations : traite-toi d'abord toi-même avec amour et respect, les autres suivront.</li>
-          <li>Santé : le corps répond aux pensées — le stress détruit, la joie répare.</li>
-          <li>Ton pouvoir est dans l'instant présent : tes pensées d'aujourd'hui créent ta vie de demain.</li>
-        </ul>
-        <div class="book-lessons">
-          <div class="book-lessons-ttl">✦ Leçons essentielles</div>
-          <ol>
-            <li>Tu deviens ce que tu penses le plus souvent — choisis tes pensées comme tes vêtements.</li>
-            <li>Demande, crois, reçois — et ressens-le comme déjà réel.</li>
-            <li>La gratitude quotidienne change ta fréquence plus vite que tout.</li>
-            <li>Visualise ton objectif (les 2 000 €, la marque lancée) chaque matin avec émotion.</li>
-            <li>Surveille tes sentiments : ils te disent en temps réel ce que tu es en train d'attirer.</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /biblio-livres-section -->
-</div>
-
 <!-- ============ VUES GROUPÉES (créées par JS) ============ -->
 <div class="view view-tabbed" id="view-finance">
-  <img class="view-banner" id="banner-finance" alt="">
   <div class="group-tabs" id="finance-tabs"></div>
   <div id="finance-content"></div>
 </div>
 <div class="view view-tabbed" id="view-objectifs">
-  <img class="view-banner" id="banner-objectifs" alt="">
   <div class="group-tabs" id="objectifs-tabs"></div>
   <div id="objectifs-content"></div>
 </div>
 <div class="view view-tabbed" id="view-routine">
-  <img class="view-banner" id="banner-routine" alt="">
   <div class="group-tabs" id="routine-tabs"></div>
   <div id="routine-content"></div>
 </div>
@@ -2760,7 +2389,6 @@ function goTo(view){
   const el = document.getElementById('view-'+view);
   if(el) el.classList.add('active');
   if(view === 'achats' && typeof ensureThree === 'function') ensureThree(init3D);
-  rotateViewBanner(view);
   if(svState[view]) showSV(view, svState[view]);
   const section = VIEW_TO_SECTION[view] || 'home';
   updateSectionNav(section, view);
@@ -2791,7 +2419,7 @@ const SECTIONS = {
   home:   { views:['home'],                              tabs:[] },
   today:  { views:['tasks','habitudes'],                 tabs:['✅ Tâches','🔥 Habitudes'] },
   argent: { views:['finance','objectifs'],               tabs:['💰 Finance','🎯 Objectifs'] },
-  perso:  { views:['mindset','journal','biblio'],        tabs:['✨ Mindset','📓 Journal','📺 Biblio'] },
+  perso:  { views:['mindset','journal'],                 tabs:['✨ Mindset','📓 Journal'] },
   vie:    { views:['sleep','planning'],                  tabs:['😴 Sommeil','📅 Planning'] }
 };
 const VIEW_TO_SECTION = {};
@@ -2816,13 +2444,13 @@ function goSubView(section, view){
 const VIEW_LABELS = {
   home:'Accueil', tasks:'Tâches', habitudes:'Habitudes',
   finance:'Finance', objectifs:'Objectifs',
-  mindset:'Mindset', journal:'Journal', biblio:'Biblio',
+  mindset:'Mindset', journal:'Journal',
   sleep:'Sommeil', planning:'Planning', achats:'Achats', capture:'Capture', tracker:'Habit Tracker'
 };
 const VIEW_TO_CAT = {
   home:'home', tasks:'today', habitudes:'today',
   finance:'argent', objectifs:'argent',
-  mindset:'perso', journal:'perso', biblio:'perso',
+  mindset:'perso', journal:'perso',
   sleep:'vie', planning:'vie', achats:'style', capture:'today', tracker:'today'
 };
 
@@ -2841,8 +2469,7 @@ const ST_CATS = {
   ]},
   perso:  {icon:'✨', label:'Perso', views:[
     {id:'mindset',   icon:'✨', label:'Mindset'},
-    {id:'journal',   icon:'📓', label:'Journal'},
-    {id:'biblio',    icon:'📺', label:'Biblio'}
+    {id:'journal',   icon:'📓', label:'Journal'}
   ]},
   style:  {icon:'🛍️', label:'Style', views:[
     {id:'achats',    icon:'🛍️', label:'Achats'}
@@ -2984,531 +2611,12 @@ function buildGroupedViews(){
       if(!oldView) return;
       oldView.className = 'subview'+(i===0?' active':'');
       oldView.id = 'sv-'+t.id;
-      const banner = oldView.querySelector('.view-banner');
-      if(banner) banner.remove();
       contentEl.appendChild(oldView);
     });
     svState[groupId] = group.tabs[0].id;
   });
 }
 
-/* ============ BANNIÈRES GIF ============
-   Par défaut chaque catégorie tire au hasard dans TOUTE la bibliothèque, sans
-   jamais rejouer le même visuel deux fois de suite. Cliquer sur une bannière
-   ouvre le studio : y choisir un GIF fixe, en ajouter par lien, régler la
-   hauteur et le cadrage. Tout est enregistré par catégorie.
-
-   Les visuels d'origine sont des WebP animés, pas des GIF : même rendu à
-   l'œil, 7,6× moins lourds (39,3 Mo → 5,2 Mo pour les 22). Ils s'affichent
-   dans une <img> comme n'importe quelle image, donc rien d'autre ne change.
-   Les visuels ajoutés par lien, eux, restent des GIF venus du web.
-
-   /!\ GIF_COUNT doit correspondre au nombre de fichiers gifs/vibe-N.webp
-   (numérotés de 1 à GIF_COUNT sans trou). */
-const GIF_COUNT = 22;
-const BUILTIN_GIFS = Array.from({length: GIF_COUNT}, (_, i) => ({
-  id: 'vibe-' + (i + 1), src: 'gifs/vibe-' + (i + 1) + '.webp', builtin: true
-}));
-let gifCustom = [];      /* {id, src, name} ajoutés par lien — commun aux 2 écrans */
-
-/* Un cadrage se règle en pourcentage d'une zone dont la largeur change du tout
-   au tout entre un écran de PC et un téléphone : le même réglage ne peut pas
-   convenir aux deux. Les visuels et les cadrages sont donc rangés par profil
-   d'écran, et ne se marchent jamais dessus. La bibliothèque, elle, reste
-   commune : un GIF ajouté sur mobile est disponible sur PC. */
-let bannerPrefs = { desktop:{}, mobile:{} };
-const BANNER_MODES = {
-  desktop: { emoji:'💻', label:'PC',     autre:'mobile'  },
-  mobile:  { emoji:'📱', label:'mobile', autre:'desktop' }
-};
-/* Même seuil que la feuille de style : au-dessus, la bannière fait 210 px. */
-function bannerMode(){ return window.matchMedia('(min-width:900px)').matches ? 'desktop' : 'mobile'; }
-function bannerProfile(mode){
-  const m = mode || bannerMode();
-  if(!bannerPrefs[m]) bannerPrefs[m] = {};
-  return bannerPrefs[m];
-}
-
-const BANNER_DEF = { gif:null, h:0, px:50, py:30 };   /* h:0 = hauteur du thème */
-
-function gifAll(){ return BUILTIN_GIFS.concat(gifCustom); }
-function gifById(id){ return gifAll().find(g => g.id === id) || null; }
-function bannerPref(view, mode){ return Object.assign({}, BANNER_DEF, bannerProfile(mode)[view] || {}); }
-function gifLoad(){
-  try { const c = JSON.parse(loadKey('gifs_custom') || 'null'); if(Array.isArray(c)) gifCustom = c; } catch(e){}
-  try {
-    const p = JSON.parse(loadKey('banner_prefs') || 'null');
-    if(p && typeof p === 'object' && !Array.isArray(p)){
-      if(p.desktop || p.mobile){
-        bannerPrefs = { desktop:p.desktop || {}, mobile:p.mobile || {} };
-      } else {
-        /* ancien format : une seule table pour tout le monde. On la recopie
-           dans les deux profils, personne ne perd son réglage, et ils
-           divergeront dès la première retouche. */
-        bannerPrefs = { desktop:p, mobile:JSON.parse(JSON.stringify(p)) };
-        gifSavePrefs();
-      }
-    }
-  } catch(e){}
-  try { const f = JSON.parse(loadKey('gifs_fp') || 'null'); if(f && typeof f === 'object') gifFp = f; } catch(e){}
-}
-function gifSaveLib(){ saveKey('gifs_custom', JSON.stringify(gifCustom)); }
-
-/* ---- anti-doublon ----
-   Deux adresses différentes désignent très souvent le MÊME fichier : les
-   banques de GIF ajoutent des paramètres de suivi (?cid=…&ct=g) et servent
-   depuis des serveurs numérotés (media0, media3…). On compare donc une forme
-   normalisée du lien, pas la chaîne brute. */
-function gifKey(url){
-  const brut = String(url || '').trim();
-  try {
-    const u = new URL(brut);
-    const host = u.hostname.toLowerCase().replace(/^www\./, '').replace(/^media\d+\./, 'media.');
-    return host + u.pathname.replace(/\/+$/, '').toLowerCase();   /* requête et ancre ignorées */
-  } catch(e){ return brut.toLowerCase(); }
-}
-
-/* Empreinte visuelle : l'image réduite en 8×8 niveaux de gris. Le même fichier
-   récupéré sur deux sites donne la même empreinte — c'est ce qui permet de
-   reconnaître un GIF d'origine qu'on rajouterait par lien. Impossible à
-   calculer si le serveur n'autorise pas la lecture des pixels : dans ce cas on
-   renvoie null et on ne bloque rien à tort. */
-let gifFp = {};
-function gifSaveFp(){ saveKey('gifs_fp', JSON.stringify(gifFp)); }
-function gifFingerprint(img){
-  try {
-    if(!img.naturalWidth) return null;
-    const c = document.createElement('canvas'); c.width = 8; c.height = 8;
-    const x = c.getContext('2d'); x.drawImage(img, 0, 0, 8, 8);
-    const d = x.getImageData(0, 0, 8, 8).data;
-    let s = '';
-    for(let i = 0; i < d.length; i += 4){
-      s += (Math.round(d[i]*0.30 + d[i+1]*0.59 + d[i+2]*0.11) >> 4).toString(16);
-    }
-    return s;
-  } catch(e){ return null; }   /* canvas « teinté » : lecture interdite */
-}
-/* Calculé UNE SEULE image à la fois, et seulement quand on s'apprête à
-   coller un lien. Le lancer à l'ouverture du studio chargeait les 22 GIFs
-   d'un bloc — près de 40 Mo, bien plus une fois décodés — par-dessus les
-   vignettes : de quoi faire tomber l'onglet sur téléphone. En file d'attente,
-   le pic mémoire est celui d'une image. */
-let gifFpEnCours = false;
-function gifWarmFingerprints(){
-  if(gifFpEnCours) return;
-  const reste = gifAll().filter(g => gifFp[g.id] === undefined);
-  if(!reste.length) return;
-  gifFpEnCours = true;
-  const suivant = i => {
-    if(i >= reste.length){ gifFpEnCours = false; gifSaveFp(); return; }
-    const g = reste[i];
-    gifFp[g.id] = null;                  /* réservé : on ne le relancera pas */
-    const im = new Image();
-    if(!g.builtin) im.crossOrigin = 'anonymous';
-    const fini = () => {
-      im.onload = im.onerror = null;
-      im.src = GS_BLANK;                 /* on relâche avant de passer au suivant */
-      setTimeout(() => suivant(i + 1), 40);
-    };
-    im.onload  = () => { gifFp[g.id] = gifFingerprint(im); fini(); };
-    im.onerror = fini;
-    im.src = g.src;
-  };
-  suivant(0);
-}
-/* Renvoie le visuel déjà présent qui correspond, ou null. */
-function gifFindDuplicate(url, fp){
-  const cle = gifKey(url);
-  return gifAll().find(g => gifKey(g.src) === cle)
-      || (fp ? gifAll().find(g => gifFp[g.id] && gifFp[g.id] === fp) : null)
-      || null;
-}
-function gifSavePrefs(){ saveKey('banner_prefs', JSON.stringify(bannerPrefs)); }
-function bannerSet(view, patch){
-  bannerProfile()[view] = Object.assign(bannerPref(view), patch);
-  gifSavePrefs();
-}
-/* Basculer entre fenêtre large et fenêtre étroite change de profil : on
-   réapplique tout, sinon l'écran garderait les réglages de l'autre. */
-function bannerWatchMode(){
-  const mq = window.matchMedia('(min-width:900px)');
-  const relire = () => document.querySelectorAll('.view-banner[id^="banner-"]')
-    .forEach(el => rotateViewBanner(el.id.slice('banner-'.length)));
-  if(mq.addEventListener) mq.addEventListener('change', relire);
-  else if(mq.addListener) mq.addListener(relire);
-}
-
-/* ---- affichage ---- */
-const bannerRotation = {};
-function applyBannerStyle(view){
-  const el = document.getElementById('banner-' + view); if(!el) return;
-  const p = bannerPref(view);
-  el.style.height = p.h ? p.h + 'px' : '';
-  el.style.objectPosition = p.px + '% ' + p.py + '%';
-}
-function rotateViewBanner(view){
-  const el = document.getElementById('banner-' + view); if(!el) return;
-  const p = bannerPref(view);
-  if(p.gif){
-    const g = gifById(p.gif);
-    /* le GIF épinglé a pu être supprimé de la bibliothèque : on retombe
-       silencieusement sur l'aléatoire plutôt que d'afficher une image morte */
-    if(g){ el.src = g.src; applyBannerStyle(view); return; }
-  }
-  const list = gifAll();
-  if(!list.length){ applyBannerStyle(view); return; }
-  let next = Math.floor(Math.random() * list.length);
-  const prev = bannerRotation[view];
-  if(prev !== undefined && next === prev && list.length > 1){
-    next = (prev + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
-  }
-  bannerRotation[view] = next;
-  el.src = list[next].src;
-  applyBannerStyle(view);
-}
-function initViewBanners(){
-  /* piloté par le DOM : toute vue portant une .view-banner est servie,
-     plus de table à tenir à jour quand une catégorie apparaît */
-  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => {
-    const view = el.id.slice('banner-'.length);
-    if(!el.dataset.gsBound){
-      el.dataset.gsBound = '1';
-      el.title = 'Cliquer pour changer ou ajuster ce visuel';
-      el.addEventListener('click', () => gsOpen(view));
-    }
-    rotateViewBanner(view);
-  });
-}
-
-/* ============ STUDIO DE BANNIÈRES ============ */
-let gsView = null;      /* catégorie en cours d'édition */
-let gsTabId = 'choix';
-
-/* GIF 1×1 transparent : sert de place vide dans la grille, et surtout à
-   libérer un GIF lourd qu'on ne voit plus. Remettre un src léger relâche le
-   décodage, alors qu'enlever l'attribut déclencherait une erreur d'image. */
-const GS_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-let gsObserver = null;
-
-/* Une vignette n'est chargée que lorsqu'elle approche de l'écran, et rendue
-   à la mémoire dès qu'elle s'en éloigne. La mémoire occupée reste celle de
-   ce qu'on voit, pas celle de toute la bibliothèque. */
-function gsObserveThumbs(){
-  const boite = document.getElementById('gif-studio');
-  const vignettes = boite ? boite.querySelectorAll('img[data-src]') : [];
-  if(gsObserver){ gsObserver.disconnect(); gsObserver = null; }
-  if(!('IntersectionObserver' in window)){
-    vignettes.forEach(i => gsLoadThumb(i));
-    return;
-  }
-  gsObserver = new IntersectionObserver(entrees => {
-    entrees.forEach(e => {
-      if(e.isIntersecting) gsLoadThumb(e.target);
-      else gsReleaseThumb(e.target);
-    });
-  }, { root: boite, rootMargin: '300px 0px' });
-  vignettes.forEach(i => gsObserver.observe(i));
-}
-function gsLoadThumb(img){
-  const vrai = img.dataset.src;
-  if(!vrai || img.getAttribute('src') === vrai) return;
-  img.onerror = () => {
-    if(img.getAttribute('src') !== vrai) return;   /* pas une vraie panne : on relâchait */
-    img.replaceWith(Object.assign(document.createElement('div'),
-      { className:'gs-broken', textContent:'lien cassé' }));
-  };
-  img.src = vrai;
-}
-function gsReleaseThumb(img){
-  if(img.getAttribute('src') !== GS_BLANK) img.src = GS_BLANK;
-}
-/* En quittant le studio, on rend tout : sinon la trentaine de Mo décodés
-   reste sur le dos de l'onglet pendant qu'on utilise l'app. */
-function gsFreeThumbs(){
-  if(gsObserver){ gsObserver.disconnect(); gsObserver = null; }
-  const boite = document.getElementById('gif-studio');
-  if(boite) boite.querySelectorAll('img[data-src]').forEach(gsReleaseThumb);
-}
-
-function gsLabel(view){
-  if(typeof VIEW_LABELS !== 'undefined' && VIEW_LABELS[view]) return VIEW_LABELS[view];
-  return view.charAt(0).toUpperCase() + view.slice(1);
-}
-function gsOpen(view){
-  gsView = view; gsTabId = 'choix';
-  document.getElementById('gif-studio').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  gsRender();
-}
-function gsClose(){
-  document.getElementById('gif-studio').classList.remove('open');
-  gsFreeThumbs();
-  document.body.style.overflow = '';
-  gsView = null;
-}
-function gsTab(t){ gsTabId = t; gsRender(); }
-
-/* ---- choix du visuel ---- */
-function gsPick(id){
-  bannerSet(gsView, { gif:id });
-  rotateViewBanner(gsView); gsRender();
-  showToast('🖼 Visuel épinglé sur ' + gsLabel(gsView));
-}
-function gsRandom(){
-  bannerSet(gsView, { gif:null });
-  rotateViewBanner(gsView); gsRender();
-  showToast('🎲 ' + gsLabel(gsView) + ' repasse en aléatoire');
-}
-/* Un lien, pas un fichier : un GIF importé en base64 pèserait plusieurs Mo et
-   ferait exploser la limite de 1 Mo du document Firestore. */
-function gsAddUrl(){
-  const inp = document.getElementById('gs-url'); if(!inp) return;
-  const url = inp.value.trim();
-  if(!url){ showToast('Colle le lien du GIF'); return; }
-  if(!/^https:\/\//i.test(url)){ showToast('⚠️ Le lien doit commencer par https://'); return; }
-  /* Premier filet : même adresse, à la normalisation près. Instantané. */
-  const dejaVu = gifFindDuplicate(url, null);
-  if(dejaVu){ gsRefuseDoublon(dejaVu); return; }
-
-  const btn = document.getElementById('gs-add-btn');
-  if(btn){ btn.disabled = true; btn.textContent = '…'; }
-  /* on vérifie que le lien affiche vraiment une image avant de l'enregistrer */
-  const test = new Image();
-  let fini = false;
-  const done = ok => {
-    if(fini) return; fini = true;
-    if(btn){ btn.disabled = false; btn.textContent = '+ Ajouter'; }
-    if(!ok){ showToast("⚠️ Ce lien n'affiche pas d'image — vérifie que c'est bien un lien direct vers l'image"); return; }
-    /* Second filet : le même fichier sous une autre adresse. On compare les
-       pixels, ce qui rattrape aussi un GIF d'origine récupéré sur le web. */
-    const fp = gifFingerprint(sonde) || gifFingerprint(test);
-    const jumeau = gifFindDuplicate(url, fp);
-    if(jumeau){ gsRefuseDoublon(jumeau); return; }
-
-    const id = 'g' + Date.now().toString(36);
-    gifCustom.push({ id:id, src:url, name:'' });
-    gifFp[id] = fp || null;
-    gifSaveLib(); gifSaveFp();
-    const i = document.getElementById('gs-url'); if(i) i.value = '';
-    gsRender();
-    showToast('✅ Visuel ajouté à ta bibliothèque');
-  };
-  /* Sonde en parallèle : seule une image chargée en CORS laisse lire ses
-     pixels. Si le site refuse, elle échoue sans bruit et on garde le test
-     principal, qui lui accepte tout. */
-  const sonde = new Image();
-  sonde.crossOrigin = 'anonymous';
-  sonde.src = url;
-
-  test.onload = () => done(true);
-  test.onerror = () => done(false);
-  setTimeout(() => done(false), 12000);
-  test.src = url;
-}
-/* Le message dit non, et la vignette concernée se signale dans la grille. */
-function gsRefuseDoublon(g){
-  showToast(g.builtin
-    ? '🔁 Déjà là — ce visuel fait partie des GIFs d’origine'
-    : '🔁 Déjà là — ce visuel est déjà dans ta bibliothèque');
-  gsTabId = 'choix'; gsRender();
-  gsFlash(g.id);
-}
-function gsFlash(id){
-  const cell = document.querySelector('#gif-studio .gs-cell[data-gif="' + id + '"]');
-  if(!cell) return;
-  cell.classList.add('dup');
-  cell.scrollIntoView({ block:'center', behavior:'smooth' });
-  setTimeout(() => cell.classList.remove('dup'), 2000);
-}
-function gsDelCustom(id, ev){
-  if(ev) ev.stopPropagation();
-  const g = gifById(id); if(!g || g.builtin) return;
-  if(!confirm('Retirer ce visuel de ta bibliothèque ?\n\nLes catégories qui l’affichaient repasseront en aléatoire.')) return;
-  gifCustom = gifCustom.filter(x => x.id !== id);
-  /* la bibliothèque est commune : on décroche ce visuel dans LES DEUX profils */
-  Object.keys(BANNER_MODES).forEach(m => {
-    const prof = bannerProfile(m);
-    Object.keys(prof).forEach(v => { if(prof[v].gif === id) prof[v].gif = null; });
-  });
-  gifSaveLib(); gifSavePrefs();
-  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => rotateViewBanner(el.id.slice(7)));
-  gsRender();
-  showToast('🗑 Visuel retiré');
-}
-
-/* ---- réglages taille et cadrage ---- */
-const GS_LIMITS = { h:[90, 520], px:[0, 100], py:[0, 100] };
-function gsSet(field, val){
-  const [min, max] = GS_LIMITS[field];
-  bannerSet(gsView, { [field]: Math.max(min, Math.min(max, Math.round(val))) });
-  gsSync();
-}
-function gsNudge(field, delta){ gsSet(field, (bannerPref(gsView)[field] || (field === 'h' ? gsCurrentH() : 0)) + delta); }
-function gsCurrentH(){
-  const el = document.getElementById('banner-' + gsView);
-  return el ? Math.round(el.getBoundingClientRect().height) || 170 : 170;
-}
-function gsResetSize(){
-  bannerSet(gsView, { h:0, px:BANNER_DEF.px, py:BANNER_DEF.py });
-  gsSync(); gsRender();
-  showToast('↺ Taille et cadrage remis par défaut');
-}
-function gsApplyAll(){
-  const p = bannerPref(gsView), prof = bannerProfile();
-  document.querySelectorAll('.view-banner[id^="banner-"]').forEach(el => {
-    const v = el.id.slice('banner-'.length);
-    prof[v] = Object.assign(bannerPref(v), { h:p.h, px:p.px, py:p.py });
-    applyBannerStyle(v);
-  });
-  gifSavePrefs();
-  showToast('📐 Taille appliquée à toutes les catégories ' + BANNER_MODES[bannerMode()].label);
-}
-/* Le seul pont entre les deux profils, et il est volontaire : on recopie le
-   réglage de CETTE catégorie vers l'autre écran, sur demande. */
-function gsCopyToOther(){
-  const ici = bannerMode(), la = BANNER_MODES[ici].autre;
-  bannerProfile(la)[gsView] = Object.assign({}, bannerPref(gsView, ici));
-  gifSavePrefs(); gsRender();
-  showToast('📤 Copié vers ' + BANNER_MODES[la].label);
-}
-/* Met à jour l'aperçu, les compteurs et la vraie bannière sans tout redessiner :
-   c'est ce qui rend le réglage fluide pendant qu'on glisse. */
-function gsSync(){
-  if(!gsView) return;
-  const p = bannerPref(gsView);
-  const prev = document.getElementById('gs-preview');
-  if(prev){
-    prev.style.height = (p.h || gsDefaultH()) + 'px';
-    prev.style.objectPosition = p.px + '% ' + p.py + '%';
-  }
-  const setTxt = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
-  setTxt('gs-h-val', (p.h || gsDefaultH()) + ' px');
-  setTxt('gs-px-val', p.px + ' %');
-  setTxt('gs-py-val', p.py + ' %');
-  const rh = document.getElementById('gs-h-range'); if(rh) rh.value = p.h || gsDefaultH();
-  applyBannerStyle(gsView);
-}
-function gsDefaultH(){ return window.matchMedia('(min-width:900px)').matches ? 210 : 170; }
-
-/* Glisser sur l'aperçu déplace le cadrage. On raisonne en pourcentage de la
-   taille affichée : le geste suit le doigt quelle que soit la taille d'écran. */
-function gsDragStart(ev){
-  if(!gsView) return;
-  const img = ev.currentTarget;
-  const r = img.getBoundingClientRect();
-  const p = bannerPref(gsView);
-  const start = { x:ev.clientX, y:ev.clientY, px:p.px, py:p.py };
-  img.classList.add('dragging');
-  try { img.setPointerCapture(ev.pointerId); } catch(e){}
-  const move = e => {
-    gsSet('px', start.px - (e.clientX - start.x) / r.width * 100);
-    gsSet('py', start.py - (e.clientY - start.y) / r.height * 100);
-  };
-  const up = () => {
-    img.classList.remove('dragging');
-    img.removeEventListener('pointermove', move);
-    img.removeEventListener('pointerup', up);
-    img.removeEventListener('pointercancel', up);
-  };
-  img.addEventListener('pointermove', move);
-  img.addEventListener('pointerup', up);
-  img.addEventListener('pointercancel', up);
-  ev.preventDefault();
-}
-
-/* ---- rendu ---- */
-function gsRender(){
-  const w = document.getElementById('gif-studio'); if(!w || !gsView) return;
-  const p = bannerPref(gsView);
-  const el = document.getElementById('banner-' + gsView);
-  const srcActuel = el ? el.getAttribute('src') : '';
-  const h = p.h || gsDefaultH();
-
-  const apercu =
-    '<div class="gs-preview-wrap">' +
-      '<img id="gs-preview" src="' + glEsc(srcActuel) + '" alt="" style="height:' + h + 'px;object-position:' + p.px + '% ' + p.py + '%" onpointerdown="gsDragStart(event)">' +
-      (gsTabId === 'taille' ? '<div class="gs-preview-hint">Glisse sur l’image pour déplacer le cadrage</div>' : '') +
-    '</div>';
-
-  /* Pas de src ici : les vignettes sont chargées et RELÂCHÉES au défilement.
-     La bibliothèque pèse près de 40 Mo, et un GIF animé occupe en mémoire
-     bien plus que son poids de fichier — tout charger d'un coup tuait
-     l'onglet sur téléphone. */
-  const cellules = gifAll().map(g =>
-    '<button class="gs-cell' + (p.gif === g.id ? ' sel' : '') + '" data-gif="' + g.id + '" onclick="gsPick(\'' + g.id + '\')" title="' + glEsc(g.src) + '">' +
-      '<img decoding="async" src="' + GS_BLANK + '" data-src="' + glEsc(g.src) + '" alt="">' +
-      (g.builtin ? '' : '<button class="gs-del" onclick="gsDelCustom(\'' + g.id + '\',event)" title="Retirer de la bibliothèque">✕</button>') +
-    '</button>').join('');
-
-  const paneChoix =
-    '<div class="gs-pane' + (gsTabId === 'choix' ? ' active' : '') + '">' +
-      '<div class="gs-grid">' +
-        '<button class="gs-cell rnd' + (p.gif ? '' : ' sel') + '" onclick="gsRandom()">' +
-          '<span>🎲</span>Aléatoire</button>' +
-        cellules +
-      '</div>' +
-      '<div class="gs-add">' +
-        '<div class="gs-ctrl-label" style="margin-bottom:6px;">Ajouter un visuel par lien</div>' +
-        '<div class="gs-add-row">' +
-          '<input id="gs-url" placeholder="https://…/mon-gif.gif" onfocus="gifWarmFingerprints()" onkeydown="if(event.key===\'Enter\')gsAddUrl()">' +
-          '<button class="gl-btn primary" id="gs-add-btn" onclick="gsAddUrl()">+ Ajouter</button>' +
-        '</div>' +
-        '<div class="gs-note">Colle l’adresse directe d’une image (clic droit sur le GIF → « Copier l’adresse de l’image »). ' +
-        'Les visuels ajoutés par lien sont chargés depuis leur site : ils ne s’affichent pas hors ligne, et disparaissent si le site les retire.</div>' +
-      '</div>' +
-    '</div>';
-
-  const ctrl = (label, field, valId, min, max) =>
-    '<div class="gs-ctrl"><div class="gs-ctrl-head"><div class="gs-ctrl-label">' + label + '</div>' +
-      '<div class="gs-ctrl-val" id="' + valId + '"></div></div>' +
-      '<div class="gs-row">' +
-        '<button class="gs-step" onclick="gsNudge(\'' + field + '\',-10)">−</button>' +
-        '<input type="range" id="gs-' + field + '-range" min="' + min + '" max="' + max + '" oninput="gsSet(\'' + field + '\',this.value)">' +
-        '<button class="gs-step" onclick="gsNudge(\'' + field + '\',10)">+</button>' +
-      '</div></div>';
-
-  const paneTaille =
-    '<div class="gs-pane' + (gsTabId === 'taille' ? ' active' : '') + '">' +
-      ctrl('Hauteur de la bannière', 'h', 'gs-h-val', GS_LIMITS.h[0], GS_LIMITS.h[1]) +
-      '<div class="gs-ctrl"><div class="gs-ctrl-head">' +
-        '<div class="gs-ctrl-label">Cadrage — glisse l’image, ou règle au clic</div>' +
-        '<div class="gs-ctrl-val"><span id="gs-px-val"></span> · <span id="gs-py-val"></span></div></div>' +
-        '<div class="gs-pad">' +
-          '<button class="gs-step" onclick="gsNudge(\'py\',-5)" title="Monter le cadrage">↑</button>' +
-          '<button class="gs-step" onclick="gsNudge(\'px\',-5)" title="Vers la gauche">←</button>' +
-          '<button class="gs-step" onclick="gsNudge(\'px\',5)" title="Vers la droite">→</button>' +
-          '<button class="gs-step" onclick="gsNudge(\'py\',5)" title="Descendre le cadrage">↓</button>' +
-          '<button class="gs-step" onclick="gsSet(\'px\',50);gsSet(\'py\',30)" title="Recentrer">◎</button>' +
-        '</div></div>' +
-      '<div class="gs-note" style="margin:0 0 10px;">Ces réglages ne valent que pour ' +
-        BANNER_MODES[bannerMode()].emoji + ' <b>' + BANNER_MODES[bannerMode()].label +
-        '</b> — le cadrage se calcule sur la largeur de l’écran, il ne peut pas être le même des deux côtés.</div>' +
-      '<div class="gs-actions">' +
-        '<button class="gl-btn" onclick="gsApplyAll()">📐 Appliquer cette taille partout</button>' +
-        '<button class="gl-btn" onclick="gsCopyToOther()">📤 Copier vers ' +
-          BANNER_MODES[BANNER_MODES[bannerMode()].autre].label + '</button>' +
-        '<button class="gl-btn" onclick="gsResetSize()">↺ Par défaut</button>' +
-      '</div>' +
-    '</div>';
-
-  w.innerHTML =
-    '<div class="gs-panel">' +
-      '<div class="gs-head">' +
-        '<div><div class="gs-sub">Bannière · réglages ' + BANNER_MODES[bannerMode()].emoji + ' ' +
-          BANNER_MODES[bannerMode()].label + '</div><div class="gs-title">' + glEsc(gsLabel(gsView)) + '</div></div>' +
-        '<button class="gs-close" onclick="gsClose()">✕ Fermer</button>' +
-      '</div>' +
-      apercu +
-      '<div class="gs-tabs">' +
-        '<button class="gs-tab' + (gsTabId === 'choix' ? ' active' : '') + '" onclick="gsTab(\'choix\')">🖼 Choisir le visuel</button>' +
-        '<button class="gs-tab' + (gsTabId === 'taille' ? ' active' : '') + '" onclick="gsTab(\'taille\')">📐 Taille et cadrage</button>' +
-      '</div>' +
-      paneChoix + paneTaille +
-    '</div>';
-  gsSync();
-  gsObserveThumbs();
-  if(typeof wrapEmojis === "function") wrapEmojis(w);
-}
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
@@ -5576,7 +4684,7 @@ const RECOMMENDED_HABITS = [
   { cat:'📚 Compétences', name:'Étudier 1 concurrent : prix, photos, comment il vend', consequence:'Pas de série avant d\'avoir étudié',
     desc:'Va sur Instagram, TikTok ou Etsy. Cherche quelqu\'un qui fait la même chose que toi, en France et à l\'étranger. Observe : quels sont ses prix, pour quoi exactement ? Comment sont ses photos (fond, lumière, mise en scène) ? Quel est son storytelling (son histoire, sa marque) ? Comment il engage sa communauté ? Note 1 chose précise à retenir. 15 min suffisent.' },
   { cat:'📚 Compétences', name:'Regarder 1 vidéo sur la vente ou le business en ligne', consequence:'Pas de scroll avant d\'avoir regardé',
-    desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer son activité", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Prends des notes dans l\'onglet Biblio ici — colle le lien pour ne pas perdre la vidéo.' },
+    desc:'YouTube. Cherche selon ce qui t\'intéresse du moment : "comment vendre sur Vinted", "personal branding Instagram", "comment fixer ses prix", "lancer son activité", "marketing pour débutants". Chaînes utiles : Alex Hormozi, Simon Squibb (EN), Marketing Mania, Ambroise Vermeylen (FR). Note l\'idée que tu retiens dans ton Journal — sinon tu oublies tout.' },
   { cat:'📚 Compétences', name:'Lire 10 pages d\'un livre de croissance ou de business', consequence:'Pas de distraction avant d\'avoir lu',
     desc:'10 pages = 10 à 15 minutes. Livres recommandés pour ta situation : "Atomic Habits" (James Clear — transformer ses habitudes en profondeur), "The Compound Effect" (Darren Hardy — les petites actions quotidiennes qui font tout), "L\'art de se lancer" (Reid Hoffman). Lis le matin ou avant de dormir. Jamais sur téléphone — papier ou liseuse uniquement, sinon tu te retrouves à scroller.' },
 ];
@@ -5899,34 +5007,6 @@ function scheduleAllNotifs(showConfirm){
 function maybeShowNotifBanner(){ renderNotifSettings(); }
 function setupNotifications(){ scheduleAllNotifs(false); }
 
-/* ============ BIBLIOTHÈQUE YOUTUBE ============ */
-const YT_KEY = 'yt_notes';
-let ytNotes = [];
-function extractYtId(url){
-  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
-function toggleBookStatus(bookId, e){
-  e.stopPropagation();
-  const badge = document.getElementById('badge-'+bookId);
-  if(!badge) return;
-  const isDone = badge.classList.contains('done');
-  const newStatus = isDone ? 'reading' : 'done';
-  badge.className = 'book-badge ' + newStatus;
-  badge.textContent = newStatus === 'done' ? '✓ Lu' : 'En cours';
-  saveKey('book_status_'+bookId, newStatus);
-  if(newStatus === 'done') addXp('bookxp-'+bookId, 50, true);
-}
-function loadBookStatuses(){
-  ['book-clear','book-hill','book-greene','book-suby','book-byrne'].forEach(id=>{
-    const saved = loadKey('book_status_'+id);
-    if(!saved) return;
-    const badge = document.getElementById('badge-'+id);
-    if(!badge) return;
-    badge.className = 'book-badge ' + saved;
-    badge.textContent = saved === 'done' ? '✓ Lu' : 'En cours';
-  });
-}
 /* ============ ACHATS — wishlist à seuils + mannequin ============ */
 const SHOP_CATS = {
   vet: {ic:'👕', lb:'Vêtements',    slot:'torse'},
@@ -6286,128 +5366,6 @@ function updateOutfit3D(){
     addW(m);
   }
 }
-function switchBiblioTab(tab){
-  document.getElementById('biblio-videos-section').style.display = tab==='videos' ? '' : 'none';
-  document.getElementById('biblio-livres-section').style.display = tab==='livres'  ? '' : 'none';
-  document.getElementById('btab-videos').classList.toggle('active', tab==='videos');
-  document.getElementById('btab-livres').classList.toggle('active', tab==='livres');
-}
-function toggleBook(id){
-  const card = document.getElementById(id);
-  card.classList.toggle('open');
-}
-async function addYtNote(){
-  const inp = document.getElementById('yt-url-input');
-  const url = inp.value.trim();
-  if(!url){ showToast('Colle un lien YouTube valide'); return; }
-  const vid = extractYtId(url);
-  if(!vid){ showToast('Lien non reconnu'); return; }
-  showToast('⏳ Récupération en cours...');
-  let title = 'Vidéo YouTube'; let thumb = '';
-  try {
-    const r = await fetch('https://www.youtube.com/oembed?url=https://youtu.be/'+vid+'&format=json');
-    const d = await r.json();
-    title = d.title || title;
-    thumb = d.thumbnail_url || '';
-  } catch(e){ }
-  ytNotes.push({ vid, url:'https://youtu.be/'+vid, title, thumb, date:todayISO(), resume:'', points:'', actions:'' });
-  saveKey(YT_KEY, JSON.stringify(ytNotes));
-  inp.value = '';
-  renderYtNotes();
-  showToast('📺 Vidéo ajoutée !');
-}
-function renderYtNotes(){
-  const grid = document.getElementById('yt-cards-grid');
-  if(!grid) return;
-  if(!ytNotes.length){
-    grid.innerHTML='<div style="grid-column:1/-1;font-size:13px;color:var(--muted3);font-style:italic;text-align:center;padding:20px 0;">Aucune vidéo enregistrée.<br>Colle un lien ci-dessus pour commencer.</div>';
-    return;
-  }
-  grid.innerHTML = ytNotes.map((n,i)=>`
-    <div class="yt-tile" onclick="openYtDetail(${i})">
-      ${n.thumb ? `<img class="yt-tile-thumb" src="${escapeHtml(n.thumb)}" alt="">` : `<div class="yt-tile-ph">📺</div>`}
-      <div class="yt-tile-body">
-        <div class="yt-tile-title">${escapeHtml(n.title)}</div>
-        <div class="yt-tile-date">${n.date}</div>
-      </div>
-    </div>`).join('');
-}
-function ytAutoResize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
-function openYtDetail(i){
-  const n = ytNotes[i];
-  document.getElementById('yt-add-section').style.display = 'none';
-  const panel = document.getElementById('yt-detail-panel');
-  panel.style.display = 'block';
-  panel.innerHTML = `
-    <div class="yt-detail-header">
-      <button class="yt-back-btn" onclick="closeYtDetail()">← Retour</button>
-      <div class="yt-detail-vtitle">${escapeHtml(n.title)}</div>
-    </div>
-    ${n.thumb ? `<img class="yt-detail-thumb" src="${escapeHtml(n.thumb)}" alt="">` : `<div class="yt-detail-ph">📺</div>`}
-    <div class="yt-detail-meta">
-      <a href="${n.url}" target="_blank" style="text-decoration:none;"><button class="yt-detail-btn">▶ Regarder</button></a>
-      <button class="yt-detail-btn primary" onclick="copyYtPrompt(${i})">📋 Prompt Claude</button>
-      <button class="yt-detail-btn danger" onclick="confirmRemoveYt(${i})">🗑 Supprimer</button>
-    </div>
-    <div class="yt-section-label">📌 Résumé</div>
-    <textarea class="yt-detail-ta" placeholder="Résumé de la vidéo en quelques phrases..." oninput="ytNotes[${i}].resume=this.value;ytAutoResize(this)">${escapeHtml(n.resume||'')}</textarea>
-    <div class="yt-section-label">💡 Points essentiels</div>
-    <textarea class="yt-detail-ta" placeholder="• Point 1&#10;• Point 2&#10;• Point 3..." oninput="ytNotes[${i}].points=this.value;ytAutoResize(this)">${escapeHtml(n.points||'')}</textarea>
-    <div class="yt-section-label">✅ Actions à prendre</div>
-    <textarea class="yt-detail-ta" placeholder="Ce que je vais appliquer concrètement..." oninput="ytNotes[${i}].actions=this.value;ytAutoResize(this)">${escapeHtml(n.actions||'')}</textarea>
-    <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="saveYtNote(${i})">💾 Enregistrer les notes</button>
-  `;
-  window.scrollTo(0,0);
-  requestAnimationFrame(()=>{ panel.querySelectorAll('.yt-detail-ta').forEach(ta=>ytAutoResize(ta)); });
-}
-function closeYtDetail(){
-  document.getElementById('yt-detail-panel').style.display = 'none';
-  document.getElementById('yt-add-section').style.display = 'block';
-  window.scrollTo(0,0);
-}
-function saveYtNote(i){
-  saveKey(YT_KEY, JSON.stringify(ytNotes));
-  showToast('💾 Notes enregistrées');
-}
-function confirmRemoveYt(i){
-  if(confirm('Supprimer cette vidéo ?')){
-    ytNotes.splice(i,1);
-    saveKey(YT_KEY, JSON.stringify(ytNotes));
-    closeYtDetail();
-    renderYtNotes();
-  }
-}
-function removeYtNote(i){
-  ytNotes.splice(i,1);
-  saveKey(YT_KEY, JSON.stringify(ytNotes));
-  renderYtNotes();
-}
-function copyYtPrompt(i){
-  const n = ytNotes[i];
-  const prompt = `Tu vas m'aider à prendre des notes sur une vidéo YouTube que j'ai regardée.
-
-📺 Vidéo : ${n.title}
-🔗 Lien : ${n.url}
-
-Pour récupérer la transcription sur YouTube :
-1. Ouvre la vidéo → clique sur "..." sous la vidéo → "Afficher la transcription"
-2. Sélectionne tout le texte → copie → colle ci-dessous entre les balises
-
-⬇️ COLLE LA TRANSCRIPTION ICI :
-<transcription>
-
-</transcription>
-
-Une fois la transcription collée, génère-moi des notes structurées :
-
-📌 RÉSUMÉ (3-5 phrases, l'essentiel de la vidéo)
-💡 POINTS ESSENTIELS (liste à puces, les idées clés à retenir)
-✅ ACTIONS À PRENDRE (ce que je vais appliquer concrètement, très pratique)
-
-Écris comme si c'étaient mes propres notes, de façon concise et directe.`;
-  navigator.clipboard.writeText(prompt).then(()=>showToast('📋 Prompt copié ! Colle-le dans Claude.ai puis ajoute la transcription')).catch(()=>showToast('Erreur copie — réessaie'));
-}
-
 /* ============ INIT ============ */
 /* ============ RPG — XP, NIVEAUX, QUÊTES ============ */
 const RPG_RANKS = ['Rookie','Apprenti','Grinder','Hustler','Self-Made','Boss','Mogul','Empire','Icône','Légende'];
@@ -7645,7 +6603,6 @@ function initApp(){
   habitsState = JSON.parse(loadKey(HABITS_STATE_KEY) || '{}');
   objHebdo = JSON.parse(loadKey(OBJ_HEBDO_KEY) || '[{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false},{"txt":"","done":false}]');
   ideesList = JSON.parse(loadKey(IDEES_KEY) || '[]');
-  ytNotes = JSON.parse(loadKey(YT_KEY) || '[]');
   // tasks
   tasksLoad();
   nmLoad();
@@ -7661,7 +6618,6 @@ function initApp(){
   initTaskNightBanner();
   // nav tree
   initNavTreePeeks();
-  loadBookStatuses();
   initShop();
   initRpg();
   initCapture();
@@ -7705,15 +6661,9 @@ function initApp(){
   renderObjHebdo();
   // idées
   renderIdees();
-  // biblio youtube
-  renderYtNotes();
   // notifications
   maybeShowNotifBanner();
   setupNotifications();
-  // bannières gif : la bibliothèque et les réglages avant le premier tirage
-  gifLoad();
-  initViewBanners();
-  bannerWatchMode();
   wrapEmojis(document.body);
 }
 let scWidget = null;
