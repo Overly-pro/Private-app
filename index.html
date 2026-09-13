@@ -435,6 +435,49 @@ body{ background:var(--bg); }
 
 /* === NAV TREE === */
 
+
+/* ===== PANNEAU LATÉRAL =====
+   Fixe à droite sur grand écran, où l'espace existe déjà. Sous le contenu
+   sur téléphone, et seulement sur l'accueil : ailleurs il mangerait un
+   écran étroit pour une information accessible en un geste. */
+.side-panel{display:none;}
+html.at-home .side-panel{display:block;margin-top:14px;}
+.sp-card{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--sc,var(--border2));
+  border-radius:var(--r);padding:12px 14px;margin-bottom:9px;}
+.sp-lb{font-size:8.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:6px;}
+.sp-big{font-family:'Instrument Serif',Georgia,serif;font-size:40px;line-height:1;color:var(--text-strong);
+  text-shadow:var(--glow-txt);}
+.sp-mid{font-family:'Space Mono',monospace;font-size:19px;font-weight:700;color:var(--text-strong);}
+.sp-sub{font-size:11px;color:var(--muted);line-height:1.55;margin-top:3px;}
+.sp-row{display:flex;align-items:center;gap:8px;}
+.sp-row .ico{color:var(--streak);}
+.sp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sp-bar{height:3px;background:rgba(var(--ink),0.08);margin:9px 0 5px;}
+.sp-bar i{display:block;height:100%;}
+.sp-obs-t{font-size:12.5px;font-weight:700;color:var(--text-strong);}
+
+/* --- téléphone : deux colonnes, pour que ça rentre sans allonger la page --- */
+@media (max-width:899px){
+  /* body est en flex : sans base à 100 % le panneau se rangerait À CÔTÉ du
+     contenu au lieu de passer dessous. */
+  body{flex-wrap:wrap;}
+  html.at-home .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:9px;
+    flex:1 1 100%;padding:0 5px 16px;box-sizing:border-box;}
+  .sp-card{margin-bottom:0;}
+  .sp-big{font-size:32px;}
+  /* la dernière carte occupe la largeur quand elle est seule sur sa ligne */
+  .sp-card:last-child:nth-child(odd){grid-column:1 / -1;}
+}
+
+/* --- ordinateur : bande fixe à droite --- */
+@media (min-width:900px){
+  .side-panel{display:block;position:fixed;top:74px;right:max(18px,calc((100vw - 1320px) / 2));
+    width:264px;max-height:calc(100vh - 92px);overflow-y:auto;z-index:60;}
+  html.at-home .side-panel{margin-top:0;}
+  /* on décale la colonne de lecture pour que le panneau ne la recouvre pas */
+  .app-shell{max-width:1180px;padding-right:296px;}
+}
+
 /* ===== BARRE DE NAVIGATION =====
    Un seul composant, deux placements. Sur ordinateur elle se pose en haut,
    collante : le regard part de là et le curseur y va sans effort. Sur
@@ -1087,15 +1130,16 @@ html.owner .subtab.owner-only{display:block!important;}
    la disposition du mobile — tout empilé, de haut en bas — simplement centrée
    et un peu plus large. Une seule valeur à régler : max-width ci-dessous. */
 @media (min-width:900px){
-  /* Les deux colonnes de navigation restent dépliées en permanence */
   body{align-items:flex-start;}
-  .app-shell{max-width:900px;width:100%;margin:0 auto;padding:14px 20px 40px;}
-  .nav-cat{font-size:8.5px;}
+  /* La largeur totale inclut la bande de droite : le contenu tient dans ce
+     qui reste une fois le panneau posé. Voir la règle du panneau plus haut. */
+  .app-shell{max-width:1180px;width:100%;margin:0 auto;padding:14px 20px 40px;padding-right:296px;}
 }
 /* Très grand écran : on élargit un peu la colonne de lecture pour que la
    page reste remplie une fois la navigation posée à gauche. */
 @media (min-width:1500px){
-  .app-shell{max-width:1100px;}
+  .app-shell{max-width:1320px;}
+  .side-panel{width:292px;}
 
   /* Plus aucun multi-colonnes ni grille : tout reste en flux normal. */
   .view,.view-tabbed,.pane,.subpanel,.subview{column-width:auto;column-count:1;}
@@ -2031,6 +2075,10 @@ html.owner .subtab.owner-only{display:block!important;}
      Le même balisage, deux placements — le CSS s'en charge. -->
 <nav class="nav-bar" id="nav-bar"></nav>
 
+<!-- Panneau latéral : fixe à droite sur grand écran, sous le contenu de
+     l'accueil sur téléphone. -->
+<aside class="side-panel" id="side-panel"></aside>
+
 <!-- ============ FIREBASE (cloud sync) ============ -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -2454,6 +2502,73 @@ const ST_CATS = {
    sous le titre. */
 let navCat = 'home';
 
+
+/* ============ PANNEAU LATÉRAL ============
+   L'espace qui reste à droite sur un écran large n'est pas rempli avec du
+   décor : il l'est avec ce qu'on va déjà chercher en naviguant. Jours
+   restants, série, prochain moment, une observation. Rien de nouveau — les
+   mêmes données, posées où l'œil tombe.
+
+   Sur téléphone il n'y a pas d'espace à droite : le panneau descend sous le
+   contenu, et seulement sur l'accueil. Ailleurs il encombrerait un écran
+   déjà étroit, alors que la même information est à un geste. */
+function panelNext(){
+  if(typeof calDayEvents !== 'function') return null;
+  const n = new Date(), min = n.getHours()*60 + n.getMinutes();
+  return calDayEvents(todayISO())
+    .filter(e => calHMToMin(e.start) + e.dur > min && !calIsDone(e))
+    .sort((a,b) => calHMToMin(a.start) - calHMToMin(b.start))[0] || null;
+}
+function panelRender(){
+  const w = document.getElementById('side-panel'); if(!w) return;
+  const g = (typeof glCurrent !== 'undefined') ? glCurrent : null;
+  const d = g ? glDaysLeft(g) : null;
+  const streak = parseInt(loadKey(TK_STREAK) || '0', 10) || 0;
+  const suiv = panelNext();
+  const obs = (typeof insights === 'function') ? (insights()[0] || null) : null;
+  const bloc = [];
+
+  if(g && glHasGoal()){
+    const atteint = glReached(g);
+    bloc.push('<div class="sp-card" style="--sc:' + glColor(g) + '">' +
+      '<div class="sp-lb">' + glEsc(g.title || glKind(g).label) + '</div>' +
+      '<div class="sp-big">' + (atteint ? '✓' : (d === null ? '—' : Math.max(d, 0))) + '</div>' +
+      '<div class="sp-sub">' + (atteint ? 'objectif atteint' : (d === null ? 'pas de date' : (d < 0 ? 'jours de retard' : 'jours restants'))) + '</div>' +
+      '<div class="sp-bar"><i style="width:' + glPct(g) + '%;background:' + glColor(g) + '"></i></div>' +
+      '<div class="sp-sub">' + glPct(g) + ' % — ' + glVal(g, glValue(g)) + ' sur ' + glVal(g, g.target) + '</div>' +
+    '</div>');
+  } else {
+    bloc.push('<div class="sp-card"><div class="sp-lb">Objectif</div>' +
+      '<div class="sp-sub">Aucun pour le moment. ' +
+      '<a onclick="goTo(\'objectifs\')" style="color:var(--accent-ink);cursor:pointer;text-decoration:underline;">Définis le tien</a></div></div>');
+  }
+
+  bloc.push('<div class="sp-card"><div class="sp-lb">Série</div>' +
+    '<div class="sp-row">' + icon('flame', 19) +
+      '<span class="sp-mid">' + streak + '</span>' +
+      '<span class="sp-sub">jour' + (streak > 1 ? 's' : '') + ' de suite</span></div>' +
+    '<div class="sp-sub">' + (streak ? 'Ne casse pas la chaîne aujourd’hui.' : 'Coche une journée complète pour la lancer.') + '</div>' +
+  '</div>');
+
+  bloc.push('<div class="sp-card"><div class="sp-lb">Prochain moment</div>' +
+    (suiv
+      ? '<div class="sp-row"><span class="sp-dot" style="background:' + calEvColor(suiv) + '"></span>' +
+        '<span class="sp-mid">' + suiv.start + '</span></div>' +
+        '<div class="sp-sub">' + glEsc(suiv.title) + ' · ' + suiv.dur + ' min</div>'
+      : '<div class="sp-sub">Plus rien de prévu aujourd’hui. ' +
+        '<a onclick="goTo(\'tasks\')" style="color:var(--accent-ink);cursor:pointer;text-decoration:underline;">Ouvrir le calendrier</a></div>') +
+  '</div>');
+
+  if(obs){
+    bloc.push('<div class="sp-card"><div class="sp-lb">Ce que je remarque</div>' +
+      '<div class="sp-obs-t">' + glEsc(obs.t) + '</div>' +
+      '<div class="sp-sub">' + glEsc(obs.d) + '</div></div>');
+  }
+
+  w.innerHTML = bloc.join('');
+  if(typeof paintIcons === 'function') paintIcons(w);
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
 function navRender(){
   const bar = document.getElementById('nav-bar'); if(!bar) return;
   bar.innerHTML = Object.keys(ST_CATS).map(k => {
@@ -2506,6 +2621,9 @@ function navSync(view){
   currentView = view;
   navCat = navCatOf(view);
   navRender(); navRenderTabs();
+  /* le panneau ne s'affiche sur téléphone que sur l'accueil */
+  document.documentElement.classList.toggle('at-home', view === 'home');
+  panelRender();
   const t = document.getElementById('nav-title');
   if(t){
     const c = ST_CATS[navCat] || {};
@@ -3464,6 +3582,7 @@ function glRenderTaskEchoes(){
 }
 function glRenderAll(){
   glSync();
+  if(typeof panelRender === 'function') panelRender();
   if(typeof renderWelcome === 'function') renderWelcome();
   glRenderHero(); glRenderActive(); glRenderParams();
   glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
