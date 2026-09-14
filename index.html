@@ -3952,6 +3952,7 @@ const CAL_SNAP = 5;                    /* minutes : pas de déplacement */
 const CAL_COLORS = ['#e03535','#e08a35','#d8c341','#4fb477','#3f9ad8','#8b6fd4','#c95a9c'];
 let calEvents = [];
 let calDate = todayISO();
+let calGeo = null;
 let calEditing = null;                 /* id en cours d'édition, ou 'new' */
 let calDraftTask = null;               /* tâche choisie dans le bac, à placer */
 let calRepDraft = 'daily';
@@ -4122,27 +4123,83 @@ function calRender(){
     '</div>';
   }).join('');
 
-  /* trait de l'heure courante, seulement sur aujourd'hui */
-  let now = '';
-  if(calDate === todayISO()){
-    const n = new Date(), min = n.getHours()*60 + n.getMinutes();
-    if(min >= h0*60 && min <= h1*60) now = '<div class="cal-now" style="top:' + top(min) + 'px"></div>';
-  }
-
   w.innerHTML =
     '<div class="cal-scroll" id="cal-scroll" style="--cal-hh:' + HH + 'px;--cal-gut:44px">' +
       '<div class="cal-grid" id="cal-grid">' + heures.join('') +
         '<div class="cal-slots" id="cal-slots"></div>' +
-        '<div class="cal-layer">' + blocs + now + '</div>' +
+        '<div class="cal-layer">' + blocs + '</div>' +
       '</div>' +
     '</div>' +
     (list.length ? '' : '<div class="cal-empty">Rien de prévu — touche la grille pour ajouter un moment.</div>');
 
+  calGeo = { h0: h0, h1: h1, HH: HH };
+  calTickNow();
   calBindGrid(h0, HH);
   calRenderHeader();
   calRenderTray();
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
 }
+
+/* ---- l'heure qui avance ----
+   Le trait de l'heure courante était posé une fois, au rendu, puis ne bougeait
+   plus : il fallait recharger l'app pour le voir avancer. Il suit maintenant
+   l'horloge à la minute près, sans redessiner la grille — un glisser en cours,
+   la modale ou le défilement ne sont pas dérangés. */
+function calTickNow(){
+  const layer = document.querySelector('#cal-grid .cal-layer');
+  if(!layer || !calGeo) return;
+  let line = document.getElementById('cal-now');
+  const n = new Date(), min = n.getHours()*60 + n.getMinutes();
+  const visible = calDate === todayISO() && min >= calGeo.h0*60 && min <= calGeo.h1*60;
+  if(!visible){ if(line) line.remove(); return; }
+  if(!line){
+    line = document.createElement('div');
+    line.id = 'cal-now'; line.className = 'cal-now';
+    layer.appendChild(line);
+  }
+  line.style.top = (min - calGeo.h0*60) / 60 * calGeo.HH + 'px';
+}
+
+/* À minuit, le calendrier qui affichait « aujourd'hui » passe au nouveau jour.
+   S'il affichait un autre jour, on le laisse où il est. On attend la fin d'un
+   glisser ou la fermeture de la modale, qui écrit dans le jour affiché. */
+let calJour = todayISO(), calMinVue = -1, calHorlogeT = null;
+function calHorloge(){
+  if(!calGeo) return;                              /* l'app n'est pas encore chargée */
+  const auj = todayISO();
+  if(auj !== calJour){
+    const occupe = !!document.querySelector('.cal-ev.dragging') ||
+      !!document.querySelector('#cal-modal.open');
+    if(calDate === calJour){
+      if(occupe) return;
+      calDate = auj;
+      calJour = auj;
+      calRender();
+    } else {
+      calJour = auj;
+      calRenderHeader();
+    }
+    const hd = document.getElementById('headerDate');
+    if(hd) hd.textContent = todayLongFR();
+  }
+  calTickNow();
+  const n = new Date(), min = n.getHours()*60 + n.getMinutes();
+  if(min !== calMinVue){
+    calMinVue = min;
+    if(typeof panelRender === 'function') panelRender();   /* « Prochain moment » */
+  }
+}
+/* Réglé sur le changement de minute. Un onglet en arrière-plan ou un PC en
+   veille ralentissent les minuteries : au retour, on remet tout à l'heure. */
+function calHorlogeDemarrer(){
+  clearTimeout(calHorlogeT);
+  calHorloge();
+  const n = new Date();
+  calHorlogeT = setTimeout(calHorlogeDemarrer, (60 - n.getSeconds()) * 1000 - n.getMilliseconds() + 200);
+}
+document.addEventListener('visibilitychange', () => { if(!document.hidden) calHorlogeDemarrer(); });
+window.addEventListener('focus', calHorlogeDemarrer);
+window.addEventListener('pageshow', calHorlogeDemarrer);
 function calRenderHeader(){
   const h = document.getElementById('cal-head'); if(!h) return;
   const list = calDayEvents(calDate);
@@ -6209,6 +6266,7 @@ function initApp(){
   // calendrier : apres tasksLoad, la graine a besoin des taches
   calLoad();
   calRender();
+  calHorlogeDemarrer();
   initTaskNightBanner();
   // nav tree
   initNavTreePeeks();
