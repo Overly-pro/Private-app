@@ -695,6 +695,10 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
   color:var(--text);font-size:14px;padding:9px 11px;font-family:inherit;}
 .gl-log-u{font-size:11px;color:var(--muted2);flex-shrink:0;}
 .gl-hint{font-size:10px;color:var(--muted3);line-height:1.5;margin-top:6px;}
+.gl-savebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.gl-savebar .gl-btn{flex:0 0 auto;min-width:0;padding:10px 18px;}
+.gl-saved{font-size:10.5px;font-weight:700;color:var(--ok);}
+.gl-saved.dirty{color:var(--warn2);}
 .gl-tagact{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gc);
   border:1px solid var(--gc);border-radius:var(--r-sm);padding:6px 10px;}
 .gl-pace{font-size:10.5px;color:var(--muted);margin:8px 0 2px;}
@@ -3104,6 +3108,7 @@ let glGoals = [];        /* tous les objectifs en cours */
 let glActiveId = null;   /* celui que l'accueil et le compte à rebours suivent */
 let glCurrent = null;    /* référence vive vers l'objectif actif */
 let glHistory = [];
+let glSaved = {};                /* heure du dernier enregistrement, par objectif */
 let glOpenId = null;     /* objectif déplié dans la liste */
 
 function glBlank(kind){
@@ -3216,6 +3221,7 @@ function glBootstrap(){
 function glSet(field, val, id){
   const g = id ? glGoals.find(x=>x.id===id) : glCurrent; if(!g) return;
   g[field] = (field==='target'||field==='from'||field==='current') ? (parseFloat(val)||0) : val;
+  glSaved[g.id] = nowTimeStr();
   if(field === 'kind'){ g.unit = GOAL_KINDS[val] ? GOAL_KINDS[val].unit : ''; g.color = glKind(g).color; }
   glSave(); glRenderAll();
 }
@@ -3223,7 +3229,37 @@ function glSrcSet(sid, field, val, gid){
   const g = gid ? glGoals.find(x=>x.id===gid) : glCurrent; if(!g) return;
   const s = (g.sources||[]).find(x=>x.id===sid); if(!s) return;
   s[field] = (field==='value') ? (parseFloat(val)||0) : val;
+  glSaved[g.id] = nowTimeStr();
   glSave(); glRenderAll();
+}
+/* Le bouton Enregistrer relit tous les champs de la carte d'un coup. Les
+   champs s'enregistrent déjà seuls quand on les quitte : le bouton donne la
+   preuve que c'est fait, et couvre la saisie qu'on n'a pas encore quittée.
+   onmousedown empêche le champ de perdre le focus avant le clic ; sans ça,
+   son enregistrement automatique redessinerait la carte et le clic tomberait
+   dans le vide. */
+function glSaveCard(id){
+  const g = glGoals.find(x => x.id === id); if(!g) return;
+  const carte = document.querySelector('.gl-card[data-goal="' + id + '"]');
+  if(carte){
+    carte.querySelectorAll('[data-gl]').forEach(el => {
+      const f = el.getAttribute('data-gl');
+      g[f] = (f === 'target' || f === 'from') ? (parseFloat(el.value) || 0) : el.value;
+    });
+    carte.querySelectorAll('[data-src]').forEach(el => {
+      const p = el.getAttribute('data-src').split(':');
+      const s = (g.sources || []).find(x => String(x.id) === p[0]); if(!s) return;
+      s[p[1]] = p[1] === 'value' ? (parseFloat(el.value) || 0) : el.value;
+    });
+  }
+  glSaved[id] = nowTimeStr();
+  glSave(); glRenderAll();
+  showToast('✅ Objectif enregistré');
+}
+function glDirty(id){
+  const el = document.getElementById('gl-saved-' + id); if(!el) return;
+  el.textContent = 'Modifications non enregistrées';
+  el.classList.add('dirty');
 }
 function glSrcAdd(gid){
   const g = gid ? glGoals.find(x=>x.id===gid) : glCurrent; if(!g) return;
@@ -3380,14 +3416,14 @@ function glCard(g){
 
   const srcRows = (g.sources||[]).map(s =>
     '<div class="gl-src-row">' +
-      '<input class="gl-src-emoji" value="'+glEsc(s.emoji)+'" maxlength="4" onchange="glSrcSet('+s.id+',\'emoji\',this.value,\''+g.id+'\')">' +
-      '<input class="gl-src-name" value="'+glEsc(s.label)+'" placeholder="Nom de la source" onchange="glSrcSet('+s.id+',\'label\',this.value,\''+g.id+'\')">' +
-      '<input class="gl-src-val" type="number" step="any" value="'+s.value+'" onchange="glSrcSet('+s.id+',\'value\',this.value,\''+g.id+'\')"><span class="gl-src-unit">'+glEsc(glUnit(g))+'</span>' +
+      '<input class="gl-src-emoji" data-src="'+s.id+':emoji" oninput="glDirty(\''+g.id+'\')" value="'+glEsc(s.emoji)+'" maxlength="4" onchange="glSrcSet('+s.id+',\'emoji\',this.value,\''+g.id+'\')">' +
+      '<input class="gl-src-name" data-src="'+s.id+':label" oninput="glDirty(\''+g.id+'\')" value="'+glEsc(s.label)+'" placeholder="Nom de la source" onchange="glSrcSet('+s.id+',\'label\',this.value,\''+g.id+'\')">' +
+      '<input class="gl-src-val" data-src="'+s.id+':value" oninput="glDirty(\''+g.id+'\')" type="number" step="any" value="'+s.value+'" onchange="glSrcSet('+s.id+',\'value\',this.value,\''+g.id+'\')"><span class="gl-src-unit">'+glEsc(glUnit(g))+'</span>' +
       '<label class="gl-counts"><input type="checkbox" '+(s.counts?'checked':'')+' onchange="glSrcSet('+s.id+',\'counts\',this.checked,\''+g.id+'\')">compte</label>' +
       '<button class="gl-src-del" onclick="glSrcDel('+s.id+',\''+g.id+'\')" title="Supprimer">✕</button>' +
     '</div>').join('');
 
-  return '<div class="gl-card' + (ouvert?' open':'') + (actif?' actif':'') + '" style="--gc:'+col+'">' +
+  return '<div class="gl-card' + (ouvert?' open':'') + (actif?' actif':'') + '" data-goal="'+g.id+'" style="--gc:'+col+'">' +
     '<button class="gl-head" onclick="glToggleOpen(\''+g.id+'\')">' +
       '<span class="gl-head-ic">' + icon(K.icon, 18) + '</span>' +
       '<span class="gl-head-txt">' +
@@ -3416,18 +3452,22 @@ function glCard(g){
           '<div class="gl-hint">Chaque relevé ajoute un point à la courbe. Un seul par jour, le dernier remplace.</div>') +
       '<div class="gl-sub">Réglages</div>' +
       '<div class="gl-field"><label>Nom</label>' +
-        '<input value="'+glEsc(g.title)+'" placeholder="'+glEsc(K.ex)+'" onchange="glSet(\'title\',this.value,\''+g.id+'\')"></div>' +
+        '<input data-gl="title" oninput="glDirty(\''+g.id+'\')" value="'+glEsc(g.title)+'" placeholder="'+glEsc(K.ex)+'" onchange="glSet(\'title\',this.value,\''+g.id+'\')"></div>' +
       '<div class="gl-grid2">' +
         '<div class="gl-field"><label>Cible ('+glEsc(glUnit(g)||'unité')+')</label>' +
-          '<input type="number" step="any" value="'+(cible||'')+'" onchange="glSet(\'target\',this.value,\''+g.id+'\')"></div>' +
+          '<input data-gl="target" oninput="glDirty(\''+g.id+'\')" type="number" step="any" value="'+(cible||'')+'" onchange="glSet(\'target\',this.value,\''+g.id+'\')"></div>' +
         '<div class="gl-field"><label>Point de départ</label>' +
-          '<input type="number" step="any" value="'+(parseFloat(g.from)||0)+'" onchange="glSet(\'from\',this.value,\''+g.id+'\')"></div>' +
+          '<input data-gl="from" oninput="glDirty(\''+g.id+'\')" type="number" step="any" value="'+(parseFloat(g.from)||0)+'" onchange="glSet(\'from\',this.value,\''+g.id+'\')"></div>' +
       '</div>' +
       '<div class="gl-grid2">' +
         '<div class="gl-field"><label>Début</label>' +
-          '<input type="date" value="'+glEsc(g.startDate)+'" onchange="glSet(\'startDate\',this.value,\''+g.id+'\')"></div>' +
+          '<input data-gl="startDate" oninput="glDirty(\''+g.id+'\')" type="date" value="'+glEsc(g.startDate)+'" onchange="glSet(\'startDate\',this.value,\''+g.id+'\')"></div>' +
         '<div class="gl-field"><label>Échéance</label>' +
-          '<input type="date" value="'+glEsc(g.deadline)+'" onchange="glSet(\'deadline\',this.value,\''+g.id+'\')"></div>' +
+          '<input data-gl="deadline" oninput="glDirty(\''+g.id+'\')" type="date" value="'+glEsc(g.deadline)+'" onchange="glSet(\'deadline\',this.value,\''+g.id+'\')"></div>' +
+      '</div>' +
+      '<div class="gl-savebar">' +
+        '<button class="gl-btn primary" onmousedown="event.preventDefault()" onclick="glSaveCard(\''+g.id+'\')">✓ Enregistrer</button>' +
+        '<span class="gl-saved" id="gl-saved-'+g.id+'">' + (glSaved[g.id] ? '✓ Enregistré à ' + glSaved[g.id] : '') + '</span>' +
       '</div>' +
       '<div class="gl-actions">' +
         (actif ? '<span class="gl-tagact">Objectif principal</span>'
@@ -3487,31 +3527,50 @@ function glDraftDecl(){
     'La date est fixée, le chiffre est réel, je crois profondément en ma capacité à l’atteindre.\n' +
     'Je le vois, je le ressens — c’est déjà en route. »';
 }
-function glRegenDecl(){ if(!glCurrent) return; glCurrent.declaration = glDraftDecl(); glSave(); glRenderAll(); showToast('✨ Déclaration régénérée'); }
 function glSuggestDecl(){ const ta=document.getElementById('gl-decl-ta'); if(ta){ ta.value = glDraftDecl(); glAutoGrow(ta); } showToast('✨ Brouillon généré'); }
 function glSaveDecl(){ const ta=document.getElementById('gl-decl-ta'); if(!ta||!glCurrent) return; glCurrent.declaration = ta.value; glSave(); glRenderAll(); showToast('✅ Déclaration enregistrée'); }
-function glAlignFromDecl(){
-  const g = glCurrent; if(!g || !g.declaration) return;
-  const m = g.declaration.match(/(\d[\d\s  .]*)/);
-  if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,'')); if(n) g.target = n; }
-  const an = (g.declaration.match(/\b(20\d{2})\b/g)||[]).map(Number);
-  if(an.length) g.deadline = g.deadline ? String(an[0]) + g.deadline.slice(4) : an[0] + '-12-31';
-  glSave(); glRenderAll(); showToast('✅ Objectif aligné sur ta déclaration');
+/* Les nombres cités dans la déclaration. Elle en contient souvent plusieurs
+   (ce qu'on touche, ce qu'on paie, ce qu'on vise) : l'ancien contrôle ne
+   lisait que le premier, et signalait un écart dès que la phrase commençait
+   par un autre chiffre que la cible. */
+function glDeclNombres(texte){
+  return (String(texte || '').match(/\d(?:[\d\s  .]*\d)?/g) || [])
+    .map(s => parseFloat(s.replace(/[\s  .]/g, '')))
+    .filter(n => !isNaN(n));
+}
+/* Empreinte de ce qu'on a validé : cible, échéance et texte. Si l'un change,
+   la vérification reprend ; sinon « c'est aligné » tient. */
+function glDeclEmpreinte(g){
+  const s = (parseFloat(g.target) || 0) + '|' + (g.deadline || '') + '|' + (g.declaration || '');
+  let h = 5381;
+  for(let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
 }
 function glDeclMismatch(){
   const g = glCurrent; if(!g || !g.declaration) return null;
-  const ecarts = [], cible = parseFloat(g.target)||0;
-  if(cible > 0){
-    const m = g.declaration.match(/(\d[\d\s  .]*)/);
-    if(m){ const n = parseFloat(m[1].replace(/[\s  .]/g,''));
-      if(n && Math.round(n) !== Math.round(cible)) ecarts.push('la cible — ' + glFmt(n) + ' dans le texte, ' + glFmt(cible) + ' dans l’objectif'); }
-  }
+  if(g.declOk && g.declOk === glDeclEmpreinte(g)) return null;
+  const ecarts = [], cible = parseFloat(g.target) || 0;
+  if(cible > 0 && glDeclNombres(g.declaration).every(n => Math.round(n) !== Math.round(cible)))
+    ecarts.push('le montant de ton objectif (' + glVal(g, cible) + ') n’apparaît pas dans le texte');
   if(g.deadline){
-    const an = parseInt(g.deadline.slice(0,4),10);
-    const y = (g.declaration.match(/\b(20\d{2})\b/g)||[]).map(Number);
-    if(y.length && y.indexOf(an) === -1) ecarts.push('l’année — ' + y[0] + ' dans le texte, ' + an + ' dans l’objectif');
+    const an = parseInt(g.deadline.slice(0,4), 10);
+    const y = (g.declaration.match(/\b(20\d{2})\b/g) || []).map(Number);
+    if(y.length && y.indexOf(an) === -1) ecarts.push('le texte parle de ' + y[0] + ', ton échéance est en ' + an);
   }
   return ecarts.length ? ecarts : null;
+}
+function glDeclAck(){
+  const g = glCurrent; if(!g) return;
+  g.declOk = glDeclEmpreinte(g);
+  glSave(); glRenderDecl();
+  showToast('✓ Noté — plus d’alerte tant que rien ne change');
+}
+function glEditGoal(){
+  if(glCurrent) glOpenId = glCurrent.id;
+  showSubtab('goal', 'progress');
+  glRenderAll();
+  const c = glCurrent && document.querySelector('.gl-card[data-goal="' + glCurrent.id + '"]');
+  if(c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function glRenderDecl(){
   const w = document.getElementById('goal-decl-wrap'); if(!w) return;
@@ -3525,10 +3584,10 @@ function glRenderDecl(){
         ? '<div class="hf-text">' + glEsc(g.declaration).replace(/\n/g,'<br>') + '</div>'
         : '<div class="gl-empty">Pas encore de déclaration pour cet objectif.</div>') +
     '</div>' +
-    (e ? '<div class="gl-warn">⚠️ Ta déclaration ne dit pas la même chose que ton objectif : ' + e.map(glEsc).join(' · ') + '.' +
+    (e ? '<div class="gl-warn">⚠️ Vérifie que ta déclaration et ton objectif disent la même chose : ' + e.map(glEsc).join(' ; ') + '.' +
       '<div class="gl-actions">' +
-        '<button class="gl-btn primary" onclick="glAlignFromDecl()">📥 Aligner l’objectif</button>' +
-        '<button class="gl-btn" onclick="glRegenDecl()">♻️ Réécrire la déclaration</button>' +
+        '<button class="gl-btn primary" onclick="glDeclAck()">✓ C’est bien aligné</button>' +
+        '<button class="gl-btn" onclick="glEditGoal()">Modifier l’objectif</button>' +
       '</div></div>' : '') +
     '<div class="card"><div class="card-title">Écrire ma déclaration <div class="line"></div></div>' +
       '<div class="gl-field"><textarea id="gl-decl-ta" oninput="glAutoGrow(this)" ' +
@@ -4743,11 +4802,9 @@ function rappelsVueDemandee(){
   try { history.replaceState(null, '', location.pathname); } catch(e){}
 }
 
-function glRenderAll(){
-  renderWelcome();
-  glRenderHero(); glRenderActive(); glRenderParams(); glRenderDecl(); glRenderRules(); glRenderHistory(); glRenderTaskEchoes();
-  if(typeof renderShop === 'function'){ renderShop(); renderMannequin(); }
-}
+/* (un second glRenderAll, plus ancien, se trouvait ici et remplaçait le
+   premier : le panneau latéral et le calendrier ne suivaient plus les
+   changements d'objectif. Il n'en reste qu'un, plus haut.) */
 
 /* compatibilité : anciens points d'appel */
 function updateCountdown(){ glRenderHero(); }
