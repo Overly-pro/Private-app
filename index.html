@@ -816,6 +816,22 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .cal-date-s{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
 .cal-today-btn{flex-shrink:0;padding:7px 12px;border-radius:var(--r);border:1px solid var(--border2);background:var(--raised);color:var(--muted2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
 .cal-today-btn.on{border-color:var(--accent);color:var(--accent-ink);}
+.cal-today-sm{display:none;}
+/* sur téléphone, la cloche prend la place : « Auj. » laisse la date sur une ligne */
+@media (max-width:480px){
+  .cal-head{gap:6px;}
+  .cal-today-btn{padding:7px 10px;}
+  .cal-today-lg{display:none;}
+  .cal-today-sm{display:inline;}
+}
+@media (max-width:380px){ .cal-date-d{font-size:13px;} }
+.cal-bell{display:flex;align-items:center;justify-content:center;color:var(--muted3);}
+.cal-bell.on{color:var(--accent-ink);border-color:rgba(var(--accent-rgb),0.45);}
+.cal-alert-note{font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:7px;}
+.cal-alert-note a{color:var(--accent-ink);cursor:pointer;text-decoration:underline;}
+.rp-intro{margin:0 0 12px;}
+.rp-etat{font-size:11.5px;font-weight:700;color:var(--ok);margin:0 0 4px;}
+.rp-autoriser{width:100%;margin:0 0 6px;}
 
 .cal-wrap{position:relative;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);overflow:hidden;}
 .cal-scroll{position:relative;overflow-y:auto;max-height:62vh;}
@@ -3958,6 +3974,7 @@ let calDraftTask = null;               /* tâche choisie dans le bac, à placer 
 let calRepDraft = 'daily';
 let calDaysDraft = [];
 let calColorDraft = CAL_COLORS[0];
+let calAlertsDraft = [];               /* rappels choisis dans la modale, en minutes avant */
 
 const CAL_DOW = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 const CAL_REPS = [
@@ -4183,6 +4200,7 @@ function calHorloge(){
     if(hd) hd.textContent = todayLongFR();
   }
   calTickNow();
+  if(typeof rappelsTick === 'function') rappelsTick();
   const n = new Date(), min = n.getHours()*60 + n.getMinutes();
   if(min !== calMinVue){
     calMinVue = min;
@@ -4212,7 +4230,8 @@ function calRenderHeader(){
       '<div class="cal-date-s">' + list.length + ' moment' + (list.length>1?'s':'') +
       ' · ' + hstr + ' · ' + faits + ' fait' + (faits>1?'s':'') + '</div></div>' +
     '<button class="cal-nav" onclick="calShift(1)" title="Jour suivant">›</button>' +
-    '<button class="cal-today-btn' + (calDate===todayISO()?' on':'') + '" onclick="calGoToday()">Aujourd\'hui</button>';
+    '<button class="cal-today-btn' + (calDate===todayISO()?' on':'') + '" onclick="calGoToday()" title="Revenir à aujourd’hui"><span class="cal-today-lg">Aujourd\'hui</span><span class="cal-today-sm">Auj.</span></button>' +
+    rappelsBouton();
 }
 /* Le bac réunit les tâches non négociables qui n'ont pas encore d'horaire. */
 function calRenderTray(){
@@ -4272,7 +4291,7 @@ function calBindGrid(h0, HH){
         el.removeEventListener('pointerup', up);
         el.removeEventListener('pointercancel', up);
         el.classList.remove('dragging');
-        if(bouge){ calSave(); calRender(); showToast('🕑 ' + ev.start + ' · ' + ev.dur + ' min'); }
+        if(bouge){ calSave(); rappelsMarquerPasses(ev); calRender(); showToast('🕑 ' + ev.start + ' · ' + ev.dur + ' min'); }
         else { calOpen(id); }
       };
       el.addEventListener('pointermove', move);
@@ -4307,6 +4326,7 @@ function calOpen(id, heure){
   calRepDraft   = ev ? ev.rep   : (calDraftTask ? 'daily' : 'none');
   calDaysDraft  = ev ? (ev.days || []).slice() : [new Date(calDate + 'T12:00:00').getDay()];
   calColorDraft = ev ? ev.color : CAL_COLORS[calEvents.length % CAL_COLORS.length];
+  calAlertsDraft = ev ? rappelsDe(ev).slice() : rappelsReglages().def.slice();
   document.getElementById('cal-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
   calRenderModal(ev, heure);
@@ -4364,6 +4384,12 @@ function calRenderModal(ev, heure){
           '<button class="' + (calDaysDraft.indexOf(i) !== -1 ? 'on' : '') + '" onclick="calToggleDow(' + i + ')">' + d + '</button>').join('') +
         '</div>' : '') +
       '</div>' +
+      '<div class="gl-field"><label>Me prévenir</label>' +
+        '<div class="cal-rep">' + RAPPELS_OPTS.map(o =>
+          '<button class="' + (calAlertsDraft.indexOf(o.m) !== -1 ? 'on' : '') + '" onclick="calToggleAlert(' + o.m + ',this)">' + o.chip + '</button>').join('') +
+        '</div>' +
+        '<div class="cal-alert-note" id="cal-alert-note">' + calAlertNote() + '</div>' +
+      '</div>' +
       /* Rattacher à un objectif : le bloc en prend la couleur, et on lit sa
          journée en voyant ce qui sert à quoi. */
       '<div class="gl-field"><label>Rattacher à un objectif</label>' +
@@ -4399,11 +4425,14 @@ function calSubmit(){
     title: titre, start: g('cal-f-start') || '09:00', dur: dur, notes: g('cal-f-notes'),
     rep: calRepDraft, days: calDaysDraft.slice(), color: calColorDraft,
     goalId: (document.getElementById('cal-f-goal') || {}).value || null,
+    alerts: calAlertsDraft.slice().sort((a,b) => b - a),
     date: calRepDraft === 'none' ? calDate : null,
     from: calRepDraft === 'none' ? null : calDate
   };
+  let cible = null;
   if(calEditing === 'new'){
-    calEvents.push(Object.assign({ id: calNewId(), taskId: calDraftTask ? calDraftTask.id : null }, patch));
+    cible = Object.assign({ id: calNewId(), taskId: calDraftTask ? calDraftTask.id : null }, patch);
+    calEvents.push(cible);
     showToast('✅ Ajouté à ' + patch.start);
   } else {
     const ev = calEvents.find(e => e.id === calEditing);
@@ -4412,10 +4441,11 @@ function calSubmit(){
          ferait disparaître son passé. */
       if(ev.rep === patch.rep && ev.rep !== 'none') patch.from = ev.from;
       Object.assign(ev, patch);
+      cible = ev;
     }
     showToast('✅ Modifié');
   }
-  calSave(); calClose(); calRender();
+  calSave(); rappelsMarquerPasses(cible); calClose(); calRender();
 }
 function calDelete(){
   const ev = calEvents.find(e => e.id === calEditing); if(!ev) return;
@@ -4426,6 +4456,291 @@ function calDelete(){
   calEvents = calEvents.filter(e => e.id !== calEditing);
   calSave(); calClose(); calRender();
   showToast('🗑 Supprimé');
+}
+
+/* ============ RAPPELS DU CALENDRIER ============
+   Une notification avant chaque moment : 30 minutes avant par défaut, réglable
+   moment par moment (à l'heure, 5 min, 15 min, 30 min, 1 h, 1 jour). Quand
+   plusieurs tombent ensemble, ils tiennent dans UNE notification qui se met à
+   jour — la liste de ce qui arrive — au lieu d'une pile de bannières.
+
+   Qui envoie : l'app elle-même, à chaque minute de son horloge (calHorloge).
+   Elle doit donc tourner. Fermée, elle rattrape à la réouverture tout rappel
+   dont le moment n'a pas encore commencé.
+
+   Le journal des rappels déjà envoyés reste sur l'appareil, hors synchro :
+   le téléphone et l'ordinateur préviennent chacun de leur côté. */
+const RAPPELS_KEY = 'cal_rappels';
+const RAPPELS_JOURNAL = 'cal_rappels_envoyes';
+const RAPPELS_OPTS = [
+  { m:0,    chip:'À l’heure', txt:'à l’heure' },
+  { m:5,    chip:'5 min',     txt:'5 min avant' },
+  { m:15,   chip:'15 min',    txt:'15 min avant' },
+  { m:30,   chip:'30 min',    txt:'30 min avant' },
+  { m:60,   chip:'1 h',       txt:'1 h avant' },
+  { m:1440, chip:'1 jour',    txt:'1 jour avant' }
+];
+
+function rappelsReglages(){
+  let r = null;
+  try { r = JSON.parse(loadKey(RAPPELS_KEY) || 'null'); } catch(e){ r = null; }
+  return { on: !r || r.on !== false, def: (r && Array.isArray(r.def)) ? r.def.slice() : [30] };
+}
+function rappelsSauver(r){ saveKey(RAPPELS_KEY, JSON.stringify({ on: r.on, def: r.def })); }
+/* un moment sans réglage propre suit le rappel par défaut */
+function rappelsDe(ev, R){ return Array.isArray(ev.alerts) ? ev.alerts : (R || rappelsReglages()).def; }
+function rappelsPermission(){ return ('Notification' in window) ? Notification.permission : 'indispo'; }
+function rappelsActifs(){ return rappelsReglages().on && rappelsPermission() === 'granted'; }
+
+function rappelsIsoPlus(iso, n){
+  const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function rappelsDebut(iso, ev){
+  const d = new Date(iso + 'T00:00:00'); d.setMinutes(calHMToMin(ev.start));
+  return d.getTime();
+}
+function rappelsCle(iso, ev, m){ return iso + '|' + ev.id + '|' + ev.start + '|' + m; }
+function rappelsJournal(){
+  try { return JSON.parse(localStorage.getItem(RAPPELS_JOURNAL) || '{}') || {}; } catch(e){ return {}; }
+}
+function rappelsJournalEcrire(j){
+  const limite = Date.now() - 3*86400000;
+  Object.keys(j).forEach(k => { if(j[k] < limite) delete j[k]; });
+  try { localStorage.setItem(RAPPELS_JOURNAL, JSON.stringify(j)); } catch(e){}
+}
+function rappelsQuand(debut, now){
+  const min = Math.round((debut - now) / 60000);
+  if(min < -1) return 'a commencé';
+  if(min <= 0) return 'maintenant';
+  if(new Date(debut).toDateString() !== new Date(now).toDateString()) return 'demain';
+  if(min < 60) return 'dans ' + min + ' min';
+  const h = Math.floor(min / 60), r = min % 60;
+  return 'dans ' + h + ' h' + (r ? ' ' + String(r).padStart(2,'0') : '');
+}
+
+/* ---- l'envoi, appelé chaque minute ---- */
+function rappelsTick(){
+  if(typeof PREVIEW !== 'undefined' && PREVIEW) return;      /* la vue client ne prévient personne */
+  if(typeof calEvents === 'undefined' || !calEvents.length) return;
+  const R = rappelsReglages();
+  if(!R.on || rappelsPermission() !== 'granted') return;
+  const now = Date.now(), journal = rappelsJournal(), nouveaux = [];
+  [todayISO(), rappelsIsoPlus(todayISO(), 1)].forEach(iso => {
+    const etat = calStateFor(iso);
+    calDayEvents(iso).forEach(ev => {
+      if(etat[calDoneId(ev)]) return;                          /* déjà fait : rien à rappeler */
+      const debut = rappelsDebut(iso, ev);
+      let du = false;
+      rappelsDe(ev, R).forEach(m => {
+        if(debut - m*60000 > now) return;                       /* pas encore l'heure */
+        if(now >= debut + (m === 0 ? 10*60000 : 0)) return;     /* trop tard : le moment a commencé */
+        const cle = rappelsCle(iso, ev, m);
+        if(journal[cle]) return;
+        journal[cle] = now;
+        du = true;
+      });
+      /* app rouverte à 10 h 57 pour 11 h : le rappel de 30 min et celui de
+         5 min sont dus ensemble, on ne prévient qu'une fois */
+      if(du) nouveaux.push({ iso: iso, ev: ev, debut: debut });
+    });
+  });
+  if(!nouveaux.length) return;
+  rappelsJournalEcrire(journal);
+  rappelsAfficher(nouveaux, journal, now);
+}
+
+/* La notification liste tout ce qui a été annoncé et n'a pas encore commencé.
+   Elle porte toujours la même étiquette : la nouvelle remplace l'ancienne. */
+function rappelsAfficher(nouveaux, journal, now){
+  const vus = {}, liste = [];
+  const ajoute = (iso, ev, debut) => {
+    const k = iso + '|' + ev.id; if(vus[k]) return;
+    vus[k] = true; liste.push({ iso: iso, ev: ev, debut: debut });
+  };
+  nouveaux.forEach(x => ajoute(x.iso, x.ev, x.debut));
+  Object.keys(journal).forEach(cle => {
+    const p = cle.split('|'); if(p.length !== 4) return;
+    const ev = calEvents.find(e => e.id === p[1]);
+    if(!ev || ev.start !== p[2] || !calOccursOn(ev, p[0])) return;
+    if(calStateFor(p[0])[calDoneId(ev)]) return;
+    const debut = rappelsDebut(p[0], ev);
+    /* seulement ce qui approche : un rendez-vous annoncé la veille ne s'invite
+       pas dans chaque notification jusqu'au lendemain */
+    if(debut > now && debut - now <= 2*3600000) ajoute(p[0], ev, debut);
+  });
+  liste.sort((a,b) => a.debut - b.debut);
+
+  const fin = x => calMinToHM(calHMToMin(x.ev.start) + x.ev.dur);
+  let titre, corps;
+  if(liste.length === 1){
+    const x = liste[0], q = rappelsQuand(x.debut, now);
+    titre = x.ev.title;
+    corps = q.charAt(0).toUpperCase() + q.slice(1) + ' · ' + x.ev.start + ' – ' + fin(x);
+  } else {
+    titre = liste.length + ' moments à venir';
+    corps = liste.slice(0, 5).map(x => x.ev.start + ' · ' + x.ev.title + ' — ' + rappelsQuand(x.debut, now)).join('\n') +
+      (liste.length > 5 ? '\n+ ' + (liste.length - 5) + ' autre' + (liste.length > 6 ? 's' : '') : '');
+  }
+  notifAfficher(titre, { body: corps, tag: 'overly-rappels', renotify: true, data: { vue: 'tasks' } });
+  if(!document.hidden && typeof showToast === 'function'){
+    const x = nouveaux[0];
+    showToast('🔔 ' + (nouveaux.length === 1 ? x.ev.title + ' — ' + rappelsQuand(x.debut, now) : nouveaux.length + ' rappels'));
+  }
+}
+
+/* Afficher une notification. Sur Android, seul le service worker en a le
+   droit : « new Notification » y lève une erreur. On passe donc par lui, et
+   on garde le constructeur pour les navigateurs sans service worker. */
+function notifAfficher(titre, options){
+  const abs = u => { try { return new URL(u, location.href).href; } catch(e){ return u; } };
+  const o = Object.assign({ icon: abs('icon-192.png'), badge: abs('brand/logo-mark-white.png'), vibrate: [180, 80, 180] }, options || {});
+  const direct = () => {
+    try {
+      const n = new Notification(titre, o);
+      n.onclick = () => { try { window.focus(); } catch(e){} if(o.data && o.data.vue === 'tasks') goTo('tasks'); n.close(); };
+    } catch(e){}
+  };
+  let sw = null;
+  try { sw = navigator.serviceWorker; } catch(e){ sw = null; }
+  if(!sw){ direct(); return; }
+  sw.getRegistration()
+    .then(reg => (reg && reg.showNotification) ? reg.showNotification(titre, o) : direct())
+    .catch(direct);
+}
+
+/* Créer ou déplacer un moment à 10 h 50 pour 11 h ne doit pas déclencher sur
+   le champ le rappel de 10 h 30 : ce qui est déjà passé est marqué comme vu. */
+function rappelsMarquerPasses(ev){
+  if(!ev || (typeof PREVIEW !== 'undefined' && PREVIEW)) return;
+  const R = rappelsReglages(), now = Date.now(), journal = rappelsJournal();
+  [todayISO(), rappelsIsoPlus(todayISO(), 1)].forEach(iso => {
+    if(!calOccursOn(ev, iso)) return;
+    const debut = rappelsDebut(iso, ev);
+    rappelsDe(ev, R).forEach(m => {
+      const cle = rappelsCle(iso, ev, m);
+      if(debut - m*60000 <= now && !journal[cle]) journal[cle] = now;
+    });
+  });
+  rappelsJournalEcrire(journal);
+}
+
+/* ---- dans la modale d'un moment ---- */
+function calToggleAlert(m, btn){
+  const i = calAlertsDraft.indexOf(m);
+  if(i === -1) calAlertsDraft.push(m); else calAlertsDraft.splice(i, 1);
+  if(btn) btn.classList.toggle('on', i === -1);
+  const n = document.getElementById('cal-alert-note'); if(n) n.innerHTML = calAlertNote();
+}
+function calAlertNote(){
+  const p = rappelsPermission();
+  if(p === 'indispo') return 'Ce navigateur ne peut pas afficher de notifications.';
+  if(p === 'denied')  return 'Notifications bloquées sur cet appareil : autorise-les dans les réglages du navigateur.';
+  if(p === 'default') return '<a onclick="rappelsAutoriser()">Autorise les notifications</a> pour recevoir ce rappel sur cet appareil.';
+  if(!rappelsReglages().on) return 'Les rappels sont coupés. Réactive-les avec la cloche, en haut du calendrier.';
+  if(!calAlertsDraft.length) return 'Aucun rappel pour ce moment.';
+  const txt = RAPPELS_OPTS.filter(o => calAlertsDraft.indexOf(o.m) !== -1).reverse().map(o => o.txt);
+  return 'Notification ' + (txt.length > 1 ? txt.slice(0, -1).join(', ') + ' et ' + txt[txt.length - 1] : txt[0]) + '.';
+}
+
+/* ---- le panneau de réglages, ouvert par la cloche ---- */
+function rappelsBouton(){
+  const on = rappelsActifs();
+  return '<button class="cal-nav cal-bell' + (on ? ' on' : '') + '" onclick="rappelsOuvrir()" title="' +
+    (on ? 'Rappels activés' : 'Rappels désactivés') + '">' + icon('bell', 15) + '</button>';
+}
+function rappelsLigneReglages(){
+  return '<div class="notif-row"><span class="notif-row-icon">🗓️</span>' +
+    '<span class="notif-row-label">Rappels du calendrier</span>' +
+    '<button class="notif-banner-btn" onclick="rappelsOuvrir()">Régler</button></div>';
+}
+function rappelsOuvrir(){
+  const w = document.getElementById('cal-modal'); if(!w) return;
+  calEditing = null; calDraftTask = null;
+  w.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  rappelsRenderPanneau();
+}
+function rappelsRenderPanneau(){
+  const w = document.getElementById('cal-modal'); if(!w) return;
+  const R = rappelsReglages(), p = rappelsPermission();
+  const autorisation =
+    p === 'granted' ? '<div class="rp-etat">✓ Notifications autorisées sur cet appareil</div>' :
+    p === 'denied'  ? '<div class="gl-warn">Les notifications sont bloquées pour cette app. Autorise-les dans les réglages du navigateur ou du téléphone, puis rouvre ce panneau.</div>' :
+    p === 'default' ? '<button class="gl-btn primary rp-autoriser" onclick="rappelsAutoriser()">🔔 Autoriser les notifications sur cet appareil</button>' :
+                      '<div class="gl-warn">Ce navigateur ne peut pas afficher de notifications.</div>';
+  w.innerHTML =
+    '<div class="cal-panel">' +
+      '<div class="gs-head">' +
+        '<div><div class="gs-sub">Calendrier</div><div class="gs-title">Rappels</div></div>' +
+        '<button class="gs-close" onclick="calClose()">✕ Fermer</button>' +
+      '</div>' +
+      '<p class="nm-hint rp-intro">Une notification avant chaque moment de ton calendrier. Si plusieurs arrivent en même temps, elles sont regroupées en une seule.</p>' +
+      autorisation +
+      '<div class="notif-row"><span class="notif-row-label">Recevoir les rappels</span>' +
+        '<label class="notif-sw"><input type="checkbox"' + (R.on ? ' checked' : '') + ' onchange="rappelsSetOn(this.checked)">' +
+        '<span class="notif-sw-track"></span></label></div>' +
+      '<div class="gl-field"><label>Rappel par défaut</label>' +
+        '<div class="cal-rep">' + RAPPELS_OPTS.map(o =>
+          '<button class="' + (R.def.indexOf(o.m) !== -1 ? 'on' : '') + '" onclick="rappelsToggleDef(' + o.m + ',this)">' + o.chip + '</button>').join('') +
+        '</div>' +
+        '<div class="cal-alert-note">Pour les moments qui n’ont pas leur propre réglage. Chaque moment peut avoir le sien.</div>' +
+      '</div>' +
+      '<div class="gs-note">Les rappels partent quand l’app est ouverte. Si elle était fermée, ils arrivent dès que tu la rouvres, tant que le moment n’a pas commencé.</div>' +
+      '<div class="gl-actions">' +
+        (p === 'granted' ? '<button class="gl-btn" onclick="rappelsTest()">Envoyer une notification test</button>' : '') +
+        '<button class="gl-btn" onclick="calClose()">Fermer</button>' +
+      '</div>' +
+    '</div>';
+  if(typeof wrapEmojis === 'function') wrapEmojis(w);
+}
+function rappelsSetOn(v){
+  const R = rappelsReglages(); R.on = !!v; rappelsSauver(R);
+  calRenderHeader();
+  if(R.on) rappelsTick();
+}
+function rappelsToggleDef(m, btn){
+  const R = rappelsReglages(), i = R.def.indexOf(m);
+  if(i === -1) R.def.push(m); else R.def.splice(i, 1);
+  R.def.sort((a,b) => b - a);
+  rappelsSauver(R);
+  if(btn) btn.classList.toggle('on', i === -1);
+}
+function rappelsAutoriser(){
+  if(rappelsPermission() === 'indispo'){ showToast('Notifications non disponibles sur ce navigateur'); return; }
+  Promise.resolve(Notification.requestPermission()).then(p => {
+    if(p === 'granted'){ showToast('🔔 Rappels activés sur cet appareil'); rappelsTick(); }
+    else showToast('Notifications refusées');
+    const w = document.getElementById('cal-modal');
+    if(w && w.classList.contains('open')){
+      if(calEditing) calRenderModal(calEditing === 'new' ? null : calEvents.find(e => e.id === calEditing));
+      else rappelsRenderPanneau();
+    }
+    calRenderHeader();
+    if(typeof renderNotifSettings === 'function') renderNotifSettings();
+  });
+}
+function rappelsTest(){
+  if(rappelsPermission() !== 'granted'){ showToast('Autorise d’abord les notifications'); return; }
+  notifAfficher('Rappel test', { body: 'Rendez-vous — dans 30 min · 11:00 – 12:00', tag: 'overly-test', data: { vue: 'tasks' } });
+  showToast('🔔 Notification test envoyée');
+}
+
+/* Toucher une notification ouvre le calendrier : l'app déjà ouverte reçoit un
+   message du service worker, sinon elle démarre avec ?vue=tasks. */
+try {
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.addEventListener('message', e => {
+      if(e.data && e.data.type === 'OUVRIR_VUE' && e.data.vue === 'tasks') goTo('tasks');
+    });
+  }
+} catch(e){}
+function rappelsVueDemandee(){
+  let vue = null;
+  try { vue = new URLSearchParams(location.search).get('vue'); } catch(e){}
+  if(vue !== 'tasks') return;
+  goTo('tasks');
+  try { history.replaceState(null, '', location.pathname); } catch(e){}
 }
 
 function glRenderAll(){
@@ -5144,12 +5459,12 @@ function renderNotifSettings(){
     return;
   }
   if(Notification.permission !== 'granted'){
-    wrap.innerHTML=`<div style="font-size:12px;color:var(--muted2);margin-bottom:10px;">Active les notifications pour recevoir ton affirmation du matin, tes rappels de tâches et habitudes, et ton journal du soir.</div>
+    wrap.innerHTML=rappelsLigneReglages()+`<div style="font-size:12px;color:var(--muted2);margin-bottom:10px;">Active les notifications pour recevoir ton affirmation du matin, tes rappels de tâches et habitudes, et ton journal du soir.</div>
       <button class="btn-primary" style="width:100%;" onclick="requestNotifPermission()">🔔 Activer les notifications</button>`;
     return;
   }
   const hourOpts = (sel)=> Array.from({length:18},(_,i)=>{const h=i+6;return `<option value="${h}"${h===sel?' selected':''}>` + String(h).padStart(2,'0')+'h00</option>';}).join('');
-  wrap.innerHTML = NOTIF_TYPES.map(n=>{
+  wrap.innerHTML = rappelsLigneReglages() + NOTIF_TYPES.map(n=>{
     const on = loadKey('notif_'+n.key+'_on') !== '0';
     const hour = parseInt(loadKey('notif_'+n.key+'_hour') || String(n.defHour));
     return `<div class="notif-row">
@@ -5192,7 +5507,7 @@ function scheduleAllNotifs(showConfirm){
     // Fallback direct : si on est exactement dans la fenêtre horaire (±30 min) et pas encore envoyé
     const diff = Math.abs(now.getHours() - hour);
     if(diff === 0 && !loadKey('notif_direct_'+todayISO()+'_'+n.key)){
-      new Notification(n.title, { body:n.bodyFn(), icon:'brand/logo-mark-white.png' });
+      notifAfficher(n.title, { body:n.bodyFn(), tag:'me-'+n.key });
       saveKey('notif_direct_'+todayISO()+'_'+n.key, '1');
     }
   });
@@ -6315,6 +6630,7 @@ function initApp(){
   navSync('home');
   paintIcons();
   wrapEmojis(document.body);
+  rappelsVueDemandee();
   /* en dernier : le parcours a besoin de l'objectif déjà chargé pour savoir
      s'il a quelque chose à expliquer */
   if(onbShouldRun()) onbStart();

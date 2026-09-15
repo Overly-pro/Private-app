@@ -90,13 +90,20 @@ self.addEventListener('message', event => {
   }
 });
 
-// Clic sur une notification → ouvre l'app
+// Clic sur une notification → ouvre l'app, sur le calendrier pour un rappel.
+// App déjà ouverte : on la met au premier plan et on lui dit quelle vue
+// afficher. Sinon on la démarre avec ?vue=… qu'elle lit au lancement.
 self.addEventListener('notificationclick', event => {
   event.notification.close();
+  const vue = (event.notification.data && event.notification.data.vue) || '';
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(list => {
-      if (list.length) return list[0].focus();
-      return clients.openWindow('./');
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      if (list.length) {
+        const c = list[0];
+        if (vue) c.postMessage({ type: 'OUVRIR_VUE', vue: vue });
+        return c.focus();
+      }
+      return clients.openWindow(vue ? './index.html?vue=' + vue : './');
     })
   );
 });
