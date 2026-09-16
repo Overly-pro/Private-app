@@ -1207,6 +1207,22 @@ html.owner .subtab.owner-only{display:block!important;}
   font-size:13px;padding:9px 10px;font-family:inherit;
 }
 .field textarea{resize:vertical;min-height:60px;}
+/* listes de date et d'heure, sur ordinateur (voir dtAmeliorer) */
+.dt-cache{display:none!important;}
+.dt-pick{align-items:center;gap:5px;}
+.dt-pick.bloc{display:flex;width:100%;}
+.dt-pick.ligne{display:inline-flex;}
+.dt-sel{background:var(--sunken);border:1px solid var(--field-border);border-radius:var(--r);color:var(--text);
+  font-size:12.5px;padding:8px 6px;font-family:inherit;cursor:pointer;min-width:0;}
+.dt-sel:hover{border-color:var(--muted3);}
+.dt-sel:focus{outline:none;border-color:var(--accent);}
+.dt-sel option{background:var(--surface);color:var(--text);}
+.dt-pick.bloc .dt-sel{flex:1 1 0;}
+.dt-date.bloc .dt-sel[data-role="m"]{flex:1.7 1 0;}
+.dt-pick.ligne .dt-sel{padding:5px 4px;}
+.dt-sep{color:var(--muted2);font-weight:700;}
+.dt-pick.off{opacity:.35;}
+.onb-field .dt-sel{font-size:16px;padding:12px 8px;border-radius:var(--r-sm);}
 .scale-row{display:flex;gap:6px;}
 .scale-btn{flex:1;text-align:center;padding:9px 0;border-radius:var(--r);border:1px solid var(--field-border);background:var(--sunken);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;}
 .scale-btn.sel{background:linear-gradient(135deg,var(--solid-a),var(--solid-b));color:var(--on-solid);border-color:transparent;}
@@ -4515,6 +4531,143 @@ function calDelete(){
   calEvents = calEvents.filter(e => e.id !== calEditing);
   calSave(); calClose(); calRender();
   showToast('🗑 Supprimé');
+}
+
+/* ============ LISTES POUR LES DATES ET LES HEURES ============
+   Sur ordinateur, les champs date et heure du navigateur se remplissent au
+   clavier, case par case : taper 2026 dans l'année donnait parfois 0002. On
+   les remplace à l'écran par des listes — jour, mois, année ; heure, minute —
+   qui écrivent dans le champ d'origine, gardé caché. Le reste de l'app lit et
+   écrit ce champ comme avant, sans rien savoir des listes.
+   Sur téléphone on garde les sélecteurs du système (calendrier, cadran),
+   déjà pensés pour le doigt. */
+const DT_MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const DT_VALUE = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+const DT_DISABLED = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'disabled');
+const DT_ACTIF = (function(){
+  try { return window.matchMedia('(hover: hover) and (pointer: fine)').matches; } catch(e){ return false; }
+})();
+
+function dt2(n){ return String(n).padStart(2, '0'); }
+function dtOptions(vide, de, a, libelle){
+  let h = '<option value="">' + vide + '</option>';
+  for(let i = de; i <= a; i++) h += '<option value="' + i + '">' + libelle(i) + '</option>';
+  return h;
+}
+function dtSelect(role, html){
+  const s = document.createElement('select');
+  s.className = 'dt-sel'; s.dataset.role = role; s.innerHTML = html;
+  return s;
+}
+
+function dtAmeliorer(input){
+  if(input.dataset.dtPick) return;
+  const type = input.type;
+  if(type !== 'date' && type !== 'time') return;
+  input.dataset.dtPick = type;
+
+  const boite = document.createElement('span');
+  boite.className = 'dt-pick dt-' + type + (input.closest('.gl-field, .field, .onb-field') ? ' bloc' : ' ligne');
+  if(type === 'date'){
+    boite.appendChild(dtSelect('j', dtOptions('Jour', 1, 31, dt2)));
+    boite.appendChild(dtSelect('m', dtOptions('Mois', 1, 12, i => DT_MOIS[i - 1])));
+    boite.appendChild(dtSelect('a', '<option value="">Année</option>'));
+  } else {
+    boite.appendChild(dtSelect('h', dtOptions('--', 0, 23, dt2)));
+    const sep = document.createElement('span');
+    sep.className = 'dt-sep'; sep.textContent = ':';
+    boite.appendChild(sep);
+    boite.appendChild(dtSelect('mn', dtOptions('--', 0, 59, dt2)));
+  }
+  /* les listes ne parlent qu'au champ caché : c'est lui qui prévient l'app */
+  boite.addEventListener('input', e => e.stopPropagation());
+  boite.addEventListener('change', e => {
+    e.stopPropagation();
+    if(e.target.tagName === 'SELECT') dtEcrire(input, boite, e.target.dataset.role);
+  });
+
+  input.classList.add('dt-cache');
+  input.insertAdjacentElement('afterend', boite);
+
+  /* le code qui écrit input.value ou input.disabled met les listes à jour */
+  Object.defineProperty(input, 'value', { configurable: true,
+    get(){ return DT_VALUE.get.call(this); },
+    set(v){ DT_VALUE.set.call(this, v); dtRemplir(this, boite); } });
+  Object.defineProperty(input, 'disabled', { configurable: true,
+    get(){ return DT_DISABLED.get.call(this); },
+    set(v){ DT_DISABLED.set.call(this, v); dtEtat(this, boite); } });
+  dtRemplir(input, boite);
+  dtEtat(input, boite);
+}
+function dtEtat(input, boite){
+  const off = DT_DISABLED.get.call(input);
+  boite.querySelectorAll('select').forEach(s => { s.disabled = off; });
+  boite.classList.toggle('off', off);
+}
+/* du champ vers les listes */
+function dtRemplir(input, boite){
+  const v = DT_VALUE.get.call(input) || '';
+  const sel = r => boite.querySelector('select[data-role="' + r + '"]');
+  if(boite.classList.contains('dt-date')){
+    const p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+    const an = p ? +p[1] : 0, mois = p ? +p[2] : 0, jour = p ? +p[3] : 0;
+    /* années : de 3 ans en arrière à 10 ans devant, élargies si la date en sort */
+    const ref = new Date().getFullYear();
+    const de = Math.min(ref - 3, an || ref), a = Math.max(ref + 10, an || ref);
+    const sa = sel('a');
+    if(sa.dataset.de !== String(de) || sa.dataset.a !== String(a)){
+      sa.innerHTML = dtOptions('Année', de, a, String);
+      sa.dataset.de = de; sa.dataset.a = a;
+    }
+    /* le nombre de jours suit le mois : pas de 31 février */
+    const nb = (an && mois) ? new Date(an, mois, 0).getDate() : 31;
+    const sj = sel('j');
+    if(sj.options.length - 1 !== nb) sj.innerHTML = dtOptions('Jour', 1, nb, dt2);
+    sj.value = jour ? String(jour) : '';
+    sel('m').value = mois ? String(mois) : '';
+    sa.value = an ? String(an) : '';
+  } else {
+    const p = /^(\d{2}):(\d{2})/.exec(v);
+    sel('h').value = p ? String(+p[1]) : '';
+    sel('mn').value = p ? String(+p[2]) : '';
+  }
+}
+/* des listes vers le champ, puis on prévient l'app comme si on avait tapé */
+function dtEcrire(input, boite, role){
+  const sel = r => boite.querySelector('select[data-role="' + r + '"]');
+  const auj = new Date();
+  const vide = role && sel(role) && sel(role).value === '';   /* remettre une liste à vide efface */
+  let v = '';
+  if(!vide && boite.classList.contains('dt-date')){
+    /* une seule liste choisie : les autres partent d'aujourd'hui */
+    const a = +sel('a').value || auj.getFullYear();
+    const m = +sel('m').value || (auj.getMonth() + 1);
+    let j = +sel('j').value || auj.getDate();
+    j = Math.min(j, new Date(a, m, 0).getDate());             /* 31 mars → avril : le 30 */
+    v = a + '-' + dt2(m) + '-' + dt2(j);
+  } else if(!vide){
+    const h = sel('h').value === '' ? auj.getHours() : +sel('h').value;
+    const mn = sel('mn').value === '' ? 0 : +sel('mn').value;
+    v = dt2(h) + ':' + dt2(mn);
+  }
+  DT_VALUE.set.call(input, v);
+  dtRemplir(input, boite);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+function dtScanner(racine){
+  if(!racine || racine.nodeType !== 1) return;
+  if(racine.matches('input[type="date"], input[type="time"]')) dtAmeliorer(racine);
+  racine.querySelectorAll('input[type="date"]:not([data-dt-pick]), input[type="time"]:not([data-dt-pick])').forEach(dtAmeliorer);
+}
+/* les champs déjà là, puis tous ceux que les rendus ajoutent ensuite */
+if(DT_ACTIF){
+  try {
+    dtScanner(document.body);
+    new MutationObserver(mutations => {
+      mutations.forEach(m => m.addedNodes.forEach(dtScanner));
+    }).observe(document.body, { childList: true, subtree: true });
+  } catch(e){}
 }
 
 /* ============ RAPPELS DU CALENDRIER ============
