@@ -858,9 +858,32 @@ html.theme-light .st-empty{color:rgba(var(--ink),0.32);}
 .cal-ev-h{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:1px;}
 .cal-ev.done{opacity:.5;}
 .cal-ev.done .cal-ev-t{text-decoration:line-through;}
-.cal-ev-chk{position:absolute;top:3px;right:4px;width:18px;height:18px;border-radius:var(--r-sm);border:1px solid var(--border2);
-  background:var(--sunken);color:var(--ok);font-size:11px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
-.cal-ev.done .cal-ev-chk{background:var(--ok);color:#06240f;border-color:var(--ok);}
+/* Valider : toute la bande de droite du bloc, pas un carré de 18 px. Au doigt,
+   viser à côté ouvrait la tâche au lieu de la cocher. Le reste du bloc ouvre,
+   la bande valide — deux zones nettes. */
+.cal-ev{padding-right:38px;}
+.cal-ev-chk{position:absolute;top:0;right:0;bottom:0;width:34px;padding:4px 0 0;margin:0;border:none;
+  border-left:1px solid rgba(var(--ink),0.08);background:transparent;cursor:pointer;
+  display:flex;align-items:flex-start;justify-content:center;font-family:inherit;}
+.cal-ev-chk span{width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:1.5px solid rgba(var(--ink),0.38);
+  background:var(--sunken);color:transparent;font-size:11px;font-weight:800;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,color .15s;}
+.cal-ev-chk:hover span{border-color:var(--ok);color:var(--ok);}
+.cal-ev-chk:active{background:rgba(var(--ok-rgb),0.14);}
+.cal-ev.done .cal-ev-chk span{background:var(--ok);border-color:var(--ok);color:#06240f;}
+.cal-ev.short .cal-ev-chk{align-items:center;padding:0;}
+@media (pointer:coarse){
+  .cal-ev{padding-right:52px;}
+  .cal-ev-chk{width:46px;padding-top:5px;}
+  .cal-ev-chk span{width:28px;height:28px;font-size:15px;border-width:2px;}
+  .cal-ev.short .cal-ev-chk span{width:22px;height:22px;font-size:12px;}
+  .cal-ev-t{font-size:12.5px;}
+  .cal-ev-h{font-size:10px;}
+}
+/* dans la fenêtre d'un moment : valider sans chercher la bande */
+.cal-fait{display:block;width:100%;margin:0 0 14px;padding:13px;border-radius:var(--r);border:1px solid rgba(var(--ok-rgb),0.5);
+  background:rgba(var(--ok-rgb),0.1);color:var(--ok);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;}
+.cal-fait.on{background:var(--ok);color:#06240f;}
 .cal-ev-grip{position:absolute;left:0;right:0;bottom:0;height:9px;cursor:ns-resize;touch-action:none;}
 .cal-ev-grip::after{content:'';position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:22px;height:2px;border-radius:var(--r-sm);background:rgba(var(--ink),0.28);}
 .cal-ev.short{padding-top:2px;}
@@ -4039,11 +4062,14 @@ function renderWelcome(){
    La récurrence n'est pas stockée jour par jour : un bloc porte sa règle et
    on calcule ses occurrences à l'affichage. Un an de routine = un objet. */
 const CAL_KEY = 'cal_events';
+/* au doigt, une heure un peu plus haute : des blocs plus faciles à viser */
+const CAL_TACTILE = (function(){ try { return window.matchMedia('(pointer: coarse)').matches; } catch(e){ return false; } })();
 const CAL_SNAP = 5;                    /* minutes : pas de déplacement */
 const CAL_COLORS = ['#e03535','#e08a35','#d8c341','#4fb477','#3f9ad8','#8b6fd4','#c95a9c'];
 let calEvents = [];
 let calDate = todayISO();
 let calGeo = null;
+let calVueDate = null;                 /* jour affiché au dernier rendu, pour garder le défilement */
 let calEditing = null;                 /* id en cours d'édition, ou 'new' */
 let calDraftTask = null;               /* tâche choisie dans le bac, à placer */
 let calRepDraft = 'daily';
@@ -4152,7 +4178,16 @@ function calToggle(id, evt){
     st[key] = !st[key];
     saveKey(TK_STATE_PREFIX + calDate, JSON.stringify(st));
   }
+  try { if(navigator.vibrate) navigator.vibrate(12); } catch(e){}   /* petit retour au doigt */
   calRender();
+}
+/* le bouton en haut de la fenêtre d'un moment */
+function calFaitDepuisModale(){
+  const id = calEditing; if(!id || id === 'new') return;
+  calClose();
+  calToggle(id);
+  const ev = calEvents.find(e => e.id === id);
+  if(ev) showToast(calIsDone(ev) ? '✅ ' + ev.title + ' — fait' : '↺ ' + ev.title + ' — pas encore fait');
 }
 
 /* ---- disposition : les blocs qui se chevauchent se partagent la largeur ---- */
@@ -4191,7 +4226,7 @@ function calRender(){
   const w = document.getElementById('cal-wrap'); if(!w) return;
   const list = calDayEvents(calDate);
   const { h0, h1 } = calBounds(list);
-  const HH = 56;                                   /* hauteur d'une heure, px */
+  const HH = CAL_TACTILE ? 64 : 56;                /* hauteur d'une heure, px */
   const top = m => (m - h0*60) / 60 * HH;
 
   const heures = [];
@@ -4210,10 +4245,17 @@ function calRender(){
       '--ev-col:' + calEvColor(ev) + ';--ev-bg:' + calEvColor(ev) + '26">' +
       '<div class="cal-ev-t">' + glEsc(ev.title) + '</div>' +
       '<div class="cal-ev-h">' + ev.start + ' – ' + fin + '</div>' +
-      '<button class="cal-ev-chk" onclick="calToggle(\'' + ev.id + '\',event)" title="Fait ?">✓</button>' +
+      '<button class="cal-ev-chk" onclick="calToggle(\'' + ev.id + '\',event)" title="Marquer comme fait" aria-label="Marquer comme fait"><span>✓</span></button>' +
       '<div class="cal-ev-grip" data-grip="' + ev.id + '"></div>' +
     '</div>';
   }).join('');
+
+  /* Même jour qu'au dernier rendu (on vient de cocher ou de déplacer) : on
+     garde l'heure qui était en vue. Avant, chaque geste faisait sauter la
+     grille vers l'heure courante. */
+  const ancien = document.getElementById('cal-scroll');
+  const repere = (ancien && ancien.clientHeight > 0 && calGeo && calVueDate === calDate)
+    ? calGeo.h0*60 + ancien.scrollTop / calGeo.HH * 60 : null;
 
   w.innerHTML =
     '<div class="cal-scroll" id="cal-scroll" style="--cal-hh:' + HH + 'px;--cal-gut:44px">' +
@@ -4226,7 +4268,8 @@ function calRender(){
 
   calGeo = { h0: h0, h1: h1, HH: HH };
   calTickNow();
-  calBindGrid(h0, HH);
+  calBindGrid(h0, HH, repere);
+  calVueDate = calDate;
   calRenderHeader();
   calRenderTray();
   if(typeof wrapEmojis === 'function') wrapEmojis(w);
@@ -4321,7 +4364,7 @@ function calRenderTray(){
 }
 
 /* ---- interactions sur la grille ---- */
-function calBindGrid(h0, HH){
+function calBindGrid(h0, HH, repere){
   const grid = document.getElementById('cal-grid'); if(!grid) return;
   const minAt = clientY => {
     const r = grid.getBoundingClientRect();
@@ -4376,9 +4419,12 @@ function calBindGrid(h0, HH){
     });
   });
 
-  /* on centre la vue sur l'heure courante plutôt qu'en haut de la grille */
+  /* on centre la vue sur l'heure courante plutôt qu'en haut de la grille,
+     sauf si on redessine le même jour : la vue reste où elle était */
   const sc = document.getElementById('cal-scroll');
-  if(sc && calDate === todayISO()){
+  if(sc && repere !== null && repere !== undefined){
+    sc.scrollTop = Math.max(0, (repere - h0*60) / 60 * HH);
+  } else if(sc && calDate === todayISO()){
     const n = new Date(), min = n.getHours()*60 + n.getMinutes();
     sc.scrollTop = Math.max(0, (min - h0*60) / 60 * HH - sc.clientHeight/3);
   }
@@ -4443,6 +4489,8 @@ function calRenderModal(ev, heure){
       '</div>' +
       (tLie ? '<div class="gs-note" style="margin:0 0 12px;">🔗 Lié à la tâche <b>' + glEsc(tLie.name) +
               '</b> — la cocher ici met à jour ta progression du jour.</div>' : '') +
+      (ev ? '<button class="cal-fait' + (calIsDone(ev) ? ' on' : '') + '" onclick="calFaitDepuisModale()">' +
+              (calIsDone(ev) ? '✓ Fait — toucher pour annuler' : '✓ Marquer comme fait') + '</button>' : '') +
       '<div class="gl-field"><label>Quoi</label>' +
         '<input id="cal-f-title" value="' + glEsc(titre) + '" placeholder="Ex : Faire les courses"></div>' +
       '<div class="gl-grid2">' +
